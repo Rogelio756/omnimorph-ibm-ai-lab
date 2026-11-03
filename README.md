@@ -1,52 +1,58 @@
-<p align="center">
-  <img src="01_diagramas_y_assets/logos/omnimorph_logo_nombre_light.svg" alt="Omnimorph Logo" width="420"/>
-</p>
+# 📊 Análisis Experimental, Benchmarks GPU y Monitores de Verificación (`M1` a `M4`)
 
-# ⚽ Omnimorph — Análisis Táctico y Narración Deportiva Sincronizada con IA
-
-**IBM SkillsBuild AI Experiential Learning Lab | México 2026**
-
-Bienvenido al repositorio oficial de **Omnimorph**, una plataforma híbrida de visión por computadora, modelado físico-matemático e inteligencia artificial generativa en **IBM Cloud (`watsonx Orchestrate ADK` + `watsonx.ai` + `watsonx.governance`)** que transforma clips de video *broadcast* de fútbol ($1080\text{p}$, $25\text{ fps}$, $30\text{ s}$) en telemetría 2D estabilizada, métricas tácticas colectivas y narración deportiva en español sincronizada en tiempo real.
+Este documento concentra los resultados experimentales medidos sobre el pipeline de Omnimorph y las especificaciones de los **Monitores de Observabilidad** que auditan cada etapa del sistema.
 
 ---
 
-## 🌿 Navegación por Ramas del Repositorio
+## 1. Resumen de Benchmarks de Percepción en GPU Local (`C2 vs A`)
 
-Este repositorio está estructurado en **4 ramas especializadas** según el área de trabajo:
+Evaluación realizada sobre el clip de referencia `2e57b9_0.mp4` ($1920\times 1080$, $25\text{ fps}$, $750\text{ cuadros} = 30\text{ s}$) en laptop **Intel Core i7-9750H + NVIDIA GTX 1660 Ti Max-Q (6 GB VRAM)**.
 
-| Rama | Propósito Principal | Documentos Clave en la Rama |
-| :--- | :--- | :--- |
-| **`main`** *(Actual)* | **Bienvenida y Portada General:** Arquitectura global, mapa del proyecto, cumplimiento de licencias y carpeta obligatoria `bob_sessions/`. | [`README.md`](README.md), [`AGENTS.md`](AGENTS.md), [`bob_sessions/`](bob_sessions/) |
-| **`investigacion`** | **Fórmulas y Modelos Matemáticos (`P1`, `P2`, `P3`):** Derivación teórica de homografías normalizadas, Algoritmo Húngaro, Savitzky-Golay y métricas tácticas. | [`investigacion/FORMULAS_Y_FUNDAMENTOS.md`](investigacion/FORMULAS_Y_FUNDAMENTOS.md), [`02_documentacion_omnimorph/SPEC_MOTOR_OMNIMORPH.md`](02_documentacion_omnimorph/SPEC_MOTOR_OMNIMORPH.md) |
-| **`analisis`** | **Resultados Experimentales y Monitores (`M1`–`M4`):** Benchmarks de los 6 agentes en GPU, validación `C2 vs A` (`IoU = 1.0`) y semáforos de observabilidad. | [`analisis/RESULTADOS_Y_MONITORES.md`](analisis/RESULTADOS_Y_MONITORES.md), [`02_documentacion_omnimorph/REPORTE_TECNICO_GPU.md`](02_documentacion_omnimorph/REPORTE_TECNICO_GPU.md) |
-| **`implementacion`** | **Lógica de Operación y Ejecución en IBM Bob IDE:** Código del motor para `watsonx Orchestrate ADK`, flujo de operación y prompts listos para **IBM Bob IDE**. | [`implementacion/cloud_tool/omnimorph_engine.py`](implementacion/cloud_tool/omnimorph_engine.py), [`implementacion/PROMPTS_IBM_BOB.md`](implementacion/PROMPTS_IBM_BOB.md) |
+| Prueba | Qué ejecuta | Tiempo Total | FPS Bucle | RAM Pico | VRAM Pico | Fidelidad vs Original (`A`) |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **`A_data`** | Los 6 modos originales en serie | $2,328\text{ s}$ ($38.8\text{ min}$) | — | $5.5\text{ GB}$ | $\le 1.5\text{ GB}$ | Referencia base ($100\%$) |
+| **`C_data`** | Un solo proceso (cada modelo corre 1 vez/cuadro, sin video) | **$1,316\text{ s}$ ($21.9\text{ min}$)** | $0.68\text{ FPS}$ | $5.8\text{ GB}$ | $2.5\text{ GB}$ | **$100\%$ idéntico (`IoU = 1.0`)** |
+| **`C2_video`** | 3 hilos en paralelo (decode $\rightarrow$ GPU $\rightarrow$ draw/write 6 videos) | **$1,335\text{ s}$ ($22.2\text{ min}$)** | $0.68\text{ FPS}$ | $5.9\text{ GB}$ | $2.4\text{ GB}$ | **$100\%$ idéntico (`IoU = 1.0`)** |
 
----
+### Desglose de Tiempo de Cómputo por Agente (Media / p95 por cuadro)
 
-## 🏗️ Arquitectura de Flujo Híbrido con Monitores por Etapa (`M1` a `M4`)
-
-![Arquitectura Omnimorph](01_diagramas_y_assets/imagenes_listas/omnimorph_flujo.png)
-
-1. **`1) LOCAL · Percepción GPU (Congelado en Disco)`:**
-   - Ejecuta una sola vez los 6 agentes de visión (`A1` Pitch Detection, `A2` Player Detection, `A3` Ball Detection, `A4` ByteTrack, `A5` SigLIP+UMAP+KMeans, `A6` ViewTransformer) generando `frames.parquet` ($750$ filas) y `objects.parquet` ($35,870$ filas). Supervisado por **`MONITOR M1`**.
-2. **`2) NUBE · IBM Cloud (`watsonx Orchestrate ADK` + `watsonx.ai` + `watsonx.governance`)`:**
-   - **Custom Python Tool (`omnimorph-engine`):** Ejecuta en $<1.5\text{ s}$ de CPU en la nube las 5 fases matemáticas auditadas por los monitores **`M2.0` a `M2.5`**.
-   - **Agente Táctico y Narrador (`ibm/granite-3-8b-instruct`):** Genera la crónica táctica y locución en español por cada ventana de $4.0\text{ s}$, auditada por **`MONITOR M3`** (`governance_audit.jsonl`).
-3. **`3) LOCAL · Dashboard Sincronizado (4 Paneles + TTS)`:**
-   - Sincroniza mediante el reloj común `(frame, t)` el Video con marcas, el Radar cenital 2D limpio, las Métricas de ventana y el Audio TTS en español, supervisado por **`MONITOR M4`**.
+| Agente | Rol | Media (ms) | p95 (ms) | % del Tiempo Total |
+| :--- | :--- | :---: | :---: | :---: |
+| **`A3` · BALL DETECTION** | YOLOv8 + `InferenceSlicer` ($640\times 640$) | $754.2\text{ ms}$ | $820.0\text{ ms}$ | **$51.0\%$** |
+| **`A5` · TEAM CLASSIFICATION** | SigLIP $\rightarrow$ UMAP $\rightarrow$ KMeans($k=2$) | $463.2\text{ ms}$ | $494.1\text{ ms}$ | **$31.0\%$** |
+| **`A2` · PLAYER DETECTION** | YOLOv8x a $1280\times 1280\text{ px}$ | $187.8\text{ ms}$ | $193.9\text{ ms}$ | $13.0\%$ |
+| **`A1` · PITCH DETECTION** | YOLOv8x-pose ($32$ puntos clave) | $63.9\text{ ms}$ | $77.0\text{ ms}$ | $4.0\%$ |
+| **`A4` · PLAYER TRACKING** | ByteTrack (`track_id` persistente) | $6.0\text{ ms}$ | $9.9\text{ ms}$ | $< 1.0\%$ |
+| **`A6` · HOMOGRAFÍA** | OpenCV `findHomography` + RANSAC | $1.1\text{ ms}$ | $1.7\text{ ms}$ | $< 1.0\%$ |
 
 ---
 
-## 🔄 Diagrama de Flujo de Operación y Desarrollo en IBM Bob IDE
+## 2. Caso Testigo del Ruido de Homografía (Frame 300, $t = 12.0\text{ s}$)
 
-![Flujo de Operación Omnimorph](01_diagramas_y_assets/imagenes_listas/omnimorph_flujo_operacion.png)
+En los datos crudos antes de aplicar `omnimorph-engine`, la falta de memoria en $H_t$ provoca picos de velocidad no físicos:
+
+| Objeto / Jugador | Equipo | `pitch_x` (cm) | `pitch_y` (cm) | Velocidad Cruda (Diferencia Finita) | Diagnóstico |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Balón (`A3`)** | — | $7335$ | $5592$ | — | Posición de referencia |
+| **FRA `track_id=18`** | `1` (FRA) | $7337$ | $5565$ | $600\text{ cm/s}$ ($21.6\text{ km/h}$) | Conduciendo el balón |
+| **ARG `track_id=2`** | `0` (ARG) | $6722$ | $6510$ | $187\text{ cm/s}$ ($6.7\text{ km/h}$) | Presionando |
+| **FRA `track_id=19`** | `1` (FRA) | $7877$ | $6541$ | **$1383\text{ cm/s}$ ($49.7\text{ km/h}$)** | **Outlier por salto de homografía $H_t$ (Corregido por P1+P2)** |
+| **Árbitro (`tid=21`)** | `null` | $3858$ | $1505$ | $78\text{ cm/s}$ ($2.8\text{ km/h}$) | Casi estático |
 
 ---
 
-## ⚖️ Gobernanza, Seguridad y Cumplimiento de Licencias
+## 3. Sistema de Monitores de Observabilidad por Etapa (`M1` a `M4`)
 
-* **Uso Obligatorio de IBM Bob IDE (`bob_sessions/`):** Todo el desarrollo de implementación se realiza en **IBM Bob IDE** dentro del presupuesto compartido de **40 Bobcoins**. Las exportaciones `.md` y capturas de consumo de cada integrante se almacenan en [`bob_sessions/`](bob_sessions/).
-* **Protección de Credenciales:** Los archivos [`.gitignore`](.gitignore) y [`.bobignore`](.bobignore) bloquean estrictamente archivos `.env` y llaves de API de IBM Cloud.
-* **Licencias de Código Abierto y Datos:**
-  - Los modelos de detección de `ultralytics` (YOLOv8) se utilizan bajo licencia abierta **AGPL-3.0**; `google/siglip-base-patch16-224` bajo **Apache-2.0**; `roboflow/sports` y `supervision` bajo **MIT**.
-  - Por respeto a los derechos de autor de transmisiones deportivas (*broadcast*), **ningún archivo de video `.mp4` se redistribuye en este repositorio público**; únicamente se procesan y comparten tablas numéricas de telemetría (`.parquet` y `.json`) con fines académicos y de investigación.
+Para garantizar que cada operación se cumpla antes de pasar a la siguiente etapa, el sistema implementa **9 puntos de control (Monitores)**:
+
+| ID Monitor | Etapa Supervisada | Métricas Auditadas | Umbral de Aprobación (`PASS`) |
+| :--- | :--- | :--- | :--- |
+| **`M1`** | **1) Percepción GPU Local** | Cuadros procesados, validez de homografía, IoU `C2 vs A` | `750/750` frames, `homography_valid == 100%`, `IoU >= 0.99` |
+| **`M2.0`** | **2) Recepción Cloud ADK** | Columnas de `frames.parquet` y `objects.parquet`, detección de `fps` | $100\%$ de columnas requeridas presentes, `fps == 25` |
+| **`M2.1`** | **2) Fase 1: Fuentes y Equipos** | Filas `track` ($17,232$), filas `ball` ($687$), varianza de `team_clean` | `det_rows_discarded == 17,951` y `team_flicker_tracks == 0` |
+| **`M2.2`** | **2) Fase 2: Homografía `P1`** | Norma de Frobenius inter-frame $\|\Delta H_t\|_F$ y límites de cancha | Reducción de *jitter* $> 20\%$ y coordenadas dentro de $12000\times 7000\text{ cm}$ |
+| **`M2.3`** | **2) Fase 3: Track Stitching `P3`** | Conteo de `track_id` antes vs. después del Algoritmo Húngaro | Reducción de $39$ IDs a $\approx 22\text{–}25$ sin mezclar equipos (`ARG != FRA`) |
+| **`M2.4`** | **2) Fase 4: Cinemática `P2`** | Velocidad máxima (`speed_mps`) y aceleración (`acceleration_mps2`) | `max_player_speed_mps <= 9.5` ($34.2\text{ km/h}$) y `max_acc <= 5.0` |
+| **`M2.5`** | **2) Fase 5: Ventanas JSON** | Cantidad de ventanas de $4.0\text{ s}$ y peso en bytes por ventana | $8$ ventanas generadas (`W01..W08`), cada una `< 600 bytes` |
+| **`M3`** | **2) LLM `watsonx.ai` + Gobernanza** | Modelo usado, esquema JSON, longitud de narración, costo RU | Modelo `ibm/granite-3-8b-instruct`, $\le 45$ palabras/ventana, `0` alucinaciones |
+| **`M4`** | **3) Dashboard Local + TTS** | Desfase temporal $|t_{\text{video}} - t_{\text{radar}}|$ y duración del audio TTS | Desfase $< 40\text{ ms}$ ($1\text{ frame}$) y `duration_s <= 4.0 s` por ventana |
