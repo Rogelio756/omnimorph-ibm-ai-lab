@@ -1,52 +1,80 @@
-<p align="center">
-  <img src="01_diagramas_y_assets/logos/omnimorph_logo_nombre_light.svg" alt="Omnimorph Logo" width="420"/>
-</p>
+# 🤖 Guía de Prompts para Ejecución en IBM Bob IDE (Omnimorph)
 
-# ⚽ Omnimorph — Análisis Táctico y Narración Deportiva Sincronizada con IA
-
-**IBM SkillsBuild AI Experiential Learning Lab | México 2026**
-
-Bienvenido al repositorio oficial de **Omnimorph**, una plataforma híbrida de visión por computadora, modelado físico-matemático e inteligencia artificial generativa en **IBM Cloud (`watsonx Orchestrate ADK` + `watsonx.ai` + `watsonx.governance`)** que transforma clips de video *broadcast* de fútbol ($1080\text{p}$, $25\text{ fps}$, $30\text{ s}$) en telemetría 2D estabilizada, métricas tácticas colectivas y narración deportiva en español sincronizada en tiempo real.
+> **Presupuesto del Equipo:** 40 Bobcoins compartidos.
+> **Instrucción clave:** Abre el repositorio en **IBM Bob IDE**, ejecuta únicamente el prompt de la sesión asignada a tu rol y, al terminar, **exporta el historial `.md` y toma captura de pantalla del resumen de consumo** para subirlos a `bob_sessions/`.
 
 ---
 
-## 🌿 Navegación por Ramas del Repositorio
+## Sesión Bob 1 · Empaquetado ADK y Validación Matemática (`M2.0` a `M2.5`)
 
-Este repositorio está estructurado en **4 ramas especializadas** según el área de trabajo:
+**Responsable sugerido:** Equipo de Matemáticas / Backend
+**Archivos objetivo:** `implementacion/cloud_tool/omnimorph_engine.py`, `implementacion/cloud_tool/adk_tool.py`, `tests/test_monitors.py`
 
-| Rama | Propósito Principal | Documentos Clave en la Rama |
-| :--- | :--- | :--- |
-| **`main`** *(Actual)* | **Bienvenida y Portada General:** Arquitectura global, mapa del proyecto, cumplimiento de licencias y carpeta obligatoria `bob_sessions/`. | [`README.md`](README.md), [`AGENTS.md`](AGENTS.md), [`bob_sessions/`](bob_sessions/) |
-| **`investigacion`** | **Fórmulas y Modelos Matemáticos (`P1`, `P2`, `P3`):** Derivación teórica de homografías normalizadas, Algoritmo Húngaro, Savitzky-Golay y métricas tácticas. | [`investigacion/FORMULAS_Y_FUNDAMENTOS.md`](investigacion/FORMULAS_Y_FUNDAMENTOS.md), [`02_documentacion_omnimorph/SPEC_MOTOR_OMNIMORPH.md`](02_documentacion_omnimorph/SPEC_MOTOR_OMNIMORPH.md) |
-| **`analisis`** | **Resultados Experimentales y Monitores (`M1`–`M4`):** Benchmarks de los 6 agentes en GPU, validación `C2 vs A` (`IoU = 1.0`) y semáforos de observabilidad. | [`analisis/RESULTADOS_Y_MONITORES.md`](analisis/RESULTADOS_Y_MONITORES.md), [`02_documentacion_omnimorph/REPORTE_TECNICO_GPU.md`](02_documentacion_omnimorph/REPORTE_TECNICO_GPU.md) |
-| **`implementacion`** | **Lógica de Operación y Ejecución en IBM Bob IDE:** Código del motor para `watsonx Orchestrate ADK`, flujo de operación y prompts listos para **IBM Bob IDE**. | [`implementacion/cloud_tool/omnimorph_engine.py`](implementacion/cloud_tool/omnimorph_engine.py), [`implementacion/PROMPTS_IBM_BOB.md`](implementacion/PROMPTS_IBM_BOB.md) |
+### 📋 Copia y pega este Prompt en IBM Bob IDE:
+```markdown
+Lee `AGENTS.md` y `implementacion/cloud_tool/omnimorph_engine.py`.
+Necesito completar dos archivos sin modificar la lógica matemática existente en `run_omnimorph_engine`:
 
----
+1. Crea `implementacion/cloud_tool/adk_tool.py`:
+   - Envuelve `process_parquet_files` como una herramienta compatible con IBM watsonx Orchestrate ADK (`@tool` de `ibm_watsonx_orchestrate.agent_builder.tools`, con fallback limpio si el paquete ADK no está instalado localmente).
+   - Incluye docstring claro con tipos de entrada y salida JSON para que el agente en Orchestrate sepa cuándo invocarla.
 
-## 🏗️ Arquitectura de Flujo Híbrido con Monitores por Etapa (`M1` a `M4`)
-
-![Arquitectura Omnimorph](01_diagramas_y_assets/imagenes_listas/omnimorph_flujo.png)
-
-1. **`1) LOCAL · Percepción GPU (Congelado en Disco)`:**
-   - Ejecuta una sola vez los 6 agentes de visión (`A1` Pitch Detection, `A2` Player Detection, `A3` Ball Detection, `A4` ByteTrack, `A5` SigLIP+UMAP+KMeans, `A6` ViewTransformer) generando `frames.parquet` ($750$ filas) y `objects.parquet` ($35,870$ filas). Supervisado por **`MONITOR M1`**.
-2. **`2) NUBE · IBM Cloud (`watsonx Orchestrate ADK` + `watsonx.ai` + `watsonx.governance`)`:**
-   - **Custom Python Tool (`omnimorph-engine`):** Ejecuta en $<1.5\text{ s}$ de CPU en la nube las 5 fases matemáticas auditadas por los monitores **`M2.0` a `M2.5`**.
-   - **Agente Táctico y Narrador (`ibm/granite-3-8b-instruct`):** Genera la crónica táctica y locución en español por cada ventana de $4.0\text{ s}$, auditada por **`MONITOR M3`** (`governance_audit.jsonl`).
-3. **`3) LOCAL · Dashboard Sincronizado (4 Paneles + TTS)`:**
-   - Sincroniza mediante el reloj común `(frame, t)` el Video con marcas, el Radar cenital 2D limpio, las Métricas de ventana y el Audio TTS en español, supervisado por **`MONITOR M4`**.
+2. Crea `tests/test_monitors.py`:
+   - Genera un dataset sintético de prueba (o carga `frames.parquet` y `objects.parquet` si existen en `data/raw/`) con 100 frames a 25 fps, incluyendo un pico artificial de ruido en H y dos fragmentos de track del mismo equipo.
+   - Ejecuta `run_omnimorph_engine` y verifica con `assert` que todos los monitores (`M2.0_input_schema`, `M2.1_sources_and_teams`, `M2.2_homography_p1`, `M2.3_track_stitching_p3`, `M2.4_kinematics_p2`, `M2.5_tactical_windows`) devuelvan `"status": "PASS"` y que `max_player_speed_mps <= 9.5`.
+   - Corre el test y muéstrame la salida de los 6 monitores.
+```
 
 ---
 
-## 🔄 Diagrama de Flujo de Operación y Desarrollo en IBM Bob IDE
+## Sesión Bob 2 · Agente en `watsonx.ai` (`ibm/granite-3-8b-instruct`) + Monitor `M3`
 
-![Flujo de Operación Omnimorph](01_diagramas_y_assets/imagenes_listas/omnimorph_flujo_operacion.png)
+**Responsable sugerido:** Integración IA Cloud y Gobernanza
+**Archivos objetivo:** `implementacion/cloud_agent/agent_narrator.py`, `implementacion/cloud_agent/governance_logger.py`
+
+### 📋 Copia y pega este Prompt en IBM Bob IDE:
+```markdown
+Lee `AGENTS.md` y `.env.example`.
+Crea el módulo de inferencia y gobernanza en `implementacion/cloud_agent/`:
+
+1. `implementacion/cloud_agent/governance_logger.py`:
+   - Implementa el **Monitor M3 (`MONITOR M3 · Auditoría LLM y Gobernanza`)**.
+   - Valida que el modelo configurado sea estrictamente `ibm/granite-3-8b-instruct` (bloqueando los modelos prohibidos en `AGENTS.md`).
+   - Implementa una función `verify_and_log_response(window_summary: dict, llm_output: dict, latency_ms: float, prompt_tokens: int, completion_tokens: int)` que:
+     a) Verifique que `llm_output` tenga las llaves `{window_id, t0, t1, analisis_tactico, narracion_es}`.
+     b) Verifique que `narracion_es` tenga <= 45 palabras (para caber en una ventana de 4.0 segundos de voz).
+     c) Escriba una línea JSON en `data/clean/governance_audit.jsonl` con timestamp ISO, `model_id`, `latency_ms`, `tokens`, costo estimado en RU y `"m3_status": "PASS"`.
+
+2. `implementacion/cloud_agent/agent_narrator.py`:
+   - Lee credenciales desde variables de entorno (`IBM_CLOUD_API_KEY`, `WATSONX_URL`, `WATSONX_PROJECT_ID`) usando `python-dotenv` sin imprimir jamás las llaves.
+   - Conecta con `ibm/granite-3-8b-instruct` en `watsonx.ai` (`temperature=0.3`, `max_new_tokens=220`).
+   - Recibe la lista de ventanas `tactical_summaries.json` generada por `omnimorph_engine.py` y devuelve para cada ventana el JSON `{window_id, t0, t1, analisis_tactico, narracion_es}` validado por `governance_logger.py`.
+   - Incluye modo simulación (`--dry-run`) para probar el Monitor M3 sin gastar tokens cuando no hay `.env`.
+```
 
 ---
 
-## ⚖️ Gobernanza, Seguridad y Cumplimiento de Licencias
+## Sesión Bob 3 · Dashboard Sincronizado de 4 Paneles + Voz TTS + Monitor `M4`
 
-* **Uso Obligatorio de IBM Bob IDE (`bob_sessions/`):** Todo el desarrollo de implementación se realiza en **IBM Bob IDE** dentro del presupuesto compartido de **40 Bobcoins**. Las exportaciones `.md` y capturas de consumo de cada integrante se almacenan en [`bob_sessions/`](bob_sessions/).
-* **Protección de Credenciales:** Los archivos [`.gitignore`](.gitignore) y [`.bobignore`](.bobignore) bloquean estrictamente archivos `.env` y llaves de API de IBM Cloud.
-* **Licencias de Código Abierto y Datos:**
-  - Los modelos de detección de `ultralytics` (YOLOv8) se utilizan bajo licencia abierta **AGPL-3.0**; `google/siglip-base-patch16-224` bajo **Apache-2.0**; `roboflow/sports` y `supervision` bajo **MIT**.
-  - Por respeto a los derechos de autor de transmisiones deportivas (*broadcast*), **ningún archivo de video `.mp4` se redistribuye en este repositorio público**; únicamente se procesan y comparten tablas numéricas de telemetría (`.parquet` y `.json`) con fines académicos y de investigación.
+**Responsable sugerido:** Frontend / UX / Visualización
+**Archivos objetivo:** `implementacion/dashboard/tts_service.py`, `implementacion/dashboard/app.py`
+
+### 📋 Copia y pega este Prompt en IBM Bob IDE:
+```markdown
+Lee `AGENTS.md` y `implementacion/cloud_tool/omnimorph_engine.py`.
+Construye el Dashboard Local de Omnimorph en `implementacion/dashboard/`:
+
+1. `implementacion/dashboard/tts_service.py`:
+   - Sintetiza en español el campo `narracion_es` de cada ventana de 4.0 s guardando el audio en `data/audio/<window_id>.mp3`.
+   - Soporta TTS Local como primario (usando `edge-tts` o `pyttsx3`) y conector opcional a IBM Watson Text to Speech si `USE_LOCAL_TTS=false`.
+   - Calcula la duración exacta del audio (`duration_s`) y reporta al **Monitor M4** si `duration_s <= 4.0`.
+
+2. `implementacion/dashboard/app.py` (en Streamlit):
+   - Muestra el encabezado con el logo `01_diagramas_y_assets/logos/omnimorph_logo_nombre_light.svg`.
+   - Implementa una barra superior de **Semáforos de Monitores en Vivo (`M1`, `M2.0`–`M2.5`, `M3`, `M4`)** leyendo `stage_monitors.json` y `governance_audit.jsonl`.
+   - Muestra los **4 Paneles Sincronizados** por el selector/reloj común `frame (0..749) / t (0.0..30.0 s)`:
+     - Panel 1: Video local + overlays.
+     - Panel 2: Radar cenital 2D limpio dibujando la cancha (120×70 m) y los puntos `(pitch_x_smooth, pitch_y_smooth)` de `objects_cleaned.parquet` coloreados por `team_clean` (ARG vs FRA) y balón.
+     - Panel 3: Métricas tácticas de la ventana activa de 4 s (altura de bloque, compactación, transición y presión).
+     - Panel 4: Crónica táctica + reproductor de audio TTS sincronizado + estado del Monitor M4.
+```
