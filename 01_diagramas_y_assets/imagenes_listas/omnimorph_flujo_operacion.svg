@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4040 1250" width="4040" height="1250">
+<defs>
+  <marker id="arrow-dark" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#495057" />
+  </marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#862e9c" />
+  </marker>
+  <marker id="arrow-yellow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59f00" />
+  </marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#2f9e44" />
+  </marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#1971c2" />
+  </marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#c92a2a" />
+  </marker>
+</defs>
+<rect x="0" y="0" width="4040" height="1250" fill="#ffffff" />
+<text x="1250.0" y="38.0" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="600" fill="#1e1e1e" text-anchor="middle">OMNIMORPH · Diagrama de Flujo de Operación y Monitores de Verificación por Etapa</text>
+<rect x="40" y="75" width="2420" height="340" rx="12" fill="#f3d9fa" stroke="#862e9c" stroke-width="2" stroke-dasharray="8,6" />
+<text x="60" y="108.0" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="600" fill="#1e1e1e" text-anchor="start">FASE A · Preparación de Datos, Especificación Matemática y Blindaje (Ideación Local · 0 Bobcoins)</text>
+<rect x="70" y="130" width="520" height="190" rx="12" fill="#eebefa" stroke="#862e9c" stroke-width="2" />
+<text x="330.0" y="159.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">A1. Percepción GPU y Dataset</text>
+<text x="85" y="185.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Clip base: 2e57b9_0.mp4 (750 frames ya en .parquet)</text>
+<text x="85" y="201.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Clips extra: QimingLi/video_human_select_Soccer</text>
+<text x="85" y="218.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  (solo tomas tácticas continuas sin cortes)</text>
+<text x="85" y="234.92000000000002" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Los .mp4 quedan en local (no se suben a GitHub)</text>
+<rect x="70" y="330" width="520" height="65" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="330.0" y="350.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M1 (validate.py + timings.parquet):</text>
+<text x="330.0" y="365.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">✓ 750/750 homografías válidas · IoU=1.0 · 687/750 balón</text>
+<rect x="660" y="130" width="540" height="190" rx="12" fill="#eebefa" stroke="#862e9c" stroke-width="2" />
+<text x="930.0" y="159.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">A2. Contención Matemática (omnimorph-engine)</text>
+<text x="675" y="185.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Especificación de 5 fases en Copia de Motor Omnimorph.md:</text>
+<text x="675" y="201.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  F1 (Equipos) → F2 (P1 Homografía) → F3 (P3 Húngaro)</text>
+<text x="675" y="218.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  → F4 (P2 Savitzky-Golay) → F5 (Ventanas 4s)</text>
+<text x="675" y="234.92000000000002" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Lista para empaquetarse en watsonx Orchestrate ADK</text>
+<rect x="660" y="330" width="540" height="65" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="930.0" y="350.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR PRE-VUELO MATEMÁTICO:</text>
+<text x="930.0" y="365.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">✓ Revisión con Giselle y Caroline · 0 bugs de inversión/escala</text>
+<rect x="1270" y="130" width="540" height="190" rx="12" fill="#eebefa" stroke="#862e9c" stroke-width="2" />
+<text x="1540.0" y="159.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">A3. Blindaje de Seguridad y Licencias</text>
+<text x="1285" y="185.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Cumplimiento AGPL-3.0 (Ultralytics) vía repo abierto</text>
+<text x="1285" y="201.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  y desacoplamiento por archivos .parquet</text>
+<text x="1285" y="218.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Configuración de .gitignore y .bobignore</text>
+<text x="1285" y="234.92000000000002" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Plantilla .env.example sin credenciales reales</text>
+<rect x="1270" y="330" width="540" height="65" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="1540.0" y="350.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR DE SEGURIDAD (Pre-Commit Check):</text>
+<text x="1540.0" y="365.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">✓ 0 API Keys en git status · .env ignorado en Bob y Git</text>
+<rect x="1880" y="130" width="550" height="190" rx="12" fill="#eebefa" stroke="#862e9c" stroke-width="2" />
+<text x="2155.0" y="159.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">A4. Subida de Plan y Prompts a GitHub</text>
+<text x="1895" y="185.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Se sube repositorio semilla con AGENTS.md y prompts</text>
+<text x="1895" y="201.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  exactos para cada integrante del equipo</text>
+<text x="1895" y="218.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Garantiza que las sesiones en IBM Bob IDE sean</text>
+<text x="1895" y="234.92000000000002" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  directas y consuman el mínimo de los 40 Bobcoins</text>
+<rect x="1880" y="330" width="550" height="65" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="2155.0" y="350.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR DE REPOSITORIO:</text>
+<text x="2155.0" y="365.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">✓ Estructura lista · 0 Bobcoins gastados en ideación</text>
+<polyline points="590,225 660,225" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="1200,225 1270,225" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="1810,225 1880,225" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<rect x="40" y="450" width="2420" height="350" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" stroke-dasharray="8,6" />
+<text x="60" y="483.0" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="600" fill="#1e1e1e" text-anchor="start">FASE B · Desarrollo Obligatorio en IBM Bob IDE y Despliegue a IBM Cloud (Presupuesto: 40 Bobcoins)</text>
+<rect x="70" y="505" width="520" height="200" rx="12" fill="#ffec99" stroke="#f59f00" stroke-width="2" />
+<text x="330.0" y="533.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">Sesión Bob 1 · Tool Matemática en Nube (ADK)</text>
+<text x="85" y="560.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• En IBM Bob IDE: genera cloud_tool/omnimorph_engine.py</text>
+<text x="85" y="576.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  con decorador @tool de watsonx Orchestrate ADK</text>
+<text x="85" y="593.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Importa a IBM Cloud:</text>
+<text x="85" y="609.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  orchestrate tools import -k python -f ... --package-root</text>
+<text x="85" y="626.56" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Incluye suite de pruebas automáticas test_physics.py</text>
+<rect x="70" y="715" width="520" height="68" rx="12" fill="#d3f9d8" stroke="#2f9e44" stroke-width="2" />
+<text x="330.0" y="735.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M2.1–M2.5 (Reporte de Fases en Nube):</text>
+<text x="330.0" y="750.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">✓ Tool activa en Orchestrate · v &lt;= 9.5 m/s · ~25 tracks</text>
+<rect x="660" y="505" width="540" height="200" rx="12" fill="#ffec99" stroke="#f59f00" stroke-width="2" />
+<text x="930.0" y="533.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">Sesión Bob 2 · Agente Orchestrate + Granite 3 8B</text>
+<text x="675" y="560.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• En IBM Bob IDE: configura el Agente en watsonx</text>
+<text x="675" y="576.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  Orchestrate conectado a ibm/granite-3-8b-instruct</text>
+<text x="675" y="593.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Conecta la Python Tool omnimorph-engine al Agente</text>
+<text x="675" y="609.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Configura el logger de watsonx.governance y</text>
+<text x="675" y="626.56" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  governance_audit.jsonl</text>
+<rect x="660" y="715" width="540" height="68" rx="12" fill="#d3f9d8" stroke="#2f9e44" stroke-width="2" />
+<text x="930.0" y="735.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M3 (Auditoría de Agente y Gobernanza):</text>
+<text x="930.0" y="750.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">✓ Respuesta JSON válida · 0 alucinaciones · Tokens medidos</text>
+<rect x="1270" y="505" width="540" height="200" rx="12" fill="#ffec99" stroke="#f59f00" stroke-width="2" />
+<text x="1540.0" y="533.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">Sesión Bob 3 · Dashboard Local 4 Paneles + TTS</text>
+<text x="1285" y="560.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• En IBM Bob IDE: genera app.py + src/tts_service.py</text>
+<text x="1285" y="576.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Conecta el Dashboard con la salida de IBM Cloud</text>
+<text x="1285" y="593.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  (trayectorias limpias + JSON narrado por ventana)</text>
+<text x="1285" y="609.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Integra reloj común (frame, t) y voz TTS en español</text>
+<rect x="1270" y="715" width="540" height="68" rx="12" fill="#d3f9d8" stroke="#2f9e44" stroke-width="2" />
+<text x="1540.0" y="735.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M4 (Prueba de Sincronía UI + Voz):</text>
+<text x="1540.0" y="750.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">✓ 4 paneles a 25 fps · Audio TTS &lt;= 4.0s por ventana</text>
+<rect x="1880" y="505" width="550" height="200" rx="12" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2" />
+<text x="2155.0" y="533.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">Evidencia Obligatoria: Carpeta bob_sessions/</text>
+<text x="1895" y="560.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Cada integrante exporta desde IBM Bob IDE:</text>
+<text x="1895" y="576.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  1. Archivo .md con el historial completo de su tarea</text>
+<text x="1895" y="593.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  2. Captura de pantalla del resumen de consumo</text>
+<text x="1895" y="609.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">     (Context Length, Task Id, Tokens, Cache, API Cost)</text>
+<text x="1895" y="626.56" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Se sube a la carpeta bob_sessions/ en GitHub</text>
+<rect x="1880" y="715" width="550" height="68" rx="12" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2" />
+<text x="2155.0" y="735.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR DE ENTREGABLE IBM BOB:</text>
+<text x="2155.0" y="750.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">✓ .md + screenshot por integrante · Presupuesto &lt;= 40 Bobcoins</text>
+<polyline points="2155,395 2155,425 330,425 330,505" fill="none" stroke="#f59f00" stroke-width="2" marker-end="url(#arrow-yellow)" />
+<polyline points="590,605 660,605" fill="none" stroke="#f59f00" stroke-width="2" marker-end="url(#arrow-yellow)" />
+<polyline points="1200,605 1270,605" fill="none" stroke="#f59f00" stroke-width="2" marker-end="url(#arrow-yellow)" />
+<polyline points="1810,605 1880,605" fill="none" stroke="#c92a2a" stroke-width="2" marker-end="url(#arrow-red)" />
+<rect x="40" y="835" width="2420" height="355" rx="12" fill="#e7f5ff" stroke="#1971c2" stroke-width="2" stroke-dasharray="8,6" />
+<text x="60" y="868.0" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="600" fill="#1e1e1e" text-anchor="start">FASE C · Operación del Sistema de Punta a Punta (Cada etapa reporta su estado a su Monitor antes de avanzar)</text>
+<rect x="70" y="890" width="520" height="200" rx="12" fill="#a5d8ff" stroke="#1971c2" stroke-width="2" />
+<text x="330.0" y="918.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">1. Envío de Telemetría Cruda a IBM Cloud</text>
+<text x="85" y="945.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• El cliente local toma frames.parquet y objects.parquet</text>
+<text x="85" y="961.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  validados previamente por el Monitor M1</text>
+<text x="85" y="978.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Invoca la herramienta omnimorph-engine alojada en</text>
+<text x="85" y="994.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  IBM watsonx Orchestrate en la nube</text>
+<rect x="70" y="1100" width="520" height="70" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="330.0" y="1122.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🟢 Semáforo M1 + M2.0: OK</text>
+<text x="330.0" y="1137.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">750 frames íntegros recibidos en IBM Cloud</text>
+<rect x="660" y="890" width="540" height="200" rx="12" fill="#b2f2bb" stroke="#2f9e44" stroke-width="2" />
+<text x="930.0" y="918.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">2. Cómputo Matemático en Nube (Fases 1 a 5)</text>
+<text x="675" y="945.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• La Python Tool en watsonx Orchestrate ejecuta:</text>
+<text x="675" y="961.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  F1 (Equipos) → F2 (P1 Homografía) → F3 (P3 Húngaro)</text>
+<text x="675" y="978.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  → F4 (P2 Savitzky-Golay) → F5 (8 Ventanas de 4.0 s)</text>
+<text x="675" y="994.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Emite diccionario de telemetría stage_monitors</text>
+<rect x="660" y="1100" width="540" height="70" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="930.0" y="1122.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🟢 Semáforo M2.1..M2.5: OK</text>
+<text x="930.0" y="1137.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">P1 suavizado · P3=24 tracks · P2 vmax &lt;= 9.5 m/s · 8 ventanas</text>
+<rect x="1270" y="890" width="540" height="200" rx="12" fill="#b2f2bb" stroke="#2f9e44" stroke-width="2" />
+<text x="1540.0" y="918.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">3. Razonamiento LLM + Gobernanza en Nube</text>
+<text x="1285" y="945.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• watsonx Orchestrate pasa las 8 ventanas tácticas a</text>
+<text x="1285" y="961.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  ibm/granite-3-8b-instruct en watsonx.ai</text>
+<text x="1285" y="978.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Genera crónica táctica y narración para cada ventana</text>
+<text x="1285" y="994.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Registra auditoría en watsonx.governance / jsonl</text>
+<rect x="1270" y="1100" width="540" height="70" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="1540.0" y="1122.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🟢 Semáforo M3: OK</text>
+<text x="1540.0" y="1137.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">JSON validado · 0 alucinaciones · Costo RU auditado</text>
+<rect x="1880" y="890" width="550" height="200" rx="12" fill="#a5d8ff" stroke="#1971c2" stroke-width="2" />
+<text x="2155.0" y="918.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">4. Dashboard Local Sincronizado (4 Paneles + Voz)</text>
+<text x="1895" y="945.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Recibe de IBM Cloud las trayectorias limpias y las</text>
+<text x="1895" y="961.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  8 narraciones validadas</text>
+<text x="1895" y="978.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">• Sintetiza voz TTS y reproduce los 4 paneles alineados</text>
+<text x="1895" y="994.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  al milisegundo con el Reloj Maestro (frame + t)</text>
+<rect x="1880" y="1100" width="550" height="70" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="2155.0" y="1122.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">🟢 Semáforo M4: OK</text>
+<text x="2155.0" y="1137.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">Desfase &lt; 40 ms · Audio TTS sincronizado en cada ventana</text>
+<polyline points="2155,783 2155,813 330,813 330,890" fill="none" stroke="#1971c2" stroke-width="2" marker-end="url(#arrow-blue)" />
+<polyline points="590,990 660,990" fill="none" stroke="#2f9e44" stroke-width="2" marker-end="url(#arrow-green)" />
+<polyline points="1200,990 1270,990" fill="none" stroke="#2f9e44" stroke-width="2" marker-end="url(#arrow-green)" />
+<polyline points="1810,990 1880,990" fill="none" stroke="#1971c2" stroke-width="2" marker-end="url(#arrow-blue)" />
+</svg>

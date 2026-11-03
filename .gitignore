@@ -1,0 +1,39 @@
+# =============================================================================
+# SEGURIDAD CRÍTICA IBM CLOUD & IBM BOB (NUNCA SUBIR CREDENCIALES)
+# =============================================================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*credentials*.json
+*apikey*
+*secret*
+
+# =============================================================================
+# VIDEOS CON COPYRIGHT Y ARCHIVOS PESADOS (MANTENER SOLO EN LOCAL)
+# =============================================================================
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wav
+*.mp3
+
+# =============================================================================
+# CARPETAS DE TRABAJO LOCAL / RESPALDOS (NO SUBIR A GITHUB)
+# =============================================================================
+docs_ibm/
+99_archivo_versiones_previas/
+.agents/
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+outputs/
+runs/
+logs/
+.hf_cache/
+.sv023/

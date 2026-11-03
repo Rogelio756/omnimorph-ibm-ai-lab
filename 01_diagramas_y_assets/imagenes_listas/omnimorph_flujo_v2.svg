@@ -1,0 +1,245 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3020 1972" width="3020" height="1972">
+<defs>
+  <marker id="arrow-dark" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#495057" />
+  </marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#862e9c" />
+  </marker>
+  <marker id="arrow-yellow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59f00" />
+  </marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#2f9e44" />
+  </marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#1971c2" />
+  </marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M 0 1 L 10 5 L 0 9 z" fill="#c92a2a" />
+  </marker>
+</defs>
+<rect x="0" y="0" width="3020" height="1972" fill="#ffffff" />
+<text x="1500.0" y="35.0" font-family="system-ui, -apple-system, sans-serif" font-size="25" font-weight="600" fill="#1e1e1e" text-anchor="middle">OMNIMORPH · Arquitectura de Flujo Híbrido con Monitores de Verificación por Etapa (Percepción Local → IBM Cloud → Dashboard Local)</text>
+<rect x="40" y="80" width="880" height="1320" rx="12" fill="#f3d9fa" stroke="#862e9c" stroke-width="2" stroke-dasharray="8,6" />
+<text x="480.0" y="114.0" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#1e1e1e" text-anchor="middle">1) LOCAL · Dell con GPU (Percepción)</text>
+<rect x="310" y="135" width="340" height="75" rx="12" fill="#eebefa" stroke="#862e9c" stroke-width="2" />
+<text x="480.0" y="159.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">Frame de video (1080p · 25 fps · 30 s)</text>
+<text x="480.0" y="180.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">2e57b9_0.mp4 + QimingLi/Soccer (solo en local)</text>
+<rect x="335" y="245" width="290" height="140" rx="12" fill="#e599f7" stroke="#862e9c" stroke-width="2" />
+<text x="480.0" y="270.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">A2 · PLAYER DETECTION</text>
+<text x="480.0" y="289.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">YOLOv8x 1280px · 185 ms · 3.5 FPS</text>
+<text x="480.0" y="314.0" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">{frame, x1, y1, x2, y2,</text>
+<text x="480.0" y="329.36" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">class_id 0-3, conf}</text>
+<text x="480.0" y="367.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#c92a2a" text-anchor="middle">Nota: encimados / balón intermitente</text>
+<rect x="335" y="425" width="290" height="140" rx="12" fill="#e599f7" stroke="#862e9c" stroke-width="2" />
+<text x="480.0" y="450.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">A4 · PLAYER TRACKING</text>
+<text x="480.0" y="469.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">ByteTrack · 6 ms · 3.3 FPS</text>
+<text x="480.0" y="494.0" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">{frame, source:&#x27;track&#x27;,</text>
+<text x="480.0" y="509.36" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">track_id, caja}</text>
+<text x="480.0" y="547.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#c92a2a" text-anchor="middle">Nota: fragmenta 39 IDs / ~25 jug. (P3)</text>
+<rect x="60" y="605" width="260" height="170" rx="12" fill="#e599f7" stroke="#862e9c" stroke-width="2" />
+<text x="190.0" y="630.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">A1 · PITCH DETECTION</text>
+<text x="190.0" y="649.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">YOLOv8x-pose · 54 ms · 9.6 FPS</text>
+<text x="190.0" y="674.0" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">{frame, n_kp_visible,</text>
+<text x="190.0" y="689.36" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">kp_x[32], kp_y[32],</text>
+<text x="190.0" y="704.72" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">kp_conf[32], H[9]}</text>
+<text x="190.0" y="757.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#c92a2a" text-anchor="middle">Nota: keypoints cambian H brusco (P1)</text>
+<rect x="350" y="605" width="260" height="170" rx="12" fill="#e599f7" stroke="#862e9c" stroke-width="2" />
+<text x="480.0" y="630.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">A5 · TEAM CLASSIFICATION</text>
+<text x="480.0" y="649.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">SigLIP→UMAP→KMeans k=2 · 461 ms</text>
+<text x="480.0" y="680.0" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">{frame, track_id,</text>
+<text x="480.0" y="695.36" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">team 0|1|null}</text>
+<text x="480.0" y="757.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#c92a2a" text-anchor="middle">Nota: 31% tiempo · porteros heurística</text>
+<rect x="640" y="605" width="260" height="170" rx="12" fill="#e599f7" stroke="#862e9c" stroke-width="2" />
+<text x="770.0" y="630.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">A3 · BALL DETECTION</text>
+<text x="770.0" y="649.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">Balón + slicer 640x640 · 750 ms</text>
+<text x="770.0" y="680.0" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">{frame, source:&#x27;ball&#x27;,</text>
+<text x="770.0" y="695.36" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">x1, y1, x2, y2, conf}</text>
+<text x="770.0" y="757.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#c92a2a" text-anchor="middle">Nota: 51% tiempo · 687/750 frames</text>
+<rect x="335" y="815" width="290" height="150" rx="12" fill="#e599f7" stroke="#862e9c" stroke-width="2" />
+<text x="480.0" y="840.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">A6 · RADAR / HOMOGRAFÍA</text>
+<text x="480.0" y="859.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">OpenCV findHomography+RANSAC · 1 ms</text>
+<text x="480.0" y="884.0" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">{frame, track_id,</text>
+<text x="480.0" y="899.36" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">pitch_x cm 0-12000,</text>
+<text x="480.0" y="914.72" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">pitch_y cm 0-7000}</text>
+<text x="480.0" y="947.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#c92a2a" text-anchor="middle">Nota: H sin memoria → saltos vel. (P1,P2)</text>
+<rect x="60" y="1005" width="840" height="170" rx="12" fill="#f8f9fa" stroke="#495057" stroke-width="2" />
+<text x="480.0" y="1032.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">DATOS CRUDOS (Salida consolidada por cuadro en disco)</text>
+<text x="80" y="1062.0" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• objects.parquet (35,870×14): frame, t, source(det|track|ball), track_id, class_id, team, bbox, pitch_x, pitch_y</text>
+<text x="80" y="1097.0" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• frames.parquet  (750×13):    frame, t, homography_valid, n_kp_visible, kp_x[32], kp_y[32], kp_conf[32], H[9]</text>
+<text x="80" y="1132.0" font-family="monospace" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• timings.parquet (750×9):     ms por agente (decode, pitch, player, ball, tracking, teams, homography)</text>
+<rect x="60" y="1205" width="840" height="165" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="480.0" y="1233.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M1 · Observabilidad de Percepción y GPU (monitor.py + validate.py)</text>
+<text x="80" y="1263.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Integridad de frames: 750/750 cuadros procesados · homography_valid = 100% (750/750)</text>
+<text x="80" y="1279.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Cobertura de objetos: Balón detectado en 687/750 frames (91.6%) · Promedio 25.9/32 keypoints visibles</text>
+<text x="80" y="1296.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Fidelidad C2 vs A: 100% cajas con IoU &gt; 0.95 (IoU medio 1.0), 100% mismos track_id y equipos</text>
+<text x="80" y="1312.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Telemetría Hardware: VRAM &lt;= 2.5 GB, Temp &lt;= 87 °C, tiempos auditados en timings.parquet</text>
+<polyline points="480,210 480,245" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="310,172 190,172 190,605" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="650,172 770,172 770,605" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="480,385 480,425" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="480,565 480,605" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="480,775 480,815" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="190,775 190,890 335,890" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="770,775 770,890 625,890" fill="none" stroke="#862e9c" stroke-width="2" marker-end="url(#arrow-purple)" />
+<polyline points="480,965 480,1005" fill="none" stroke="#495057" stroke-width="2" marker-end="url(#arrow-dark)" />
+<polyline points="480,1175 480,1205" fill="none" stroke="#f59f00" stroke-width="2" marker-end="url(#arrow-yellow)" />
+<rect x="1040" y="80" width="1160" height="1320" rx="12" fill="#d3f9d8" stroke="#2f9e44" stroke-width="2" stroke-dasharray="8,6" />
+<text x="1620.0" y="114.0" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#1e1e1e" text-anchor="middle">2) NUBE · IBM Cloud (watsonx Orchestrate ADK + Motor Matemático + watsonx.ai + Monitores)</text>
+<rect x="1070" y="135" width="1100" height="70" rx="12" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2" />
+<text x="1620.0" y="162.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">Banda Transversal: watsonx.governance + Bitácora de Auditoría (governance_audit.jsonl)</text>
+<text x="1620.0" y="185.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#343a40" text-anchor="middle">Gobernanza, control de versiones del modelo, trazabilidad por ventana, evaluación de riesgos y auditoría de tokens/CUH</text>
+<rect x="1070" y="230" width="540" height="85" rx="12" fill="#b2f2bb" stroke="#2f9e44" stroke-width="2" />
+<text x="1340.0" y="258.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">Recepción en watsonx Orchestrate ADK</text>
+<text x="1340.0" y="282.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">Recibe objects.parquet, frames.parquet y JSON (~420 KB)</text>
+<text x="1340.0" y="297.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">vía Custom Python Tool (--package-root / payload)</text>
+<rect x="1650" y="230" width="520" height="85" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="1910.0" y="255.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M2.0 · Verificador de Esquema de Entrada</text>
+<text x="1665" y="277.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Valida columnas requeridas en frames.parquet y objects.parquet</text>
+<text x="1665" y="292.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Calcula FPS dinámico (25 Hz) y verifica 0 corrupción de tipos</text>
+<polyline points="1610,272 1650,272" fill="none" stroke="#f59f00" stroke-width="2" stroke-dasharray="8,6" marker-end="url(#arrow-yellow)" />
+<rect x="1060" y="340" width="1120" height="725" rx="12" fill="#ebfbee" stroke="#2f9e44" stroke-width="2" />
+<text x="1620.0" y="367.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">Custom Python Tool en Nube (Orchestrate ADK): SKILL omnimorph-engine (Matemáticas + Analista Táctico)</text>
+<rect x="1075" y="385" width="530" height="115" rx="12" fill="#b2f2bb" stroke="#2f9e44" stroke-width="2" />
+<text x="1340.0" y="410.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">Fase 1 · Separación de Fuentes y Equipos</text>
+<text x="1090" y="434.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Separa source==&#x27;track&#x27; y source==&#x27;ball&#x27; (descarta &#x27;det&#x27;)</text>
+<text x="1090" y="449.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• team_clean = moda(team) por track_id</text>
+<text x="1090" y="464.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Heurística espacial para porteros (class_id==1)</text>
+<rect x="1650" y="385" width="515" height="115" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="1907.5" y="410.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M2.1 · Consistencia de Fuentes y Equipos</text>
+<text x="1665" y="434.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: 17,232 filas &#x27;track&#x27; + 687 filas &#x27;ball&#x27; preservadas</text>
+<text x="1665" y="449.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: 0 cambios de equipo (varianza team_clean = 0 por ID)</text>
+<text x="1665" y="464.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: 100% de jugadores y porteros con equipo 0 o 1 válido</text>
+<polyline points="1605,442 1650,442" fill="none" stroke="#f59f00" stroke-width="2" stroke-dasharray="8,6" marker-end="url(#arrow-yellow)" />
+<rect x="1075" y="515" width="530" height="120" rx="12" fill="#b2f2bb" stroke="#2f9e44" stroke-width="2" />
+<text x="1340.0" y="540.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">Fase 2 · Estabilización Geométrica Directa (P1)</text>
+<text x="1090" y="564.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Normaliza H / H[2,2] (8 DOF) y pondera kp_conf &gt; 0.5</text>
+<text x="1090" y="579.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Filtro EMA adaptativo: H_smooth[t] = α_t H_t + (1-α_t) H_{t-1}</text>
+<text x="1090" y="594.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Proyección directa H_smooth @ p_img (pies z=0)</text>
+<rect x="1650" y="515" width="515" height="120" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="1907.5" y="540.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M2.2 · Estabilidad de Homografía (P1)</text>
+<text x="1665" y="564.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: H_smooth[2,2] == 1.0 y 0 matrices singulares</text>
+<text x="1665" y="579.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Mide reducción de jitter inter-frame ||ΔH_t||_F (&gt; 60% menor)</text>
+<text x="1665" y="594.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: 100% de (pitch_x, pitch_y) dentro de 12000×7000 cm</text>
+<polyline points="1605,575 1650,575" fill="none" stroke="#f59f00" stroke-width="2" stroke-dasharray="8,6" marker-end="url(#arrow-yellow)" />
+<rect x="1075" y="650" width="530" height="120" rx="12" fill="#b2f2bb" stroke="#2f9e44" stroke-width="2" />
+<text x="1340.0" y="675.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">Fase 3 · Unificación de Trayectorias / Stitching (P3)</text>
+<text x="1090" y="699.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Extrapolación cinemática en vacíos &lt;= 3.0s hacia pos_start(B)</text>
+<text x="1090" y="714.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Matriz de costo con restricción dura de mismo equipo</text>
+<text x="1090" y="729.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Algoritmo Húngaro + resolución de cadenas transitivas</text>
+<rect x="1650" y="650" width="515" height="120" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="1907.5" y="675.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M2.3 · Auditoría de Re-ID / Stitching (P3)</text>
+<text x="1665" y="699.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica reducción de IDs: de 39 track_ids a ~22-25 jugadores</text>
+<text x="1665" y="714.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: 0 fusiones inválidas entre equipos opuestos (ARG≠FRA)</text>
+<text x="1665" y="729.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: 0 solapamientos temporales en un mismo track_id_stitched</text>
+<polyline points="1605,710 1650,710" fill="none" stroke="#f59f00" stroke-width="2" stroke-dasharray="8,6" marker-end="url(#arrow-yellow)" />
+<rect x="1075" y="785" width="530" height="125" rx="12" fill="#b2f2bb" stroke="#2f9e44" stroke-width="2" />
+<text x="1340.0" y="810.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">Fase 4 · Filtrado Cinemático y Límites Físicos (P2)</text>
+<text x="1090" y="834.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Despiking mediano (ventana=5) + Savitzky-Golay (w=11, p=2)</text>
+<text x="1090" y="849.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Derivada analítica exacta (deriv=1, delta=0.04 s)</text>
+<text x="1090" y="864.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Clipeo fisiológico: v &lt;= 9.5 m/s (34.2 km/h), a &lt;= 5.0 m/s²</text>
+<rect x="1650" y="785" width="515" height="125" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="1907.5" y="810.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M2.4 · Validador Biodinámico / Físico (P2)</text>
+<text x="1665" y="834.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: 0 jugadores con speed_mps &gt; 9.5 m/s (0 outliers)</text>
+<text x="1665" y="849.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: 0 aceleraciones &gt; 5.0 m/s² (balón &lt;= 35.0 m/s)</text>
+<text x="1665" y="864.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Caso testigo: track_id=19 en frame 300 baja de 49.7 km/h a &lt; 15 km/h</text>
+<polyline points="1605,847 1650,847" fill="none" stroke="#f59f00" stroke-width="2" stroke-dasharray="8,6" marker-end="url(#arrow-yellow)" />
+<rect x="1075" y="925" width="530" height="125" rx="12" fill="#b2f2bb" stroke="#2f9e44" stroke-width="2" />
+<text x="1340.0" y="950.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">Fase 5 · Analista de Datos por Ventana (~4.0 s)</text>
+<text x="1090" y="974.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Mapeo en 8 ventanas de 4.0 s (100 frames por ventana)</text>
+<text x="1090" y="989.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Métricas: Altura de bloque, compactación, transición (m/s)</text>
+<text x="1090" y="1004.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Posesión (&lt;= 3.5m) y Presión (rivales &lt;= 2.5m) cuadro a cuadro</text>
+<rect x="1650" y="925" width="515" height="125" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="1907.5" y="950.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M2.5 · Validador de Ventanas Tácticas JSON</text>
+<text x="1665" y="974.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica: 8/8 ventanas generadas cubriendo 0.0 s a 30.0 s</text>
+<text x="1665" y="989.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica tamaño compacto: &lt; 500 bytes por JSON (ahorro de tokens)</text>
+<text x="1665" y="1004.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica coherencia: 0 valores NaN/Null en métricas colectivas</text>
+<polyline points="1605,987 1650,987" fill="none" stroke="#f59f00" stroke-width="2" stroke-dasharray="8,6" marker-end="url(#arrow-yellow)" />
+<polyline points="1340,205 1340,230" fill="none" stroke="#c92a2a" stroke-width="2" stroke-dasharray="8,6" marker-end="url(#arrow-red)" />
+<polyline points="1340,315 1340,385" fill="none" stroke="#2f9e44" stroke-width="2" marker-end="url(#arrow-green)" />
+<polyline points="1340,500 1340,515" fill="none" stroke="#2f9e44" stroke-width="2" marker-end="url(#arrow-green)" />
+<polyline points="1340,635 1340,650" fill="none" stroke="#2f9e44" stroke-width="2" marker-end="url(#arrow-green)" />
+<polyline points="1340,770 1340,785" fill="none" stroke="#2f9e44" stroke-width="2" marker-end="url(#arrow-green)" />
+<polyline points="1340,910 1340,925" fill="none" stroke="#2f9e44" stroke-width="2" marker-end="url(#arrow-green)" />
+<rect x="1070" y="1095" width="540" height="155" rx="12" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2" />
+<text x="1340.0" y="1124.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">watsonx Orchestrate + watsonx.ai (LLM)</text>
+<text x="1340.0" y="1147.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#c92a2a" text-anchor="middle">Modelo permitido: ibm/granite-3-8b-instruct (temp=0.3)</text>
+<text x="1340.0" y="1175.0" font-family="monospace" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="middle">Síntesis táctica y generación de narración en español</text>
+<text x="1340.0" y="1191.64" font-family="monospace" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="middle">Devuelve JSON: {window_id, t0, t1, texto, metricas}</text>
+<rect x="1650" y="1095" width="520" height="155" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="1910.0" y="1122.0" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="400" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M3 · Auditoría LLM y Gobernanza</text>
+<text x="1665" y="1149.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Verifica modelo permitido (ibm/granite-3-8b-instruct)</text>
+<text x="1665" y="1164.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Valida JSON de salida y longitud de narración (&lt;= 45 palabras / 4s)</text>
+<text x="1665" y="1179.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Guardia Anti-Alucinación: cruza números del texto vs JSON táctico</text>
+<text x="1665" y="1195.08" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Registra latencia (ms), tokens y costo RU en governance_audit.jsonl</text>
+<polyline points="1340,1050 1340,1095" fill="none" stroke="#2f9e44" stroke-width="2" marker-end="url(#arrow-green)" />
+<polyline points="1610,1172 1650,1172" fill="none" stroke="#f59f00" stroke-width="2" stroke-dasharray="8,6" marker-end="url(#arrow-yellow)" />
+<rect x="1070" y="1275" width="1100" height="95" rx="12" fill="#f3d9fa" stroke="#862e9c" stroke-width="2" />
+<text x="1620.0" y="1303.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">Construcción y Despliegue con IBM Bob IDE (Uso Obligatorio · 40 Bobcoins · Entregable bob_sessions/)</text>
+<text x="1090" y="1329.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Cada integrante desarrolla su módulo en IBM Bob IDE y exporta el historial .md + captura de consumo (Tokens, Costo, Task ID) en bob_sessions/</text>
+<text x="1090" y="1344.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="start">• Seguridad: .bobignore y .gitignore bloquean .env y API Keys (0 credenciales expuestas en GitHub)</text>
+<polyline points="900,1090 985,1090 985,272 1070,272" fill="none" stroke="#2f9e44" stroke-width="3" marker-end="url(#arrow-green)" />
+<rect x="928" y="630" width="105" height="52" rx="12" fill="#d3f9d8" stroke="#2f9e44" stroke-width="2" />
+<text x="980.5" y="648.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">sube: parquet</text>
+<text x="980.5" y="663.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">y JSON</text>
+<rect x="2320" y="80" width="640" height="1320" rx="12" fill="#e7f5ff" stroke="#1971c2" stroke-width="2" stroke-dasharray="8,6" />
+<text x="2640.0" y="114.0" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="600" fill="#1e1e1e" text-anchor="middle">3) LOCAL · Dashboard Sincronizado</text>
+<rect x="2350" y="145" width="580" height="385" rx="12" fill="#a5d8ff" stroke="#1971c2" stroke-width="2" />
+<text x="2640.0" y="176.0" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#1e1e1e" text-anchor="middle">Monitor Visual · Cuatro Paneles Sincronizados</text>
+<rect x="2375" y="198" width="255" height="140" rx="12" fill="#e7f5ff" stroke="#1971c2" stroke-width="2" />
+<text x="2502.5" y="226.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">1. Video + marcas</text>
+<text x="2502.5" y="254.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">Overlays de cajas, IDs</text>
+<text x="2502.5" y="269.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">unificados (track_id_stitched),</text>
+<text x="2502.5" y="284.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">equipos y keypoints</text>
+<rect x="2650" y="198" width="255" height="140" rx="12" fill="#e7f5ff" stroke="#1971c2" stroke-width="2" />
+<text x="2777.5" y="226.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">2. Radar cenital 2D</text>
+<text x="2777.5" y="254.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">Vista 2D limpia de cancha</text>
+<text x="2777.5" y="269.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">(pitch_x_smooth, pitch_y_smooth)</text>
+<text x="2777.5" y="284.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">Sin saltos ni parpadeos</text>
+<rect x="2375" y="360" width="255" height="145" rx="12" fill="#e7f5ff" stroke="#1971c2" stroke-width="2" />
+<text x="2502.5" y="388.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">3. Métricas de la ventana</text>
+<text x="2502.5" y="416.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">Altura de bloque, compactación,</text>
+<text x="2502.5" y="431.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">velocidad de transición y</text>
+<text x="2502.5" y="446.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">presión real (~4 s)</text>
+<rect x="2650" y="360" width="255" height="145" rx="12" fill="#e7f5ff" stroke="#1971c2" stroke-width="2" />
+<text x="2777.5" y="388.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">4. Narración</text>
+<text x="2777.5" y="416.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">Crónica táctica del LLM</text>
+<text x="2777.5" y="431.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">ibm/granite-3-8b-instruct</text>
+<text x="2777.5" y="446.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#343a40" text-anchor="middle">({t0, t1, texto})</text>
+<rect x="2350" y="575" width="580" height="110" rx="12" fill="#a5d8ff" stroke="#1971c2" stroke-width="2" />
+<text x="2640.0" y="607.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">Voz · TTS Local (o IBM Watson TTS español)</text>
+<text x="2640.0" y="635.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#343a40" text-anchor="middle">Recibe el texto de la narración, sintetiza voz en español</text>
+<text x="2640.0" y="651.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#343a40" text-anchor="middle">y mide la duración exacta del audio (duration_s) por ventana</text>
+<rect x="2350" y="730" width="580" height="95" rx="12" fill="#a5d8ff" stroke="#1971c2" stroke-width="2" />
+<text x="2640.0" y="762.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">Audio sincronizado</text>
+<text x="2640.0" y="788.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#343a40" text-anchor="middle">Salida de voz alineada temporalmente con la ventana activa del partido</text>
+<rect x="2350" y="870" width="580" height="125" rx="12" fill="#a5d8ff" stroke="#1971c2" stroke-width="2" />
+<text x="2640.0" y="902.0" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="600" fill="#1e1e1e" text-anchor="middle">Reloj común: frame + t en cada fila</text>
+<text x="2640.0" y="931.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#343a40" text-anchor="middle">Garantiza sincronización exacta entre el video local (cada 40 ms),</text>
+<text x="2640.0" y="947.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#343a40" text-anchor="middle">el radar 2D limpio, las métricas por ventana (~4 s) y el audio narrado</text>
+<rect x="2350" y="1040" width="580" height="330" rx="12" fill="#fff9db" stroke="#f59f00" stroke-width="2" />
+<text x="2640.0" y="1071.0" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#1e1e1e" text-anchor="middle">🔍 MONITOR M4 · Observabilidad de Sincronía y Audio en Vivo</text>
+<text x="2370" y="1108.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Monitor de Reloj (Drift Check):</text>
+<text x="2370" y="1124.64" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  Verifica desfase |t_video - t_radar| &lt; 40 ms (1 cuadro a 25 fps)</text>
+<text x="2370" y="1141.28" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start"></text>
+<text x="2370" y="1157.92" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Monitor de Cadencia de Voz (TTS Duration Check):</text>
+<text x="2370" y="1174.56" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  Verifica que duration_s del audio &lt;= 4.0 s de su ventana [t0, t1]</text>
+<text x="2370" y="1191.2" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  (ajusta velocidad de lectura si el texto excede la ventana)</text>
+<text x="2370" y="1207.84" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start"></text>
+<text x="2370" y="1224.48" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">✓ Monitor de Continuidad Visual en Radar 2D:</text>
+<text x="2370" y="1241.12" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  Muestra indicador verde cuando los 4 paneles reciben datos</text>
+<text x="2370" y="1257.76" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="start">  validados por M1, M2.1..M2.5 y M3 sin pérdida de frames</text>
+<polyline points="2777,505 2777,575" fill="none" stroke="#1971c2" stroke-width="2" marker-end="url(#arrow-blue)" />
+<polyline points="2640,685 2640,730" fill="none" stroke="#1971c2" stroke-width="2" marker-end="url(#arrow-blue)" />
+<polyline points="2640,825 2640,870" fill="none" stroke="#1971c2" stroke-width="2" marker-end="url(#arrow-blue)" />
+<polyline points="2640,995 2640,1040" fill="none" stroke="#f59f00" stroke-width="2" marker-end="url(#arrow-yellow)" />
+<polyline points="2200,1172 2265,1172 2265,432 2375,432" fill="none" stroke="#2f9e44" stroke-width="3" marker-end="url(#arrow-green)" />
+<rect x="2208" y="760" width="105" height="65" rx="12" fill="#d3f9d8" stroke="#2f9e44" stroke-width="2" />
+<text x="2260.5" y="778.0" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">regresa: JSON</text>
+<text x="2260.5" y="793.36" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">por ventana +</text>
+<text x="2260.5" y="808.72" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="400" fill="#1e1e1e" text-anchor="middle">radar limpio</text>
+<polyline points="480,135 480,58 2500,58 2500,198" fill="none" stroke="#862e9c" stroke-width="3" stroke-dasharray="8,6" marker-end="url(#arrow-purple)" />
+<rect x="1220" y="44" width="480" height="28" rx="12" fill="#f3d9fa" stroke="#862e9c" stroke-width="2" />
+<text x="1460.0" y="62.0" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#1e1e1e" text-anchor="middle">video original (.mp4): nunca sale de la laptop</text>
+</svg>

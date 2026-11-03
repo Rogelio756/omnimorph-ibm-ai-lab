@@ -1,0 +1,26 @@
+# =============================================================================
+# .bobignore — Protege secretos y ahorra tokens/Bobcoins en IBM Bob IDE
+# =============================================================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*credentials*.json
+*apikey*
+
+# Ignorar binarios pesados, videos y PDFs de guías para no saturar el contexto de Bob
+*.mp4
+*.avi
+*.mov
+*.pdf
+*.pptx
+*.jpg
+*.png
+*.svg
+*.excalidraw
+docs_ibm/
+99_archivo_versiones_previas/
+.git/
+__pycache__/
+.venv/
