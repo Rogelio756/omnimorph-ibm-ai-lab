@@ -83,25 +83,41 @@ Página Streamlit multipage que se abre en la barra lateral como segunda página
 
 ---
 
-## 3. Estructura final del dashboard
+## 3. Estructura final de los dashboards (Streamlit + Web Nativo)
 
 ```
-implementacion/dashboard/
+implementacion/dashboard/          ← Dashboard clásico Streamlit (:8501)
 ├── app.py                         ← MATEO · Dashboard principal (4 paneles)
 └── pages/
     └── 1_Observabilidad.py        ← MATEO · Tablero de monitores M1–M4
+
+dashboard/                         ← Nuevo Frontend Web MATEO (:8600)
+├── serve.py                       ← Servidor HTTP con soporte Range para streaming MP4
+├── pages/
+│   ├── index.html                 ← Portada con video hero en bucle y bloques 01–03
+│   ├── mateo.html                 ← Tablero interactivo sincronizado al milisegundo
+│   └── loader.html                ← Pantalla de carga/transición
+├── data/
+│   └── mateo_data.json            ← Telemetría compilada (196 KB: 1800 frames, 21 jugadores, 8 ventanas)
+├── media/                         ← Videos H.264, audio maestro 60s y subtítulos WebVTT
+├── styles/                        ← Sistema de diseño dark gallery (tokens.css, hero.css, etc.)
+└── components/data-adapter.js     ← Adaptador de contratos JSON del pipeline
 ```
 
 ---
 
-## 4. Cómo lanzar MATEO
+## 4. Cómo lanzar MATEO mañana (Comandos de arranque rápido)
 
 ```powershell
-# Desde el directorio del proyecto
+# 1. Lanzar el Nuevo Frontend Web MATEO (recomendado -> http://localhost:8600/pages/index.html)
+.\.venv\Scripts\python.exe dashboard\serve.py
+
+# 2. (Opcional) Regenerar dashboard/data/mateo_data.json y dashboard/media/ tras nuevos experimentos
+.\.venv\Scripts\python.exe scripts\export_dashboard_data.py
+
+# 3. (Opcional) Lanzar el Dashboard clásico en Streamlit (-> http://localhost:8501)
 .\.venv\Scripts\streamlit run implementacion\dashboard\app.py
 ```
-
-Streamlit detecta automáticamente la carpeta `pages/` y añade la segunda página en la barra lateral.
 
 ---
 
@@ -121,6 +137,7 @@ Streamlit detecta automáticamente la carpeta `pages/` y añade la segunda pági
 | `outputs/clip_13/VIDEO_RADAR_POST_MATEMATICA.mp4` | ✅ En disco (`2.8 MB`) | Video H.264 exclusivo del Radar Cenital 2D (Panel 2) |
 | `outputs/clip_13/VIDEO_UNIFICADO_TODOS_JUNTOS.mp4` | ✅ En disco (`34.9 MB`) | Video H.264 percepción cruda (6 modelos) |
 | `data/videos/mundial_2014_720p_hd/L6sbfskaTDQ-720-13.mp4` | ✅ En disco | Video H.264 original sin marcas (vista paralela Panel 1) |
+| Servidor Web MATEO (`dashboard/serve.py`) | ✅ Activo (`:8600`) | `http://localhost:8600/pages/index.html` y `mateo.html` |
 | Servidor Streamlit (`app.py`) | ✅ Activo (`:8501`) | Dashboard MATEO corriendo en `http://localhost:8501` |
 | Servidor FastAPI + ngrok (`api_server.py`) | ⏳ No activo | Pendiente: lanzar para Orchestrate |
 
@@ -133,6 +150,27 @@ Streamlit detecta automáticamente la carpeta `pages/` y añade la segunda pági
    - Empaquetar y desplegar el MVP demostrable en **IBM Cloud Code Engine** (`deploy_code_engine.py` + contenedor ligero con los artefactos pre-procesados en GPU) e integrar `openapi_tool.yaml` en **IBM watsonx Orchestrate**.
 3. **Fase 2 Cloud — Portafolio personal en Vercel:**
    - Una vez concluida la prueba en IBM, construir el frontend web estático/interactivo sincronizado al milisegundo (3 videos H.264 en paralelo + métricas + transcriptor TTS) para desplegarlo en **Vercel**.
+
+---
+
+## 8. Integración del Nuevo Frontend Web MATEO (`dashboard/`)
+
+Se conectaron los nuevos visuales creados por IBM Bob en `dashboard/` con la telemetría real del pipeline:
+- **Exportador automatizado (`scripts/export_dashboard_data.py`):**
+  - Genera `dashboard/data/mateo_data.json` (196 KB) a partir de los Parquets y JSONs limpios.
+  - Copia los videos H.264, audios y subtítulos a `dashboard/media/`.
+- **Tablero reactivo conectado (`dashboard/pages/mateo.html`):**
+  - Sincronización milimétrica con el video: al mover el reloj o darle Play, avanzan en paralelo el video original, el video con marcas, el radar cenital con estelas dinámicas, las métricas tácticas (altura de bloque, transiciones, compacidad) y la crónica/transcripción IA de `ibm/granite-4-h-small`.
+  - Servidor ligero con soporte HTTP Range en `dashboard/serve.py` corriendo en el puerto **8600**.
+- **Fix Hero Video en Portada (`dashboard/pages/index.html` y `dashboard/styles/components/hero.css`):**
+  - **Diagnóstico real en Windows (`SPI_GETCLIENTAREAANIMATION = 0`):**
+    1. En esta laptop Windows tiene desactivadas las animaciones de área de cliente (`SPI_GETCLIENTAREAANIMATION = 0`), lo que hace que Chrome y Edge evalúen `@media (prefers-reduced-motion: reduce)` como **`true`**.
+    2. En `dashboard/styles/components/hero.css` (líneas 53–57) aún existía una regla `@media (prefers-reduced-motion: reduce) { .hero__video { display: none; } }` que ocultaba por completo el `<video>` de portada a nivel CSS, además de que el navegador respondía `304 Not Modified` para `hero.css`.
+    3. El botón `#btn-audio` ("Activar sonido") apuntaba a un archivo inexistente (`hero-ambient.mp3`, `404`) en vez de activar el audio del propio `demo_omni.mp4`.
+  - **Solución:**
+    - Se eliminó `@media (prefers-reduced-motion: reduce) { .hero__video { display: none; } }` de `hero.css`, se añadió `style="display: block; opacity: 1;"` inline en `#hero-video` y se agregaron parámetros `?v=3` en los `<link rel="stylesheet">` de `index.html` para invalidar la caché `304` del navegador.
+    - Se conectó el botón `#btn-audio` ("Activar sonido") directamente al audio del `<video id="hero-video">` (`video.muted = false; video.volume = 0.35;`).
+    - Se retiró la tarjeta del logo OMNIMORPH (`.hero__logo-card`) que flotaba encima del video de portada y se reubicó en el pie de página (`footer.footer-legend`) para dejar el video 100% despejado.
 
 ---
 

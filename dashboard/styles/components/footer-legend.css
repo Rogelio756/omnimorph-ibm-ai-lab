@@ -1,0 +1,72 @@
+/**
+ * styles/components/footer-legend.css
+ * OMNIMORPH — Leyenda al pie: Creadores, Programa, Licencia
+ * Textos vienen de config/ui.config.json (nunca escritos a mano en HTML).
+ */
+
+.footer-legend {
+  border-top: var(--border);
+  padding: var(--space-6) var(--cell-padding-x);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-9);
+  align-items: flex-start;
+}
+
+/* Columna de la leyenda */
+.footer-legend__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 160px;
+}
+
+.footer-legend__heading {
+  font-family: var(--font-ui);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.footer-legend__value {
+  font-size: 14px;
+  color: var(--color-text);
+  line-height: var(--lh-body);
+}
+
+/* Wordmarks al final */
+.footer-legend__wordmarks {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.footer-legend__wordmark {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-wordmark);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.footer-legend__wordmark--primary {
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .footer-legend {
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .footer-legend__wordmarks {
+    margin-left: 0;
+    align-items: flex-start;
+  }
+}

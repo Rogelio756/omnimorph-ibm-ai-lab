@@ -1,0 +1,107 @@
+/**
+ * styles/tokens.css
+ * OMNIMORPH / MATEO — Design Tokens
+ * Fuente de verdad CSS. Todos los valores derivan de DESIGN.md.
+ * NUNCA escribir colores, tamaños o radios directamente en componentes.
+ */
+
+:root {
+  /* ── Colores: Fondo y superficie ────────────────────────────────────────── */
+  --color-bg:           #111111;
+  --color-bg-deep:      #0A0A0A;
+  --color-surface:      #1A1A1A;
+  --color-border:       #2A2A2A;
+  --color-border-soft:  #3A3A3A;
+
+  /* ── Colores: Texto ─────────────────────────────────────────────────────── */
+  --color-text:         #FFFFFF;
+  --color-text-soft:    #A1A1AE;
+
+  /* ── Colores: Equipos y balón ───────────────────────────────────────────── */
+  --color-team-a:       #F5A623; /* BRA — naranja */
+  --color-team-b:       #F5F3EE; /* GER — crema   */
+  --color-ball:         #A3E635; /* balón — lima   */
+
+  /* ── Colores: Cancha ────────────────────────────────────────────────────── */
+  --color-pitch:        #0E1A16;
+  --color-pitch-lines:  #2A4A3E;
+
+  /* ── Colores: Estado / semáforo ─────────────────────────────────────────── */
+  --color-ok:           #1FC8B0;
+  --color-alert:        #F24E6B;
+  --color-warn:         #F5A623; /* = team-a */
+
+  /* ── Colores: Especiales ────────────────────────────────────────────────── */
+  --color-logo-card:    #F5F3EE;
+
+  /* ── Tema claro (pantalla de carga/error) ───────────────────────────────── */
+  --color-bg-light:          #FFFFFF;
+  --color-text-light:        #111111;
+  --color-text-soft-light:   #4B5563;
+  --color-border-light:      #E5E7EB;
+
+  /* ── Tipografía ─────────────────────────────────────────────────────────── */
+  --font-headline:  'Jost', 'Segoe UI', system-ui, sans-serif;
+  --font-ui:        'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:      'JetBrains Mono', 'Consolas', monospace;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+
+  /* Tamaños */
+  --text-hero:     76px;
+  --text-kpi:      44px;
+  --text-title:    24px;
+  --text-body:     15px;
+  --text-label:    12px;
+  --text-small:    11px;
+
+  /* Interlineado */
+  --lh-hero:   1.0;
+  --lh-body:   1.6;
+  --lh-label:  1.4;
+
+  /* Letter-spacing */
+  --ls-wordmark: 0.2em;
+  --ls-label:    0.06em;
+  --ls-kpi:      -0.02em;
+
+  /* ── Espaciado (base 4 px) ──────────────────────────────────────────────── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-9:   36px;
+  --space-12:  48px;
+
+  /* Padding de celda */
+  --cell-padding-y: 20px;
+  --cell-padding-x: 24px;
+
+  /* ── Radios ─────────────────────────────────────────────────────────────── */
+  --radius-pill: 30px;
+  --radius-card: 0px;
+
+  /* ── Bordes ─────────────────────────────────────────────────────────────── */
+  --border-width: 1px;
+  --border:       1px solid var(--color-border);
+  --border-soft:  1px solid var(--color-border-soft);
+
+  /* ── Sidebar jugadores ──────────────────────────────────────────────────── */
+  --sidebar-players-width: 320px;
+
+  /* ── Transición ─────────────────────────────────────────────────────────── */
+  --transition: 150ms ease-out;
+
+  /* ── Overlay hero ───────────────────────────────────────────────────────── */
+  --hero-overlay: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.75) 0%,
+    rgba(0, 0, 0, 0.20) 100%
+  );
+
+  /* ── Barra KPI equipos ──────────────────────────────────────────────────── */
+  --kpi-bar-height: 4px;
+}

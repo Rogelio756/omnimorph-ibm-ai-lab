@@ -1,0 +1,104 @@
+/**
+ * styles/components/master-clock.css
+ * OMNIMORPH — Reloj maestro: línea de tiempo con ventanas
+ */
+
+.master-clock {
+  padding: var(--space-3) var(--cell-padding-x);
+  border-bottom: var(--border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+/* Línea de tiempo */
+.master-clock__timeline {
+  flex: 1;
+  position: relative;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.master-clock__track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--color-border-soft);
+}
+
+.master-clock__progress {
+  position: absolute;
+  left: 0;
+  height: 1px;
+  background-color: var(--color-text);
+  transition: width var(--transition);
+}
+
+/* Ventanas Wn */
+.master-clock__windows {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+}
+
+.master-clock__window {
+  flex: 1;
+  border-right: 1px solid var(--color-border);
+  position: relative;
+}
+
+.master-clock__window:last-child {
+  border-right: none;
+}
+
+.master-clock__window-label {
+  position: absolute;
+  top: 0;
+  left: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--color-text-soft);
+  line-height: 1;
+}
+
+.master-clock__window--active {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* Cabezal de reproducción */
+.master-clock__playhead {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 32px;
+  background-color: var(--color-text);
+  transform: translateX(-1px);
+  transition: left var(--transition);
+}
+
+/* Indicadores numéricos */
+.master-clock__info {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.master-clock__time {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-medium);
+  font-size: 20px;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.master-clock__frame {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}

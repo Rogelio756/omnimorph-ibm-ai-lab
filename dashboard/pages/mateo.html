@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MATEO — Motor de Análisis Táctico y Estadístico de Operaciones Futbolísticas">
+  <title>MATEO — Tablero de Análisis Táctico</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/layout.css">
+  <link rel="stylesheet" href="../styles/components/pill-button.css">
+  <link rel="stylesheet" href="../styles/components/status-chips.css">
+  <link rel="stylesheet" href="../styles/components/master-clock.css">
+  <link rel="stylesheet" href="../styles/components/video-panel.css">
+  <link rel="stylesheet" href="../styles/components/radar.css">
+  <link rel="stylesheet" href="../styles/components/kpi-card.css">
+  <link rel="stylesheet" href="../styles/components/chronicle.css">
+  <link rel="stylesheet" href="../styles/components/transcript.css">
+  <link rel="stylesheet" href="../styles/components/player-sidebar.css">
+  <link rel="stylesheet" href="../styles/components/footer-legend.css">
+  <link rel="stylesheet" href="../styles/components/powered-by.css">
+
+  <style>
+    /* ── Página ──────────────────────────────────────────────────────────── */
+    .page-mateo { background-color: var(--color-bg); min-height: 100dvh; display: flex; flex-direction: column; }
+
+    /* ── Cabecera sticky ─────────────────────────────────────────────────── */
+    .mateo-header {
+      position: sticky; top: 0; z-index: 100;
+      background-color: var(--color-bg); border-bottom: var(--border);
+      display: flex; align-items: center; gap: var(--space-4);
+      padding: var(--space-3) var(--cell-padding-x); flex-wrap: wrap;
+    }
+    .mateo-header__brand { display: flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
+    .mateo-header__logo { width: 32px; height: 32px; flex-shrink: 0; }
+    .mateo-header__titles { display: flex; flex-direction: column; gap: 1px; }
+    .mateo-header__name {
+      font-family: var(--font-headline); font-weight: var(--font-weight-medium); font-size: 18px;
+      letter-spacing: var(--ls-wordmark); text-transform: uppercase; line-height: 1; color: var(--color-text);
+    }
+    .mateo-header__subtitle { font-size: var(--text-label); color: var(--color-text-soft); letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; }
+    .mateo-header__sep { width: 1px; height: 28px; background-color: var(--color-border); flex-shrink: 0; }
+    .mateo-header__chips { display: flex; gap: var(--space-2); flex-wrap: wrap; flex: 1; }
+    .mateo-header__back { margin-left: auto; }
+
+    /* ── Tira de observabilidad ──────────────────────────────────────────── */
+    .obs-strip {
+      display: flex; flex-wrap: wrap; gap: var(--space-2);
+      padding: var(--space-2) var(--cell-padding-x); border-bottom: var(--border); background-color: var(--color-bg);
+    }
+    .obs-strip__label {
+      font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);
+      align-self: center; margin-right: var(--space-2); flex-shrink: 0;
+    }
+
+    /* ── Transporte (play + reloj) ───────────────────────────────────────── */
+    .transport { display: flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
+    .btn-icon {
+      width: 40px; height: 40px; border-radius: 50%; border: var(--border-width) solid var(--color-text);
+      background: var(--color-text); color: var(--color-bg); display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: opacity var(--transition);
+    }
+    .btn-icon:hover { opacity: 0.85; }
+    .btn-icon:focus-visible { outline: 2px solid var(--color-ok); outline-offset: 3px; }
+    .btn-icon svg { width: 16px; height: 16px; }
+    .btn-sm { height: 32px; padding: 0 var(--space-4); font-size: 11px; }
+    .btn-xs { height: 28px; padding: 0 var(--space-3); font-size: 10px; }
+    .master-clock__timeline { cursor: pointer; }
+    .master-clock__windows { pointer-events: none; }
+    .master-clock__window { flex: none; position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--color-border); border-right: none; }
+    .master-clock__gap { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(90deg, transparent 0 4px, rgba(255,255,255,0.03) 4px 8px); }
+
+    /* ── Layout del tablero ──────────────────────────────────────────────── */
+    .mateo-body { flex: 1; display: grid; grid-template-columns: 1fr var(--sidebar-players-width); border-top: var(--border); }
+    .mateo-main { display: flex; flex-direction: column; min-width: 0; }
+    .panels-grid { display: grid; grid-template-columns: 1fr 1fr; flex: 1; }
+    .panel { border-right: var(--border); border-bottom: var(--border); display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+    .panel:nth-child(even) { border-right: none; }
+    .panel__header {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: var(--space-3) var(--space-4); border-bottom: var(--border); flex-shrink: 0; flex-wrap: wrap;
+    }
+    .panel__title {
+      font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);
+      letter-spacing: var(--ls-label); text-transform: uppercase; flex: 1;
+    }
+    .panel__body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+    /* ── Panel 1: video ──────────────────────────────────────────────────── */
+    .video-panel__main video { object-fit: contain; background: #000; }
+    .video-panel__main video::cue { font-family: var(--font-ui); font-size: 15px; background: rgba(0,0,0,0.72); color: #fff; }
+    .video-panel__thumb-video { position: relative; }
+    .video-panel__thumb-video video { object-fit: contain; background: #000; cursor: pointer; }
+    .video-panel__overlay {
+      position: absolute; top: var(--space-3); left: var(--space-3); z-index: 5;
+      display: flex; gap: var(--space-2); pointer-events: none;
+    }
+    .video-panel__overlay .chip { background: rgba(0,0,0,0.6); }
+    .video-panel__bar { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3); flex-wrap: wrap; }
+    .video-panel__bar .spacer { flex: 1; }
+    .shot-tag { font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft); }
+    .shot-tag--open { color: var(--color-ok); }
+
+    /* ── Panel 2: radar ──────────────────────────────────────────────────── */
+    .radar-container { width: 100%; background-color: var(--color-pitch); position: relative; overflow: hidden; }
+    .radar-container svg { width: 100%; height: auto; display: block; }
+    .radar-hold {
+      position: absolute; top: var(--space-3); right: var(--space-3);
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: var(--ls-label); text-transform: uppercase;
+      color: var(--color-warn); border: 1px solid var(--color-warn); border-radius: var(--radius-pill); padding: 2px 10px;
+      background: rgba(0,0,0,0.5); display: none;
+    }
+    .radar-hold--on { display: block; }
+    #radar-video { width: 100%; display: none; background: #000; }
+    .radar-stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: var(--border); }
+    .radar-stats > div { padding: var(--space-3) var(--space-4); border-right: var(--border); display: flex; flex-direction: column; gap: 2px; }
+    .radar-stats > div:last-child { border-right: none; }
+    .radar-stats .lbl { font-size: var(--text-label); color: var(--color-text-soft); letter-spacing: var(--ls-label); text-transform: uppercase; }
+    .radar-stats .val { font-family: var(--font-mono); font-size: 18px; color: var(--color-text); font-variant-numeric: tabular-nums; }
+
+    /* ── Panel 3: KPIs ───────────────────────────────────────────────────── */
+    .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .kpi-grid > .kpi-card { border-right: var(--border); }
+    .kpi-grid > .kpi-card:nth-child(even) { border-right: none; }
+    .spark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+    .spark__bar { flex: 1; background: var(--color-border-soft); min-height: 2px; cursor: pointer; transition: background-color var(--transition); }
+    .spark__bar:hover { background: var(--color-text-soft); }
+    .spark__bar--active { background: var(--color-text); }
+    .centroid-line { position: relative; height: 26px; margin-top: var(--space-2); }
+    .centroid-line__track { position: absolute; left: 0; right: 0; top: 12px; height: 1px; background: var(--color-pitch-lines); }
+    .centroid-line__mid { position: absolute; left: 50%; top: 4px; width: 1px; height: 17px; background: var(--color-pitch-lines); }
+    .centroid-line__dot { position: absolute; top: 6px; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-6px); transition: left var(--transition); border: 1px solid var(--color-bg); }
+    .kpi-row { padding: var(--space-3) var(--cell-padding-x); border-bottom: var(--border); }
+
+    /* ── Panel 4: crónica ────────────────────────────────────────────────── */
+    .chronicle-container { padding: var(--cell-padding-y) var(--cell-padding-x); display: flex; flex-direction: column; gap: var(--space-4); }
+    .chronicle__text { min-height: 4.5em; }
+    .chronicle__analysis { font-size: 13px; color: var(--color-text-soft); line-height: 1.6; }
+    .chronicle__waveform-bar { transition: background-color var(--transition), opacity var(--transition); }
+    .transcript-container { flex: 1; overflow-y: auto; border-top: var(--border); max-height: 300px; }
+    .transcript { max-height: none; overflow: visible; }
+    .transcript__line { cursor: pointer; }
+    .transcript__line:hover { background-color: rgba(255,255,255,0.03); }
+
+    /* ── Sidebar ─────────────────────────────────────────────────────────── */
+    .player-sidebar { border-left: var(--border); }
+    .player-row__team { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .player-row__live { font-family: var(--font-mono); font-size: 9px; color: var(--color-ok); min-width: 30px; text-align: right; }
+    .player-empty { padding: var(--space-4); font-size: var(--text-label); color: var(--color-text-soft); }
+
+    /* ── Aviso de datos ──────────────────────────────────────────────────── */
+    .data-notice {
+      padding: var(--space-3) var(--cell-padding-x); font-family: var(--font-mono); font-size: var(--text-label);
+      color: var(--color-text-soft); border-bottom: var(--border); display: none; align-items: center; gap: var(--space-2);
+    }
+    .data-notice--on { display: flex; }
+    .data-notice__dot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-alert); flex-shrink: 0; }
+
+    @media (max-width: 1100px) { .mateo-body { grid-template-columns: 1fr; } .player-sidebar { border-left: none; border-top: var(--border); } }
+    @media (max-width: 860px) {
+      .panels-grid { grid-template-columns: 1fr; }
+      .panel { border-right: none; }
+      .master-clock { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body class="page-mateo">
+
+  <!-- ═══════════════════ CABECERA ═══════════════════ -->
+  <header class="mateo-header" role="banner">
+    <div class="mateo-header__brand">
+      <div class="mateo-header__logo" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="32" aria-hidden="true">
+          <polygon points="20,2 36,9 20,16 4,9" fill="#F5A623"/>
+          <polygon points="4,9 20,16 20,38 4,31" fill="#1FC8B0"/>
+          <polygon points="20,16 36,9 36,31 20,38" fill="#7C5CD8"/>
+          <polyline points="4,9 20,2 36,9 36,31 20,38 4,31 4,9" stroke="#111" stroke-width="0.8" fill="none"/>
+          <line x1="20" y1="2" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
+          <line x1="4" y1="9" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
+          <line x1="36" y1="9" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
+          <line x1="20" y1="16" x2="20" y2="38" stroke="#111" stroke-width="0.8"/>
+        </svg>
+      </div>
+      <div class="mateo-header__titles">
+        <span class="mateo-header__name">MATEO</span>
+        <span class="mateo-header__subtitle">Motor de Análisis Táctico y Estadístico</span>
+      </div>
+    </div>
+
+    <div class="mateo-header__sep" aria-hidden="true"></div>
+
+    <div class="mateo-header__chips">
+      <span class="chip chip--team-a" id="chip-match"><span class="chip__dot"></span>BRA vs GER · 2014</span>
+      <span class="chip" id="chip-pipeline"><span class="chip__dot"></span>Pipeline —</span>
+      <span class="chip chip--ok"><span class="chip__dot"></span>ibm/granite-4-h-small</span>
+    </div>
+
+    <a class="btn btn--outline mateo-header__back btn-sm" href="index.html">Inicio</a>
+  </header>
+
+  <!-- ═══════════════════ OBSERVABILIDAD ═══════════════════ -->
+  <div class="obs-strip" role="region" aria-label="Estado de monitores MATEO" id="obs-strip">
+    <span class="obs-strip__label">Monitores</span>
+  </div>
+
+  <!-- ═══════════════════ RELOJ MAESTRO + TRANSPORTE ═══════════════════ -->
+  <div class="master-clock" role="region" aria-label="Reloj maestro de sincronización">
+    <div class="transport">
+      <button class="btn-icon" id="btn-play" type="button" aria-label="Reproducir">
+        <svg id="ico-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
+        <svg id="ico-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="display:none"><path d="M3.5 2h3v12h-3zM9.5 2h3v12h-3z"/></svg>
+      </button>
+    </div>
+
+    <div class="master-clock__timeline" id="mc-timeline" role="slider" aria-label="Línea de tiempo" aria-valuemin="0" aria-valuemax="60" aria-valuenow="0" tabindex="0">
+      <div class="master-clock__track"></div>
+      <div class="master-clock__progress" id="mc-progress" style="width: 0%"></div>
+      <div class="master-clock__windows" id="mc-windows"></div>
+      <div class="master-clock__playhead" id="mc-playhead" style="left: 0%"></div>
+    </div>
+
+    <div class="master-clock__info">
+      <span class="master-clock__time" id="mc-time">00:00.0</span>
+      <span class="master-clock__frame" id="mc-frame">Frame 0 / 1799</span>
+    </div>
+  </div>
+
+  <div class="data-notice" id="data-notice">
+    <div class="data-notice__dot"></div>
+    <span id="data-notice-text">No se pudieron cargar los datos.</span>
+  </div>
+
+  <!-- ═══════════════════ CUERPO ═══════════════════ -->
+  <div class="mateo-body">
+    <main class="mateo-main" role="main">
+      <div class="panels-grid">
+
+        <!-- ── PANEL 1: VIDEO ── -->
+        <section class="panel" id="panel-video" aria-label="Video">
+          <div class="panel__header">
+            <span class="panel__title" id="p1-title">P1 — Video con marcas MATEO</span>
+            <span class="chip" id="chip-live"><span class="chip__dot"></span>en pausa</span>
+          </div>
+          <div class="panel__body">
+            <div class="video-panel">
+              <div class="video-panel__main" id="slot-main">
+                <div class="video-panel__overlay"><span class="chip" id="chip-main-label"><span class="chip__dot"></span>Con marcas</span></div>
+                <video id="v-marked" playsinline preload="auto" muted aria-label="Video con marcas matemáticas MATEO y narración IA">
+                  <track id="v-track" kind="subtitles" srclang="es" label="Narración IA" default>
+                </video>
+              </div>
+
+              <div class="video-panel__thumb">
+                <div class="video-panel__thumb-video" id="slot-thumb">
+                  <video id="v-original" playsinline preload="auto" muted aria-label="Video original sin marcas"></video>
+                </div>
+                <div style="display:flex; flex-direction:column; gap: var(--space-2); min-width: 120px;">
+                  <span class="video-panel__thumb-label" id="thumb-label">Original · sin marcas</span>
+                  <button class="btn btn--outline btn-xs" id="btn-swap" type="button">Intercambiar</button>
+                </div>
+              </div>
+
+              <div class="video-panel__bar">
+                <button class="btn btn--primary btn-xs" id="btn-narration" type="button" aria-pressed="false">Activar narración</button>
+                <button class="btn btn--outline btn-xs" id="btn-subs" type="button" aria-pressed="true">Subtítulos</button>
+                <span class="spacer"></span>
+                <span class="shot-tag" id="shot-tag">—</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── PANEL 2: RADAR ── -->
+        <section class="panel" id="panel-radar" aria-label="Radar cenital">
+          <div class="panel__header">
+            <span class="panel__title">P2 — Radar cenital 120 × 70 m</span>
+            <button class="btn btn--primary btn-xs" id="btn-radar-live" type="button" aria-pressed="true">Datos</button>
+            <button class="btn btn--outline btn-xs" id="btn-radar-video" type="button" aria-pressed="false">Video</button>
+          </div>
+          <div class="panel__body">
+            <div class="radar-container" id="radar-container">
+              <svg id="radar-svg" viewBox="-20 -20 1240 740" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Radar cenital con posiciones reales de jugadores y balón">
+                <rect x="-20" y="-20" width="1240" height="740" fill="#0E1A16"/>
+                <g fill="none" stroke="#2A4A3E" stroke-width="2">
+                  <rect x="0" y="0" width="1200" height="700"/>
+                  <line x1="600" y1="0" x2="600" y2="700"/>
+                  <circle cx="600" cy="350" r="91.5"/>
+                  <rect x="0" y="148" width="165" height="403"/>
+                  <rect x="1035" y="148" width="165" height="403"/>
+                  <rect x="0" y="258" width="55" height="183"/>
+                  <rect x="1145" y="258" width="55" height="183"/>
+                  <rect x="-12" y="313" width="12" height="73"/>
+                  <rect x="1200" y="313" width="12" height="73"/>
+                  <path d="M165 277 A91.5 91.5 0 0 1 165 423"/>
+                  <path d="M1035 277 A91.5 91.5 0 0 0 1035 423"/>
+                </g>
+                <circle cx="600" cy="350" r="4" fill="#2A4A3E"/>
+                <circle cx="110" cy="350" r="3" fill="#2A4A3E"/>
+                <circle cx="1090" cy="350" r="3" fill="#2A4A3E"/>
+                <g id="radar-trails"></g>
+                <g id="radar-players"></g>
+              </svg>
+              <video id="v-radar" playsinline preload="auto" muted aria-label="Video del radar cenital suavizado"></video>
+              <span class="radar-hold" id="radar-hold">Toma cerrada · última foto táctica</span>
+              <div class="radar__legend">
+                <div class="radar__legend-item"><div class="radar__legend-dot" style="background: var(--color-team-a)"></div><span>BRA</span></div>
+                <div class="radar__legend-item"><div class="radar__legend-dot" style="background: var(--color-team-b)"></div><span>GER</span></div>
+                <div class="radar__legend-item"><div class="radar__legend-dot" style="background: #6B7280"></div><span>Árbitro</span></div>
+                <div class="radar__legend-item"><div class="radar__legend-dot" style="background: var(--color-ball)"></div><span>Balón</span></div>
+              </div>
+            </div>
+            <div class="radar-stats">
+              <div><span class="lbl">BRA en campo</span><span class="val" id="rs-a">—</span></div>
+              <div><span class="lbl">GER en campo</span><span class="val" id="rs-b">—</span></div>
+              <div><span class="lbl">Balón</span><span class="val" id="rs-ball">—</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── PANEL 3: KPIs ── -->
+        <section class="panel" id="panel-kpis" aria-label="Métricas tácticas">
+          <div class="panel__header">
+            <span class="panel__title">P3 — Métricas tácticas</span>
+            <span class="chip" id="chip-window-kpi"><span class="chip__dot"></span>W0</span>
+          </div>
+          <div class="panel__body">
+            <div class="kpi-row" style="display:flex; align-items:center; gap: var(--space-3); flex-wrap: wrap;">
+              <span class="badge badge--team-a" id="badge-dominant">—</span>
+              <span class="text-label" id="kpi-pressure-val" style="font-family: var(--font-mono); color: var(--color-text-soft);">Presión —</span>
+            </div>
+
+            <div class="kpi-grid">
+              <div class="kpi-card">
+                <span class="kpi-card__label">Altura del bloque</span>
+                <div><span class="kpi-card__value" id="kpi-bh-val">—</span><span class="kpi-card__unit">m</span></div>
+                <div class="spark" id="spark-bh" aria-label="Evolución por ventana"></div>
+              </div>
+              <div class="kpi-card">
+                <span class="kpi-card__label">Vel. transición</span>
+                <div><span class="kpi-card__value" id="kpi-ts-val">—</span><span class="kpi-card__unit">m/s</span></div>
+                <div class="spark" id="spark-ts" aria-label="Evolución por ventana"></div>
+              </div>
+              <div class="kpi-card">
+                <span class="kpi-card__label">Compacidad</span>
+                <div><span class="kpi-card__value" id="kpi-cp-val" style="font-size: 32px;">—</span><span class="kpi-card__unit">m</span></div>
+                <div class="spark" id="spark-cp" aria-label="Evolución por ventana"></div>
+              </div>
+              <div class="kpi-card">
+                <span class="kpi-card__label">Presencia en cuadro</span>
+                <div class="kpi-bar" style="grid-template-columns: var(--pa, 1fr) var(--pb, 1fr);" id="kpi-presence-bar">
+                  <div class="kpi-bar__track"><div class="kpi-bar__fill--team-a" style="width:100%"></div></div>
+                  <div class="kpi-bar__track"><div class="kpi-bar__fill--team-b" style="width:100%"></div></div>
+                </div>
+                <div class="kpi-bar__labels">
+                  <span class="kpi-bar__team-label" id="kpi-pa">BRA —</span>
+                  <span class="kpi-bar__team-label kpi-bar__team-label--right" id="kpi-pb">GER —</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="kpi-row" style="border-bottom: none;">
+              <span class="text-label">Centroides en el eje largo (0 – 120 m)</span>
+              <div class="centroid-line">
+                <div class="centroid-line__track"></div>
+                <div class="centroid-line__mid"></div>
+                <div class="centroid-line__dot" id="cent-a" style="left: 50%; background: var(--color-team-a);" title="BRA"></div>
+                <div class="centroid-line__dot" id="cent-b" style="left: 50%; background: var(--color-team-b);" title="GER"></div>
+              </div>
+              <div style="display:flex; justify-content: space-between; font-family: var(--font-mono); font-size: 12px;">
+                <span style="color: var(--color-team-a);">BRA <span id="centroid-bra">—</span></span>
+                <span style="color: var(--color-team-b);">GER <span id="centroid-ger">—</span></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── PANEL 4: CRÓNICA ── -->
+        <section class="panel" id="panel-chronicle" aria-label="Crónica IA">
+          <div class="panel__header">
+            <span class="panel__title">P4 — Crónica IA + transcripción</span>
+            <span class="chip" id="chip-narr-mode"><span class="chip__dot"></span>—</span>
+          </div>
+          <div class="panel__body">
+            <div class="chronicle-container">
+              <p class="chronicle__text" id="chronicle-text" aria-live="polite">Cargando narración…</p>
+              <div class="chronicle__waveform" aria-label="Progreso de la ventana narrada">
+                <div class="chronicle__waveform-bars" id="waveform-bars"></div>
+                <span class="chronicle__waveform-time" id="waveform-time">0.0 s</span>
+              </div>
+              <p class="chronicle__analysis" id="chronicle-analysis"></p>
+              <div class="chronicle__meta">
+                <span class="chronicle__meta-item">Latencia <span class="chronicle__meta-value" id="chron-latency">—</span></span>
+                <span class="chronicle__meta-item">Tokens in/out <span class="chronicle__meta-value" id="chron-tokens">—</span></span>
+              </div>
+            </div>
+            <div class="transcript-container" id="transcript-container">
+              <div class="transcript" id="transcript" aria-label="Transcripción sincronizada"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ── SIDEBAR DE JUGADORES ── -->
+    <aside class="player-sidebar" role="complementary" aria-label="Estadísticas de jugadores">
+      <div class="player-sidebar__team-selector">
+        <button class="btn btn--primary btn-sm" id="btn-team-0" type="button" aria-pressed="true">BRA</button>
+        <button class="btn btn--outline btn-sm" id="btn-team-1" type="button" aria-pressed="false">GER</button>
+        <span style="margin-left: auto; align-self: center; font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);">Top 5</span>
+      </div>
+      <div class="player-sidebar__metric-selector">
+        <span class="text-label" style="width: 100%; margin-bottom: var(--space-1);">Métrica</span>
+        <button class="btn btn--primary btn-xs" data-metric="dist_m" type="button">Distancia</button>
+        <button class="btn btn--outline btn-xs" data-metric="avg_mps" type="button">Vel. media</button>
+        <button class="btn btn--outline btn-xs" data-metric="sprints" type="button">Sprints</button>
+      </div>
+      <div class="player-sidebar__list" id="player-list"></div>
+
+      <div class="player-card" id="player-card">
+        <span class="player-card__title" id="pc-title">Selecciona un jugador</span>
+        <div class="player-card__heatmap" aria-label="Mapa de calor del jugador">
+          <svg id="pc-heat" viewBox="0 0 120 70" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="120" height="70" fill="#0E1A16"/>
+          </svg>
+        </div>
+        <div class="player-card__stats">
+          <div class="player-card__stat"><span class="player-card__stat-label">Dist.</span><span class="player-card__stat-value" id="pc-dist">—</span></div>
+          <div class="player-card__stat"><span class="player-card__stat-label">Vel. media</span><span class="player-card__stat-value" id="pc-avg">—</span></div>
+          <div class="player-card__stat"><span class="player-card__stat-label">Sprints</span><span class="player-card__stat-value" id="pc-spr">—</span></div>
+        </div>
+        <span class="text-label" id="pc-foot" style="color: var(--color-text-soft);"></span>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ═══════════════════ PIE ═══════════════════ -->
+  <footer class="footer-legend" role="contentinfo">
+    <div class="footer-legend__col"><span class="footer-legend__heading">Creadores</span><span class="footer-legend__value" id="legend-creators">[Equipo Omnimorph — añadir nombres]</span></div>
+    <div class="footer-legend__col"><span class="footer-legend__heading">Programa</span><span class="footer-legend__value" id="legend-program">[Programa / Institución — añadir]</span></div>
+    <div class="footer-legend__col"><span class="footer-legend__heading">Licencia</span><span class="footer-legend__value" id="legend-license">[Licencia — añadir]</span></div>
+    <div class="footer-legend__wordmarks">
+      <span class="footer-legend__wordmark footer-legend__wordmark--primary">OMNIMORPH</span>
+      <span class="footer-legend__wordmark">MATEO · Motor de análisis táctico y estadístico</span>
+    </div>
+  </footer>
+
+  <script>
+  /**
+   * mateo.html — Tablero vivo
+   * ------------------------------------------------------------------
+   * Fuente de datos: ../data/mateo_data.json (scripts/export_dashboard_data.py)
+   * Reloj maestro:   el video con marcas (#v-marked). Todo lo demás
+   *                  (video original, radar, KPIs, crónica, transcripción,
+   *                  jugadores) se sincroniza a su currentTime.
+   */
+  (function () {
+    'use strict';
+
+    var $ = function (id) { return document.getElementById(id); };
+    var COLORS = { 0: '#F5A623', 1: '#F5F3EE', 2: '#6B7280' };
+    var TEAM = { 0: 'BRA', 1: 'GER', 2: 'ARB' };
+    var TRAIL = 14;
+
+    var D = null;              // datos
+    var FPS = 30, NF = 1800, DUR = 60;
+    var lastValid = [];        // último frame con jugadores ≤ i
+    var curFrame = -1, curWin = -2;
+    var team = 0, metric = 'dist_m', selected = null;
+    var narrationOn = false, subsOn = true, swapped = false, radarMode = 'live';
+
+    var vMarked = $('v-marked'), vOrig = $('v-original'), vRadar = $('v-radar');
+
+    function pad(s) {
+      var m = Math.floor(s / 60), sec = s - m * 60;
+      return String(m).padStart(2, '0') + ':' + (sec < 10 ? '0' : '') + sec.toFixed(1);
+    }
+    function fmt(v, d) { return v == null || isNaN(v) ? '—' : Number(v).toFixed(d); }
+
+    // ── Carga ──────────────────────────────────────────────────────────
+    fetch('../data/mateo_data.json')
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(init)
+      .catch(function () {
+        $('data-notice').classList.add('data-notice--on');
+        $('data-notice-text').textContent = location.protocol === 'file:'
+          ? 'Abre el tablero con un servidor: python -m http.server 8600 --directory dashboard  →  http://localhost:8600/pages/mateo.html'
+          : 'Falta dashboard/data/mateo_data.json — ejecuta: python scripts/export_dashboard_data.py';
+      });
+
+    fetch('../config/ui.config.json').then(function (r) { return r.json(); }).then(function (cfg) {
+      var leg = cfg.legend || {};
+      [['legend-creators', leg.creators], ['legend-program', leg.program], ['legend-license', leg.license]]
+        .forEach(function (p) { if (p[1]) $(p[0]).textContent = p[1]; });
+    }).catch(function () {});
+
+    function init(data) {
+      D = data;
+      FPS = D.meta.fps; NF = D.meta.n_frames; DUR = D.meta.duration_s;
+      D.players.forEach(function (p) { p.avg_mps = p.frames ? p.dist_m / (p.frames / FPS) : 0; });
+
+      var lv = -1;
+      for (var i = 0; i < NF; i++) { if (D.frames[i].p.length) lv = i; lastValid.push(lv); }
+
+      // Medios
+      vMarked.src = D.media.marked;
+      $('v-track').src = D.media.vtt;
+      vOrig.src = D.media.original;
+      vRadar.src = D.media.radar;
+
+      buildMonitors();
+      buildTimeline();
+      buildSparks();
+      buildTranscript();
+      buildWaveform();
+      renderPlayers();
+      bindUI();
+
+      render(true);
+      requestAnimationFrame(loop);
+    }
+
+    // ── Monitores ──────────────────────────────────────────────────────
+    function buildMonitors() {
+      var strip = $('obs-strip');
+      ['M1', 'M2.0', 'M2.1', 'M2.2', 'M2.3', 'M2.4', 'M2.5', 'M3', 'M4'].forEach(function (k) {
+        var s = D.monitors[k];
+        var c = document.createElement('span');
+        c.className = 'chip chip--' + (s === 'PASS' ? 'ok' : s ? 'alert' : '');
+        c.title = k + ': ' + (s || 'sin datos');
+        c.innerHTML = '<span class="chip__dot"></span>' + k;
+        strip.appendChild(c);
+      });
+      var keys = ['M1', 'M2.0', 'M2.1', 'M2.2', 'M2.3', 'M2.4', 'M2.5', 'M3', 'M4'];
+      var ok = keys.filter(function (k) { return D.monitors[k] === 'PASS'; }).length;
+      var cp = $('chip-pipeline');
+      cp.className = 'chip chip--' + (ok === keys.length ? 'ok' : 'alert');
+      cp.lastChild.textContent = 'Pipeline ' + ok + '/' + keys.length + (ok === keys.length ? ' OK' : '');
+    }
+
+    // ── Línea de tiempo con ventanas reales ────────────────────────────
+    function buildTimeline() {
+      var host = $('mc-windows');
+      D.windows.forEach(function (w, i) {
+        var d = document.createElement('div');
+        d.className = 'master-clock__window';
+        d.id = 'mc-w' + i;
+        d.style.left = (w.t0 / DUR * 100) + '%';
+        d.style.width = ((w.t1 - w.t0) / DUR * 100) + '%';
+        d.innerHTML = '<span class="master-clock__window-label">' + w.id + '</span>';
+        host.appendChild(d);
+      });
+      var lastT = D.windows.length ? D.windows[D.windows.length - 1].t1 : 0;
+      if (lastT < DUR) {
+        var g = document.createElement('div');
+        g.className = 'master-clock__gap';
+        g.style.left = (lastT / DUR * 100) + '%';
+        g.style.width = ((DUR - lastT) / DUR * 100) + '%';
+        g.title = 'Sin ventana táctica';
+        host.appendChild(g);
+      }
+      $('mc-timeline').setAttribute('aria-valuemax', String(DUR));
+    }
+
+    function seek(t) {
+      t = Math.max(0, Math.min(DUR - 0.05, t));
+      vMarked.currentTime = t;
+      syncFollowers(true);
+      render(true);
+    }
+
+    // ── Sparklines por ventana ─────────────────────────────────────────
+    function buildSparks() {
+      [['spark-bh', 'block_height_m'], ['spark-ts', 'transition_mps'], ['spark-cp', 'compactness_m']].forEach(function (s) {
+        var host = $(s[0]);
+        var max = Math.max.apply(null, D.windows.map(function (w) { return w[s[1]] || 0; })) || 1;
+        D.windows.forEach(function (w, i) {
+          var b = document.createElement('div');
+          b.className = 'spark__bar';
+          b.dataset.w = i;
+          b.style.height = Math.max(8, (w[s[1]] || 0) / max * 100) + '%';
+          b.title = w.id + ': ' + fmt(w[s[1]], 2);
+          b.addEventListener('click', function () { seek(w.t0 + 0.01); });
+          host.appendChild(b);
+        });
+      });
+    }
+
+    // ── Transcripción ──────────────────────────────────────────────────
+    function buildTranscript() {
+      var host = $('transcript');
+      host.innerHTML = '';
+      D.windows.forEach(function (w, i) {
+        var line = document.createElement('div');
+        line.className = 'transcript__line';
+        line.id = 'tl-' + i;
+        line.tabIndex = 0;
+        line.innerHTML = '<span class="transcript__ts">' + pad(w.t0) + '</span><span class="transcript__text"></span>';
+        line.lastChild.textContent = '[' + w.id + '] ' + (w.narration || '—');
+        line.addEventListener('click', function () { seek(w.t0 + 0.01); });
+        line.addEventListener('keydown', function (e) { if (e.key === 'Enter') seek(w.t0 + 0.01); });
+        host.appendChild(line);
+      });
+    }
+
+    function buildWaveform() {
+      var host = $('waveform-bars');
+      for (var b = 0; b < 48; b++) {
+        var bar = document.createElement('div');
+        bar.className = 'chronicle__waveform-bar';
+        host.appendChild(bar);
+      }
+    }
+
+    function shapeWaveform(seedText) {
+      var seed = 0;
+      for (var i = 0; i < seedText.length; i++) seed = (seed * 31 + seedText.charCodeAt(i)) >>> 0;
+      var bars = $('waveform-bars').children;
+      for (var j = 0; j < bars.length; j++) {
+        seed = (seed * 1103515245 + 12345) >>> 0;
+        bars[j].style.height = (6 + (seed % 22)) + 'px';
+      }
+    }
+
+    // ── Bucle principal ────────────────────────────────────────────────
+    function loop() {
+      syncFollowers(false);
+      render(false);
+      requestAnimationFrame(loop);
+    }
+
+    function syncFollowers(force) {
+      var t = vMarked.currentTime;
+      [vOrig, vRadar].forEach(function (v) {
+        if (!v.readyState) return;
+        if (force || Math.abs(v.currentTime - t) > 0.2) v.currentTime = t;
+        if (!vMarked.paused && v.paused) v.play().catch(function () {});
+        if (vMarked.paused && !v.paused) v.pause();
+      });
+    }
+
+    function render(force) {
+      if (!D) return;
+      var t = vMarked.currentTime || 0;
+      var f = Math.min(NF - 1, Math.floor(t * FPS));
+      var pct = t / DUR * 100;
+
+      $('mc-progress').style.width = pct + '%';
+      $('mc-playhead').style.left = pct + '%';
+      $('mc-time').textContent = pad(t);
+      $('mc-timeline').setAttribute('aria-valuenow', t.toFixed(1));
+
+      var wi = -1;
+      for (var i = 0; i < D.windows.length; i++) { if (t >= D.windows[i].t0 && t < D.windows[i].t1) { wi = i; break; } }
+      if (wi !== curWin || force) { renderWindow(wi); curWin = wi; }
+      updateWaveform(wi, t);
+
+      if (f !== curFrame || force) {
+        curFrame = f;
+        $('mc-frame').textContent = 'Frame ' + f + ' / ' + (NF - 1);
+        renderRadar(f);
+        updatePlayerLive(f);
+      }
+    }
+
+    // ── Radar ──────────────────────────────────────────────────────────
+    function renderRadar(f) {
+      var lv = lastValid[f];
+      var holding = lv !== f;
+      $('radar-hold').classList.toggle('radar-hold--on', holding && lv >= 0);
+      var tag = $('shot-tag');
+      tag.textContent = holding ? 'Toma cerrada / repetición · radar en espera' : 'Toma abierta · homografía activa';
+      tag.className = 'shot-tag' + (holding ? '' : ' shot-tag--open');
+
+      var pl = $('radar-players'), tr = $('radar-trails');
+      if (lv < 0) { pl.innerHTML = ''; tr.innerHTML = ''; setRadarStats(null, null); return; }
+
+      var fr = D.frames[lv];
+      var trails = '';
+      var seen = 0;
+      for (var k = lv - 1; k >= 0 && seen < TRAIL; k--) {
+        var pf = D.frames[k].p;
+        if (!pf.length) continue;
+        seen++;
+        var op = (0.28 * (1 - seen / (TRAIL + 1))).toFixed(3);
+        for (var j = 0; j < pf.length; j++) {
+          var q = pf[j];
+          trails += '<circle cx="' + q[2] + '" cy="' + q[3] + '" r="5" fill="' + COLORS[q[1]] + '" opacity="' + op + '"/>';
+        }
+      }
+      tr.innerHTML = trails;
+
+      var out = '', na = 0, nb = 0;
+      fr.p.forEach(function (p) {
+        if (p[1] === 0) na++; else if (p[1] === 1) nb++;
+        var isSel = selected === p[0];
+        var r = p[1] === 2 ? 11 : 15;
+        if (isSel) out += '<circle cx="' + p[2] + '" cy="' + p[3] + '" r="26" fill="none" stroke="#1FC8B0" stroke-width="3"/>';
+        out += '<circle cx="' + p[2] + '" cy="' + p[3] + '" r="' + r + '" fill="' + COLORS[p[1]] + '" stroke="#111" stroke-width="2"/>';
+        if (p[1] !== 2) out += '<text x="' + p[2] + '" y="' + (p[3] + 5) + '" fill="#111" font-family="JetBrains Mono, Consolas, monospace" font-size="14" text-anchor="middle">' + p[0] + '</text>';
+      });
+      var ball = D.frames[f].b || (holding ? null : fr.b);
+      if (ball) out += '<circle cx="' + ball[0] + '" cy="' + ball[1] + '" r="10" fill="#A3E635" stroke="#111" stroke-width="2"/>';
+      pl.innerHTML = out;
+      setRadarStats(na, nb, ball);
+    }
+
+    function setRadarStats(na, nb, ball) {
+      $('rs-a').textContent = na == null ? '—' : na;
+      $('rs-b').textContent = nb == null ? '—' : nb;
+      $('rs-ball').textContent = ball ? (ball[0] / 10).toFixed(0) + ', ' + (ball[1] / 10).toFixed(0) + ' m' : '—';
+    }
+
+    // ── Ventana táctica (KPIs + crónica) ───────────────────────────────
+    function renderWindow(wi) {
+      document.querySelectorAll('.master-clock__window').forEach(function (el, i) {
+        el.classList.toggle('master-clock__window--active', i === wi);
+      });
+      document.querySelectorAll('.spark__bar').forEach(function (b) {
+        b.classList.toggle('spark__bar--active', Number(b.dataset.w) === wi);
+      });
+      document.querySelectorAll('.transcript__line').forEach(function (l, i) {
+        l.classList.toggle('transcript__line--active', i === wi);
+        l.classList.toggle('transcript__line--next', i === wi + 1);
+      });
+
+      var chipW = $('chip-window-kpi');
+      if (wi < 0) {
+        chipW.lastChild.textContent = 'Fuera de ventana';
+        $('chronicle-text').textContent = 'Sin ventana táctica en este tramo del clip (posterior a ' + pad(D.windows[D.windows.length - 1].t1) + ').';
+        $('chronicle-analysis').textContent = '';
+        return;
+      }
+      var w = D.windows[wi];
+      chipW.lastChild.textContent = w.id + ' · ' + w.t0.toFixed(1) + '–' + w.t1.toFixed(1) + ' s';
+
+      $('kpi-bh-val').textContent = fmt(w.block_height_m, 1);
+      $('kpi-ts-val').textContent = fmt(w.transition_mps, 1);
+      $('kpi-cp-val').textContent = fmt(w.compactness_m, 1);
+      $('kpi-pressure-val').textContent = 'Presión · ' + (w.pressure || '—');
+
+      var badge = $('badge-dominant');
+      if (w.dominant === 'BRA') { badge.className = 'badge badge--team-a'; badge.textContent = 'BRA domina'; }
+      else if (w.dominant === 'GER') { badge.className = 'badge badge--team-b'; badge.textContent = 'GER domina'; }
+      else { badge.className = 'badge'; badge.textContent = 'Equilibrado'; }
+
+      var tot = (w.n_a || 0) + (w.n_b || 0) || 1;
+      var bar = $('kpi-presence-bar');
+      bar.style.setProperty('--pa', Math.max(0.05, (w.n_a || 0) / tot) + 'fr');
+      bar.style.setProperty('--pb', Math.max(0.05, (w.n_b || 0) / tot) + 'fr');
+      $('kpi-pa').textContent = 'BRA ' + Math.round((w.n_a || 0) / tot * 100) + '%';
+      $('kpi-pb').textContent = 'GER ' + Math.round((w.n_b || 0) / tot * 100) + '%';
+
+      $('cent-a').style.left = Math.min(100, Math.max(0, w.centroid_a_m / 120 * 100)) + '%';
+      $('cent-b').style.left = Math.min(100, Math.max(0, w.centroid_b_m / 120 * 100)) + '%';
+      $('centroid-bra').textContent = fmt(w.centroid_a_m, 1) + ' m';
+      $('centroid-ger').textContent = fmt(w.centroid_b_m, 1) + ' m';
+
+      $('chronicle-text').textContent = w.narration || '—';
+      $('chronicle-analysis').textContent = w.analysis || '';
+      $('chron-latency').textContent = w.latency_ms != null ? Math.round(w.latency_ms) + ' ms' : '—';
+      $('chron-tokens').textContent = (w.tokens_in || '—') + ' / ' + (w.tokens_out || '—');
+      var cm = $('chip-narr-mode');
+      cm.className = 'chip chip--' + (w.mode === 'online' ? 'ok' : 'warn');
+      cm.lastChild.textContent = w.mode === 'online' ? 'watsonx en línea' : (w.mode || 'offline');
+      shapeWaveform(w.narration || w.id);
+
+      // Desplazar la transcripción dentro de su contenedor (sin mover la página)
+      var line = $('tl-' + wi), box = $('transcript-container');
+      if (line && box) box.scrollTo({ top: line.offsetTop - box.offsetTop - 8, behavior: 'smooth' });
+    }
+
+    function updateWaveform(wi, t) {
+      var bars = $('waveform-bars').children;
+      var prog = 0, el = 0;
+      if (wi >= 0) {
+        var w = D.windows[wi];
+        el = t - w.t0;
+        prog = el / (w.t1 - w.t0);
+      }
+      var n = Math.floor(prog * bars.length);
+      for (var i = 0; i < bars.length; i++) bars[i].classList.toggle('chronicle__waveform-bar--active', i < n);
+      $('waveform-time').textContent = wi >= 0 ? el.toFixed(1) + ' s' : '—';
+    }
+
+    // ── Jugadores ──────────────────────────────────────────────────────
+    function renderPlayers() {
+      var host = $('player-list');
+      var list = D.players.filter(function (p) { return p.team === team; })
+        .sort(function (a, b) { return b[metric] - a[metric]; }).slice(0, 5);
+      host.innerHTML = '';
+      if (!list.length) { host.innerHTML = '<div class="player-empty">Sin jugadores con datos suficientes.</div>'; return; }
+      var max = list[0][metric] || 1;
+      list.forEach(function (p) {
+        var row = document.createElement('div');
+        row.className = 'player-row' + (selected === p.id ? ' player-row--active' : '');
+        row.dataset.id = p.id;
+        row.tabIndex = 0;
+        var val = metric === 'dist_m' ? p.dist_m.toFixed(0) + ' m' : metric === 'avg_mps' ? p.avg_mps.toFixed(1) + ' m/s' : String(p.sprints);
+        row.innerHTML =
+          '<span class="player-row__team" style="background:' + COLORS[p.team] + '"></span>' +
+          '<span class="player-row__track">#' + p.id + '</span>' +
+          '<div class="player-row__bar-wrap"><div class="player-row__bar-fill' + (p.team === 1 ? ' player-row__bar-fill--team-b' : '') +
+          '" style="width:' + Math.max(4, p[metric] / max * 100) + '%"></div></div>' +
+          '<span class="player-row__value">' + val + '</span>' +
+          '<span class="player-row__live" data-live="' + p.id + '"></span>';
+        row.addEventListener('click', function () { selectPlayer(p.id); });
+        row.addEventListener('keydown', function (e) { if (e.key === 'Enter') selectPlayer(p.id); });
+        host.appendChild(row);
+      });
+      if (selected == null || !list.some(function (p) { return p.id === selected; })) selectPlayer(list[0].id);
+      updatePlayerLive(Math.max(0, curFrame));
+    }
+
+    function selectPlayer(id) {
+      selected = id;
+      var p = D.players.find(function (x) { return x.id === id; });
+      document.querySelectorAll('.player-row').forEach(function (r) { r.classList.toggle('player-row--active', Number(r.dataset.id) === id); });
+      if (!p) return;
+      $('pc-title').textContent = 'Jugador #' + p.id + ' · ' + TEAM[p.team];
+      $('pc-dist').textContent = p.dist_m.toFixed(0) + ' m';
+      $('pc-avg').textContent = p.avg_mps.toFixed(1);
+      $('pc-spr').textContent = p.sprints;
+      $('pc-foot').textContent = 'Visible ' + (p.frames / FPS).toFixed(1) + ' s en toma abierta · ID cosido M2.2';
+      var svg = '<rect width="120" height="70" fill="#0E1A16"/>';
+      for (var gx = 0; gx < 12; gx++) for (var gy = 0; gy < 7; gy++) {
+        var h = p.heat[gx][gy];
+        if (h > 0) svg += '<rect x="' + gx * 10 + '" y="' + gy * 10 + '" width="10" height="10" fill="' + COLORS[p.team] + '" opacity="' + (0.12 + h * 0.75).toFixed(2) + '"/>';
+      }
+      svg += '<g fill="none" stroke="#2A4A3E" stroke-width="0.6"><rect x="0.3" y="0.3" width="119.4" height="69.4"/><line x1="60" y1="0" x2="60" y2="70"/><circle cx="60" cy="35" r="9.15"/><rect x="0.3" y="14.8" width="16.5" height="40.3"/><rect x="103.2" y="14.8" width="16.5" height="40.3"/></g>';
+      $('pc-heat').innerHTML = svg;
+      curFrame = -1; // fuerza redibujo del radar con el anillo
+    }
+
+    function updatePlayerLive(f) {
+      var lv = lastValid[f];
+      var onPitch = {};
+      if (lv === f && lv >= 0) D.frames[f].p.forEach(function (p) { onPitch[p[0]] = true; });
+      document.querySelectorAll('[data-live]').forEach(function (el) {
+        el.textContent = onPitch[el.dataset.live] ? 'EN CAMPO' : '';
+      });
+    }
+
+    // ── Interacción ────────────────────────────────────────────────────
+    function setPlaying(on) {
+      if (on) vMarked.play().catch(function () {}); else vMarked.pause();
+    }
+
+    function bindUI() {
+      var btnPlay = $('btn-play');
+      btnPlay.addEventListener('click', function () { setPlaying(vMarked.paused); });
+      vMarked.addEventListener('play', function () {
+        $('ico-play').style.display = 'none'; $('ico-pause').style.display = '';
+        btnPlay.setAttribute('aria-label', 'Pausar');
+        var c = $('chip-live'); c.className = 'chip chip--live'; c.lastChild.textContent = 'reproduciendo';
+        syncFollowers(true);
+      });
+      vMarked.addEventListener('pause', function () {
+        $('ico-play').style.display = ''; $('ico-pause').style.display = 'none';
+        btnPlay.setAttribute('aria-label', 'Reproducir');
+        var c = $('chip-live'); c.className = 'chip'; c.lastChild.textContent = 'en pausa';
+        syncFollowers(true);
+      });
+      vMarked.addEventListener('seeked', function () { syncFollowers(true); });
+      vMarked.addEventListener('click', function () { setPlaying(vMarked.paused); });
+      vMarked.addEventListener('loadedmetadata', function () {
+        if (vMarked.textTracks[0]) vMarked.textTracks[0].mode = subsOn ? 'showing' : 'hidden';
+      });
+
+      // Línea de tiempo: clic y arrastre
+      var tl = $('mc-timeline'), dragging = false;
+      function tlSeek(e) { var r = tl.getBoundingClientRect(); seek((e.clientX - r.left) / r.width * DUR); }
+      tl.addEventListener('pointerdown', function (e) { dragging = true; tl.setPointerCapture(e.pointerId); tlSeek(e); });
+      tl.addEventListener('pointermove', function (e) { if (dragging) tlSeek(e); });
+      tl.addEventListener('pointerup', function () { dragging = false; });
+      tl.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { seek(vMarked.currentTime + 1); e.preventDefault(); }
+        if (e.key === 'ArrowLeft') { seek(vMarked.currentTime - 1); e.preventDefault(); }
+      });
+
+      // Teclado global
+      document.addEventListener('keydown', function (e) {
+        var tag = (e.target.tagName || '').toLowerCase();
+        if (tag === 'button' || tag === 'input') return;
+        if (e.code === 'Space') { setPlaying(vMarked.paused); e.preventDefault(); }
+        if (e.target === tl) return;
+        if (e.key === 'ArrowRight') seek(vMarked.currentTime + 1);
+        if (e.key === 'ArrowLeft') seek(vMarked.currentTime - 1);
+      });
+
+      // Narración IA (audio TTS incrustado en el video con marcas)
+      $('btn-narration').addEventListener('click', function () {
+        narrationOn = !narrationOn;
+        vMarked.muted = !narrationOn;
+        this.textContent = narrationOn ? 'Silenciar narración' : 'Activar narración';
+        this.className = 'btn btn-xs ' + (narrationOn ? 'btn--outline' : 'btn--primary');
+        this.setAttribute('aria-pressed', String(narrationOn));
+        if (narrationOn && vMarked.paused) setPlaying(true);
+      });
+
+      $('btn-subs').addEventListener('click', function () {
+        subsOn = !subsOn;
+        if (vMarked.textTracks[0]) vMarked.textTracks[0].mode = subsOn ? 'showing' : 'hidden';
+        this.className = 'btn btn-xs ' + (subsOn ? 'btn--outline' : 'btn--outline');
+        this.style.opacity = subsOn ? '1' : '0.5';
+        this.setAttribute('aria-pressed', String(subsOn));
+      });
+
+      // Intercambiar video principal / miniatura (mueve los elementos <video>)
+      function doSwap() {
+        var wasPlaying = !vMarked.paused;
+        swapped = !swapped;
+        var main = $('slot-main'), thumb = $('slot-thumb');
+        if (swapped) { main.appendChild(vOrig); thumb.appendChild(vMarked); }
+        else { main.appendChild(vMarked); thumb.appendChild(vOrig); }
+        $('p1-title').textContent = swapped ? 'P1 — Video original' : 'P1 — Video con marcas MATEO';
+        $('chip-main-label').lastChild.textContent = swapped ? 'Original' : 'Con marcas';
+        $('thumb-label').textContent = swapped ? 'Con marcas · MATEO' : 'Original · sin marcas';
+        if (wasPlaying) { vMarked.play().catch(function () {}); syncFollowers(true); }
+      }
+      $('btn-swap').addEventListener('click', doSwap);
+      vOrig.addEventListener('click', function () { if (!swapped) doSwap(); });
+
+      // Radar: datos vivos vs video del radar
+      function setRadar(mode) {
+        radarMode = mode;
+        var live = mode === 'live';
+        $('radar-svg').style.display = live ? '' : 'none';
+        vRadar.style.display = live ? 'none' : 'block';
+        $('btn-radar-live').className = 'btn btn-xs ' + (live ? 'btn--primary' : 'btn--outline');
+        $('btn-radar-video').className = 'btn btn-xs ' + (!live ? 'btn--primary' : 'btn--outline');
+        $('btn-radar-live').setAttribute('aria-pressed', String(live));
+        $('btn-radar-video').setAttribute('aria-pressed', String(!live));
+        if (!live) syncFollowers(true);
+      }
+      $('btn-radar-live').addEventListener('click', function () { setRadar('live'); });
+      $('btn-radar-video').addEventListener('click', function () { setRadar('video'); });
+
+      // Equipo y métrica
+      [0, 1].forEach(function (tm) {
+        $('btn-team-' + tm).addEventListener('click', function () {
+          team = tm; selected = null;
+          [0, 1].forEach(function (k) {
+            var b = $('btn-team-' + k);
+            b.className = 'btn btn-sm ' + (k === tm ? 'btn--primary' : 'btn--outline');
+            b.setAttribute('aria-pressed', String(k === tm));
+          });
+          renderPlayers();
+        });
+      });
+      document.querySelectorAll('[data-metric]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          metric = b.dataset.metric;
+          document.querySelectorAll('[data-metric]').forEach(function (x) {
+            x.className = 'btn btn-xs ' + (x === b ? 'btn--primary' : 'btn--outline');
+          });
+          renderPlayers();
+        });
+      });
+    }
+  })();
+  </script>
+</body>
+</html>

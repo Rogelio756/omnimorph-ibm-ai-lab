@@ -1,0 +1,171 @@
+/**
+ * styles/base.css
+ * OMNIMORPH / MATEO — Reset, tipografía global, fondo
+ * Importa tokens.css antes de este archivo.
+ */
+
+/* ── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100dvh;
+}
+
+/* ── Tipografía global ───────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--lh-label);
+  color: var(--color-text);
+}
+
+p {
+  line-height: var(--lh-body);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-ok);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-ok);
+  outline-offset: 3px;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* ── Clases utilitarias de tipografía ───────────────────────────────────── */
+.text-hero {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-hero);
+  line-height: var(--lh-hero);
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.text-kpi {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-kpi);
+  letter-spacing: var(--ls-kpi);
+  font-variant-numeric: tabular-nums;
+}
+
+.text-title {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-title);
+}
+
+.text-body {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+}
+
+.text-label {
+  font-family: var(--font-ui);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.text-soft {
+  color: var(--color-text-soft);
+}
+
+/* ── Fuentes locales (@font-face) ────────────────────────────────────────── */
+/* Jost */
+@font-face {
+  font-family: 'Jost';
+  src: url('../assets/fonts/Jost-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Jost';
+  src: url('../assets/fonts/Jost-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter */
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../assets/fonts/Inter-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* JetBrains Mono */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/JetBrainsMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}

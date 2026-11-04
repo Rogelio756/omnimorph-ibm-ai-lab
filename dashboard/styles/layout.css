@@ -1,0 +1,240 @@
+/**
+ * styles/layout.css
+ * OMNIMORPH / MATEO — Rejilla, barra lateral, breakpoints
+ * Importa tokens.css y base.css antes de este archivo.
+ */
+
+/* ── Rejilla principal con líneas de 1 px ───────────────────────────────── */
+.om-grid {
+  display: grid;
+  border-top: var(--border);
+}
+
+/* Rejilla del tablero: contenido principal + sidebar de jugadores */
+.om-grid--dashboard {
+  grid-template-columns: 1fr var(--sidebar-players-width);
+  grid-template-rows: auto;
+  min-height: 100dvh;
+}
+
+/* Rejilla de paneles 2×2 */
+.om-grid--panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+}
+
+.om-grid--panels > * {
+  border-right: var(--border);
+  border-bottom: var(--border);
+}
+
+.om-grid--panels > *:nth-child(even) {
+  border-right: none;
+}
+
+/* Rejilla de 3 columnas para bloques numerados */
+.om-grid--thirds {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.om-grid--thirds > * + * {
+  border-left: var(--border);
+}
+
+/* Rejilla de chips / tira de observabilidad */
+.om-grid--chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--cell-padding-x);
+  border-bottom: var(--border);
+}
+
+/* ── Celda genérica ─────────────────────────────────────────────────────── */
+.om-cell {
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-bottom: var(--border);
+}
+
+.om-cell--flush {
+  padding: 0;
+}
+
+/* ── Sección: separación entre bloques ─────────────────────────────────── */
+.om-section {
+  padding-top: var(--space-12);
+  padding-bottom: var(--space-12);
+}
+
+.om-section--inner {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--cell-padding-x);
+}
+
+/* ── Cabecera del tablero ────────────────────────────────────────────────── */
+.om-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-bottom: var(--border);
+  background-color: var(--color-bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.om-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 0 0 auto;
+}
+
+.om-header__chips {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.om-header__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ── Barra de navegación (portada) ──────────────────────────────────────── */
+.om-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-5) var(--cell-padding-x);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: transparent;
+}
+
+.om-nav__wordmark {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: 18px;
+  letter-spacing: var(--ls-wordmark);
+  text-transform: uppercase;
+  color: var(--color-text);
+  margin-right: auto;
+}
+
+.om-nav__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.om-nav__link {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-soft);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  transition: color var(--transition);
+}
+
+.om-nav__link:hover,
+.om-nav__link:focus-visible {
+  color: var(--color-text);
+}
+
+/* ── Sidebar de jugadores (tablero) ─────────────────────────────────────── */
+.om-sidebar-players {
+  width: var(--sidebar-players-width);
+  border-left: var(--border);
+  background-color: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* ── Footer / leyenda ────────────────────────────────────────────────────── */
+.om-footer {
+  border-top: var(--border);
+  padding: var(--space-6) var(--cell-padding-x);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.om-footer__text {
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+  letter-spacing: var(--ls-label);
+}
+
+/* ── Breakpoints ─────────────────────────────────────────────────────────── */
+
+/* Tableta: sidebar baja debajo */
+@media (max-width: 1100px) {
+  .om-grid--dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .om-sidebar-players {
+    width: 100%;
+    border-left: none;
+    border-top: var(--border);
+  }
+}
+
+/* Móvil: paneles en columna */
+@media (max-width: 768px) {
+  .om-grid--panels {
+    grid-template-columns: 1fr;
+  }
+
+  .om-grid--panels > * {
+    border-right: none;
+  }
+
+  .om-grid--thirds {
+    grid-template-columns: 1fr;
+  }
+
+  .om-grid--thirds > * + * {
+    border-left: none;
+    border-top: var(--border);
+  }
+
+  .om-nav__links {
+    display: none; /* en móvil se ocultaría en un menú hamburguesa futuro */
+  }
+
+  .text-hero {
+    font-size: clamp(36px, 8vw, 76px);
+  }
+}
+
+/* Franja "Impulsado por": logos en fila, apilada en móvil */
+.om-powered-by {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--cell-padding-x);
+  border-top: var(--border);
+  border-bottom: var(--border);
+}
+
+@media (max-width: 600px) {
+  .om-powered-by {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

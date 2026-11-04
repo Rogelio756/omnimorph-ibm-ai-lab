@@ -1,0 +1,77 @@
+/**
+ * styles/components/pill-button.css
+ * OMNIMORPH — Botones en píldora (único estilo principal + contorno)
+ * No hay colores de marca. Texto nunca usa color de equipo.
+ */
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 44px;
+  min-width: 44px;
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-ui);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity var(--transition), background-color var(--transition);
+  border: none;
+  text-decoration: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-ok);
+  outline-offset: 3px;
+}
+
+/* ── Principal: píldora blanca ──────────────────────────────────────────── */
+.btn--primary {
+  background-color: var(--color-text);   /* #FFFFFF */
+  color: var(--color-bg);                /* #111111 */
+}
+
+.btn--primary:hover {
+  opacity: 0.88;
+}
+
+.btn--primary:active {
+  opacity: 0.72;
+}
+
+/* ── Secundario: contorno blanco ────────────────────────────────────────── */
+.btn--outline {
+  background-color: transparent;
+  color: var(--color-text);
+  border: var(--border-width) solid var(--color-text);
+}
+
+.btn--outline:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.btn--outline:active {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Tema claro (para pantalla loader) ──────────────────────────────────── */
+.btn--dark {
+  background-color: var(--color-text-light);  /* #111111 */
+  color: var(--color-bg-light);               /* #FFFFFF */
+}
+
+.btn--dark:hover {
+  opacity: 0.85;
+}
+
+/* ── Icon-only: cuadrado mínimo 44 px ───────────────────────────────────── */
+.btn--icon {
+  padding: 0;
+  width: 44px;
+}

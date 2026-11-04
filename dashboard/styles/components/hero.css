@@ -1,0 +1,158 @@
+/**
+ * styles/components/hero.css
+ * OMNIMORPH — Sección hero de la portada
+ * Video de fondo, capa oscura, titular, botones
+ */
+
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background-color: var(--color-bg-deep);
+}
+
+/* ── Capas de fondo (de abajo a arriba) ─────────────────────────────────── */
+
+/* 1. Fallback animado: cancha con puntos (canvas) */
+.hero__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: var(--color-pitch);
+}
+
+/* 2. Poster: imagen del estadio */
+.hero__poster {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: url('../assets/hero/hero-poster.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 3. Video en bucle */
+.hero__video {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  display: block;
+}
+
+.hero__video--loaded {
+  opacity: 1;
+}
+
+/* 4. Capa oscura: más fuerte a la izquierda */
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: var(--hero-overlay);
+}
+
+/* ── Contenido del hero ─────────────────────────────────────────────────── */
+.hero__content {
+  position: relative;
+  z-index: 4;
+  padding: 120px var(--cell-padding-x) var(--space-12);
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Titular principal */
+.hero__title {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-hero);
+  line-height: var(--lh-hero);
+  text-transform: uppercase;
+  color: var(--color-text);
+  max-width: 14ch;
+}
+
+/* Subtítulo */
+.hero__subtitle {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-soft);
+  max-width: 52ch;
+}
+
+/* Bloque de acciones */
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Indicador "Preparando el análisis…" */
+.hero__preparing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.hero__dots {
+  display: flex;
+  gap: 4px;
+}
+
+.hero__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--color-text);
+  animation: hero-dot-pulse 1.4s ease-in-out infinite;
+}
+
+.hero__dot:nth-child(2) { animation-delay: 0.2s; }
+.hero__dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes hero-dot-pulse {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40%            { opacity: 1;   transform: scale(1);   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__dot {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Logo OMNIMORPH (tarjeta crema, bordes rectos) al costado del hero */
+.hero__logo-card {
+  position: absolute;
+  right: var(--cell-padding-x);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  background-color: var(--color-logo-card);
+  padding: var(--space-6);
+  border-radius: var(--radius-card);
+  max-width: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .hero__logo-card {
+    display: none;
+  }
+}

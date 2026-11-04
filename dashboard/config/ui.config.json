@@ -1,0 +1,45 @@
+{
+  "_comment": "ui.config.json — Configuración de la interfaz OMNIMORPH/MATEO. Editar aquí para cambiar equipos, colores, textos de leyenda y métrica activa. Nunca escribir estos valores directamente en HTML o CSS.",
+
+  "match": {
+    "team_a": {
+      "id": "BRA",
+      "name": "Brasil",
+      "color": "#F5A623",
+      "kit": "amarillo/verde"
+    },
+    "team_b": {
+      "id": "GER",
+      "name": "Alemania",
+      "color": "#F5F3EE",
+      "kit": "blanco"
+    },
+    "ball_color": "#A3E635",
+    "event": "BRA vs GER · 2014",
+    "clip": "L6sbfskaTDQ-720-13.mp4",
+    "fps": 30,
+    "n_frames": 1800
+  },
+
+  "active_metric": "block_height_m",
+
+  "metrics": [
+    { "id": "block_height_m",        "label": "Block Height",       "unit": "m" },
+    { "id": "transition_speed_mps",  "label": "Trans. Speed",       "unit": "m/s" },
+    { "id": "block_compactness_m",   "label": "Compacidad",         "unit": "m" },
+    { "id": "pressure_context",      "label": "Presión",            "unit": "" }
+  ],
+
+  "legend": {
+    "creators":  "[Equipo Omnimorph — añadir nombres]",
+    "program":   "[Programa / Institución — añadir]",
+    "license":   "[Licencia — añadir]"
+  },
+
+  "nav_links": [
+    { "label": "Inicio",        "href": "index.html"  },
+    { "label": "MATEO",         "href": "mateo.html"  },
+    { "label": "Arquitectura",  "href": "#"           },
+    { "label": "Equipo",        "href": "#"           }
+  ]
+}

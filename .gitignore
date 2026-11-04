@@ -12,6 +12,7 @@
 *.mkv
 data/videos/
 data/audio/
+dashboard/media/
 
 # Pesos de modelos
 *.pt

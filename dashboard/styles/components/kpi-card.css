@@ -1,0 +1,102 @@
+/**
+ * styles/components/kpi-card.css
+ * OMNIMORPH — Tarjetas de KPI táctiles
+ * Cifras en Jost 44 px, barra BRA/GER de 4 px, badge "domina"
+ */
+
+.kpi-card {
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-bottom: var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Etiqueta de la métrica */
+.kpi-card__label {
+  font-family: var(--font-ui);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+/* Cifra principal */
+.kpi-card__value {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-kpi);
+  line-height: 1.0;
+  color: var(--color-text);
+  letter-spacing: var(--ls-kpi);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cifra vacía */
+.kpi-card__value--empty {
+  color: var(--color-text-soft);
+}
+
+/* Unidad junto a la cifra */
+.kpi-card__unit {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  color: var(--color-text-soft);
+  margin-left: var(--space-1);
+}
+
+/* Barra de progreso BRA vs GER */
+.kpi-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.kpi-bar__track {
+  height: var(--kpi-bar-height);
+  background-color: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.kpi-bar__fill--team-a {
+  height: 100%;
+  background-color: var(--color-team-a);
+  border-radius: 2px;
+  transition: width var(--transition);
+}
+
+.kpi-bar__fill--team-b {
+  height: 100%;
+  background-color: var(--color-team-b);
+  border-radius: 2px;
+  transition: width var(--transition);
+}
+
+/* Etiquetas debajo de la barra */
+.kpi-bar__labels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.kpi-bar__team-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}
+
+.kpi-bar__team-label--right {
+  text-align: right;
+}
+
+/* Badge "domina" al pie */
+.kpi-card__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}

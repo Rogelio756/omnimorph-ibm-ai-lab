@@ -1,0 +1,33 @@
+/**
+ * visuals/theme.css
+ * OMNIMORPH — Aplica los tokens de diseño a las figuras SVG/Canvas
+ * (radar, heatmap, charts). Importar en los módulos de visuals/.
+ */
+
+/* ── Radar cenital ───────────────────────────────────────────────────────── */
+.vis-radar {
+  --vis-pitch-bg:       var(--color-pitch);
+  --vis-pitch-line:     var(--color-pitch-lines);
+  --vis-player-a:       var(--color-team-a);
+  --vis-player-b:       var(--color-team-b);
+  --vis-ball:           var(--color-ball);
+  --vis-label:          var(--color-bg);
+  --vis-trail-opacity:  0.2;
+}
+
+/* ── Heatmap ─────────────────────────────────────────────────────────────── */
+.vis-heatmap {
+  --vis-heat-low:       var(--color-pitch);
+  --vis-heat-mid:       #1a3a20;
+  --vis-heat-high:      var(--color-team-a);
+}
+
+/* ── Charts (barras, líneas) ────────────────────────────────────────────── */
+.vis-chart {
+  --vis-chart-bg:       var(--color-bg);
+  --vis-chart-grid:     var(--color-border);
+  --vis-chart-text:     var(--color-text-soft);
+  --vis-chart-line-a:   var(--color-team-a);
+  --vis-chart-line-b:   var(--color-team-b);
+  --vis-chart-axis:     var(--color-border-soft);
+}

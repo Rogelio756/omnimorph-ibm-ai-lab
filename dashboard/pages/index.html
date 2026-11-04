@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OMNIMORPH — Análisis táctico de fútbol con IA. Ve lo que el ojo no ve.">
+  <title>OMNIMORPH — Inicio</title>
+  <!-- Hojas de estilo en orden de dependencia -->
+  <link rel="stylesheet" href="../styles/tokens.css?v=3">
+  <link rel="stylesheet" href="../styles/base.css?v=3">
+  <link rel="stylesheet" href="../styles/layout.css?v=3">
+  <link rel="stylesheet" href="../styles/components/nav.css?v=3">
+  <link rel="stylesheet" href="../styles/components/pill-button.css?v=3">
+  <link rel="stylesheet" href="../styles/components/status-chips.css?v=3">
+  <link rel="stylesheet" href="../styles/components/hero.css?v=3">
+  <link rel="stylesheet" href="../styles/components/tiles.css?v=3">
+  <link rel="stylesheet" href="../styles/components/powered-by.css?v=3">
+  <link rel="stylesheet" href="../styles/components/footer-legend.css?v=3">
+  <style>
+    /* Estilos de página que no pertenecen a ningún componente reutilizable */
+    .page-index {
+      min-height: 100dvh;
+      background-color: var(--color-bg);
+    }
+
+    /* Cancha animada (fallback del hero) */
+    #hero-canvas {
+      display: block;
+    }
+
+    /* Asegurar que el hero ocupe exactamente la ventana */
+    .hero {
+      min-height: 100dvh;
+    }
+
+    /* Sección de bloques numerados */
+    .section-features {
+      border-top: var(--border);
+    }
+
+    /* Franja "Impulsado por" — override de espacio interno */
+    .powered-by {
+      padding-block: var(--space-9);
+    }
+  </style>
+</head>
+<body class="page-index">
+
+  <!-- ── NAVEGACIÓN ─────────────────────────────────────────────────────── -->
+  <nav class="om-nav" id="main-nav" role="navigation" aria-label="Navegación principal">
+    <span class="om-nav__wordmark">OMNIMORPH</span>
+
+    <ul class="om-nav__links" role="list">
+      <li><a class="om-nav__link om-nav__link--active" href="index.html">Inicio</a></li>
+      <li><a class="om-nav__link" href="mateo.html">MATEO</a></li>
+      <li><a class="om-nav__link" href="#">Arquitectura</a></li>
+      <li><a class="om-nav__link" href="#">Equipo</a></li>
+    </ul>
+
+    <a class="om-nav__link" href="mateo.html" style="margin-left: var(--space-4);">Abrir tablero</a>
+  </nav>
+
+  <!-- ── HERO ───────────────────────────────────────────────────────────── -->
+  <section class="hero" id="hero" aria-label="Portada OMNIMORPH">
+
+    <!-- Capa 1: cancha animada (fallback CSS + canvas) -->
+    <canvas class="hero__canvas" id="hero-canvas" aria-hidden="true"></canvas>
+
+    <!-- Capa 2: video en bucle (muted, playsinline, autoplay) -->
+    <video
+      class="hero__video hero__video--loaded"
+      id="hero-video"
+      style="display: block; opacity: 1;"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      src="../assets/hero/demo_omni.mp4"
+      aria-hidden="true"
+    ></video>
+
+    <!-- Capa 3: overlay oscuro (más fuerte a la izquierda) -->
+    <div class="hero__overlay" aria-hidden="true"></div>
+
+    <!-- Contenido principal del hero -->
+    <div class="hero__content">
+      <h1 class="hero__title text-hero">
+        ¡Que no te lo cuente tu cuñado!
+      </h1>
+
+      <p class="hero__subtitle">
+        Ve lo que el ojo no ve: posiciones, métricas tácticas y una crónica
+        narrada por IA, todo en un solo tablero.
+      </p>
+
+      <!-- Acciones -->
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="mateo.html" role="button">
+          Analizar mi partido
+        </a>
+
+        <!-- Indicador "Preparando…" — se oculta cuando el video carga -->
+        <span class="hero__preparing" id="hero-preparing" aria-live="polite">
+          Preparando el análisis
+          <span class="hero__dots" aria-hidden="true">
+            <span class="hero__dot"></span>
+            <span class="hero__dot"></span>
+            <span class="hero__dot"></span>
+          </span>
+        </span>
+
+        <button
+          class="btn btn--outline"
+          id="btn-audio"
+          aria-label="Activar sonido del video de fondo"
+          type="button"
+        >
+          Activar sonido
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── BLOQUES NUMERADOS ─────────────────────────────────────────────── -->
+  <section class="section-features om-grid om-grid--thirds" aria-label="Características de OMNIMORPH">
+
+    <article class="tile">
+      <span class="tile__number">01</span>
+      <h2 class="tile__title">Visión</h2>
+      <p class="tile__description">
+        Detección de jugadores y balón frame a frame. Tracking con costura
+        de identidad y mapeo a coordenadas reales de cancha (120 × 70 m).
+      </p>
+    </article>
+
+    <article class="tile">
+      <span class="tile__number">02</span>
+      <h2 class="tile__title">Métricas</h2>
+      <p class="tile__description">
+        Block height, velocidad de transición, compacidad y centroides.
+        Suavizado Savitzky-Golay. Ventanas tácticas de 4 segundos.
+      </p>
+    </article>
+
+    <article class="tile">
+      <span class="tile__number">03</span>
+      <h2 class="tile__title">Narrador</h2>
+      <p class="tile__description">
+        Crónica táctica generada por <span class="text-mono">ibm/granite-4-h-small</span>
+        vía watsonx.ai. Texto sintetizado a voz y sincronizado con el video.
+      </p>
+    </article>
+
+  </section>
+
+  <!-- ── FRANJA "IMPULSADO POR IBM" ────────────────────────────────────── -->
+  <section class="powered-by" aria-label="Herramientas que impulsan OMNIMORPH">
+    <span class="powered-by__label">Impulsado por herramientas de IBM</span>
+
+    <div class="powered-by__logos" id="ibm-logos">
+      <!-- Los logos se insertan aquí desde logos.manifest.json via JS
+           Mientras faltan, se muestran placeholders punteados -->
+    </div>
+  </section>
+
+  <!-- ── LEYENDA AL PIE ─────────────────────────────────────────────────── -->
+  <footer class="footer-legend" role="contentinfo">
+    <div class="footer-legend__col">
+      <span class="footer-legend__heading">Creadores</span>
+      <span class="footer-legend__value" id="legend-creators">
+        [Equipo Omnimorph — añadir nombres]
+      </span>
+    </div>
+
+    <div class="footer-legend__col">
+      <span class="footer-legend__heading">Programa</span>
+      <span class="footer-legend__value" id="legend-program">
+        [Programa / Institución — añadir]
+      </span>
+    </div>
+
+    <div class="footer-legend__col">
+      <span class="footer-legend__heading">Licencia</span>
+      <span class="footer-legend__value" id="legend-license">
+        [Licencia — añadir]
+      </span>
+    </div>
+
+    <div class="footer-legend__wordmarks" style="display: flex; flex-direction: row; align-items: center; gap: var(--space-4);">
+      <div style="background-color: var(--color-logo-card); padding: var(--space-3); border-radius: 0;">
+        <img
+          src="../assets/logos/omnimorph/logo_omnimorph.jpg"
+          alt="Logo OMNIMORPH"
+          style="max-width: 140px; width: 100%; display: block; border-radius: 0;"
+        >
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1);">
+        <span class="footer-legend__wordmark footer-legend__wordmark--primary">OMNIMORPH</span>
+        <span class="footer-legend__wordmark">MATEO · Motor de análisis táctico y estadístico</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── SCRIPTS ────────────────────────────────────────────────────────── -->
+  <script>
+  (function () {
+    'use strict';
+
+    // ── Detección de movimiento reducido ──────────────────────────────────
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ── Video de fondo ────────────────────────────────────────────────────
+    const video   = document.getElementById('hero-video');
+    const preparing = document.getElementById('hero-preparing');
+
+    if (video) {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.setAttribute('playsinline', '');
+      video.setAttribute('muted', '');
+
+      function handleStarted() {
+        if (preparing) preparing.style.display = 'none';
+        const canvas = document.getElementById('hero-canvas');
+        if (canvas) canvas.style.display = 'none';
+      }
+
+      video.addEventListener('playing', handleStarted);
+      video.addEventListener('timeupdate', function firstFrame() {
+        if (video.currentTime > 0) {
+          handleStarted();
+          video.removeEventListener('timeupdate', firstFrame);
+        }
+      });
+
+      // Disparar reproducción forzada
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.then(handleStarted).catch(function(err) {
+          console.warn('Autoplay bloqueado por el navegador, requiere interacción:', err);
+        });
+      }
+    }
+
+    // ── Audio del video de portada ────────────────────────────────────────
+    const btnAudio = document.getElementById('btn-audio');
+
+    function enableAudio() {
+      if (!video) return;
+      video.muted = false;
+      video.volume = 0.35;
+      video.play().catch(function () {});
+      sessionStorage.setItem('om-audio', 'on');
+      if (btnAudio) {
+        btnAudio.textContent = 'Silenciar';
+        btnAudio.setAttribute('aria-label', 'Silenciar el audio de fondo');
+      }
+    }
+
+    function disableAudio() {
+      if (video) video.muted = true;
+      sessionStorage.setItem('om-audio', 'off');
+      if (btnAudio) {
+        btnAudio.textContent = 'Activar sonido';
+        btnAudio.setAttribute('aria-label', 'Activar sonido del video de fondo');
+      }
+    }
+
+    if (btnAudio) {
+      btnAudio.addEventListener('click', function () {
+        if (video && !video.muted) {
+          disableAudio();
+        } else {
+          enableAudio();
+        }
+      });
+    }
+
+    // ── Cancha animada (fallback canvas) ─────────────────────────────────
+    const canvas = document.getElementById('hero-canvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+
+      function resizeCanvas() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Puntos: BRA naranja, GER crema, balón lima
+      const COLORS = ['#F5A623', '#F5A623', '#F5A623', '#F5F3EE', '#F5F3EE', '#F5F3EE', '#A3E635'];
+      const points = Array.from({ length: 22 }, function (_, i) {
+        return {
+          x:   Math.random() * window.innerWidth,
+          y:   Math.random() * window.innerHeight,
+          vx:  (Math.random() - 0.5) * 0.4,
+          vy:  (Math.random() - 0.5) * 0.4,
+          r:   i === 6 ? 5 : 4,
+          col: COLORS[i % COLORS.length],
+        };
+      });
+
+      function drawField() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Fondo de cancha
+        ctx.fillStyle = '#0E1A16';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Línea central
+        ctx.strokeStyle = '#2A4A3E';
+        ctx.lineWidth   = 1;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, 0);
+        ctx.lineTo(canvas.width / 2, canvas.height);
+        ctx.stroke();
+      }
+
+      let rafId;
+      function animate() {
+        drawField();
+        points.forEach(function (p) {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+          if (p.y < 0 || p.y > canvas.height)  p.vy *= -1;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.col;
+          ctx.globalAlpha = 0.75;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        });
+        rafId = requestAnimationFrame(animate);
+      }
+
+      animate();
+
+      // Detener si el video ya está reproduciéndose
+      if (video) {
+        video.addEventListener('playing', function () {
+          cancelAnimationFrame(rafId);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+      }
+    }
+
+    // ── Navbar: fondo al hacer scroll ────────────────────────────────────
+    const nav = document.getElementById('main-nav');
+    if (nav) {
+      window.addEventListener('scroll', function () {
+        if (window.scrollY > 40) {
+          nav.classList.add('om-nav--scrolled');
+        } else {
+          nav.classList.remove('om-nav--scrolled');
+        }
+      }, { passive: true });
+    }
+
+    // ── Logos desde manifest ──────────────────────────────────────────────
+    const logosContainer = document.getElementById('ibm-logos');
+    if (logosContainer) {
+      fetch('../assets/logos/logos.manifest.json')
+        .then(function (r) { return r.json(); })
+        .then(function (manifest) {
+          manifest.logos
+            .filter(function (l) { return l.id.startsWith('ibm') || l.id.startsWith('programa'); })
+            .forEach(function (logo) {
+              const filePath = '../assets/logos/' + logo.file;
+              const isPending = logo.status && logo.status.startsWith('PENDING');
+
+              if (isPending) {
+                const ph = document.createElement('span');
+                ph.className = 'powered-by__logo-placeholder';
+                ph.textContent = '[' + logo.alt + ']';
+                ph.title = logo.status;
+                logosContainer.appendChild(ph);
+              } else {
+                const wrapper = document.createElement('span');
+                wrapper.className = 'powered-by__logo-item';
+                const img = document.createElement('img');
+                img.src = filePath;
+                img.alt = logo.alt;
+                img.style.maxWidth = logo.max_width + 'px';
+                wrapper.appendChild(img);
+                logosContainer.appendChild(wrapper);
+              }
+            });
+        })
+        .catch(function () {
+          // Si falla la carga del manifest, mostrar placeholders estáticos
+          ['IBM', 'watsonx', 'Granite'].forEach(function (name) {
+            const ph = document.createElement('span');
+            ph.className = 'powered-by__logo-placeholder';
+            ph.textContent = '[Logo ' + name + ']';
+            logosContainer.appendChild(ph);
+          });
+        });
+    }
+
+    // ── Textos de leyenda desde ui.config.json ────────────────────────────
+    fetch('../config/ui.config.json')
+      .then(function (r) { return r.json(); })
+      .then(function (cfg) {
+        var leg = cfg.legend || {};
+        var map = {
+          'legend-creators': leg.creators,
+          'legend-program':  leg.program,
+          'legend-license':  leg.license,
+        };
+        Object.keys(map).forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el && map[id]) el.textContent = map[id];
+        });
+      })
+      .catch(function () { /* mantiene los marcadores [..] */ });
+
+  })();
+  </script>
+
+</body>
+</html>

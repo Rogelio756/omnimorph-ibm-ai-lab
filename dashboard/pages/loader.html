@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<!--
+  loader.html — Pantalla de carga / respaldo OMNIMORPH
+  =====================================================
+  AUTOSUFICIENTE: todos los estilos y el SVG están incrustados.
+  Funciona aunque el resto del proyecto no esté disponible.
+  Sirve como pantalla de carga inicial Y como pantalla de error.
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OMNIMORPH — Preparando el análisis</title>
+  <style>
+    /* ── Tokens incrustados (subconjunto del tema claro) ─────────────────── */
+    :root {
+      --color-bg-light:        #FFFFFF;
+      --color-text-light:      #111111;
+      --color-text-soft-light: #4B5563;
+      --color-border-light:    #E5E7EB;
+      --color-team-a:          #F5A623;
+      --color-ok:              #1FC8B0;
+      --font-headline: 'Jost', 'Segoe UI', system-ui, sans-serif;
+      --font-ui:       'Inter', 'Segoe UI', system-ui, sans-serif;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-9: 36px;
+      --space-12: 48px;
+      --radius-pill: 30px;
+    }
+
+    /* ── Reset mínimo ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Página ────────────────────────────────────────────────────────── */
+    body {
+      background-color: var(--color-bg-light);
+      color: var(--color-text-light);
+      font-family: var(--font-ui);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      padding: var(--space-12) var(--space-6);
+    }
+
+    /* ── Contenedor central ────────────────────────────────────────────── */
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-6);
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
+    }
+
+    /* ── Cubo SVG ──────────────────────────────────────────────────────── */
+    .loader__cube {
+      width: 80px;
+      height: 80px;
+    }
+
+    /* Animación de la capa superior del cubo */
+    .cube-top {
+      transform-origin: 50% 22%;
+      animation: cube-lift 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes cube-lift {
+      0%,  60%, 100% { transform: translateY(0);   opacity: 1;   }
+      30%             { transform: translateY(-12px); opacity: 0.9; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cube-top { animation: none; }
+    }
+
+    /* ── Wordmark ──────────────────────────────────────────────────────── */
+    .loader__wordmark {
+      font-family: var(--font-headline);
+      font-weight: 500;
+      font-size: 26px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-text-light);
+    }
+
+    /* ── Estado ────────────────────────────────────────────────────────── */
+    .loader__status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 14px;
+      color: var(--color-text-soft-light);
+    }
+
+    /* ── Puntos pulsando ───────────────────────────────────────────────── */
+    .loader__dots { display: flex; gap: 4px; }
+
+    .loader__dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: var(--color-text-light);
+      animation: dot-pulse 1.4s ease-in-out infinite;
+    }
+    .loader__dot:nth-child(2) { animation-delay: 0.2s; }
+    .loader__dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes dot-pulse {
+      0%, 80%, 100% { opacity: 0.25; transform: scale(0.75); }
+      40%            { opacity: 1;    transform: scale(1);    }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .loader__dot { animation: none; opacity: 1; }
+    }
+
+    /* ── Indicador de progreso (barra delgada) ─────────────────────────── */
+    .loader__bar-wrap {
+      width: 100%;
+      height: 2px;
+      background-color: var(--color-border-light);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .loader__bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--color-text-light);
+      border-radius: 1px;
+      animation: bar-progress 3s ease-in-out infinite;
+    }
+
+    @keyframes bar-progress {
+      0%   { width: 0%;   opacity: 1;   }
+      70%  { width: 85%;  opacity: 1;   }
+      90%  { width: 100%; opacity: 1;   }
+      100% { width: 100%; opacity: 0;   }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .loader__bar { animation: none; width: 60%; }
+    }
+
+    /* ── Bloque de respaldo ─────────────────────────────────────────────── */
+    .loader__fallback {
+      border-top: 1px solid var(--color-border-light);
+      padding-top: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-4);
+      width: 100%;
+    }
+
+    .loader__fallback-text {
+      font-size: 14px;
+      color: var(--color-text-soft-light);
+      line-height: 1.6;
+      max-width: 30ch;
+    }
+
+    /* ── Botón Reintentar ───────────────────────────────────────────────── */
+    .btn-retry {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      padding: 0 24px;
+      border-radius: var(--radius-pill);
+      background-color: var(--color-text-light);
+      color: var(--color-bg-light);
+      font-family: var(--font-ui);
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: opacity 150ms ease-out;
+      text-decoration: none;
+    }
+
+    .btn-retry:hover { opacity: 0.85; }
+    .btn-retry:focus-visible {
+      outline: 2px solid #1FC8B0;
+      outline-offset: 3px;
+    }
+
+    /* ── Enlace secundario ──────────────────────────────────────────────── */
+    .loader__link {
+      font-size: 13px;
+      color: var(--color-text-soft-light);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .loader__link:hover { color: var(--color-text-light); }
+
+    /* ── Pie de página ──────────────────────────────────────────────────── */
+    .loader__footer {
+      font-size: 11px;
+      color: var(--color-text-soft-light);
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loader" role="main" aria-label="Pantalla de carga OMNIMORPH">
+
+    <!-- Cubo de Rubik SVG — autosuficiente, sin archivos externos -->
+    <div class="loader__cube" aria-hidden="true">
+      <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+        <!-- Cara inferior izquierda -->
+        <polygon points="8,26 48,44 48,92 8,74" fill="#1FC8B0"/>
+        <!-- Cara inferior derecha -->
+        <polygon points="48,44 88,26 88,74 48,92" fill="#7C5CD8"/>
+        <!-- Líneas cara izquierda -->
+        <line x1="8" y1="51" x2="48" y2="69" stroke="#111" stroke-width="0.8" opacity="0.3"/>
+        <line x1="8" y1="62" x2="48" y2="80" stroke="#111" stroke-width="0.8" opacity="0.3"/>
+        <line x1="28" y1="44" x2="28" y2="83" stroke="#111" stroke-width="0.8" opacity="0.3"/>
+        <!-- Líneas cara derecha -->
+        <line x1="48" y1="60" x2="88" y2="42" stroke="#111" stroke-width="0.8" opacity="0.3"/>
+        <line x1="48" y1="72" x2="88" y2="54" stroke="#111" stroke-width="0.8" opacity="0.3"/>
+        <line x1="68" y1="44" x2="68" y2="83" stroke="#111" stroke-width="0.8" opacity="0.3"/>
+        <!-- Cara superior (se levanta) -->
+        <g class="cube-top">
+          <polygon points="48,4 88,22 48,40 8,22" fill="#F5A623"/>
+          <line x1="28" y1="13" x2="68" y2="31" stroke="#111" stroke-width="0.8" opacity="0.3"/>
+          <line x1="48" y1="4"  x2="48" y2="40" stroke="#111" stroke-width="0.8" opacity="0.3"/>
+          <line x1="18" y1="22" x2="78" y2="22" stroke="#111" stroke-width="0.8" opacity="0.3"/>
+          <!-- Cuadro rosa -->
+          <polygon points="48,13 62,19 48,25 34,19" fill="#FF6B9D" opacity="0.85"/>
+          <!-- Cuadro lima -->
+          <polygon points="58,10 72,16 58,22 44,16" fill="#A3E635" opacity="0.85"/>
+        </g>
+        <!-- Bordes exteriores -->
+        <polyline points="8,22 48,4 88,22 88,74 48,92 8,74 8,22" stroke="#111" stroke-width="1.5" fill="none"/>
+        <line x1="48" y1="4"  x2="48" y2="40" stroke="#111" stroke-width="1.5"/>
+        <line x1="8" y1="22" x2="48" y2="40" stroke="#111" stroke-width="1.5"/>
+        <line x1="88" y1="22" x2="48" y2="40" stroke="#111" stroke-width="1.5"/>
+        <line x1="48" y1="40" x2="48" y2="92" stroke="#111" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <!-- Wordmark -->
+    <p class="loader__wordmark">OMNIMORPH</p>
+
+    <!-- Estado -->
+    <div class="loader__status" aria-live="polite" id="loader-status">
+      <span id="loader-text">Preparando el análisis</span>
+      <span class="loader__dots" aria-hidden="true">
+        <span class="loader__dot"></span>
+        <span class="loader__dot"></span>
+        <span class="loader__dot"></span>
+      </span>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="loader__bar-wrap" role="progressbar" aria-label="Progreso de carga" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+      <div class="loader__bar" id="loader-bar"></div>
+    </div>
+
+    <!-- Bloque de respaldo -->
+    <div class="loader__fallback" id="loader-fallback" hidden>
+      <p class="loader__fallback-text">
+        ¿Está tardando demasiado? El pipeline puede necesitar más tiempo
+        o el servidor podría haber encontrado un error.
+      </p>
+      <button class="btn-retry" id="btn-retry" type="button">
+        Reintentar
+      </button>
+      <a class="loader__link" href="index.html">Volver al inicio</a>
+    </div>
+
+    <!-- Pie -->
+    <p class="loader__footer">OMNIMORPH · ibm/granite-4-h-small · watsonx.ai</p>
+
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    var TIMEOUT_MS = 15000;   // Mostrar respaldo después de 15 s
+    var fallback   = document.getElementById('loader-fallback');
+    var statusText = document.getElementById('loader-status');
+    var barEl      = document.getElementById('loader-bar');
+    var btnRetry   = document.getElementById('btn-retry');
+    var loaderText = document.getElementById('loader-text');
+
+    // Mostrar el bloque de respaldo si tarda demasiado
+    var fallbackTimer = setTimeout(function () {
+      if (fallback) fallback.hidden = false;
+    }, TIMEOUT_MS);
+
+    // El script que llama a loader.html puede llamar a window.loaderReady()
+    // para indicar que la carga terminó y redirigir
+    window.loaderReady = function (redirectUrl) {
+      clearTimeout(fallbackTimer);
+      if (loaderText) loaderText.textContent = 'Listo';
+      if (barEl) {
+        barEl.style.animation = 'none';
+        barEl.style.width = '100%';
+      }
+      setTimeout(function () {
+        window.location.href = redirectUrl || 'mateo.html';
+      }, 400);
+    };
+
+    // window.loaderError() para indicar un error
+    window.loaderError = function (msg) {
+      clearTimeout(fallbackTimer);
+      if (loaderText) loaderText.textContent = msg || 'Error al iniciar el análisis';
+      if (fallback) fallback.hidden = false;
+      if (barEl) { barEl.style.animation = 'none'; barEl.style.width = '0%'; }
+    };
+
+    // Reintentar: recarga la página
+    if (btnRetry) {
+      btnRetry.addEventListener('click', function () {
+        window.location.reload();
+      });
+    }
+
+    // Actualizar aria-valuenow mientras avanza la barra
+    var barProgress = 0;
+    var barTimer = setInterval(function () {
+      barProgress = Math.min(barProgress + 2, 90);
+      var wrap = document.querySelector('[role="progressbar"]');
+      if (wrap) wrap.setAttribute('aria-valuenow', barProgress);
+      if (barProgress >= 90) clearInterval(barTimer);
+    }, (3000 / 45));
+
+  })();
+  </script>
+
+</body>
+</html>

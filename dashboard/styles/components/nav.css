@@ -1,0 +1,24 @@
+/**
+ * styles/components/nav.css
+ * OMNIMORPH — Barra de navegación de la portada
+ */
+
+/* La estructura base .om-nav está en layout.css */
+
+/* Separador visual entre wordmark y links */
+.om-nav::after {
+  content: none;
+}
+
+/* Estado scroll: agrega fondo semitransparente */
+.om-nav--scrolled {
+  background: rgba(11, 11, 11, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background var(--transition);
+}
+
+/* Enlace activo */
+.om-nav__link--active {
+  color: var(--color-text);
+}

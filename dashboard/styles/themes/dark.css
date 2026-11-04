@@ -1,0 +1,30 @@
+/**
+ * styles/themes/dark.css
+ * OMNIMORPH — Tema oscuro (predeterminado)
+ * Aquí se pueden sobreescribir tokens para variantes futuras.
+ * Por ahora equivale exactamente a los valores de tokens.css.
+ */
+
+/* Este archivo existe para que variantes futuras (claro, alto contraste)
+   sigan el mismo patrón: un archivo por tema que sobreescribe :root.
+   En producción se puede activar así:
+     <link rel="stylesheet" href="themes/dark.css">
+   o con JavaScript:
+     document.documentElement.dataset.theme = 'dark';
+*/
+
+[data-theme="dark"] {
+  --color-bg:           #111111;
+  --color-bg-deep:      #0A0A0A;
+  --color-surface:      #1A1A1A;
+  --color-border:       #2A2A2A;
+  --color-border-soft:  #3A3A3A;
+  --color-text:         #FFFFFF;
+  --color-text-soft:    #A1A1AE;
+}
+
+/**
+ * styles/themes/light.css (placeholder para el futuro)
+ * Solo se usaría en la pantalla de carga/error.
+ * Los tokens de tema claro ya están en tokens.css como --color-bg-light, etc.
+ */

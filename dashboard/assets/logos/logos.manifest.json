@@ -1,0 +1,54 @@
+{
+  "_comment": "logos.manifest.json — Fuente única de verdad para todos los logos. Los componentes leen este archivo; nunca escriben rutas a mano. Añadir un logo: agregar una entrada aquí y colocar el archivo en assets/logos/<categoria>/.",
+
+  "logos": [
+    {
+      "id": "omnimorph-main",
+      "file": "omnimorph/logo_omnimorph.jpg",
+      "alt": "Logo OMNIMORPH — cubo de Rubik con wordmark",
+      "max_width": 220,
+      "variant": "dark",
+      "status": "OK"
+    },
+    {
+      "id": "omnimorph-cube",
+      "file": "omnimorph/omnimorph-cube.svg",
+      "alt": "Cubo de Rubik OMNIMORPH",
+      "max_width": 80,
+      "variant": "both",
+      "status": "PENDING"
+    },
+    {
+      "id": "ibm-main",
+      "file": "ibm/IBM_logo.svg",
+      "alt": "IBM",
+      "max_width": 60,
+      "variant": "light",
+      "status": "PENDING — descargar logo oficial IBM de IBM Brand Center"
+    },
+    {
+      "id": "ibm-watsonx",
+      "file": "ibm/watsonx_logo.svg",
+      "alt": "IBM watsonx",
+      "max_width": 100,
+      "variant": "light",
+      "status": "PENDING"
+    },
+    {
+      "id": "ibm-granite",
+      "file": "ibm/granite_logo.svg",
+      "alt": "IBM Granite",
+      "max_width": 90,
+      "variant": "light",
+      "status": "PENDING"
+    },
+    {
+      "id": "programa-main",
+      "file": "programa/programa_logo.svg",
+      "alt": "[Logo del programa — añadir alt descriptivo]",
+      "max_width": 120,
+      "variant": "both",
+      "status": "PENDING — colocar logo del programa en assets/logos/programa/"
+    }
+  ]
+}

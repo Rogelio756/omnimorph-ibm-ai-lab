@@ -1,0 +1,75 @@
+/**
+ * styles/components/chronicle.css
+ * OMNIMORPH — Crónica IA: texto, reproductor de forma de onda, pie
+ */
+
+.chronicle {
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Texto de la narración */
+.chronicle__text {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: var(--text-body);
+  line-height: 1.8;
+  color: var(--color-text);
+}
+
+/* Reproductor de forma de onda (visualización estática/SVG) */
+.chronicle__waveform {
+  height: 40px;
+  background-color: var(--color-surface);
+  border: var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  gap: var(--space-2);
+  overflow: hidden;
+}
+
+.chronicle__waveform-bars {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+}
+
+.chronicle__waveform-bar {
+  width: 2px;
+  background-color: var(--color-text-soft);
+  border-radius: 1px;
+  opacity: 0.6;
+}
+
+.chronicle__waveform-bar--active {
+  background-color: var(--color-text);
+  opacity: 1;
+}
+
+.chronicle__waveform-time {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+  flex-shrink: 0;
+}
+
+/* Pie: latencia y tokens */
+.chronicle__meta {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.chronicle__meta-item {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}
+
+.chronicle__meta-value {
+  color: var(--color-text);
+}

@@ -1,0 +1,145 @@
+/**
+ * styles/components/player-sidebar.css
+ * OMNIMORPH — Barra lateral de jugadores (320 px)
+ * Selector BRA/GER, lista de 5 jugadores, ficha con mapa de calor y 3 cifras
+ */
+
+.player-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Selector de equipo */
+.player-sidebar__team-selector {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border);
+}
+
+/* Lista de jugadores */
+.player-sidebar__list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Fila de jugador */
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border);
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.player-row:hover {
+  background-color: var(--color-surface);
+}
+
+.player-row--active {
+  background-color: var(--color-surface);
+}
+
+/* Número de track */
+.player-row__track {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+  min-width: 28px;
+}
+
+/* Barra de la métrica activa */
+.player-row__bar-wrap {
+  flex: 1;
+  height: var(--kpi-bar-height);
+  background-color: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.player-row__bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background-color: var(--color-team-a);
+  transition: width var(--transition);
+}
+
+.player-row__bar-fill--team-b {
+  background-color: var(--color-team-b);
+}
+
+/* Valor numérico de la métrica */
+.player-row__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Selector de métrica */
+.player-sidebar__metric-selector {
+  padding: var(--space-2) var(--space-4);
+  border-bottom: var(--border);
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* Ficha del jugador seleccionado */
+.player-card {
+  border-top: var(--border);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.player-card__title {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+/* Mapa de calor (placeholder canvas/SVG) */
+.player-card__heatmap {
+  aspect-ratio: 120 / 70;
+  background-color: var(--color-pitch);
+  border: var(--border);
+  overflow: hidden;
+}
+
+/* 3 cifras de la ficha */
+.player-card__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  border-top: var(--border);
+  padding-top: var(--space-3);
+}
+
+.player-card__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.player-card__stat-label {
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.player-card__stat-value {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-medium);
+  font-size: 18px;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}

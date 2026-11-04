@@ -1,0 +1,74 @@
+/**
+ * styles/components/transcript.css
+ * OMNIMORPH — Transcripción sincronizada al español
+ * Línea activa en blanco, siguiente atenuada con cursor
+ */
+
+.transcript {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 320px;
+}
+
+.transcript__line {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--cell-padding-x);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition);
+}
+
+/* Marca de tiempo */
+.transcript__ts {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+  flex-shrink: 0;
+  padding-top: 2px;
+  min-width: 60px;
+}
+
+/* Texto de la línea */
+.transcript__text {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-soft);
+}
+
+/* Línea activa (se está reproduciendo) */
+.transcript__line--active {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.transcript__line--active .transcript__text {
+  color: var(--color-text);
+}
+
+/* Línea siguiente (cursor de anticipación) */
+.transcript__line--next .transcript__text {
+  color: var(--color-text-soft);
+  opacity: 0.6;
+}
+
+/* Cursor parpadeante en la línea siguiente */
+.transcript__cursor {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  background-color: var(--color-text-soft);
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transcript__cursor {
+    animation: none;
+  }
+}
