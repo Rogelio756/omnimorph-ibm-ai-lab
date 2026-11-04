@@ -4,16 +4,18 @@
 **Proyecto:** Omnimorph — Análisis Táctico de Fútbol con IA (MATEO)  
 **Equipo:** Rogelio Leonardo Méndez Macías  
 **Herramientas y Entornos:** IBM Bob IDE + Gemini (Antigravity) + Claude Code + GitHub  
+**Rama activa de trabajo:** `feat-dashboard-mejoras` (respaldo base en `pre-mejoras`)  
 
 ---
 
 ## 1. Objetivos de la sesión
 
 1. Analizar la propuesta técnica enviada por Fernando Maciel (IBM) sobre arquitecturas híbridas (CV + LLM).
-2. Evaluar el repositorio de datos y análisis creado por el equipo: [`omnimorph-brasil-alemania-2014`](https://github.com/FerTC8/omnimorph-brasil-alemania-2014.git).
+2. Evaluar y auditar el repositorio de datos creado por el equipo: [`omnimorph-brasil-alemania-2014`](https://github.com/FerTC8/omnimorph-brasil-alemania-2014.git).
 3. Asegurar y respaldar el código actual en GitHub mediante ramas de seguridad (`pre-mejoras` y `feat-dashboard-mejoras`).
 4. Instalar y desacoplar la herramienta meta-arquitectónica **The Architect** en una carpeta apartada (`tools/the-architect/`) para garantizar continuidad total e interoperabilidad entre agentes (Bob, Gemini y Claude).
-5. Definir la arquitectura para las próximas dos mejoras: **Página Pre-Match & Analytics** y **Chatbot Táctico con IBM Granite**.
+5. Diseñar los planos visuales de la aplicación completa (funciones existentes vs. nuevas adiciones) y el wireframe de la interfaz de 4 paneles/páginas.
+6. Dejar preparado el prompt de traspaso para continuar el análisis y desarrollo en Claude Code.
 
 ---
 
@@ -70,8 +72,47 @@ Para permitir que el desarrollador pueda alternar sin perder el contexto de trab
 
 ---
 
-## 5. Próximos Pasos (Roadmap Inmediato)
+## 5. Planos Visuales y Wireframe de la Solución Completa
 
-1. **Paso 1:** Migrar los archivos del repositorio `omnimorph-brasil-alemania-2014` a `data/partidos/brasil_alemania_2014/`.
-2. **Paso 2:** Crear la página `implementacion/dashboard/pages/2_Analisis_Brasil_Alemania.py` con pestañas Pre-Match, Evolución Estadística y Mapa SVG de los 8 Goles.
-3. **Paso 3:** Desarrollar el Chatbot Táctico conectado a **IBM Granite** (`ibm/granite-4-h-small`) con inyección de contexto futbolístico.
+### A. Arquitectura Unificada (End-to-End)
+```
+FUENTES (Video + Datos FIFA Brasil 1-7)
+   │
+   ├──> PERCEPCIÓN MATEMÁTICA LOCAL (YOLO + Homografía EMA + Savitzky-Golay)
+   │       │
+   │       └──> Ventanas 4.0s (JSON)
+   │               │
+   ├──> CEREBRO COGNITIVO IBM watsonx.ai
+   │       │   • Modelo: ibm/granite-4-h-small
+   │       │   • Narrador de Audio (TTS pyttsx3)
+   │       │   • Asistente Conversacional (Chatbot)
+   │       │   • Auditoría watsonx.governance (Monitor M3)
+   │       │
+   └──> STREAMLIT MULTI-PAGE DASHBOARD (MATEO)
+           ├── Página 1: Operaciones en Vivo (Video, Radar 2D, Métricas, Relato)
+           ├── Página 2: Centro de Partido Brasil 1-7 (Pre-Match, Stats, 8 Goles SVG)
+           ├── Página 3: Chatbot Asistente Granite (Conversacional, Chips, RAG ligero)
+           └── Página 4: Observabilidad (9 Monitores PASS M1 a M4)
+```
+
+### B. Wireframe de Navegación del Usuario
+- **Barra Lateral:** Menú de 4 páginas + Semáforos en tiempo real M1–M4.
+- **Página 1 (Operaciones en Vivo):** 4 paneles sincronizados por el Reloj Maestro (0..60s).
+- **Página 2 (Centro de Partido Brasil 1-7):** 4 pestañas interactivas:
+  - Tab 1: Ficha Pre-Match (Estadio Mineirão, clima, bajas de Neymar y Thiago Silva, 23 jugadores).
+  - Tab 2: Evolución Estadística (1T 0-5 vs 2T 1-2 vs Total 1-7, xG, posesión, pases).
+  - Tab 3: Mapa de los 8 Goles (`mapa_8_goles.svg` con escala de tamaño según xG).
+  - Tab 4: Zoom al Gol de Müller en min 11 (`radar_gol_muller.svg` y pantallas de Klose/Höwedes).
+- **Página 3 (Chatbot Asistente con IBM Granite):**
+  - Componente de chat con `st.chat_message()` y `st.chat_input()`.
+  - Preguntas sugeridas en chips rápidos.
+  - Respuestas analíticas fundamentadas en los datos oficiales con telemetría de tokens y latencia.
+- **Página 4 (Observabilidad):** Estado detallado de los 9 monitores del pipeline.
+
+---
+
+## 6. Próximos Pasos (Roadmap de Implementación)
+
+1. **Paso 1:** Copiar el dataset validado a `data/partidos/brasil_alemania_2014/`.
+2. **Paso 2:** Crear `implementacion/dashboard/pages/2_Analisis_Brasil_Alemania.py`.
+3. **Paso 3:** Implementar el Chatbot conversacional con `ibm/granite-4-h-small`.
