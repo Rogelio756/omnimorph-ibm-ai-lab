@@ -31,6 +31,8 @@ from implementacion.cloud_agent.agent_narrator import (
     _init_watsonx_model,
 )
 from implementacion.cloud_agent.chat_verificador import (
+    RE_METRICA,
+    TERMINOS_METRICA,
     construir_hechos,
     sin_acentos,
     verificar_atribucion,
@@ -97,6 +99,39 @@ PALABRAS_DATO_INDIVIDUAL = (
 # Se responden con los datos generales del partido, que siempre se envían
 PALABRAS_SOLO_PARTIDO = (
     "clima", "temperatura", "arbitr", "estadio", "asistencia", "public", "fecha", "sede",
+)
+
+# Comparaciones entre tiempos: Granite confunde equipos, así que las redacta el código
+RE_TIEMPOS = re.compile(
+    r"\b(?:1t|2t|1er tiempo|2do tiempo|primer tiempo|segundo tiempo|primera parte|"
+    r"segunda parte|cada tiempo|por tiempo|ambos tiempos|dos tiempos|entre tiempos)\b"
+)
+RE_COMPARACION = re.compile(
+    r"\b(?:cambi\w*|compar\w*|diferenc\w*|evolu\w*|vari\w*|contrast\w*|mejoro|empeoro)\b"
+    r"|\bque (?:paso|ocurrio|sucedio)\b"
+)
+METRICAS_COMPARACION = {
+    "goles": ("Goles", ""),
+    "posesion_pct": ("Posesión", "%"),
+    "tiros_totales": ("Tiros totales", ""),
+    "tiros_a_puerta": ("Tiros a puerta", ""),
+    "tiros_dentro_area": ("Tiros dentro del área", ""),
+    "tiros_fuera_area": ("Tiros fuera del área", ""),
+    "xg_esperado": ("xG estimado", ""),
+    "precision_pases_pct": ("Precisión de pases", "%"),
+    "corners": ("Córners", ""),
+    "faltas_cometidas": ("Faltas cometidas", ""),
+    "fueras_de_juego": ("Fueras de juego", ""),
+    "atajadas": ("Atajadas", ""),
+    "recuperaciones": ("Recuperaciones", ""),
+}
+METRICAS_RESUMEN = ("goles", "posesion_pct", "tiros_totales", "tiros_a_puerta", "xg_esperado")
+METRICAS_TOTALES = (*METRICAS_RESUMEN, "corners", "faltas_cometidas", "atajadas")
+RE_RESUMEN = re.compile(r"\b(?:resumen|resume|resumir|estadisticas)\b")
+
+MENSAJE_BLOQUEADA = (
+    "Descarté esta respuesta porque algunas cifras no coincidían con los datos. "
+    "Prueba con una pregunta más concreta o consulta la página Partido."
 )
 
 
@@ -261,6 +296,59 @@ def respuesta_sin_datos(pregunta: str, datos: dict) -> Optional[str]:
     )
 
 
+def respuesta_comparativa(pregunta: str, datos: dict) -> Optional[str]:
+    """
+    Redacta con los datos, sin LLM, las comparaciones entre tiempos, las comparaciones
+    entre equipos y los resúmenes estadísticos. Si la pregunta nombra una métrica o un
+    equipo, se limita a ellos. Las preguntas sobre un jugador siguen su curso normal.
+    """
+    normalizada = sin_acentos(pregunta)
+    hechos = datos["hechos"]
+    nombrados = [e for clave, e in hechos["equipos"].items() if clave in normalizada]
+    compara = RE_COMPARACION.search(normalizada) is not None
+    por_tiempos = compara and RE_TIEMPOS.search(normalizada) is not None
+    entre_equipos = compara and (len(nombrados) == 2 or "equipos" in normalizada)
+    resumen = RE_RESUMEN.search(normalizada) is not None
+    if not (por_tiempos or entre_equipos or resumen):
+        return None
+    if any(
+        re.search(rf"\b{re.escape(alias)}\b", normalizada)
+        for alias in hechos["alias_jugadores"]
+    ):
+        return None
+
+    equipos = nombrados or list(hechos["equipos"].values())
+    pedidas = [TERMINOS_METRICA[t] for t in RE_METRICA.findall(normalizada)]
+    claves = [c for c in dict.fromkeys(pedidas) if c in METRICAS_COMPARACION]
+
+    if por_tiempos:
+        lineas = ["Comparación entre el 1T y el 2T:"]
+        predeterminadas = METRICAS_RESUMEN
+    else:
+        lineas = ["Totales del partido:"]
+        predeterminadas = METRICAS_TOTALES
+
+    for clave in claves or predeterminadas:
+        etiqueta, unidad = METRICAS_COMPARACION[clave]
+        partes = []
+        for equipo in equipos:
+            valores = equipo["valores"][clave]
+            if por_tiempos:
+                partes.append(
+                    f"{equipo['nombre']} {valores['1T']:g}{unidad} en el 1T "
+                    f"y {valores['2T']:g}{unidad} en el 2T"
+                )
+            else:
+                partes.append(f"{equipo['nombre']} {valores['Total']:g}{unidad}")
+        lineas.append(f"- {etiqueta}: {'; '.join(partes)}.")
+    return "\n".join(lineas)
+
+
+def respuesta_por_regla(pregunta: str, datos: dict) -> Optional[str]:
+    """Respuesta redactada por el código, o None si la pregunta va a Granite."""
+    return respuesta_sin_datos(pregunta, datos) or respuesta_comparativa(pregunta, datos)
+
+
 def construir_mensajes(pregunta: str, historial: list[dict], datos: dict) -> list[dict]:
     """Mensajes para la API de chat, con el historial reciente y los datos relevantes."""
     recientes = [
@@ -357,11 +445,13 @@ def auditar_respuesta(
     error: Optional[str] = None,
     origen: str = "granite",
     hechos: Optional[dict] = None,
+    bloquear: bool = False,
 ) -> dict:
     """
     Registra la interacción en chat_audit.jsonl y devuelve la entrada.
     origen: "granite", o "regla" si la respuesta no pasó por el LLM.
     hechos: valores de referencia para comprobar a quién se atribuye cada cifra.
+    bloquear: marca para descartar la respuesta de Granite si alguna cifra no coincide.
     """
     # Las cifras que trae la propia pregunta no son invención del modelo
     sin_respaldo = (
@@ -371,8 +461,11 @@ def auditar_respuesta(
     mal_atribuidas = (
         verificar_atribucion(respuesta, hechos) if respuesta and hechos else []
     )
+    bloqueada = bool(bloquear and mal_atribuidas and origen == "granite")
     if error or not respuesta or not modelo_ok:
         status = "FAIL"
+    elif bloqueada:
+        status = "BLOQUEADA"
     elif sin_respaldo or mal_atribuidas:
         status = "REVISAR"
     else:
@@ -393,6 +486,8 @@ def auditar_respuesta(
         "cost_ru_est": round(tokens_in * RU_PER_TOKEN_IN + tokens_out * RU_PER_TOKEN_OUT, 6),
         "numeros_sin_respaldo": sin_respaldo,
         "atribucion_incorrecta": mal_atribuidas,
+        "bloqueada": bloqueada,
+        "respuesta_descartada": respuesta if bloqueada else None,
         "status": status,
         "error": error,
     }

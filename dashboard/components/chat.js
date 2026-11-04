@@ -10,6 +10,7 @@
   var TIMEOUT_MS = 90000;
   var SUGERIDAS = [
     '¿Quién marcó cada gol y en qué minuto?',
+    '¿Cómo cambió el partido del 1T al 2T?',
     'Compara el xG de ambos equipos en cada tiempo.',
     '¿Cómo se generó el gol de Müller?',
     '¿Qué bajas tuvo Brasil?',
@@ -82,7 +83,7 @@
     aviso.classList.toggle('notice--alert', info.estado !== 'cargando');
     if (info.estado === 'cargando') {
       aviso.hidden = false;
-      aviso.lastElementChild.textContent = 'La primera conexión con Granite puede tardar cerca de un minuto.';
+      aviso.lastElementChild.textContent = 'Conectando con Granite. Tarda unos segundos.';
     } else if (!listo) {
       aviso.hidden = false;
       aviso.lastElementChild.textContent = 'Revisa IBM_CLOUD_API_KEY, WATSONX_URL y WATSONX_SPACE_ID o WATSONX_PROJECT_ID en .env, ' +
@@ -140,7 +141,8 @@
     (r.avisos || []).forEach(function (a) { cuerpo.appendChild(el('span', { class: 'msg__note', text: a })); });
     cuerpo.appendChild(el('span', { class: 'msg__meta', text: r.origen === 'regla'
       ? 'Respuesta directa desde los datos, sin LLM'
-      : r.modelo + ' · ' + Math.round(r.latency_ms) + ' ms · tokens ' + r.tokens_in + '/' + r.tokens_out + ' · ' + r.estado }));
+      : r.modelo + ' · ' + Math.round(r.latency_ms) + ' ms · tokens ' + r.tokens_in + '/' + r.tokens_out + ' · ' +
+        (r.bloqueada ? 'descartada por el verificador' : r.estado) }));
     return agregarMensaje('assistant', cuerpo);
   }
 
@@ -166,10 +168,8 @@
     mensajeUsuario(texto);
 
     var pendiente = agregarMensaje('assistant', el('div', { class: 'msg__body msg__body--pending', 'aria-live': 'polite', text: 'Pensando…' }));
-    // Tras un rato sin usar el chat, la primera respuesta puede tardar ~20 s
     var avisoEspera = setTimeout(function () {
-      pendiente.querySelector('.msg__body').textContent =
-        'Pensando… la primera respuesta tras un rato de inactividad puede tardar hasta 30 s.';
+      pendiente.querySelector('.msg__body').textContent = 'Pensando… está tardando más de lo normal.';
     }, 6000);
     var control = new AbortController();
     var temporizador = setTimeout(function () { control.abort(); }, TIMEOUT_MS);
@@ -189,7 +189,10 @@
       .then(function (data) {
         pendiente.remove();
         mensajeAsistente(data);
-        historial.push({ role: 'user', content: texto }, { role: 'assistant', content: data.respuesta });
+        // Una respuesta descartada no entra al historial: el modelo no debe apoyarse en ella
+        if (!data.bloqueada) {
+          historial.push({ role: 'user', content: texto }, { role: 'assistant', content: data.respuesta });
+        }
       })
       .catch(function (err) {
         pendiente.remove();

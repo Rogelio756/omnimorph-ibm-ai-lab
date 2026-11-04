@@ -3,7 +3,7 @@
 **Proyecto:** Omnimorph — Análisis Táctico de Fútbol con IA (MATEO)  
 **Agente:** Claude Code  
 **Rama activa:** `feat-dashboard-mejoras`  
-**Estado:** Pasos 1 a 3 y verificación en GitHub (`d9a8248`); frontend web implementado, sin commit
+**Estado:** frontend web y fuentes en GitHub (`e05e5d3`); fiabilidad del chat implementada, sin commit
 
 ---
 
@@ -147,18 +147,57 @@ El usuario aclaró que el dashboard sobre el que quería trabajar es el frontend
 
 **Hallazgos de las pruebas:**
 
-- La primera pregunta tras un rato de inactividad tarda unos 20 s en el servicio, y las siguientes unos 0,4 s. Un calentamiento al arrancar no lo evitó, así que se quitó y la página avisa al usuario tras 6 s de espera.
-- La pregunta abierta «¿Cómo cambió el partido del 1T al 2T?» sigue fallando, y ahora el aviso aparece en pantalla con cada cifra discrepante.
+- La pregunta abierta «¿Cómo cambió el partido del 1T al 2T?» seguía fallando. Se resolvió después (sección 10).
 - El puerto 8600 lo ocupaba el servidor que el usuario ya tenía corriendo (PID 20744). No se tocó. Las pruebas se hicieron en el 8601. Ese servidor necesita reiniciarse para tener el endpoint del chat; las páginas estáticas funcionan sin reiniciar.
 
 **Sin verificar:** el límite de 30 preguntas en pantalla, el diseño en móvil, el despliegue en Code Engine y las capturas con el panel en primer plano. La verificación visual se limitó a las páginas del chat y de la comparativa.
 
 ---
 
-## 10. Próximos pasos
+## 10. Fiabilidad del chat
 
-1. Reiniciar el servidor del puerto 8600 y probar el chat allí.
-2. Avisar a Fer de las correcciones para llevarlas al repo de origen.
-3. Integrar audio maestro y subtítulos en el pipeline.
-4. Descargar las fuentes locales (Jost, Inter, JetBrains Mono), que siguen pendientes y dan 404 en todas las páginas.
-5. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.
+### Latencia: la causa real era IPv6
+
+La explicación anterior («la primera pregunta tras inactividad») era incorrecta: una pausa de 6 s bastaba para que **casi cada pregunta** tardara 20 s. Las pruebas previas salían rápidas porque lanzaban las preguntas seguidas.
+
+**Causa:** la red no tiene salida IPv6. `us-south.ml.cloud.ibm.com` publica direcciones IPv6 antes que las IPv4, y cada intento falla a los 21 s (timeout TCP de Windows), mientras IPv4 conecta en 0,03 s. El cliente HTTP cierra las conexiones inactivas, así que cada pregunta tras una pausa pagaba esa espera. El calentamiento que se probó antes no podía resolverlo.
+
+**Solución:** `cloud_agent/red_ipv4.py` usa IPv4 para `*.cloud.ibm.com`, solo dentro del proceso y sin tocar la configuración del sistema. **Resultado:** con pausas de 8 s, respuestas de 0,6 a 2 s frente a ~21 s, y cargar el modelo pasó de ~45 s a ~5 s. También se aplica al narrador. En otra red sin este problema, la mejora puede ser menor o nula.
+
+### Respuestas redactadas por código, sin LLM
+
+`respuesta_por_regla` responde sin Granite las comparaciones entre tiempos, las comparaciones entre equipos y los resúmenes estadísticos, además de los jugadores sin datos. Si la pregunta nombra una métrica o un equipo, se limita a ellos. «¿Cómo cambió el partido del 1T al 2T?» vuelve a las sugeridas: sus cifras se comprobaron contra el archivo original.
+
+### Bloqueo de respuestas
+
+En la web, una respuesta de Granite con cifras que el verificador no puede cuadrar **se descarta**: el usuario ve un mensaje, no entra al historial y queda en el registro como `BLOQUEADA`, con `respuesta_descartada`. Streamlit no bloquea, porque transmite la respuesta mientras se genera; solo la marca.
+
+El bloqueo volvió crítico cada falso positivo: la primera versión descartó 5 de 7 respuestas, varias correctas. Las causas se corrigieron en el verificador: cifras entre paréntesis con su tiempo, «en el segundo» sin «tiempo», minutos enumerados, cifras del rival tras «vs» o «contra», el sujeto heredado entre oraciones, y `%` junto a «pases».
+
+### Resultado en la última tanda con Granite
+
+10 preguntas nuevas con pausas: 8 respuestas mostradas y 2 descartadas. Una descartada era falsa con razón («perdió 6 goles en 7 minutos»). La otra era correcta, por un error del verificador ya corregido. Entre las mostradas, una afirmaba «Kroos con 2 asistencias»: ese caso también se corrigió y hoy se marca.
+
+Casos guardados: 22 de 22 correctas sin marcar, 16 de 16 dirigidos, 7 de 7 correctas nuevas sin marcar, 8 de 8 falsas nuevas detectadas y 7 de 8 respuestas malas reales.
+
+**Importante:** esos casos se usaron para ajustar las reglas; no son una medición independiente. Tras el último ajuste solo se repitió una prueba corta por la página, no una tanda nueva.
+
+### Limitaciones
+
+- **Afirmaciones falsas con cifras reales no se detectan.** Tras el último ajuste, «¿Quién dio más asistencias?» respondió «Toni Kroos dio 1 asistencia»: la cifra es cierta, pero los máximos son Müller y Lahm con 2. Pasó con PASS. La respuesta mala que quedó sin detectar es del mismo tipo: cifras reales con verbos falsos («Brasil redujo…»).
+- **Tampoco se detectan** detalles sin cifras ni rangos mal calculados. En el clip dijo compacidad «entre 17.23 y 62.51» para W0–W4, y el mínimo real de esas ventanas es 22.85.
+- **Un falso positivo sigue siendo posible:** en ese caso se descarta una respuesta correcta.
+- **PASS** significa que no encontró problemas, no que la respuesta sea correcta.
+
+**Consumo:** el registro del chat suma unas 30 RU estimadas en toda la sesión, casi todas de pruebas. La cifra es aproximada: conviene revisar la cuota real en watsonx.
+
+---
+
+## 11. Próximos pasos
+
+1. Reiniciar el servidor del puerto 8600: sin eso sigue con el código anterior y sin chat.
+2. Dejar reproducible el arranque desde un clon limpio y fusionar la rama.
+3. Avisar a Fer de las correcciones para llevarlas al repo de origen.
+4. Integrar audio maestro y subtítulos en el pipeline.
+5. Añadir los textos de licencia OFL de las fuentes.
+6. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.

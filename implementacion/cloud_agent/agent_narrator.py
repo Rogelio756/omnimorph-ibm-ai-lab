@@ -51,6 +51,9 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from implementacion.cloud_agent.governance_monitor_m3 import GovernanceMonitorM3
+from implementacion.cloud_agent.red_ipv4 import preferir_ipv4_en_ibm
+
+preferir_ipv4_en_ibm()
 
 
 # ---------------------------------------------------------------------------

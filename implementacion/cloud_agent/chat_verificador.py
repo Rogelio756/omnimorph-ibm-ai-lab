@@ -33,12 +33,16 @@ TERMINOS_METRICA = {
     "fueras de juego": "fueras_de_juego",
     "fuera de juego": "fueras_de_juego",
     "posesion": "posesion_pct",
+    "precision en pases": "precision_pases_pct",
+    "precision de pases": "precision_pases_pct",
     "precision": "precision_pases_pct",
     "tiros": "tiros_totales",
     "disparos": "tiros_totales",
     "disparo": "tiros_totales",
     "remates": "tiros_totales",
     "xg": "xg_esperado",
+    "valor estimado de gol": "xg_esperado",
+    "goles esperados": "xg_esperado",
     "corners": "corners",
     "faltas": "faltas_cometidas",
     "atajadas": "atajadas",
@@ -72,6 +76,7 @@ ETIQUETAS_METRICA = {
 TERMINOS_PERIODO = {
     "1t": "1T", "1er tiempo": "1T", "primer tiempo": "1T", "primera parte": "1T",
     "2t": "2T", "2do tiempo": "2T", "segundo tiempo": "2T", "segunda parte": "2T",
+    "en el primero": "1T", "en el segundo": "2T",
     "total": "Total", "todo el partido": "Total", "partido completo": "Total",
 }
 NUMEROS_EN_LETRAS = {
@@ -92,9 +97,13 @@ def _alternativas(terminos) -> str:
 RE_METRICA = re.compile(rf"\b(?:{_alternativas(TERMINOS_METRICA)})\b(?!/)")
 RE_PERIODO = re.compile(rf"\b(?:{_alternativas(TERMINOS_PERIODO)})\b")
 RE_NUMERO = re.compile(r"(?<![\w.,])\d+(?:[.,]\d+)?(?![\w])")
-RE_MINUTOS = re.compile(r"\bminutos?\s+\d+|\b\d+\s+minutos?\b|\b\d+'")
+RE_MINUTOS = re.compile(
+    r"\bminutos?\s+\d+(?:\s*(?:,|y)\s*\d+)*|\b\d+\s+minutos?\b|\b\d+'|\ben el \d+(?![\w.,%])"
+)
 RE_MARCADOR = re.compile(r"\b(\d+)\s*-\s*(\d+)\b")
-RE_SEGMENTO = re.compile(r",\s+|\s+y\s+|\s+vs\.?\s+")
+RE_SEGMENTO = re.compile(r"(,\s+|\s+y\s+|\s+vs\.?\s+|\s+contra\s+|\s+frente a\s+)")
+# Tras estos separadores, una cifra sin equipo explícito es del rival: no se puede atribuir
+RE_RIVAL = re.compile(r"vs|contra|frente")
 RE_DIFERENCIA = re.compile(
     r"\b(?:mas|menos)\b|\bde\s+[\d.,]+%?\s+a\b|\bdel\s+[\d.,]+%?\s+al\b|→"
 )
@@ -257,23 +266,40 @@ def _preparar_frase(frase: str, hechos: dict) -> str:
     return frase
 
 
+def _periodo_de(numero: re.Match, periodos: list, segmento: str) -> Optional[str]:
+    """
+    Tiempo al que pertenece la cifra. Solo cuenta si no hay otra cifra ni un paréntesis
+    entre ambos: en "18 (1T 2, 2T 16)" el 18 es el total, no el dato del 1T.
+    """
+    validos = []
+    for inicio, fin, periodo in periodos:
+        tramo = segmento[fin:numero.start()] if fin <= numero.start() else segmento[numero.end():inicio]
+        if not re.search(r"[()]", tramo) and not RE_NUMERO.search(tramo):
+            validos.append((inicio, fin, periodo))
+    return _cercano(numero, validos)
+
+
 def verificar_atribucion(respuesta: str, hechos: dict) -> list[str]:
     """
     Devuelve una descripción por cada cifra que no coincide con los datos.
 
     Cada oración se divide en segmentos. Una cifra se compara con el equipo o
-    jugador, la métrica y el tiempo de su segmento; lo que falte se hereda del
-    segmento anterior, como en "53% en el 1T y 44% en el 2T".
+    jugador, la métrica y el tiempo de su segmento. La métrica y la entidad que falten
+    se heredan del segmento anterior, como en "53% en el 1T y 44% en el 2T", y la
+    siguiente oración hereda el sujeto, es decir, la entidad con la que abre la oración.
     """
     patron_entidad = re.compile(
         rf"\b(?:{_alternativas([*hechos['equipos'], *hechos['alias_jugadores']])})\b"
     )
     hallazgos: list[str] = []
-    entidad_previa = None
+    sujeto = None
 
     for oracion in re.split(r"\n+|\.\s+|;\s+", sin_acentos(respuesta)):
-        metrica_previa = periodo_previo = None
-        for segmento in RE_SEGMENTO.split(_preparar_frase(oracion, hechos)):
+        entidad_previa = sujeto
+        metrica_previa = None
+        trozos = RE_SEGMENTO.split(_preparar_frase(oracion, hechos))
+        separadores = ["", *trozos[1::2]]
+        for indice, segmento in enumerate(trozos[0::2]):
             entidades = [(m.start(), m.end(), m.group()) for m in patron_entidad.finditer(segmento)]
             metricas = [
                 (m.start(), m.end(), TERMINOS_METRICA[m.group()])
@@ -285,15 +311,20 @@ def verificar_atribucion(respuesta: str, hechos: dict) -> list[str]:
             ]
             # Evoluciones y diferencias no son el valor de un solo tiempo
             sin_periodo = RE_DIFERENCIA.search(segmento) is not None
+            cifra_del_rival = not entidades and RE_RIVAL.search(separadores[indice])
 
-            for numero in RE_NUMERO.finditer(segmento):
+            for numero in [] if cifra_del_rival else RE_NUMERO.finditer(segmento):
                 metrica = _cercano(numero, metricas) or metrica_previa
-                entidad = _cercano(numero, entidades) or entidad_previa
+                # En "Toni Kroos (Alemania) con 2 asistencias" la cifra es del jugador
+                jugadores = [e for e in entidades if e[2] not in hechos["equipos"]]
+                entidad = _cercano(numero, jugadores or entidades) or entidad_previa
                 if metrica is None or entidad is None:
                     continue
                 cifra = float(numero.group().replace(",", "."))
+                if metrica == "pases" and segmento[numero.end():].startswith("%"):
+                    metrica = "precision_pases_pct"
                 if entidad in hechos["equipos"]:
-                    periodo = None if sin_periodo else _cercano(numero, periodos) or periodo_previo
+                    periodo = None if sin_periodo else _periodo_de(numero, periodos, segmento)
                     hallazgo = _revisar_equipo(cifra, hechos["equipos"][entidad], metrica, periodo)
                 else:
                     hallazgo = _revisar_jugador(
@@ -304,8 +335,10 @@ def verificar_atribucion(respuesta: str, hechos: dict) -> list[str]:
 
             if entidades:
                 entidad_previa = entidades[-1][2]
+                # Solo es sujeto si abre la oración (tras una viñeta): en "Destacaron
+                # Kroos y Müller", Kroos no es el sujeto de la oración siguiente
+                if indice == 0 and entidades[0][0] <= 2:
+                    sujeto = entidades[0][2]
             if metricas:
                 metrica_previa = metricas[-1][2]
-            if periodos:
-                periodo_previo = periodos[-1][2]
     return hallazgos

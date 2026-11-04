@@ -113,7 +113,7 @@ class ChatBackend:
         a = self.agente
         with self._lock:
             contexto = a.serializar_contexto(self.datos)
-            respuesta = a.respuesta_sin_datos(pregunta, self.datos)
+            respuesta = a.respuesta_por_regla(pregunta, self.datos)
             origen = "regla" if respuesta else "granite"
             metricas: dict = {}
             if respuesta is None:
@@ -124,18 +124,28 @@ class ChatBackend:
                     a.auditar_respuesta(pregunta, None, contexto, metricas, error=str(exc))
                     raise
             auditoria = a.auditar_respuesta(
-                pregunta, respuesta, contexto, metricas, origen=origen, hechos=self.datos["hechos"]
+                pregunta,
+                respuesta,
+                contexto,
+                metricas,
+                origen=origen,
+                hechos=self.datos["hechos"],
+                bloquear=True,
             )
+        bloqueada = auditoria["bloqueada"]
+        if bloqueada:
+            respuesta = a.MENSAJE_BLOQUEADA
         return {
             "respuesta": respuesta,
+            "bloqueada": bloqueada,
             "origen": origen,
             "modelo": a.REQUIRED_MODEL,
             "estado": auditoria["status"],
             "latency_ms": auditoria["latency_ms"],
             "tokens_in": auditoria["tokens_in"],
             "tokens_out": auditoria["tokens_out"],
-            "atribucion_incorrecta": auditoria["atribucion_incorrecta"],
-            "numeros_sin_respaldo": auditoria["numeros_sin_respaldo"],
+            "atribucion_incorrecta": [] if bloqueada else auditoria["atribucion_incorrecta"],
+            "numeros_sin_respaldo": [] if bloqueada else auditoria["numeros_sin_respaldo"],
             "avisos": a.avisos_calidad(respuesta),
         }
 
