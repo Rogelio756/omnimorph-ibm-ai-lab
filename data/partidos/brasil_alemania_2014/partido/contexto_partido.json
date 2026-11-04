@@ -1,0 +1,115 @@
+{
+  "partido_info": {
+    "id": "WC2014_SF_BRA_GER",
+    "competicion": "Copa Mundial de la FIFA Brasil 2014",
+    "fase": "Semifinal (Partido 61)",
+    "fecha": "2014-07-08",
+    "hora_local": "17:00 BRT",
+    "estadio": "Estádio Governador Magalhães Pinto (Mineirão)",
+    "ciudad": "Belo Horizonte, Brasil",
+    "asistencia": 58141,
+    "arbitro": {
+      "principal": "Marco Antonio Rodríguez",
+      "pais": "México",
+      "asistente_1": "Marvin Torrentera (México)",
+      "asistente_2": "Marcos Quintero (México)",
+      "cuarto_arbitro": "Mark Geiger (Estados Unidos)"
+    },
+    "condiciones_climaticas": {
+      "temperatura_c": 22,
+      "humedad_pct": 51,
+      "cielo": "Despejado",
+      "viento_kmh": 11
+    },
+    "resultado": {
+      "marcador_final": "1-7",
+      "primer_tiempo": "0-5",
+      "segundo_tiempo": "1-2",
+      "clasificado": "Alemania (clasifica a la Final)"
+    }
+  },
+  "equipos": {
+    "brasil": {
+      "team_id": 0,
+      "pais": "Brasil",
+      "codigo": "BRA",
+      "entrenador": "Luiz Felipe Scolari",
+      "esquema_inicial": "4-2-3-1",
+      "capitan": "David Luiz (#4)",
+      "bajas_previas": [
+        {
+          "nombre": "Neymar Jr (#10)",
+          "motivo": "Fractura de la tercera vértebra lumbar en cuartos de final ante Colombia"
+        },
+        {
+          "nombre": "Thiago Silva (#3)",
+          "motivo": "Suspensión por acumulación de dos tarjetas amarillas"
+        }
+      ],
+      "plantilla": {
+        "12": {"nombre": "Júlio César", "posicion": "Portero", "titular": true, "minutos": 90, "eventos": ["7 goles recibidos", "3 atajadas"]},
+        "23": {"nombre": "Maicon", "posicion": "Lateral derecho", "titular": true, "minutos": 90, "eventos": []},
+        "4": {"nombre": "David Luiz", "posicion": "Defensa central (C)", "titular": true, "minutos": 90, "eventos": ["Capitán"]},
+        "13": {"nombre": "Dante", "posicion": "Defensa central", "titular": true, "minutos": 90, "eventos": ["Tarjeta amarilla 68'"]},
+        "6": {"nombre": "Marcelo", "posicion": "Lateral izquierdo", "titular": true, "minutos": 90, "eventos": ["Asistencia 90'"]},
+        "17": {"nombre": "Luiz Gustavo", "posicion": "Pivote defensivo", "titular": true, "minutos": 90, "eventos": []},
+        "5": {"nombre": "Fernandinho", "posicion": "Mediocentro", "titular": true, "minutos": 45, "eventos": ["Sustituido al descanso (46')"]},
+        "7": {"nombre": "Hulk", "posicion": "Extremo derecho", "titular": true, "minutos": 45, "eventos": ["Sustituido al descanso (46')"]},
+        "11": {"nombre": "Oscar", "posicion": "Mediapunta", "titular": true, "minutos": 90, "eventos": ["Gol 90'"]},
+        "20": {"nombre": "Bernard", "posicion": "Extremo izquierdo", "titular": true, "minutos": 90, "eventos": []},
+        "9": {"nombre": "Fred", "posicion": "Delantero centro", "titular": true, "minutos": 69, "eventos": ["Sustituido al 69'"]},
+        "8": {"nombre": "Paulinho", "posicion": "Mediocentro", "titular": false, "minutos": 45, "eventos": ["Ingresó al 46' por Fernandinho"]},
+        "16": {"nombre": "Ramires", "posicion": "Extremo / Interior", "titular": false, "minutos": 45, "eventos": ["Ingresó al 46' por Hulk"]},
+        "19": {"nombre": "Willian", "posicion": "Extremo", "titular": false, "minutos": 21, "eventos": ["Ingresó al 69' por Fred"]},
+        "1": {"nombre": "Jefferson", "posicion": "Portero suplente", "titular": false, "minutos": 0, "eventos": []},
+        "22": {"nombre": "Victor", "posicion": "Portero suplente", "titular": false, "minutos": 0, "eventos": []},
+        "2": {"nombre": "Dani Alves", "posicion": "Lateral derecho suplente", "titular": false, "minutos": 0, "eventos": []},
+        "14": {"nombre": "Maxwell", "posicion": "Lateral izquierdo suplente", "titular": false, "minutos": 0, "eventos": []},
+        "15": {"nombre": "Henrique", "posicion": "Defensa central suplente", "titular": false, "minutos": 0, "eventos": []},
+        "18": {"nombre": "Hernanes", "posicion": "Mediocentro suplente", "titular": false, "minutos": 0, "eventos": []},
+        "21": {"nombre": "Jô", "posicion": "Delantero centro suplente", "titular": false, "minutos": 0, "eventos": []},
+        "3": {"nombre": "Thiago Silva", "posicion": "Defensa central (C)", "titular": false, "minutos": 0, "eventos": ["Suspendido por tarjetas"]},
+        "10": {"nombre": "Neymar Jr", "posicion": "Delantero / Mediapunta", "titular": false, "minutos": 0, "eventos": ["Baja por lesión vertebral"]}
+      }
+    },
+    "alemania": {
+      "team_id": 1,
+      "pais": "Alemania",
+      "codigo": "GER",
+      "entrenador": "Joachim Löw",
+      "esquema_inicial": "4-2-3-1 / 4-3-3",
+      "capitan": "Philipp Lahm (#16)",
+      "bajas_previas": [
+        {
+          "nombre": "Shkodran Mustafi (#21)",
+          "motivo": "Lesión muscular sufrida en octavos de final vs Argelia"
+        }
+      ],
+      "plantilla": {
+        "1": {"nombre": "Manuel Neuer", "posicion": "Portero", "titular": true, "minutos": 90, "eventos": ["1 gol recibido", "7 atajadas"]},
+        "16": {"nombre": "Philipp Lahm", "posicion": "Lateral derecho (C)", "titular": true, "minutos": 90, "eventos": ["Capitán", "Asistencias 24' y 69'"]},
+        "20": {"nombre": "Jérôme Boateng", "posicion": "Defensa central", "titular": true, "minutos": 90, "eventos": []},
+        "5": {"nombre": "Mats Hummels", "posicion": "Defensa central", "titular": true, "minutos": 45, "eventos": ["Sustituido al descanso (46')"]},
+        "4": {"nombre": "Benedikt Höwedes", "posicion": "Lateral izquierdo", "titular": true, "minutos": 90, "eventos": []},
+        "7": {"nombre": "Bastian Schweinsteiger", "posicion": "Pivote organizador", "titular": true, "minutos": 90, "eventos": []},
+        "6": {"nombre": "Sami Khedira", "posicion": "Interior mixto", "titular": true, "minutos": 76, "eventos": ["Gol 29'", "Asistencia 26'", "Sustituido al 76'"]},
+        "18": {"nombre": "Toni Kroos", "posicion": "Mediocentro ofensivo", "titular": true, "minutos": 90, "eventos": ["Goles 24' y 26'", "Asistencia 11'", "Jugador del Partido"]},
+        "13": {"nombre": "Thomas Müller", "posicion": "Extremo / Delantero", "titular": true, "minutos": 90, "eventos": ["Gol 11'", "Asistencias 23' y 79'"]},
+        "8": {"nombre": "Mesut Özil", "posicion": "Mediapunta", "titular": true, "minutos": 90, "eventos": ["Asistencia 29'"]},
+        "11": {"nombre": "Miroslav Klose", "posicion": "Delantero centro", "titular": true, "minutos": 58, "eventos": ["Gol 23' (Récord 16 goles en Mundiales)", "Sustituido al 58'"]},
+        "17": {"nombre": "Per Mertesacker", "posicion": "Defensa central", "titular": false, "minutos": 45, "eventos": ["Ingresó al 46' por Hummels"]},
+        "9": {"nombre": "André Schürrle", "posicion": "Extremo", "titular": false, "minutos": 32, "eventos": ["Ingresó al 58' por Klose", "Goles 69' y 79'"]},
+        "14": {"nombre": "Julian Draxler", "posicion": "Mediapunta", "titular": false, "minutos": 14, "eventos": ["Ingresó al 76' por Khedira"]},
+        "12": {"nombre": "Ron-Robert Zieler", "posicion": "Portero suplente", "titular": false, "minutos": 0, "eventos": []},
+        "22": {"nombre": "Roman Weidenfeller", "posicion": "Portero suplente", "titular": false, "minutos": 0, "eventos": []},
+        "2": {"nombre": "Kevin Großkreutz", "posicion": "Lateral / Mediocampista", "titular": false, "minutos": 0, "eventos": []},
+        "3": {"nombre": "Matthias Ginter", "posicion": "Defensa central suplente", "titular": false, "minutos": 0, "eventos": []},
+        "10": {"nombre": "Lukas Podolski", "posicion": "Delantero suplente", "titular": false, "minutos": 0, "eventos": []},
+        "15": {"nombre": "Erik Durm", "posicion": "Lateral suplente", "titular": false, "minutos": 0, "eventos": []},
+        "19": {"nombre": "Mario Götze", "posicion": "Mediapunta suplente", "titular": false, "minutos": 0, "eventos": []},
+        "23": {"nombre": "Christoph Kramer", "posicion": "Mediocentro suplente", "titular": false, "minutos": 0, "eventos": []},
+        "21": {"nombre": "Shkodran Mustafi", "posicion": "Defensa", "titular": false, "minutos": 0, "eventos": ["Baja por lesión muscular"]}
+      }
+    }
+  }
+}

@@ -21,6 +21,7 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_05_deploy_orchestrate_github.md` | 2026-11-04 | FastAPI + IBM watsonx Orchestrate + GitHub + bob_sessions |
 | `sesion_06_mateo_dashboard.md` | 2026-11-04 | Dashboard MATEO en paralelo H.264, radar 2D independiente y audio TTS 60s |
 | `sesion_07_arquitectura_hibrida_y_the_architect.md` | 2026-11-04 | Análisis híbrido (Fernando Maciel), repo Brasil-Alemania, The Architect y ramas Git |
+| `sesion_08_auditoria_y_migracion_brasil_alemania.md` | 2026-11-04 | Auditoría del repo y migración corregida de datos a `data/partidos/brasil_alemania_2014/` |
 
 
 ---

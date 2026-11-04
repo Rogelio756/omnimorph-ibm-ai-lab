@@ -1,0 +1,9 @@
+Orden,Minuto,Reloj_Oficial,Marcador,Equipo,Anotador,Dorsal_Anotador,Asistente,Dorsal_Asistente,Tipo_Jugada,xG,Pitch_X_cm,Pitch_Y_cm,Distancia_m,Pie_Remate,Zona_Remate
+1,11,10:33,0-1,Alemania,Thomas Müller,13,Toni Kroos,18,Balón parado (Córner derecho),0.35,920,4150,11.3,Derecho,Punto de penalti / Centro del área
+2,23,22:04,0-2,Alemania,Miroslav Klose,11,Thomas Müller,13,Jugada abierta (Ataque combinativo interior),0.65,680,3450,6.8,Derecho,Área chica
+3,24,23:57,0-3,Alemania,Toni Kroos,18,Philipp Lahm,16,Jugada abierta (Centro raso y llegada de segunda línea),0.38,1520,3800,15.5,Izquierdo,Frontal del área grande
+4,26,25:38,0-4,Alemania,Toni Kroos,18,Sami Khedira,6,Jugada abierta (Presión alta y recuperación en salida),0.88,850,3600,8.6,Derecho,Centro del área
+5,29,28:44,0-5,Alemania,Sami Khedira,6,Mesut Özil,8,Jugada abierta (Ataque vertical y pase atrás),0.42,1120,3200,11.6,Derecho,Punto de penalti
+6,69,68:11,0-6,Alemania,André Schürrle,9,Philipp Lahm,16,Jugada abierta (Desborde exterior y pase atrás),0.45,1050,3750,10.8,Derecho,Centro del área
+7,79,78:20,0-7,Alemania,André Schürrle,9,Thomas Müller,13,Jugada abierta (Control orientado y volea al ángulo),0.12,880,2450,13.7,Izquierdo,Sector izquierdo del área
+8,90,89:45,1-7,Brasil,Oscar,11,Marcelo,6,Jugada abierta (Transición rápida y contraataque),0.28,10850,3650,11.6,Derecho,Interior del área grande
