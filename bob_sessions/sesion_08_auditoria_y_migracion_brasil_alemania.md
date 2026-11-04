@@ -3,7 +3,7 @@
 **Proyecto:** Omnimorph — Análisis Táctico de Fútbol con IA (MATEO)  
 **Agente:** Claude Code  
 **Rama activa:** `feat-dashboard-mejoras`  
-**Estado:** Paso 1 terminado, sin commit
+**Estado:** Paso 1 en commit `ec00cfc`; Paso 2 implementado
 
 ---
 
@@ -48,21 +48,33 @@ No se modificó código ni el clon de origen. No se llamó a Granite.
 
 ## 4. Hallazgos pendientes en el código
 
-1. **Encoding:** `app.py:110` y `1_Observabilidad.py:66` leen JSON sin `encoding="utf-8"`. En Windows (cp1252) los acentos de las narraciones se leen mal.
-2. **Monitor M3:**
+1. **Monitor M3:**
    - `governance_monitor_m3.py:148`: la revisión anti-alucinación siempre pasa.
    - `agent_narrator.py:396`: declara Granite como modelo usado incluso en modo offline.
    - `agent_narrator.py:392`: una ventana que cae a offline queda marcada `online`.
-3. **Chatbot:** el M3 actual no sirve para el chat, porque exige JSON por ventana y el narrador borra el log de auditoría en cada corrida.
-4. **Páginas:** la Sesión 07 ubica Observabilidad como Página 4, pero el archivo es `1_Observabilidad.py`.
-5. **Documentación:** `AGENTS.md` §6 sigue en ARG/FRA con 750 frames; a `.env.example` le falta `WATSONX_SPACE_ID`.
-6. **Otros:** `.env.txt` duplica las credenciales; `sesion_dashboard_omnimorph_2026-11-04.md` sigue fuera del índice; `blueprints/` no existe; el Dockerfile copia `data/raw/`, que no está en Git.
+2. **Chatbot:** el M3 actual no sirve para el chat, porque exige JSON por ventana y el narrador borra el log de auditoría en cada corrida.
+3. **Documentación:** `AGENTS.md` §6 sigue en ARG/FRA con 750 frames; a `.env.example` le falta `WATSONX_SPACE_ID`.
+4. **Otros:** `.env.txt` duplica las credenciales; `sesion_dashboard_omnimorph_2026-11-04.md` sigue fuera del índice; `blueprints/` no existe; el Dockerfile copia `data/raw/`, que no está en Git.
 
 ---
 
-## 5. Próximos pasos
+## 5. Paso 2 — Página de análisis
 
-1. Commit de esta migración con `git add data/partidos`. No usar `git add data/`, que subiría también `data/clean/`.
-2. Avisar a Fer de las correcciones para llevarlas al repo de origen.
-3. Paso 2: seguir `architect-brownfield.md`, corregir el encoding y crear la Página 2, marcando en pantalla los datos no verificados.
-4. Paso 3: chatbot con `ibm/granite-4-h-small` y auditoría propia, corrigiendo además el M3.
+- **Nueva página:** `pages/2_Analisis_Brasil_Alemania.py`, con cuatro pestañas: ficha previa, comparativa 1T/2T, los 8 goles y gol de Müller.
+- **Datos compartidos:** `partido_data.py` carga los datos sin depender de Streamlit, para que también lo use el chatbot.
+- **Encoding:** `app.py` y Observabilidad ya leen sus archivos en UTF-8.
+- **Observabilidad:** renombrada a `4_Observabilidad.py`, para que el chatbot ocupe la posición 3.
+- **Decisiones:** se mantuvo `pages/` por convención del repo. Del modo brownfield se aplicó el mapeo y no el blueprint completo de 20 secciones, por ser una sola página sobre un mapa ya hecho.
+- **Colores:** los gráficos usan `#2563eb` y `#dc2626`, validados para modo claro y oscuro. La paleta naranja/crema de `DESIGN.md` no se usó porque el crema casi no se ve sobre fondo blanco.
+
+**Verificado en el navegador, en modo oscuro:** las cuatro pestañas, el selector de gol, las páginas `app` y Observabilidad, sin excepciones y con los acentos correctos.
+
+**Sin verificar:** el modo claro.
+
+---
+
+## 6. Próximos pasos
+
+1. Avisar a Fer de las correcciones para llevarlas al repo de origen.
+2. Paso 3: chatbot con `ibm/granite-4-h-small` y auditoría propia, corrigiendo además el M3.
+3. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.

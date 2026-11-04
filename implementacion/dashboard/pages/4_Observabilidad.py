@@ -1,11 +1,11 @@
 """
-implementacion/dashboard/pages/1_Observabilidad.py
+implementacion/dashboard/pages/4_Observabilidad.py
 ===================================================
 MATEO · Página de Observabilidad del Pipeline
 Muestra el estado detallado de los 9 monitores (M1, M2.0–M2.5, M3, M4)
 con métricas completas, timeline de ejecución y auditoría de gobernanza IBM.
 
-Se abre automáticamente en la barra lateral de Streamlit como segunda página.
+Se abre automáticamente en la barra lateral de Streamlit como cuarta página.
 """
 
 from __future__ import annotations
@@ -63,7 +63,7 @@ st.markdown("""
 @st.cache_data(ttl=10)
 def load_json(path: pathlib.Path) -> dict | None:
     if path.exists():
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     return None
 
@@ -79,7 +79,7 @@ def load_governance_audit() -> list[dict]:
     if not p.exists():
         return []
     rows = []
-    with open(p) as f:
+    with open(p, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
