@@ -1,0 +1,34 @@
+# Reglas de .gitignore del proyecto Omnimorph (AGENTS.md §3)
+
+# Credenciales y variables de entorno
+.env
+.env.*
+!.env.example
+
+# Videos y audios generados / descargados
+*.mp4
+*.avi
+*.mov
+*.mkv
+data/videos/
+data/audio/
+
+# Pesos de modelos
+*.pt
+*.pth
+*.onnx
+
+# Parquets pesados y salidas crudas
+data/raw/*.parquet
+outputs/
+runs/
+
+# Entornos virtuales y cachés
+.venv/
+.sv023/
+.hf_cache/
+.ultralytics/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/

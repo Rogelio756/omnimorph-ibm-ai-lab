@@ -1,0 +1,272 @@
+openapi: "3.0.3"
+info:
+  title: "Omnimorph Engine Tool"
+  description: |
+    Herramienta de procesamiento de telemetría de fútbol para importación directa
+    en IBM watsonx Orchestrate. Ejecuta el pipeline Omnimorph (Fases 1–5) sobre
+    archivos parquet de tracking y devuelve ventanas tácticas + estado de monitores.
+  version: "1.0.0"
+  contact:
+    name: "Omnimorph AI Lab"
+
+servers:
+  - url: "https://REEMPLAZAR-CON-URL-NGROK.ngrok-free.app"
+    description: "Túnel ngrok activo (IBM watsonx Orchestrate) — ejecuta launch_ngrok.py para obtener la URL real"
+  - url: "http://localhost:8000"
+    description: "Servidor local de desarrollo"
+  - url: "https://omnimorph-engine.example.com"
+    description: "Servidor de producción (IBM Cloud Code Engine)"
+
+paths:
+  /:
+    get:
+      operationId: "health_check"
+      summary: "Verificación de disponibilidad del servidor"
+      tags:
+        - "Health"
+      responses:
+        "200":
+          description: "Servidor disponible"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  service:
+                    type: string
+                  version:
+                    type: string
+
+  /health:
+    get:
+      operationId: "health_check_detail"
+      summary: "Estado detallado del servidor y disponibilidad de datos"
+      tags:
+        - "Health"
+      responses:
+        "200":
+          description: "Estado del servidor"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data_ready:
+                    type: boolean
+                  frames_parquet:
+                    type: boolean
+                  objects_parquet:
+                    type: boolean
+
+  /process:
+    post:
+      operationId: "process_parquet_tool"
+      summary: "Procesar archivos parquet con el pipeline Omnimorph"
+      description: |
+        Recibe las rutas a frames.parquet y objects.parquet, ejecuta las 5 fases
+        del Omnimorph Engine (separación track/ball, homografía EMA normalizada,
+        track stitching con algoritmo húngaro, cinemática Savitzky-Golay v≤9.5 m/s,
+        y ventanas tácticas de 4.0 s), activa los Monitores M2.0–M2.5 y devuelve
+        el resultado completo incluyendo las 8 ventanas tácticas.
+      tags:
+        - "Omnimorph Engine"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessRequest"
+            example:
+              frames_path: "data/raw/frames.parquet"
+              objects_path: "data/raw/objects.parquet"
+              output_dir: "data/clean"
+      responses:
+        "200":
+          description: "Pipeline ejecutado correctamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessResponse"
+        "400":
+          description: "Parámetros inválidos o archivos no encontrados"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: "Error interno del engine"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    ProcessRequest:
+      type: object
+      required:
+        - frames_path
+        - objects_path
+      properties:
+        frames_path:
+          type: string
+          description: "Ruta al archivo frames.parquet (750 filas, una por frame)"
+          example: "data/raw/frames.parquet"
+        objects_path:
+          type: string
+          description: "Ruta al archivo objects.parquet (filas de detecciones, tracks y balón)"
+          example: "data/raw/objects.parquet"
+        output_dir:
+          type: string
+          description: "Directorio de salida para artefactos limpios"
+          default: "data/clean"
+          example: "data/clean"
+
+    ProcessResponse:
+      type: object
+      required:
+        - status
+        - stage_monitors
+        - output_files
+        - tactical_summaries
+        - elapsed_s
+      properties:
+        status:
+          type: string
+          enum: ["PASS", "FAIL"]
+          description: "Estado global del pipeline (PASS si todos los monitores pasan)"
+        elapsed_s:
+          type: number
+          format: float
+          description: "Tiempo de ejecución en segundos"
+        output_files:
+          type: object
+          description: "Rutas de los artefactos generados"
+          properties:
+            objects_cleaned:
+              type: string
+              description: "objects_cleaned.parquet con track_id_stitched y velocidades"
+            tactical_summaries:
+              type: string
+              description: "tactical_summaries.json con las 8 ventanas tácticas"
+            frames_clean:
+              type: string
+              description: "frames_clean.parquet con H_norm y H_ema"
+        stage_monitors:
+          type: object
+          description: "Resultados de los monitores M2.0–M2.5"
+          properties:
+            status:
+              type: string
+              enum: ["PASS", "FAIL"]
+            checks:
+              type: object
+              additionalProperties:
+                $ref: "#/components/schemas/MonitorCheck"
+        tactical_summaries:
+          type: array
+          description: "Lista de 8 ventanas tácticas de 4.0 s"
+          items:
+            $ref: "#/components/schemas/TacticalWindow"
+
+    MonitorCheck:
+      type: object
+      required:
+        - monitor
+        - name
+        - pass
+      properties:
+        monitor:
+          type: string
+          description: "Identificador del monitor (e.g. M2.0)"
+        name:
+          type: string
+          description: "Nombre descriptivo del monitor"
+        pass:
+          type: boolean
+          description: "true si el chequeo pasó"
+        details:
+          type: object
+          description: "Detalles adicionales del chequeo"
+          additionalProperties: true
+
+    TacticalWindow:
+      type: object
+      required:
+        - window_id
+        - t0
+        - t1
+        - pressure_context
+        - dominant_team
+      properties:
+        window_id:
+          type: string
+          description: "Identificador de ventana (W0–W7)"
+          example: "W3"
+        t0:
+          type: number
+          format: float
+          description: "Tiempo de inicio en segundos"
+          example: 12.0
+        t1:
+          type: number
+          format: float
+          description: "Tiempo de fin en segundos"
+          example: 16.0
+        frame_start:
+          type: integer
+          description: "Frame de inicio (0-indexed)"
+        frame_end:
+          type: integer
+          description: "Frame de fin (inclusive)"
+        block_height_m:
+          type: number
+          format: float
+          description: "Dispersión vertical del bloque defensivo en metros"
+        block_compactness_m:
+          type: number
+          format: float
+          description: "Compacidad del bloque defensivo en metros"
+        transition_speed_mps:
+          type: number
+          format: float
+          description: "Velocidad media del balón en la ventana (m/s)"
+        pressure_context:
+          type: string
+          enum: ["ataque", "defensa", "neutro"]
+          description: "Contexto táctico dominante en la ventana"
+        dominant_team:
+          type: string
+          description: "Equipo dominante en la ventana (ARG, FRA o neutro)"
+          example: "ARG"
+        n_arg:
+          type: integer
+          description: "Número de filas de jugadores ARG en la ventana"
+        n_fra:
+          type: integer
+          description: "Número de filas de jugadores FRA en la ventana"
+        centroid_arg_x_cm:
+          type: number
+          format: float
+          description: "Posición X centroide ARG en cm"
+        centroid_fra_x_cm:
+          type: number
+          format: float
+          description: "Posición X centroide FRA en cm"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - detail
+      properties:
+        error:
+          type: string
+          description: "Tipo de error"
+        detail:
+          type: string
+          description: "Descripción detallada del error"
