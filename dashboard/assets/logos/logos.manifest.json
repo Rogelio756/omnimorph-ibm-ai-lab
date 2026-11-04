@@ -4,10 +4,10 @@
   "logos": [
     {
       "id": "omnimorph-main",
-      "file": "omnimorph/logo_omnimorph.jpg",
+      "file": "omnimorph/logo_omnimorph.svg",
       "alt": "Logo OMNIMORPH — cubo de Rubik con wordmark",
       "max_width": 220,
-      "variant": "dark",
+      "variant": "light",
       "status": "OK"
     },
     {
