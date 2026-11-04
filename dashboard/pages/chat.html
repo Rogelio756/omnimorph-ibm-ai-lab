@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MATEO — Chatbot táctico sobre Brasil 1-7 Alemania con IBM Granite">
+  <title>MATEO — Chatbot táctico</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/components/pill-button.css">
+  <link rel="stylesheet" href="../styles/components/status-chips.css">
+  <link rel="stylesheet" href="../styles/components/site-header.css">
+  <link rel="stylesheet" href="../styles/components/site-nav.css">
+  <link rel="stylesheet" href="../styles/components/tabs.css">
+  <link rel="stylesheet" href="../styles/components/match-hub.css">
+  <link rel="stylesheet" href="../styles/components/chat.css">
+  <style>
+    .btn-xs { height: 28px; padding: 0 var(--space-3); font-size: 10px; }
+  </style>
+</head>
+<body class="page-chat">
+
+  <header class="site-header" role="banner">
+    <div class="site-header__brand">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="32" aria-hidden="true">
+        <polygon points="20,2 36,9 20,16 4,9" fill="#F5A623"/>
+        <polygon points="4,9 20,16 20,38 4,31" fill="#1FC8B0"/>
+        <polygon points="20,16 36,9 36,31 20,38" fill="#7C5CD8"/>
+        <polyline points="4,9 20,2 36,9 36,31 20,38 4,31 4,9" stroke="#111" stroke-width="0.8" fill="none"/>
+        <line x1="20" y1="2" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
+        <line x1="4" y1="9" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
+        <line x1="36" y1="9" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
+        <line x1="20" y1="16" x2="20" y2="38" stroke="#111" stroke-width="0.8"/>
+      </svg>
+      <div class="site-header__titles">
+        <span class="site-header__name">MATEO</span>
+        <span class="site-header__subtitle">Asistente táctico</span>
+      </div>
+    </div>
+    <div class="site-header__sep" aria-hidden="true"></div>
+    <div class="site-header__chips">
+      <span class="chip chip--team-a"><span class="chip__dot"></span>BRA vs GER · 2014</span>
+      <span class="chip chip--ok"><span class="chip__dot"></span>ibm/granite-4-h-small</span>
+    </div>
+    <nav id="site-nav" class="site-nav" aria-label="Navegación principal"></nav>
+  </header>
+
+  <main class="chat">
+    <section class="chat__head">
+      <div>
+        <h1>Chatbot táctico</h1>
+        <p>Responde solo con los datos del partido</p>
+      </div>
+      <span class="chip chip--warn" id="chip-estado"><span class="chip__dot"></span>Conectando con Granite…</span>
+    </section>
+
+    <div class="notice" role="note">
+      <span class="notice__tag">Aviso</span>
+      <span>Puede equivocarse, sobre todo en preguntas abiertas o comparaciones amplias. Las cifras que no coinciden
+        con los datos se marcan, pero la respuesta sigue visible: verifícalas en la página
+        <a href="partido.html" style="text-decoration: underline;">Partido</a>.</span>
+    </div>
+
+    <div class="notice notice--alert" id="estado-aviso" hidden>
+      <span class="notice__tag">Estado</span>
+      <span></span>
+    </div>
+
+    <section class="chat__log" id="log" aria-label="Conversación">
+      <p class="chat__empty" id="vacio">Elige una pregunta o escribe la tuya.</p>
+      <div class="suggest" id="sugeridas" role="group" aria-label="Preguntas sugeridas"></div>
+    </section>
+
+    <p class="notice" id="limite" hidden>
+      <span class="notice__tag">Límite</span>
+      <span>Esta conversación llegó al límite de 30 preguntas. Empieza una nueva para continuar.</span>
+    </p>
+
+    <form class="composer" id="form" autocomplete="off">
+      <div class="composer__field">
+        <label class="stat__label" for="pregunta">Pregunta sobre el partido</label>
+        <textarea id="pregunta" rows="1" maxlength="500" disabled placeholder="Por ejemplo: ¿Qué bajas tuvo Brasil?"></textarea>
+        <span class="composer__count" id="contador">0 / 500</span>
+      </div>
+      <button class="btn btn--outline btn-sm" id="nueva" type="button" hidden>Nueva conversación</button>
+      <button class="btn btn--primary" id="enviar" type="submit" disabled>Enviar</button>
+    </form>
+  </main>
+
+  <footer class="site-footer">MATEO · Omnimorph AI Lab · IBM watsonx.ai · <code>ibm/granite-4-h-small</code></footer>
+
+  <script src="../components/site-nav.js"></script>
+  <script src="../components/chat.js"></script>
+</body>
+</html>

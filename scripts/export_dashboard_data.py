@@ -127,12 +127,50 @@ def build_players(df_tr: pd.DataFrame, fps: float) -> list:
     return players
 
 
+PARTIDO_SRC = ROOT / "data" / "partidos" / "brasil_alemania_2014"
+OUT_PARTIDO = OUT_DATA / "partido"
+
+
+def export_partido() -> None:
+    """
+    Copia los datos de Brasil 1-7 Alemania (data/partidos/) al frontend.
+    Genera dashboard/data/partido/partido.json y copia los SVG y PROCEDENCIA.md.
+    """
+    if not PARTIDO_SRC.exists():
+        print(f"[!!] Falta {PARTIDO_SRC}")
+        return
+    contexto = _load_json(PARTIDO_SRC / "partido" / "contexto_partido.json")
+    data = {
+        "partido": contexto["partido_info"],
+        "equipos": contexto["equipos"],
+        "estadisticas": _load_json(PARTIDO_SRC / "partido" / "estadisticas_partido.json"),
+        "goles": _load_json(PARTIDO_SRC / "partido" / "cronologia_goles.json"),
+        "gol_muller": _load_json(PARTIDO_SRC / "gol_muller" / "gol_muller_min11.json"),
+    }
+    OUT_PARTIDO.mkdir(parents=True, exist_ok=True)
+    out = OUT_PARTIDO / "partido.json"
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+    for origen in (
+        PARTIDO_SRC / "assets" / "mapa_8_goles.svg",
+        PARTIDO_SRC / "assets" / "radar_gol_muller.svg",
+        PARTIDO_SRC / "PROCEDENCIA.md",
+    ):
+        shutil.copy2(origen, OUT_PARTIDO / origen.name)
+    print(f"[OK] {out}  ({out.stat().st_size / 1024:.0f} KB) + 2 SVG + PROCEDENCIA.md")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-media", action="store_true", help="No copiar videos/audio")
+    ap.add_argument("--solo-partido", action="store_true",
+                    help="Exportar solo los datos del partido (no recalcula frames ni copia media)")
     args = ap.parse_args()
 
     OUT_DATA.mkdir(parents=True, exist_ok=True)
+    export_partido()
+    if args.solo_partido:
+        return
 
     df = pd.read_parquet(CLEAN / "objects_cleaned.parquet")
     df_frm = pd.read_parquet(CLEAN / "frames_clean.parquet")

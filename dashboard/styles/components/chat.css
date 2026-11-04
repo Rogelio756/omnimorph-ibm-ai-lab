@@ -1,0 +1,212 @@
+/**
+ * styles/components/chat.css
+ * OMNIMORPH — Página del chatbot táctico (chat.html)
+ * Solo tokens de tokens.css; ningún valor de color a mano.
+ */
+
+.page-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+}
+
+.chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  border-left: var(--border);
+  border-right: var(--border);
+}
+
+.chat__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-9) var(--cell-padding-x) var(--space-6);
+  border-bottom: var(--border);
+}
+
+.chat__head h1 {
+  font-size: var(--text-kpi);
+  line-height: 1.1;
+  letter-spacing: var(--ls-kpi);
+}
+
+.chat__head p {
+  margin-top: var(--space-2);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.chat__log {
+  flex: 1;
+  min-height: 280px;
+}
+
+.chat__empty {
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  font-size: 14px;
+  color: var(--color-text-soft);
+  border-bottom: var(--border);
+}
+
+.suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--cell-padding-x) var(--cell-padding-y);
+  border-bottom: var(--border);
+}
+
+/* ── Mensajes ───────────────────────────────────────────────────────────── */
+.msg {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-bottom: var(--border);
+}
+
+.msg__who {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.msg--assistant .msg__who {
+  color: var(--color-text);
+}
+
+.msg__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.msg__body ul {
+  padding-left: var(--space-5);
+}
+
+.msg__body li + li {
+  margin-top: var(--space-1);
+}
+
+.msg__body--pending {
+  color: var(--color-text-soft);
+}
+
+.msg__meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--color-text-soft);
+}
+
+.msg__note {
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}
+
+.msg__flag {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--color-warn);
+  font-size: 13px;
+  color: var(--color-text-soft);
+}
+
+.msg__flag strong {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.msg__flag ul {
+  padding-left: var(--space-4);
+}
+
+.msg--error .msg__body {
+  color: var(--color-alert);
+}
+
+/* ── Entrada ────────────────────────────────────────────────────────────── */
+.composer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--cell-padding-x);
+  background-color: var(--color-bg);
+  border-top: var(--border);
+}
+
+.composer__field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.composer textarea {
+  width: 100%;
+  min-height: 44px;
+  max-height: 140px;
+  padding: 10px var(--space-4);
+  resize: none;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: var(--border-soft);
+  border-radius: var(--radius-card);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.composer textarea::placeholder {
+  color: var(--color-text-soft);
+}
+
+.composer textarea:focus-visible {
+  outline: 2px solid var(--color-ok);
+  outline-offset: 2px;
+}
+
+.composer textarea:disabled {
+  opacity: 0.5;
+}
+
+.composer__count {
+  align-self: flex-end;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--color-text-soft);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .chat__head h1 {
+    font-size: var(--text-title);
+  }
+  .msg {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+}

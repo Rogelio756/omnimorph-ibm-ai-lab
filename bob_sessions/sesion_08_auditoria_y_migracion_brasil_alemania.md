@@ -3,7 +3,7 @@
 **Proyecto:** Omnimorph — Análisis Táctico de Fútbol con IA (MATEO)  
 **Agente:** Claude Code  
 **Rama activa:** `feat-dashboard-mejoras`  
-**Estado:** Pasos 1 a 3 en GitHub (`ff2ff2b`); verificación de atribución implementada
+**Estado:** Pasos 1 a 3 y verificación en GitHub (`d9a8248`); frontend web implementado, sin commit
 
 ---
 
@@ -84,7 +84,7 @@ No se modificó código ni el clon de origen. No se llamó a Granite.
 - La revisión anti-alucinación ya puede fallar; antes siempre pasaba.
 - El modo se registra por ventana, con `offline` y `mixto` a nivel global, y el reporte incluye `offline_calls`.
 
-Las 8 narraciones reales siguen en PASS al reauditarlas, y los casos negativos fallan como se espera. El narrador se probó en modo offline y mixto en un directorio aislado. **No se ejecutó `run_pipeline.py` completo.**
+Las 8 narraciones reales siguen en PASS al reauditarlas, y los casos negativos fallan como se espera. El narrador se probó en modo offline y mixto en un directorio aislado. **`run_pipeline.py` completo se ejecutó después (sección 8).**
 
 ### Limitaciones conocidas
 
@@ -112,8 +112,53 @@ Las 8 narraciones reales siguen en PASS al reauditarlas, y los casos negativos f
 
 ---
 
-## 8. Próximos pasos
+## 8. Ejecución completa del pipeline
 
-1. Avisar a Fer de las correcciones para llevarlas al repo de origen.
-2. Ejecutar `run_pipeline.py` completo para confirmar los 9 monitores con el M3 corregido.
-3. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.
+`run_pipeline.py --use-real` con respaldo previo de `data/clean`, `data/audio` y `data/raw` en `backups/pre_pipeline_2026-11-04/` (23 archivos, checksums verificados).
+
+**Resultado:** 9 de 9 monitores en PASS en 74,8 s. El M3 corregido registró 8 llamadas a `ibm/granite-4-h-small`, 8 en PASS, 0 offline, con 1,39 s de latencia media. Las ventanas tácticas salieron idénticas a las anteriores.
+
+**Efecto secundario:** el pipeline regenera las narraciones y el audio por ventana, pero no el audio maestro (`NARRACION_COMPLETA_60S.wav`), los subtítulos (`narrations_es.vtt`) ni el video, que se hicieron a mano. Con las narraciones nuevas, el texto del dashboard ya no coincidía con el audio y los subtítulos.
+
+**Decisión:** se guardó la ejecución nueva en `backups/post_pipeline_2026-11-04/` y se restauraron desde el respaldo `narrations.json`, `governance_audit.jsonl`, `monitor_m3.json`, `monitor_m4.json` y los `W*.wav`. Así el dashboard sigue coherente con el video y los subtítulos. Los monitores M1 y M2 y `pipeline_summary.json` quedan con los de la ejecución nueva, también en PASS. Se verificó que cada narración aparece en el VTT.
+
+**Consecuencia:** el `monitor_m3.json` activo es el anterior, sin el campo `offline_calls`. La evidencia del M3 corregido está en la carpeta `post_pipeline`.
+
+**Para que el pipeline sea repetible:** falta integrar la generación del audio maestro y de los subtítulos en `run_pipeline.py`. Hasta entonces, cada ejecución desfasa esos archivos.
+
+---
+
+## 9. Cambio de rumbo: frontend web de `dashboard/`
+
+El usuario aclaró que el dashboard sobre el que quería trabajar es el frontend web que ya tenía (el del video, `dashboard/`), no el Streamlit. Las páginas de Streamlit se conservan como respaldo y no se tocaron más.
+
+**Qué se hizo en `dashboard/`:**
+
+- **`pages/partido.html`** con `components/partido.js`: las cuatro pestañas (ficha previa, comparativa 1T/2T, los 8 goles y gol de Müller), con gráfico SVG propio, tooltip, tabla de 12 métricas y el aviso de calidad de datos. Los datos se insertan con `textContent`.
+- **`pages/chat.html`** con `components/chat.js`: chatbot con preguntas sugeridas, avisos de cifras, métricas por respuesta, límite de 30 preguntas y «Nueva conversación».
+- **`serve.py`:** `POST /api/chat` y `GET /api/chat/estado`, que reutilizan `chat_agent.py` y el verificador. Carga Granite en segundo plano. Además, los `.js` y `.css` ya salen sin caché.
+- **Navegación común** (`site-nav.js`) en las cuatro páginas y la portada.
+- **Datos:** `scripts/export_dashboard_data.py --solo-partido` genera `dashboard/data/partido/` (JSON, 2 SVG y `PROCEDENCIA.md`).
+- **Estilos:** cinco archivos CSS nuevos que solo usan los tokens de `tokens.css`.
+
+**Seguridad del endpoint** (gasta cuota de watsonx.ai): solo conexiones locales; `Host` y `Origin` locales (frena el DNS rebinding); `Content-Type` JSON; cuerpo máximo de 16 KB; pregunta máxima de 500 caracteres; 12 peticiones por minuto; solo roles `user` y `assistant` en el historial. Se probaron todas con peticiones reales: 403, 415, 400, 413, 429 y el descarte de un mensaje con rol `system`.
+
+**Colores:** el validador de paleta da FAIL en banda de luminosidad y saturación mínima para naranja/crema, porque el crema es casi blanco. Sí pasa la separación entre equipos (23,6 en visión normal, 22,5 con daltonismo) y el contraste. Se mantuvieron los colores de `DESIGN.md`, que define el crema «diferenciado por luminosidad», y se añadió codificación secundaria: etiquetas BRA/GER, valores sobre las barras y leyenda.
+
+**Hallazgos de las pruebas:**
+
+- La primera pregunta tras un rato de inactividad tarda unos 20 s en el servicio, y las siguientes unos 0,4 s. Un calentamiento al arrancar no lo evitó, así que se quitó y la página avisa al usuario tras 6 s de espera.
+- La pregunta abierta «¿Cómo cambió el partido del 1T al 2T?» sigue fallando, y ahora el aviso aparece en pantalla con cada cifra discrepante.
+- El puerto 8600 lo ocupaba el servidor que el usuario ya tenía corriendo (PID 20744). No se tocó. Las pruebas se hicieron en el 8601. Ese servidor necesita reiniciarse para tener el endpoint del chat; las páginas estáticas funcionan sin reiniciar.
+
+**Sin verificar:** el límite de 30 preguntas en pantalla, el diseño en móvil, el despliegue en Code Engine y las capturas con el panel en primer plano. La verificación visual se limitó a las páginas del chat y de la comparativa.
+
+---
+
+## 10. Próximos pasos
+
+1. Reiniciar el servidor del puerto 8600 y probar el chat allí.
+2. Avisar a Fer de las correcciones para llevarlas al repo de origen.
+3. Integrar audio maestro y subtítulos en el pipeline.
+4. Descargar las fuentes locales (Jost, Inter, JetBrains Mono), que siguen pendientes y dan 404 en todas las páginas.
+5. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.
