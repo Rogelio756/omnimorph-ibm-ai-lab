@@ -109,3 +109,22 @@ ETAPA 5: Orquestador maestro
 - TTS local: `pyttsx3` (primario) o `gTTS` (fallback)
 - Dashboard: `streamlit`
 - Sin imports de `openai`, `anthropic` u otras APIs de terceros en código de producción
+
+---
+
+## 8. Continuidad entre Agentes (IBM Bob, Claude Code, Gemini Antigravity)
+
+Para garantizar que el desarrollo continúe sin fricción independientemente del entorno o agente que use el desarrollador (IBM Bob IDE, Claude Code o Gemini en Antigravity):
+
+### A. Meta-agente de Arquitectura: The Architect
+- Ubicación central: `tools/the-architect/`
+- Enlaces de skills: `.agents/skills/the-architect/` y `.claude/skills/the-architect/`
+- Comandos Claude: `.claude/commands/` (`/architect`, `/architect-brownfield`, `/architect-quick`)
+- **Modo Brownfield:** Al planear nuevas capacidades sobre el código existente, consultar `tools/the-architect/commands/architect-brownfield.md`.
+- **Blueprints:** Los planos técnicos aprobados se guardan en `./blueprints/`.
+
+### B. Bitácora Oficial Unificada: `bob_sessions/`
+- Todo agente (Bob, Claude o Gemini) **DEBE registrar al finalizar su trabajo** un reporte detallado en `bob_sessions/` siguiendo la numeración secuencial (`sesion_01`, `sesion_02`, ..., `sesion_07_...`).
+- Actualizar siempre la tabla índice de `bob_sessions/README.md`.
+- Cualquier agente nuevo que inicie sesión debe leer la última entrada en `bob_sessions/` para retomar el hilo exacto de trabajo.
+
