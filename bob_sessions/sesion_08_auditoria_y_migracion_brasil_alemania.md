@@ -3,7 +3,7 @@
 **Proyecto:** Omnimorph — Análisis Táctico de Fútbol con IA (MATEO)  
 **Agente:** Claude Code  
 **Rama activa:** `feat-dashboard-mejoras`  
-**Estado:** frontend web y fuentes en GitHub (`e05e5d3`); fiabilidad del chat implementada, sin commit
+**Estado:** frontend web y chat en GitHub (`0e9b51d`); arranque desde clon limpio probado, sin commit
 
 ---
 
@@ -193,11 +193,37 @@ Casos guardados: 22 de 22 correctas sin marcar, 16 de 16 dirigidos, 7 de 7 corre
 
 ---
 
-## 11. Próximos pasos
+## 11. Arranque desde un clon limpio
 
-1. Reiniciar el servidor del puerto 8600: sin eso sigue con el código anterior y sin chat.
-2. Dejar reproducible el arranque desde un clon limpio y fusionar la rama.
-3. Avisar a Fer de las correcciones para llevarlas al repo de origen.
-4. Integrar audio maestro y subtítulos en el pipeline.
-5. Añadir los textos de licencia OFL de las fuentes.
-6. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.
+El repositorio no tenía `README` ni dependencias para la web y el chat. Se añadieron `README.md` y `requirements-dashboard.txt`, con las versiones probadas, y `.env.example` ahora incluye `WATSONX_SPACE_ID`.
+
+**Otros cambios:**
+
+- `chat_agent.py` usa las ventanas de `dashboard/data/mateo_data.json` cuando falta `data/clean/`, que no está en Git. Sin esto, el chat perdía las preguntas sobre el clip.
+- `mateo.html` avisa si faltan los videos. Antes el reproductor quedaba en negro y «Play» no hacía nada, sin explicación.
+
+**Prueba:** clon nuevo de la rama con los cambios aplicados encima, entorno virtual nuevo con Python 3.12 e instalación en 233 s.
+
+| Escenario | Resultado |
+|---|---|
+| `.env` copiado sin editar | Tablero y Partido funcionan; chat «no disponible» |
+| Con credenciales | Chat listo en 7 s; respuestas de 0,5 a 2 s, incluido el clip |
+| Sin videos | Portada con fondo animado; MATEO con datos, radar, línea de tiempo y aviso |
+
+**Límites:**
+
+- Los videos (148 MB) siguen fuera de Git por `AGENTS.md` §3, así que un clon limpio no reproduce video. Falta decidir cómo distribuirlos.
+- `run_pipeline.py` no se puede ejecutar con datos reales desde un clon limpio.
+- Solo se probó en Windows.
+
+---
+
+## 12. Próximos pasos
+
+1. Decidir cómo distribuir los videos.
+2. Fusionar la rama en `master`.
+3. Reiniciar el servidor del puerto 8600: sin eso sigue con el código anterior y sin chat.
+4. Avisar a Fer de las correcciones para llevarlas al repo de origen.
+5. Integrar audio maestro y subtítulos en el pipeline.
+6. Añadir los textos de licencia OFL de las fuentes.
+7. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.

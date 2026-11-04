@@ -256,10 +256,21 @@ def cargar_datos() -> dict:
         estadisticas, contexto_partido["equipos"]
     )
 
+    ventanas = _ventanas_clip()
+    if ventanas:
+        datos["ventanas_clip"] = ventanas
+    return datos
+
+
+def _ventanas_clip() -> list[dict]:
+    """
+    Ventanas del pipeline. data/clean/ no está en Git: en un clon limpio se usan
+    las exportadas al tablero, que sí están versionadas.
+    """
     ventanas_path = CLEAN_DIR / "tactical_summaries.json"
     if ventanas_path.exists():
         with open(ventanas_path, encoding="utf-8") as f:
-            datos["ventanas_clip"] = [
+            return [
                 {
                     "ventana": v["window_id"],
                     "t0_s": v["t0"],
@@ -272,7 +283,23 @@ def cargar_datos() -> dict:
                 }
                 for v in json.load(f)
             ]
-    return datos
+    exportadas = _ROOT / "dashboard" / "data" / "mateo_data.json"
+    if not exportadas.exists():
+        return []
+    with open(exportadas, encoding="utf-8") as f:
+        return [
+            {
+                "ventana": v["id"],
+                "t0_s": v["t0"],
+                "t1_s": v["t1"],
+                "equipo_dominante": EQUIPO_CLIP.get(v["dominant"], v["dominant"]),
+                "contexto_presion": v["pressure"],
+                "altura_bloque_m": round(v["block_height_m"], 2),
+                "compacidad_bloque_m": round(v["compactness_m"], 2),
+                "velocidad_transicion_mps": round(v["transition_mps"], 2),
+            }
+            for v in json.load(f)["windows"]
+        ]
 
 
 def respuesta_sin_datos(pregunta: str, datos: dict) -> Optional[str]:

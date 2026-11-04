@@ -505,6 +505,10 @@
       for (var i = 0; i < NF; i++) { if (D.frames[i].p.length) lv = i; lastValid.push(lv); }
 
       // Medios
+      vMarked.addEventListener('error', function () {
+        $('data-notice').classList.add('data-notice--on');
+        $('data-notice-text').textContent = 'Faltan los videos en dashboard/media/ (no están en Git): el reproductor no funciona, pero datos, radar y línea de tiempo sí. Consulta el README.';
+      });
       vMarked.src = D.media.marked;
       $('v-track').src = D.media.vtt;
       vOrig.src = D.media.original;
