@@ -1,7 +1,8 @@
 """
 implementacion/dashboard/app.py
 ================================
-Dashboard Omnimorph — Streamlit (4 paneles sincronizados)
+MATEO — Motor de Análisis Táctico y Estadístico de Operaciones futbolísticas
+Dashboard Streamlit (4 paneles sincronizados) · Powered by IBM watsonx.ai
 
 Ejecutar:
     streamlit run implementacion/dashboard/app.py
@@ -10,9 +11,9 @@ Paneles:
   Panel 1: Video local / Visor de fotograma y bounding boxes (track_id_stitched)
   Panel 2: Radar Cenital 2D (cancha 120×70 m, ARG/FRA/balón)
   Panel 3: Métricas tácticas de la ventana activa de 4.0 s
-  Panel 4: Crónica táctica ibm/granite-3-8b-instruct + Reproductor TTS
+  Panel 4: Crónica táctica ibm/granite-4-h-small + Reproductor TTS
 
-Reloj Maestro: frame 0..749 / t 0.0..30.0 s (sincroniza todos los paneles)
+Reloj Maestro: frame 0..1799 / t 0.0..60.0 s (sincroniza todos los paneles)
 Tablero de Semáforos: M1, M2.0–M2.5, M3, M4 en tiempo real
 """
 
@@ -40,7 +41,7 @@ AUDIO_DIR = _ROOT / "data" / "audio"
 LOGO_PATH = _ROOT / "01_diagramas_y_assets" / "logos" / "omnimorph_logo_nombre_light.svg"
 
 st.set_page_config(
-    page_title="Omnimorph — Pipeline Dashboard",
+    page_title="MATEO — Análisis Táctico de Fútbol",
     page_icon="⚽",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -128,8 +129,8 @@ def load_monitor(name: str) -> dict | None:
 # ---------------------------------------------------------------------------
 
 def render_semaphores():
-    """Renderiza el tablero de semáforos de observabilidad."""
-    st.subheader("🚦 Tablero de Observabilidad")
+    """Renderiza el tablero de semáforos de observabilidad MATEO."""
+    st.subheader("🚦 MATEO · Tablero de Observabilidad")
 
     m1 = load_monitor("m1")
     m2 = load_monitor("m2")
@@ -193,7 +194,12 @@ def render_logo():
         st.markdown(f'<div style="text-align:center;padding:8px">{svg}</div>', unsafe_allow_html=True)
     else:
         st.markdown(
-            '<h1 style="text-align:center;font-family:monospace;letter-spacing:4px">⚽ OMNIMORPH</h1>',
+            '<div style="text-align:center;padding:12px 0 4px 0">'
+            '<span style="font-family:monospace;font-size:2.2rem;font-weight:900;'
+            'letter-spacing:6px;color:#1f2328">⚽ MATEO</span><br>'
+            '<span style="font-size:0.78rem;color:#57606a;letter-spacing:2px">'
+            'MOTOR DE ANÁLISIS TÁCTICO Y ESTADÍSTICO DE OPERACIONES FUTBOLÍSTICAS</span>'
+            '</div>',
             unsafe_allow_html=True,
         )
 
@@ -226,91 +232,126 @@ def render_master_clock(frame: int, n_frames: int = 750, fps: float = 25.0):
 # ---------------------------------------------------------------------------
 
 def render_panel1(frame: int, df_objects: pd.DataFrame | None, fps: float = 30.0):
-    st.markdown("### 📹 Panel 1 — Visor de fotograma y Video Unificado")
+    st.markdown("### 📹 Panel 1 — Video con Marcas (Sin Radar) y Video Original")
 
-    # Mostrar reproductor del Video Post-Matemática (si existe) y del Video Unificado Crudo
     clip13_dir = _ROOT / "outputs" / "mvp_pruebas" / "mundial_2014_brasil_alemania" / "clip_13"
     post_math_video = clip13_dir / "VIDEO_OMNIMORPH_POST_MATEMATICA.mp4"
+    orig_video = _ROOT / "data" / "videos" / "mundial_2014_720p_hd" / "L6sbfskaTDQ-720-13.mp4"
     unified_video = clip13_dir / "VIDEO_UNIFICADO_TODOS_JUNTOS.mp4"
+    vtt_path = CLEAN_DIR / "narrations_es.vtt"
+    subs_arg = str(vtt_path) if vtt_path.exists() else None
 
-    if post_math_video.exists():
-        with st.expander("✨ Ver Video POST-MATEMÁTICA Omnimorph (Estabilizado M2.0–M2.4)", expanded=True):
-            st.video(str(post_math_video))
-    if unified_video.exists():
-        with st.expander("🎬 Ver Video Percepción Cruda (Antes de Matemática — 6 Modelos)", expanded=False):
+    view_mode = st.segmented_control(
+        "Modo de visualización de video",
+        options=[
+            "🔀 En paralelo (Con Marcas + Original)",
+            "✨ Con Marcas (Sin Radar + Audio TTS)",
+            "📹 Original (Sin Marcas)",
+            "🎬 Percepción Cruda",
+        ],
+        default="🔀 En paralelo (Con Marcas + Original)",
+        label_visibility="collapsed",
+    )
+
+    if view_mode == "🔀 En paralelo (Con Marcas + Original)":
+        vcol1, vcol2 = st.columns(2)
+        with vcol1:
+            st.caption("✨ **Video con Marcas MATEO (Sin Radar · Audio TTS + Subtítulos)**")
+            if post_math_video.exists():
+                st.video(str(post_math_video), subtitles=subs_arg)
+            else:
+                st.warning("VIDEO_OMNIMORPH_POST_MATEMATICA.mp4 no encontrado.")
+        with vcol2:
+            st.caption("📹 **Video Original de Referencia (Sin Marcas)**")
+            if orig_video.exists():
+                st.video(str(orig_video))
+            else:
+                st.warning("Video original L6sbfskaTDQ-720-13.mp4 no encontrado.")
+    elif view_mode == "✨ Con Marcas (Sin Radar + Audio TTS)":
+        st.caption("✨ **Video con Marcas MATEO (M2.0–M2.4 · Sin Radar · Audio TTS + Subtítulos)**")
+        if post_math_video.exists():
+            st.video(str(post_math_video), subtitles=subs_arg)
+        else:
+            st.warning("VIDEO_OMNIMORPH_POST_MATEMATICA.mp4 no encontrado.")
+    elif view_mode == "📹 Original (Sin Marcas)":
+        st.caption("📹 **Video Original de Referencia (Sin Marcas)**")
+        if orig_video.exists():
+            st.video(str(orig_video))
+        else:
+            st.warning("Video original L6sbfskaTDQ-720-13.mp4 no encontrado.")
+    else:
+        st.caption("🎬 **Video de Percepción Cruda (6 Modelos sin suavizado)**")
+        if unified_video.exists():
             st.video(str(unified_video))
+        else:
+            st.warning("VIDEO_UNIFICADO_TODOS_JUNTOS.mp4 no encontrado.")
 
     if df_objects is None:
         st.warning("objects_cleaned.parquet no encontrado. Ejecuta el pipeline primero.")
         return
 
-    # Filtrar objetos del frame actual
-    df_f = df_objects[df_objects["frame"] == frame]
-    max_x_global = float(df_objects["x2"].max()) if len(df_objects) > 0 and "x2" in df_objects.columns else 1280.0
-    canvas_w = 1280 if max_x_global <= 1300 else 1920
-    canvas_h = 720 if canvas_w == 1280 else 1080
+    with st.expander(f"🔍 Inspector de Cajas por Fotograma (Frame {frame} | t = {frame/fps:.2f} s)", expanded=False):
+        df_f = df_objects[df_objects["frame"] == frame]
+        max_x_global = float(df_objects["x2"].max()) if len(df_objects) > 0 and "x2" in df_objects.columns else 1280.0
+        canvas_w = 1280 if max_x_global <= 1300 else 1920
+        canvas_h = 720 if canvas_w == 1280 else 1080
 
-    # Dibujar en un "frame" virtual usando matplotlib
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.patches as mpatches
-        import matplotlib.pyplot as plt
+        try:
+            import matplotlib
+            matplotlib.use("Agg")
+            import matplotlib.patches as mpatches
+            import matplotlib.pyplot as plt
 
-        fig, ax = plt.subplots(figsize=(8, 4.5))
-        ax.set_xlim(0, canvas_w)
-        ax.set_ylim(canvas_h, 0)  # invertir eje Y (imagen)
-        ax.set_facecolor("#1a1a2e")
-        fig.patch.set_facecolor("#1a1a2e")
-        ax.set_title(f"Frame {frame} | t = {frame/fps:.2f} s ({canvas_w}x{canvas_h})", color="white", fontsize=10)
-        ax.axis("off")
+            fig, ax = plt.subplots(figsize=(8, 4.5))
+            ax.set_xlim(0, canvas_w)
+            ax.set_ylim(canvas_h, 0)
+            ax.set_facecolor("#1a1a2e")
+            fig.patch.set_facecolor("#1a1a2e")
+            ax.set_title(f"Frame {frame} | t = {frame/fps:.2f} s ({canvas_w}x{canvas_h})", color="white", fontsize=10)
+            ax.axis("off")
 
-        team_colors = {0: "#3b82f6", 1: "#ef4444", None: "#fbbf24"}
-        label_colors = {0: "BRA", 1: "GER", None: "REF"}
+            team_colors = {0: "#3b82f6", 1: "#ef4444", None: "#fbbf24"}
+            label_colors = {0: "BRA", 1: "GER", None: "REF"}
 
-        # Agrupar por source (priorizar track sobre det)
-        df_track = df_f[df_f["source"].isin(["track"])]
+            df_track = df_f[df_f["source"].isin(["track"])]
 
-        for _, row in df_track.iterrows():
-            x1, y1, x2, y2 = row["x1"], row["y1"], row["x2"], row["y2"]
-            team = row.get("team")
-            # Manejar pandas NA
-            if team is not None and not (isinstance(team, float) and np.isnan(team)):
-                team = int(team)
-            else:
-                team = None
-            tid = row.get("track_id_stitched", row.get("track_id"))
-            color = team_colors.get(team, "#94a3b8")
+            for _, row in df_track.iterrows():
+                x1, y1, x2, y2 = row["x1"], row["y1"], row["x2"], row["y2"]
+                team = row.get("team")
+                if team is not None and not (isinstance(team, float) and np.isnan(team)):
+                    team = int(team)
+                else:
+                    team = None
+                tid = row.get("track_id_stitched", row.get("track_id"))
+                color = team_colors.get(team, "#94a3b8")
 
-            rect = mpatches.FancyBboxPatch(
-                (x1, y1), x2 - x1, y2 - y1,
-                boxstyle="round,pad=1",
-                linewidth=1.5, edgecolor=color, facecolor="none",
-            )
-            ax.add_patch(rect)
-            label_str = f"{label_colors.get(team, '?')}#{tid}" if tid is not None else "?"
-            ax.text(
-                x1, max(y1 - 5, 0), label_str,
-                color=color, fontsize=6, weight="bold",
-                va="bottom",
-            )
+                rect = mpatches.FancyBboxPatch(
+                    (x1, y1), x2 - x1, y2 - y1,
+                    boxstyle="round,pad=1",
+                    linewidth=1.5, edgecolor=color, facecolor="none",
+                )
+                ax.add_patch(rect)
+                label_str = f"{label_colors.get(team, '?')}#{tid}" if tid is not None else "?"
+                ax.text(
+                    x1, max(y1 - 5, 0), label_str,
+                    color=color, fontsize=6, weight="bold",
+                    va="bottom",
+                )
 
-        # Balón
-        df_ball_f = df_f[df_f["source"] == "ball"]
-        for _, row in df_ball_f.iterrows():
-            bx = (row["x1"] + row["x2"]) / 2
-            by = (row["y1"] + row["y2"]) / 2
-            circle = plt.Circle((bx, by), 8, color="#f97316", zorder=5)
-            ax.add_patch(circle)
-            ax.text(bx, by - 12, "BALL", color="#f97316", weight="bold", ha="center", fontsize=7)
+            df_ball_f = df_f[df_f["source"] == "ball"]
+            for _, row in df_ball_f.iterrows():
+                bx = (row["x1"] + row["x2"]) / 2
+                by = (row["y1"] + row["y2"]) / 2
+                circle = plt.Circle((bx, by), 8, color="#f97316", zorder=5)
+                ax.add_patch(circle)
+                ax.text(bx, by - 12, "BALL", color="#f97316", weight="bold", ha="center", fontsize=7)
 
-        st.pyplot(fig, width="stretch")
-        plt.close(fig)
+            st.pyplot(fig, width="stretch")
+            plt.close(fig)
 
-    except ImportError:
-        # Fallback sin matplotlib
-        st.info(f"Frame {frame} — {len(df_f)} objetos detectados")
-        st.dataframe(df_f[["source", "track_id_stitched", "class_name", "team", "x1", "y1", "x2", "y2"]].head(20))
+        except ImportError:
+            st.info(f"Frame {frame} — {len(df_f)} objetos detectados")
+            st.dataframe(df_f[["source", "track_id_stitched", "class_name", "team", "x1", "y1", "x2", "y2"]].head(20))
 
 
 # ---------------------------------------------------------------------------
@@ -318,97 +359,121 @@ def render_panel1(frame: int, df_objects: pd.DataFrame | None, fps: float = 30.0
 # ---------------------------------------------------------------------------
 
 def render_panel2(frame: int, df_objects: pd.DataFrame | None):
-    st.markdown("### 🗺️ Panel 2 — Radar Cenital")
+    st.markdown("### 🗺️ Panel 2 — Radar Cenital 2D (Visual de al lado)")
+
+    clip13_dir = _ROOT / "outputs" / "mvp_pruebas" / "mundial_2014_brasil_alemania" / "clip_13"
+    radar_video = clip13_dir / "VIDEO_RADAR_POST_MATEMATICA.mp4"
+
+    radar_mode = st.segmented_control(
+        "Modo de Radar Cenital",
+        options=[
+            "🎬 Video Radar 2D + Fotograma Sincronizado",
+            "🎬 Solo Video Radar 2D (60 s)",
+            "📍 Solo Radar por Fotograma (Reloj Maestro)",
+        ],
+        default="🎬 Video Radar 2D + Fotograma Sincronizado",
+        label_visibility="collapsed",
+    )
+
+    if radar_mode in ("🎬 Video Radar 2D + Fotograma Sincronizado", "🎬 Solo Video Radar 2D (60 s)"):
+        if radar_video.exists():
+            st.caption("🗺️ **Video del Radar Cenital 2D Suavizado (Savitzky-Golay M2.3 + Estelas)**")
+            st.video(str(radar_video))
+        else:
+            st.info("Generando VIDEO_RADAR_POST_MATEMATICA.mp4...")
+
+    if radar_mode == "🎬 Solo Video Radar 2D (60 s)":
+        return
 
     if df_objects is None:
         st.warning("Datos no disponibles.")
         return
 
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
+    with st.expander(f"📍 Radar Interactivo Sincronizado con Reloj Maestro (Frame {frame})", expanded=(radar_mode == "📍 Solo Radar por Fotograma (Reloj Maestro)")):
+        try:
+            import matplotlib
+            matplotlib.use("Agg")
+            import matplotlib.pyplot as plt
 
-        fig, ax = plt.subplots(figsize=(8, 5))
-        fig.patch.set_facecolor("#0f172a")
-        ax.set_facecolor("#166534")  # verde cancha
-        ax.set_xlim(0, 12000)
-        ax.set_ylim(0, 7000)
-        ax.set_xlabel("← Portería BRA (Brasil)          Portería GER (Alemania) →", color="#94a3b8", fontsize=8)
-        ax.set_title(f"Radar Cenital | Frame {frame}", color="white", fontsize=10)
+            fig, ax = plt.subplots(figsize=(8, 4.5))
+            fig.patch.set_facecolor("#0f172a")
+            ax.set_facecolor("#166534")  # verde cancha
+            ax.set_xlim(0, 12000)
+            ax.set_ylim(0, 7000)
+            ax.set_xlabel("← Portería BRA (Brasil)          Portería GER (Alemania) →", color="#94a3b8", fontsize=8)
+            ax.set_title(f"Radar Cenital | Frame {frame}", color="white", fontsize=10)
 
-        # Líneas de cancha
-        ax.axvline(6000, color="white", linewidth=1, alpha=0.5)
-        ax.axhline(3500, color="white", linewidth=0.5, alpha=0.3)
-        center_circle = plt.Circle((6000, 3500), 915, fill=False, color="white", linewidth=1, alpha=0.5)
-        ax.add_patch(center_circle)
-        ax.add_patch(plt.Rectangle((0, 1500), 1650, 4000, fill=False, edgecolor="white", linewidth=1, alpha=0.5))
-        ax.add_patch(plt.Rectangle((10350, 1500), 1650, 4000, fill=False, edgecolor="white", linewidth=1, alpha=0.5))
+            # Líneas de cancha
+            ax.axvline(6000, color="white", linewidth=1, alpha=0.5)
+            ax.axhline(3500, color="white", linewidth=0.5, alpha=0.3)
+            center_circle = plt.Circle((6000, 3500), 915, fill=False, color="white", linewidth=1, alpha=0.5)
+            ax.add_patch(center_circle)
+            ax.add_patch(plt.Rectangle((0, 1500), 1650, 4000, fill=False, edgecolor="white", linewidth=1, alpha=0.5))
+            ax.add_patch(plt.Rectangle((10350, 1500), 1650, 4000, fill=False, edgecolor="white", linewidth=1, alpha=0.5))
 
-        # Filtrar objetos del frame actual y últimos N frames (trail)
-        f_range = range(max(0, frame - 10), frame + 1)
-        df_range = df_objects[df_objects["frame"].isin(f_range)]
-        df_cur = df_objects[df_objects["frame"] == frame]
+            # Filtrar objetos del frame actual y últimos N frames (trail)
+            f_range = range(max(0, frame - 10), frame + 1)
+            df_range = df_objects[df_objects["frame"].isin(f_range)]
+            df_cur = df_objects[df_objects["frame"] == frame]
 
-        # Colores por equipo
-        col_arg = "#60a5fa"  # azul claro
-        col_fra = "#f87171"  # rojo
+            col_arg = "#60a5fa"  # azul claro
+            col_fra = "#f87171"  # rojo
 
-        pitch_x_col = "pitch_x_smooth" if "pitch_x_smooth" in df_objects.columns else "pitch_x"
-        pitch_y_col = "pitch_y_smooth" if "pitch_y_smooth" in df_objects.columns else "pitch_y"
+            pitch_x_col = "pitch_x_smooth" if "pitch_x_smooth" in df_objects.columns else "pitch_x"
+            pitch_y_col = "pitch_y_smooth" if "pitch_y_smooth" in df_objects.columns else "pitch_y"
 
-        # Trails
-        for team_id, col in [(0, col_arg), (1, col_fra)]:
-            df_team = df_range[
-                (df_range["source"] == "track") &
-                (df_range["team"].notna()) &
-                (df_range["team"].astype(str).str.replace(".0", "", regex=False) == str(team_id))
-            ]
-            if len(df_team) > 0:
-                ax.scatter(
-                    df_team[pitch_x_col], df_team[pitch_y_col],
-                    c=col, alpha=0.15, s=8, zorder=1,
-                )
-
-        # Posiciones actuales
-        df_track_cur = df_cur[df_cur["source"] == "track"]
-        for team_id, col, label in [(0, col_arg, "BRA"), (1, col_fra, "GER")]:
-            df_t = df_track_cur[
-                df_track_cur["team"].notna() &
-                (df_track_cur["team"].astype(str).str.replace(".0", "", regex=False) == str(team_id))
-            ]
-            if len(df_t) > 0:
-                ax.scatter(
-                    df_t[pitch_x_col], df_t[pitch_y_col],
-                    c=col, s=80, zorder=3, label=label, edgecolors="white", linewidths=0.8,
-                )
-                for _, row in df_t.iterrows():
-                    tid = row.get("track_id_stitched", row.get("track_id", ""))
-                    ax.annotate(
-                        str(tid) if tid is not None else "",
-                        (row[pitch_x_col], row[pitch_y_col]),
-                        fontsize=5, color="white", ha="center", va="center",
+            # Trails
+            for team_id, col in [(0, col_arg), (1, col_fra)]:
+                df_team = df_range[
+                    (df_range["source"] == "track") &
+                    (df_range["team"].notna()) &
+                    (df_range["team"].astype(str).str.replace(".0", "", regex=False) == str(team_id))
+                ]
+                if len(df_team) > 0:
+                    ax.scatter(
+                        df_team[pitch_x_col], df_team[pitch_y_col],
+                        c=col, alpha=0.15, s=8, zorder=1,
                     )
 
-        # Balón
-        df_ball_cur = df_cur[df_cur["source"] == "ball"]
-        if len(df_ball_cur) > 0:
-            bx = df_ball_cur["pitch_x"].iloc[0]
-            by = df_ball_cur["pitch_y"].iloc[0]
-            ax.scatter([bx], [by], c="#f97316", s=120, zorder=5, marker="*", label="Balón")
+            # Posiciones actuales
+            df_track_cur = df_cur[df_cur["source"] == "track"]
+            for team_id, col, label in [(0, col_arg, "BRA"), (1, col_fra, "GER")]:
+                df_t = df_track_cur[
+                    df_track_cur["team"].notna() &
+                    (df_track_cur["team"].astype(str).str.replace(".0", "", regex=False) == str(team_id))
+                ]
+                if len(df_t) > 0:
+                    ax.scatter(
+                        df_t[pitch_x_col], df_t[pitch_y_col],
+                        c=col, s=80, zorder=3, label=label, edgecolors="white", linewidths=0.8,
+                    )
+                    for _, row in df_t.iterrows():
+                        tid = row.get("track_id_stitched", row.get("track_id", ""))
+                        ax.annotate(
+                            str(tid) if tid is not None else "",
+                            (row[pitch_x_col], row[pitch_y_col]),
+                            fontsize=5, color="white", ha="center", va="center",
+                        )
 
-        ax.legend(loc="lower right", fontsize=8, framealpha=0.3, labelcolor="white")
-        ax.tick_params(colors="#94a3b8", labelsize=7)
-        for spine in ax.spines.values():
-            spine.set_edgecolor("#475569")
+            # Balón
+            df_ball_cur = df_cur[df_cur["source"] == "ball"]
+            if len(df_ball_cur) > 0:
+                bx = df_ball_cur["pitch_x"].iloc[0]
+                by = df_ball_cur["pitch_y"].iloc[0]
+                ax.scatter([bx], [by], c="#f97316", s=120, zorder=5, marker="*", label="Balón")
 
-        st.pyplot(fig, width="stretch")
-        plt.close(fig)
+            ax.legend(loc="lower right", fontsize=8, framealpha=0.3, labelcolor="white")
+            ax.tick_params(colors="#94a3b8", labelsize=7)
+            for spine in ax.spines.values():
+                spine.set_edgecolor("#475569")
 
-    except ImportError:
-        st.info(f"Frame {frame} — Radar requiere matplotlib.")
-        df_cur = df_objects[df_objects["frame"] == frame]
-        st.dataframe(df_cur[["source", "team", "pitch_x", "pitch_y"]].head(25))
+            st.pyplot(fig, width="stretch")
+            plt.close(fig)
+
+        except ImportError:
+            st.info(f"Frame {frame} — Radar requiere matplotlib.")
+            df_cur = df_objects[df_objects["frame"] == frame]
+            st.dataframe(df_cur[["source", "team", "pitch_x", "pitch_y"]].head(25))
 
 
 # ---------------------------------------------------------------------------
@@ -481,11 +546,17 @@ def render_panel3(frame: int, tactical: list | None, fps: float = 30.0):
 # ---------------------------------------------------------------------------
 
 def render_panel4(frame: int, narrations: list | None, tactical: list | None, fps: float = 30.0):
-    st.markdown("### 🎙️ Panel 4 — Crónica Táctica + TTS")
+    st.markdown("### 🎙️ Panel 4 — Crónica Táctica + Audio TTS y Transcriptor")
 
     if narrations is None:
         st.warning("narrations.json no encontrado.")
         return
+
+    # 1. Reproductor de Audio Maestro Continuo (60 s sincronizados)
+    master_wav = AUDIO_DIR / "NARRACION_COMPLETA_60S.wav"
+    if master_wav.exists():
+        st.caption("🔊 **Audio Maestro Continuo (60 s — Todas las ventanas sincronizadas con el video)**")
+        st.audio(str(master_wav), format="audio/wav", autoplay=False)
 
     t = frame / fps
     active_narr = None
@@ -502,21 +573,20 @@ def render_panel4(frame: int, narrations: list | None, tactical: list | None, fp
 
     wid = active_narr["window_id"]
     mode = active_narr.get("mode", "offline")
+    t0_act = float(active_narr.get("t0", 0.0))
+    t1_act = float(active_narr.get("t1", 0.0))
 
     st.markdown(
-        f'<div class="metric-card">'
-        f'<b>Ventana {wid}</b> '
+        f'<div class="metric-card" style="border-left: 4px solid #22c55e">'
+        f'<b>🟢 Ventana Activa: {wid}</b> ({t0_act:.1f}s – {t1_act:.1f}s) '
         f'<span style="font-size:11px;color:#64748b">[{mode}]</span>'
         f'</div>',
         unsafe_allow_html=True,
     )
 
-    with st.expander("📋 Análisis táctico", expanded=True):
-        st.write(active_narr.get("analisis_tactico", "—"))
+    st.info(f"**🎙️ Narración ({wid}):** {active_narr.get('narracion_es', '—')}")
 
-    st.info(f"**🎙️ Narración:** {active_narr.get('narracion_es', '—')}")
-
-    # Reproductor de audio
+    # Reproductor de audio de la ventana individual
     audio_path = None
     for ext in [".mp3", ".wav"]:
         candidate = AUDIO_DIR / f"{wid}{ext}"
@@ -525,19 +595,37 @@ def render_panel4(frame: int, narrations: list | None, tactical: list | None, fp
             break
 
     if audio_path:
-        with open(audio_path, "rb") as f:
-            audio_bytes = f.read()
         mime = "audio/mp3" if audio_path.suffix == ".mp3" else "audio/wav"
-        st.audio(audio_bytes, format=mime, autoplay=False)
-        st.caption(f"🔊 Audio: {audio_path.name}")
+        st.audio(str(audio_path), format=mime, autoplay=False)
+        st.caption(f"🔊 Audio individual ({wid}): `{audio_path.name}`")
     else:
         st.caption("🔇 Audio no generado aún (ejecuta tts_service.py)")
 
-    # Tokens / latencia
-    lat = active_narr.get("latency_ms", 0)
-    tok_in = active_narr.get("tokens_in", 0)
-    tok_out = active_narr.get("tokens_out", 0)
-    st.caption(f"Latencia: {lat:.0f} ms | Tokens in/out: {tok_in}/{tok_out}")
+    with st.expander(f"📋 Análisis táctico detallado ({wid})", expanded=False):
+        st.write(active_narr.get("analisis_tactico", "—"))
+        lat = active_narr.get("latency_ms", 0)
+        tok_in = active_narr.get("tokens_in", 0)
+        tok_out = active_narr.get("tokens_out", 0)
+        st.caption(f"Latencia: {lat:.0f} ms | Tokens in/out: {tok_in}/{tok_out}")
+
+    # 2. Transcriptor Sincronizado Completo (W0..W7)
+    with st.expander("📝 Transcriptor Completo Sincronizado (Todas las Ventanas)", expanded=True):
+        for n in narrations:
+            n_wid = n.get("window_id", "?")
+            n_t0 = float(n.get("t0", 0.0))
+            n_t1 = float(n.get("t1", 0.0))
+            n_txt = n.get("narracion_es", "—")
+            is_cur = (n_wid == wid)
+            bg = "#dcfce7" if is_cur else "#f8fafc"
+            border = "#22c55e" if is_cur else "#cbd5e1"
+            badge_str = "🟢 EN CURSO" if is_cur else "⏱️"
+            st.markdown(
+                f'<div style="background:{bg};border-left:4px solid {border};'
+                f'padding:8px 10px;border-radius:6px;margin:4px 0;font-size:13px">'
+                f'<b>{badge_str} [{n_wid}] {n_t0:05.2f}s – {n_t1:05.2f}s:</b> {n_txt}'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -546,6 +634,9 @@ def render_panel4(frame: int, narrations: list | None, tactical: list | None, fp
 
 def render_sidebar():
     with st.sidebar:
+        st.markdown("## ⚽ MATEO")
+        st.caption("Motor de Análisis Táctico y\nEstadístico de Operaciones Futbolísticas")
+        st.markdown("---")
         st.markdown("## ⚙️ Controles")
 
         # Auto-play
@@ -607,10 +698,15 @@ def main():
     # Reloj Maestro dinámico según frames cargados (1800 en Clip 13 @ 30 fps o 750 @ 25 fps)
     n_frames = len(df_frames) if df_frames is not None and len(df_frames) > 0 else 750
     fps = 30.0 if n_frames > 1000 else 25.0
-    if "master_clock" not in st.session_state:
-        st.session_state["master_clock"] = 0
+    if "master_clock_val" not in st.session_state:
+        first_track_frame = 0
+        if df_objects is not None and "source" in df_objects.columns:
+            tr_frames = df_objects.loc[df_objects["source"] == "track", "frame"]
+            if len(tr_frames) > 0:
+                first_track_frame = int(tr_frames.min())
+        st.session_state["master_clock_val"] = first_track_frame
 
-    frame = min(st.session_state.get("master_clock", 0), n_frames - 1)
+    frame = min(st.session_state["master_clock_val"], n_frames - 1)
 
     # Renderizar slider del reloj maestro
     st.markdown("### ⏱️ Reloj Maestro Común")
@@ -622,6 +718,8 @@ def main():
         key="master_clock_main",
         help="Sincroniza los 4 paneles: Panel 1 (video), Panel 2 (radar), Panel 3 (métricas), Panel 4 (narración)",
     )
+    # Sincronizar el valor interno con lo que el usuario movió en el slider
+    st.session_state["master_clock_val"] = frame
     t_cur = frame / fps
     st.caption(f"🕐 t = {t_cur:.2f} s / {(n_frames/fps):.1f} s | Frame {frame}/{n_frames-1} ({fps:.0f} FPS)")
     st.markdown("---")
@@ -640,18 +738,17 @@ def main():
     with col4:
         render_panel4(frame, narrations, tactical, fps=fps)
 
-    # Auto-play
+    # Auto-play — actualiza el key interno (no el key del widget) antes de rerun
     if autoplay:
         time.sleep(1.0 / fps_play)
-        next_frame = (frame + 1) % n_frames
-        st.session_state["master_clock_main"] = next_frame
+        st.session_state["master_clock_val"] = (frame + 1) % n_frames
         st.rerun()
 
     # Footer
     st.markdown("---")
     st.markdown(
         '<p style="text-align:center;color:#64748b;font-size:12px">'
-        'Omnimorph AI Lab · IBM watsonx.ai · ibm/granite-3-8b-instruct'
+        'MATEO · Omnimorph AI Lab · IBM watsonx.ai · <code>ibm/granite-4-h-small</code>'
         '</p>',
         unsafe_allow_html=True,
     )

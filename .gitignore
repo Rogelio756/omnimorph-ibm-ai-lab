@@ -22,6 +22,7 @@ data/audio/
 data/raw/*.parquet
 outputs/
 runs/
+backups/
 
 # Entornos virtuales y cachés
 .venv/

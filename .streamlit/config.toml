@@ -1,0 +1,13 @@
+[server]
+maxUploadSize = 500
+maxMessageSize = 500
+enableWebsocketCompression = false
+enableCORS = false
+enableXsrfProtection = false
+
+[browser]
+gatherUsageStats = false
+serverAddress = "localhost"
+
+[runner]
+fastReruns = false
