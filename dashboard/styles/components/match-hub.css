@@ -78,6 +78,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Valores que son texto (nombres) y no cifras: más pequeños para no partirse en líneas */
+.stat__value--text {
+  font-size: var(--text-title);
+  line-height: 1.25;
+}
+
 .stat__hint {
   font-size: var(--text-label);
   color: var(--color-text-soft);

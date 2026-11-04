@@ -113,10 +113,10 @@
   var RENDER = { ficha: renderFicha, comparativa: renderComparativa, goles: renderGoles, muller: renderMuller };
 
   // ── Ficha previa ─────────────────────────────────────────────────────────
-  function stat(label, valor, hint) {
+  function stat(label, valor, hint, esTexto) {
     return el('div', { class: 'stat' },
       el('span', { class: 'stat__label', text: label }),
-      el('span', { class: 'stat__value', text: valor }),
+      el('span', { class: 'stat__value' + (esTexto ? ' stat__value--text' : ''), text: valor }),
       hint ? el('span', { class: 'stat__hint', text: hint }) : null);
   }
 
@@ -129,7 +129,7 @@
       stat('Asistencia', num(info.asistencia, 0), 'Mineirão'),
       stat('Clima', clima.temperatura_c + ' °C',
         clima.cielo + ' · humedad ' + clima.humedad_pct + '% · viento ' + clima.viento_kmh + ' km/h'),
-      stat('Árbitro', arb.principal, arb.pais)));
+      stat('Árbitro', arb.principal, arb.pais, true)));
     host.appendChild(el('p', { class: 'caption',
       text: 'Asistentes: ' + arb.asistente_1 + ' y ' + arb.asistente_2 + ' · Cuarto árbitro: ' + arb.cuarto_arbitro }));
 
