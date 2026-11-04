@@ -17,7 +17,6 @@ import pathlib
 import re
 import sys
 import time
-import unicodedata
 from collections import Counter
 from datetime import datetime, timezone
 from typing import Iterator, Optional
@@ -30,6 +29,11 @@ from implementacion.cloud_agent.agent_narrator import (
     REQUIRED_MODEL,
     _get_watsonx_credentials,
     _init_watsonx_model,
+)
+from implementacion.cloud_agent.chat_verificador import (
+    construir_hechos,
+    sin_acentos,
+    verificar_atribucion,
 )
 from implementacion.cloud_agent.governance_monitor_m3 import (
     AUTHORIZED_MODELS,
@@ -96,14 +100,9 @@ PALABRAS_SOLO_PARTIDO = (
 )
 
 
-def _sin_acentos(texto: str) -> str:
-    descompuesto = unicodedata.normalize("NFKD", texto.lower())
-    return "".join(c for c in descompuesto if not unicodedata.combining(c))
-
-
 def seleccionar_secciones(texto: str) -> list[str]:
     """Secciones relevantes para el texto; todas si no se reconoce el tema."""
-    normalizado = _sin_acentos(texto)
+    normalizado = sin_acentos(texto)
     elegidas = [
         seccion
         for seccion, palabras in PALABRAS_SECCION.items()
@@ -211,6 +210,13 @@ def cargar_datos() -> dict:
         },
     }
 
+    datos["hechos"] = construir_hechos(
+        estadisticas,
+        goles,
+        contexto_partido["equipos"],
+        partido_data.METRICAS,
+        partido_data.EQUIPOS,
+    )
     datos["jugadores_sin_datos"] = _jugadores_sin_datos(
         estadisticas, contexto_partido["equipos"]
     )
@@ -239,13 +245,13 @@ def respuesta_sin_datos(pregunta: str, datos: dict) -> Optional[str]:
     Responde sin LLM cuando se pide una estadística individual de un jugador que
     no la tiene: en esas preguntas Granite toma la cifra de otro jugador.
     """
-    normalizada = _sin_acentos(pregunta)
+    normalizada = sin_acentos(pregunta)
     if not any(palabra in normalizada for palabra in PALABRAS_DATO_INDIVIDUAL):
         return None
     mencionados = [
         nombre
         for nombre in datos.get("jugadores_sin_datos", [])
-        if re.search(rf"\b{re.escape(_sin_acentos(nombre))}\b", normalizada)
+        if re.search(rf"\b{re.escape(sin_acentos(nombre))}\b", normalizada)
     ]
     if not mencionados:
         return None
@@ -333,7 +339,7 @@ def numeros_sin_respaldo(respuesta: str, contexto: str) -> list[str]:
 
 def avisos_calidad(respuesta: str) -> list[str]:
     """Avisos que añade el código, sin depender de que el modelo los recuerde."""
-    texto = _sin_acentos(respuesta)
+    texto = sin_acentos(respuesta)
     avisos = []
     if "xg" in texto:
         avisos.append("El xG es estimado, no es un dato oficial.")
@@ -350,19 +356,24 @@ def auditar_respuesta(
     model_id: str = REQUIRED_MODEL,
     error: Optional[str] = None,
     origen: str = "granite",
+    hechos: Optional[dict] = None,
 ) -> dict:
     """
     Registra la interacción en chat_audit.jsonl y devuelve la entrada.
     origen: "granite", o "regla" si la respuesta no pasó por el LLM.
+    hechos: valores de referencia para comprobar a quién se atribuye cada cifra.
     """
     # Las cifras que trae la propia pregunta no son invención del modelo
     sin_respaldo = (
         numeros_sin_respaldo(respuesta, f"{contexto} {pregunta}") if respuesta else []
     )
     modelo_ok = origen == "regla" or model_id in AUTHORIZED_MODELS
+    mal_atribuidas = (
+        verificar_atribucion(respuesta, hechos) if respuesta and hechos else []
+    )
     if error or not respuesta or not modelo_ok:
         status = "FAIL"
-    elif sin_respaldo:
+    elif sin_respaldo or mal_atribuidas:
         status = "REVISAR"
     else:
         status = "PASS"
@@ -381,6 +392,7 @@ def auditar_respuesta(
         "tokens_out": tokens_out,
         "cost_ru_est": round(tokens_in * RU_PER_TOKEN_IN + tokens_out * RU_PER_TOKEN_OUT, 6),
         "numeros_sin_respaldo": sin_respaldo,
+        "atribucion_incorrecta": mal_atribuidas,
         "status": status,
         "error": error,
     }

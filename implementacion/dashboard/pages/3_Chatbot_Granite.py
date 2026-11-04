@@ -53,6 +53,15 @@ def texto_metricas(mensaje: dict) -> str:
     )
 
 
+def mostrar_aviso_atribucion(hallazgos: list[str]) -> None:
+    if hallazgos:
+        st.warning(
+            "\n".join(f"- {hallazgo}" for hallazgo in hallazgos),
+            icon=":material/rule:",
+            title="Revisa estas cifras: no coinciden con los datos",
+        )
+
+
 def mostrar_aviso_cifras(numeros: list[str]) -> None:
     if numeros:
         st.warning(
@@ -90,6 +99,7 @@ for mensaje in st.session_state.mensajes:
     with st.chat_message(mensaje["role"]):
         st.markdown(mensaje["content"])
         if mensaje["role"] == "assistant":
+            mostrar_aviso_atribucion(mensaje["atribucion_incorrecta"])
             mostrar_aviso_cifras(mensaje["numeros_sin_respaldo"])
             for aviso in chat_agent.avisos_calidad(mensaje["content"]):
                 st.caption(aviso)
@@ -152,7 +162,7 @@ if pregunta and chat_habilitado:
                 st.stop()
 
         auditoria = chat_agent.auditar_respuesta(
-            pregunta, respuesta, contexto, metricas, origen=origen
+            pregunta, respuesta, contexto, metricas, origen=origen, hechos=datos["hechos"]
         )
 
     st.session_state.mensajes += [
@@ -166,6 +176,7 @@ if pregunta and chat_habilitado:
             "tokens_out": auditoria["tokens_out"],
             "status": auditoria["status"],
             "numeros_sin_respaldo": auditoria["numeros_sin_respaldo"],
+            "atribucion_incorrecta": auditoria["atribucion_incorrecta"],
         },
     ]
     st.rerun()

@@ -3,7 +3,7 @@
 **Proyecto:** Omnimorph — Análisis Táctico de Fútbol con IA (MATEO)  
 **Agente:** Claude Code  
 **Rama activa:** `feat-dashboard-mejoras`  
-**Estado:** Pasos 1 y 2 en GitHub (`66c0fc9`); Paso 3 implementado
+**Estado:** Pasos 1 a 3 en GitHub (`ff2ff2b`); verificación de atribución implementada
 
 ---
 
@@ -88,17 +88,32 @@ Las 8 narraciones reales siguen en PASS al reauditarlas, y los casos negativos f
 
 ### Limitaciones conocidas
 
-- **Preguntas abiertas o comparaciones amplias:** Granite sigue atribuyendo cifras al equipo equivocado. «¿Cómo cambió el partido del 1T al 2T?» falló en todas las pruebas, y por eso se retiró de las sugeridas.
-- **La auditoría no detecta ese error:** solo comprueba que la cifra exista en los datos, no a quién pertenece. PASS no significa que la respuesta sea correcta.
-- **Detalles inventados:** en explicaciones narrativas, como la del gol de Müller, puede añadir detalles que no están en los datos.
+- **Preguntas abiertas o comparaciones amplias:** Granite sigue atribuyendo cifras al equipo equivocado. «¿Cómo cambió el partido del 1T al 2T?» falló en casi todas las pruebas, y por eso se retiró de las sugeridas. El verificador las marca, pero no las evita.
+- **Detalles inventados:** en explicaciones narrativas, como la del gol de Müller, puede añadir detalles que no están en los datos. El verificador no los detecta, porque solo revisa cifras.
 - **Primera carga:** conectar con Granite tarda unos 45 s; después queda en caché.
-- **Mediciones:** las pruebas sumaron unas 16 RU estimadas. Costo y tokens son aproximados.
+- **Mediciones:** las pruebas sumaron unas 17 RU estimadas. Costo y tokens son aproximados.
 
 ---
 
-## 7. Próximos pasos
+## 7. Verificación de atribución
+
+`cloud_agent/chat_verificador.py` comprueba por reglas, sin LLM, que cada cifra corresponda al equipo o jugador, la métrica y el tiempo indicados. Las cifras que no coinciden se muestran en pantalla, se guardan en `atribucion_incorrecta` y dejan la respuesta en REVISAR. Se eligió REVISAR y no FAIL porque es una comprobación por reglas, no un veredicto.
+
+**Resultado:** 8 de 8 respuestas malas reales detectadas, 0 falsos positivos en 22 respuestas correctas y 16 de 16 casos dirigidos. En una prueba con Granite por la página, marcó una respuesta mala y dejó en PASS una correcta.
+
+**Importante:** esos casos se usaron también para ajustar las reglas, así que no son una medición independiente. Una versión anterior marcó 9 errores en una respuesta casi correcta, y eso solo apareció al probar con Granite real.
+
+**Limitaciones:**
+
+- PASS significa que no encontró problemas, no que la respuesta sea correcta.
+- Solo revisa cifras en las que reconoce equipo o jugador y métrica. Las afirmaciones sin cifras, como «Brasil mejoró», no se comprueban.
+- En comparaciones como «Alemania dominó en tiros a puerta (10 vs 8)», puede atribuir la segunda cifra al primer equipo y marcarla por error.
+- Marca, pero no corrige ni bloquea la respuesta.
+
+---
+
+## 8. Próximos pasos
 
 1. Avisar a Fer de las correcciones para llevarlas al repo de origen.
-2. Validar la atribución de cifras en las respuestas de Granite, comparando contra los datos por equipo y tiempo.
-3. Ejecutar `run_pipeline.py` completo para confirmar los 9 monitores con el M3 corregido.
-4. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.
+2. Ejecutar `run_pipeline.py` completo para confirmar los 9 monitores con el M3 corregido.
+3. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.
