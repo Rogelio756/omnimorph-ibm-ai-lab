@@ -10,7 +10,6 @@
     ['Inicio', 'index.html'],
     ['MATEO', 'mateo.html'],
     ['Partido', 'partido.html'],
-    ['Chatbot', 'chat.html'],
   ];
 
   var host = document.getElementById('site-nav');

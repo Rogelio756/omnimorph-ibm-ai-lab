@@ -236,6 +236,20 @@ class RangeHandler(SimpleHTTPRequestHandler):
         except Exception:
             self._json(502, {"error": "granite_no_respondio"})
 
+    def send_error(self, code, message=None, explain=None):
+        ruta = urlparse(self.path).path
+        es_pagina = ruta.endswith(".html") or not os.path.splitext(ruta)[1]
+        if code == 404 and self.command == "GET" and es_pagina:
+            with open(os.path.join(self.directory, "pages", "error.html"), "rb") as f:
+                cuerpo = f.read()
+            self.send_response(404)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(cuerpo)))
+            self.end_headers()
+            self.wfile.write(cuerpo)
+            return
+        super().send_error(code, message, explain)
+
     def do_GET(self):
         if self.path.split("?")[0] == "/api/chat/estado":
             if not self._origen_local():

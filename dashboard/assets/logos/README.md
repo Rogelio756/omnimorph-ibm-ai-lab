@@ -6,7 +6,8 @@
 assets/logos/
 ├── omnimorph/      Logo principal OMNIMORPH y variantes
 ├── ibm/            Logos de IBM y sus herramientas (IBM, watsonx, Granite)
-├── programa/       Logo del programa o institución académica
+├── programa/       Originales de herramientas IBM y logo del programa
+├── web/            Versiones recortadas que usa el sitio (generadas de los originales)
 ├── logos.manifest.json  ← Fuente de verdad; los componentes leen esto
 └── README.md        ← Este archivo
 ```
@@ -31,12 +32,12 @@ assets/logos/
 
 | ID                | Archivo esperado              | Dónde obtenerlo |
 |-------------------|-------------------------------|-----------------|
-| `omnimorph-main`  | `omnimorph/omnimorph-logo.svg` | Diseño propio  |
-| `omnimorph-cube`  | `omnimorph/omnimorph-cube.svg` | Diseño propio  |
-| `ibm-main`        | `ibm/IBM_logo.svg`             | Ver sección IBM abajo |
-| `ibm-watsonx`     | `ibm/watsonx_logo.svg`         | Ver sección IBM abajo |
-| `ibm-granite`     | `ibm/granite_logo.svg`         | Ver sección IBM abajo |
 | `programa-main`   | `programa/programa_logo.svg`   | Institución    |
+
+Los SVG de `omnimorph/`, `ibm/` y `programa/` son imágenes dentro de un lienzo de 1080 px,
+exportadas de Canva, no vectores reales. Por eso el sitio usa los PNG de `web/`: sin margen vacío y más ligeros.
+En `web/` solo se recortó; el único recoloreado es el nombre en blanco de `omnimorph-logo-oscuro.png`.
+Si tienes SVG vectoriales oficiales, sustitúyelos y actualiza el manifest.
 
 ---
 
@@ -64,7 +65,7 @@ assets/logos/
 
 ### Implementación en OMNIMORPH
 - Los logos IBM aparecen únicamente en la franja "Impulsado por herramientas de IBM"
-  de la portada y en el pie de página del tablero.
+  de la portada, que tiene fondo claro para no recolorearlos.
 - Se usan con su `alt` descriptivo para accesibilidad.
 - El espacio libre lo gestiona el `gap` del contenedor flex (`var(--space-6)` = 24 px).
 - Cuando el logo está pendiente, se muestra un recuadro punteado `[Logo IBM]`.
@@ -74,7 +75,8 @@ assets/logos/
 ## Reglas de uso: logo OMNIMORPH
 
 - El cubo de Rubik es el símbolo principal; el wordmark "OMNIMORPH" es Jost 500.
-- **Variante oscura:** cubo de colores sobre fondo `#111111`.
+- **Variante oscura:** cubo de colores con nombre en blanco sobre fondo `#111111`
+  (`web/omnimorph-logo-oscuro.png`). El nombre azul marino original no se lee sobre oscuro.
 - **Variante crema:** cubo de colores sobre tarjeta `#F5F3EE` (solo en hero).
 - No cambiar los colores de las caras del cubo (naranja, turquesa, morado, rosa, lima).
 - Tamaño mínimo de uso: 32 px de altura.

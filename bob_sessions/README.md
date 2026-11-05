@@ -22,6 +22,7 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_06_mateo_dashboard.md` | 2026-11-04 | Dashboard MATEO en paralelo H.264, radar 2D independiente y audio TTS 60s |
 | `sesion_07_arquitectura_hibrida_y_the_architect.md` | 2026-11-04 | Análisis híbrido (Fernando Maciel), repo Brasil-Alemania, The Architect y ramas Git |
 | `sesion_08_auditoria_y_migracion_brasil_alemania.md` | 2026-11-04 | Auditoría del repo, migración corregida de datos, página de análisis y chatbot con Granite |
+| `sesion_09_visual_chat_flotante_y_fichero.md` | 2026-11-04 | Mejora visual, transiciones, audio de MATEO, chat flotante, fichero de jugadores y hallazgo de identificadores repetidos |
 
 
 ---

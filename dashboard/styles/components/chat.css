@@ -1,50 +1,8 @@
 /**
  * styles/components/chat.css
- * OMNIMORPH — Página del chatbot táctico (chat.html)
+ * OMNIMORPH — Conversación del chatbot táctico (la ventana está en chat-widget.css)
  * Solo tokens de tokens.css; ningún valor de color a mano.
  */
-
-.page-chat {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-  background-color: var(--color-bg);
-}
-
-.chat {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  border-left: var(--border);
-  border-right: var(--border);
-}
-
-.chat__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-9) var(--cell-padding-x) var(--space-6);
-  border-bottom: var(--border);
-}
-
-.chat__head h1 {
-  font-size: var(--text-kpi);
-  line-height: 1.1;
-  letter-spacing: var(--ls-kpi);
-}
-
-.chat__head p {
-  margin-top: var(--space-2);
-  font-size: var(--text-label);
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-  color: var(--color-text-soft);
-}
 
 .chat__log {
   flex: 1;
@@ -202,9 +160,6 @@
 }
 
 @media (max-width: 720px) {
-  .chat__head h1 {
-    font-size: var(--text-title);
-  }
   .msg {
     grid-template-columns: 1fr;
     gap: var(--space-2);

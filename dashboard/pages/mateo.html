@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="../styles/components/chronicle.css">
   <link rel="stylesheet" href="../styles/components/transcript.css">
   <link rel="stylesheet" href="../styles/components/player-sidebar.css">
-  <link rel="stylesheet" href="../styles/components/footer-legend.css">
+  <link rel="stylesheet" href="../styles/components/site-credit.css">
   <link rel="stylesheet" href="../styles/components/powered-by.css">
   <link rel="stylesheet" href="../styles/components/site-nav.css">
 
@@ -34,7 +34,7 @@
       padding: var(--space-3) var(--cell-padding-x); flex-wrap: wrap;
     }
     .mateo-header__brand { display: flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
-    .mateo-header__logo { width: 32px; height: 32px; flex-shrink: 0; }
+    .brand-cubo { height: 32px; width: auto; flex-shrink: 0; }
     .mateo-header__titles { display: flex; flex-direction: column; gap: 1px; }
     .mateo-header__name {
       font-family: var(--font-headline); font-weight: var(--font-weight-medium); font-size: 18px;
@@ -48,7 +48,7 @@
     /* ── Tira de observabilidad ──────────────────────────────────────────── */
     .obs-strip {
       display: flex; flex-wrap: wrap; gap: var(--space-2);
-      padding: var(--space-2) var(--cell-padding-x); border-bottom: var(--border); background-color: var(--color-bg);
+      padding: var(--space-3) var(--cell-padding-x); border-bottom: var(--border); background-color: var(--color-bg-deep);
     }
     .obs-strip__label {
       font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);
@@ -73,11 +73,13 @@
     .master-clock__gap { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(90deg, transparent 0 4px, rgba(255,255,255,0.03) 4px 8px); }
 
     /* ── Layout del tablero ──────────────────────────────────────────────── */
-    .mateo-body { flex: 1; display: grid; grid-template-columns: 1fr var(--sidebar-players-width); border-top: var(--border); }
-    .mateo-main { display: flex; flex-direction: column; min-width: 0; }
-    .panels-grid { display: grid; grid-template-columns: 1fr 1fr; flex: 1; }
-    .panel { border-right: var(--border); border-bottom: var(--border); display: flex; flex-direction: column; min-height: 0; min-width: 0; }
-    .panel:nth-child(even) { border-right: none; }
+    /* Arriba lo que se mira (video y radar), abajo lo que se lee; el filo de 1 px es la separación */
+    .master-clock { position: sticky; top: 57px; z-index: 90; background-color: var(--color-bg); }
+    .mateo-body { flex: 1; display: flex; }
+    .mateo-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .panels-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; flex: 1; background-color: var(--color-border); }
+    .panel, .panels-grid > .player-sidebar { display: flex; flex-direction: column; min-height: 0; min-width: 0; background-color: var(--color-bg); grid-column: span 2; }
+    #panel-video, #panel-radar { grid-column: span 3; }
     .panel__header {
       display: flex; align-items: center; gap: var(--space-2);
       padding: var(--space-3) var(--space-4); border-bottom: var(--border); flex-shrink: 0; flex-wrap: wrap;
@@ -89,6 +91,10 @@
     .panel__body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
 
     /* ── Panel 1: video ──────────────────────────────────────────────────── */
+    .video-panel { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; border-bottom: none; flex: 1; align-content: start; }
+    .video-panel__main { grid-column: 1 / -1; }
+    .video-panel__thumb { padding: var(--space-3); align-items: center; }
+    .video-panel__thumb-video { flex: none; width: 150px; }
     .video-panel__main video { object-fit: contain; background: #000; }
     .video-panel__main video::cue { font-family: var(--font-ui); font-size: 15px; background: rgba(0,0,0,0.72); color: #fff; }
     .video-panel__thumb-video { position: relative; }
@@ -100,6 +106,7 @@
     .video-panel__overlay .chip { background: rgba(0,0,0,0.6); }
     .video-panel__bar { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3); flex-wrap: wrap; }
     .video-panel__bar .spacer { flex: 1; }
+    .audio-selector { display: flex; flex-wrap: wrap; gap: var(--space-1); }
     .shot-tag { font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft); }
     .shot-tag--open { color: var(--color-ok); }
 
@@ -113,8 +120,8 @@
       background: rgba(0,0,0,0.5); display: none;
     }
     .radar-hold--on { display: block; }
-    #radar-video { width: 100%; display: none; background: #000; }
-    .radar-stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: var(--border); }
+    #v-radar { width: 100%; aspect-ratio: 1240 / 740; object-fit: contain; display: none; background: #000; }
+    .radar-stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: var(--border); margin-top: auto; }
     .radar-stats > div { padding: var(--space-3) var(--space-4); border-right: var(--border); display: flex; flex-direction: column; gap: 2px; }
     .radar-stats > div:last-child { border-right: none; }
     .radar-stats .lbl { font-size: var(--text-label); color: var(--color-text-soft); letter-spacing: var(--ls-label); text-transform: uppercase; }
@@ -145,9 +152,11 @@
     .transcript__line:hover { background-color: rgba(255,255,255,0.03); }
 
     /* ── Sidebar ─────────────────────────────────────────────────────────── */
-    .player-sidebar { border-left: var(--border); }
+    .player-sidebar { height: auto; }
     .player-row__team { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .player-row__live { font-family: var(--font-mono); font-size: 9px; color: var(--color-ok); min-width: 30px; text-align: right; }
+    .player-sidebar__aviso { margin: 0; padding: var(--space-3) var(--space-4); border-bottom: var(--border); font-size: var(--text-label); line-height: 1.5; color: var(--color-text-soft); }
+    .player-row__track { white-space: nowrap; }
     .player-empty { padding: var(--space-4); font-size: var(--text-label); color: var(--color-text-soft); }
 
     /* ── Aviso de datos ──────────────────────────────────────────────────── */
@@ -158,34 +167,43 @@
     .data-notice--on { display: flex; }
     .data-notice__dot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-alert); flex-shrink: 0; }
 
-    @media (max-width: 1100px) { .mateo-body { grid-template-columns: 1fr; } .player-sidebar { border-left: none; border-top: var(--border); } }
+    @media (max-width: 1100px) {
+      .panels-grid .panel { grid-column: span 3; }
+      .panels-grid > .player-sidebar { grid-column: 1 / -1; }
+      .video-panel { grid-template-columns: minmax(0, 1fr); }
+      .video-panel__bar { padding-top: 0; }
+    }
+    /* Bajo este ancho la cabecera ocupa dos líneas y el reloj ya no puede ir pegado a ella */
+    @media (max-width: 1000px) {
+      .master-clock { position: static; }
+    }
     @media (max-width: 860px) {
-      .panels-grid { grid-template-columns: 1fr; }
-      .panel { border-right: none; }
-      .master-clock { flex-wrap: wrap; }
+      .panels-grid .panel, #panel-video, #panel-radar { grid-column: 1 / -1; }
+      .master-clock { flex-wrap: wrap; gap: var(--space-3); }
+      .master-clock__timeline { order: 3; flex-basis: 100%; }
+      .mateo-header { position: static; }
+    }
+    @media (max-width: 480px) {
+      .mateo-header__brand { flex-shrink: 1; min-width: 0; }
+      .mateo-header__subtitle { line-height: 1.3; }
+      .mateo-header__sep { display: none; }
     }
   </style>
+  <link rel="stylesheet" href="../styles/components/tabs.css">
+  <link rel="stylesheet" href="../styles/components/chat.css">
+  <link rel="stylesheet" href="../styles/components/chat-widget.css">
+  <link rel="stylesheet" href="../styles/components/transicion.css">
+  <script src="../components/transicion.js"></script>
 </head>
 <body class="page-mateo">
 
   <!-- ═══════════════════ CABECERA ═══════════════════ -->
   <header class="mateo-header" role="banner">
     <div class="mateo-header__brand">
-      <div class="mateo-header__logo" aria-hidden="true">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="32" aria-hidden="true">
-          <polygon points="20,2 36,9 20,16 4,9" fill="#F5A623"/>
-          <polygon points="4,9 20,16 20,38 4,31" fill="#1FC8B0"/>
-          <polygon points="20,16 36,9 36,31 20,38" fill="#7C5CD8"/>
-          <polyline points="4,9 20,2 36,9 36,31 20,38 4,31 4,9" stroke="#111" stroke-width="0.8" fill="none"/>
-          <line x1="20" y1="2" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
-          <line x1="4" y1="9" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
-          <line x1="36" y1="9" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
-          <line x1="20" y1="16" x2="20" y2="38" stroke="#111" stroke-width="0.8"/>
-        </svg>
-      </div>
+      <img class="brand-cubo" src="../assets/logos/web/omnimorph-cubo.png" alt="">
       <div class="mateo-header__titles">
-        <span class="mateo-header__name">MATEO</span>
-        <span class="mateo-header__subtitle">Motor de Análisis Táctico y Estadístico</span>
+        <span class="mateo-header__name">OMNIMORPH</span>
+        <span class="mateo-header__subtitle">MATEO · Análisis táctico y estadístico</span>
       </div>
     </div>
 
@@ -193,17 +211,10 @@
 
     <div class="mateo-header__chips">
       <span class="chip chip--team-a" id="chip-match"><span class="chip__dot"></span>BRA vs GER · 2014</span>
-      <span class="chip" id="chip-pipeline"><span class="chip__dot"></span>Pipeline —</span>
-      <span class="chip chip--ok"><span class="chip__dot"></span>ibm/granite-4-h-small</span>
     </div>
 
     <nav id="site-nav" class="site-nav mateo-header__back" aria-label="Navegación principal"></nav>
   </header>
-
-  <!-- ═══════════════════ OBSERVABILIDAD ═══════════════════ -->
-  <div class="obs-strip" role="region" aria-label="Estado de monitores MATEO" id="obs-strip">
-    <span class="obs-strip__label">Monitores</span>
-  </div>
 
   <!-- ═══════════════════ RELOJ MAESTRO + TRANSPORTE ═══════════════════ -->
   <div class="master-clock" role="region" aria-label="Reloj maestro de sincronización">
@@ -240,7 +251,7 @@
         <!-- ── PANEL 1: VIDEO ── -->
         <section class="panel" id="panel-video" aria-label="Video">
           <div class="panel__header">
-            <span class="panel__title" id="p1-title">P1 — Video con marcas MATEO</span>
+            <span class="panel__title" id="p1-title">Video con marcas MATEO</span>
             <span class="chip" id="chip-live"><span class="chip__dot"></span>en pausa</span>
           </div>
           <div class="panel__body">
@@ -263,7 +274,11 @@
               </div>
 
               <div class="video-panel__bar">
-                <button class="btn btn--primary btn-xs" id="btn-narration" type="button" aria-pressed="false">Activar narración</button>
+                <div class="audio-selector" role="group" aria-label="Audio">
+                  <button class="btn btn--primary btn-xs" data-audio="original" type="button" aria-pressed="true">Audio original</button>
+                  <button class="btn btn--outline btn-xs" data-audio="mezcla" type="button" aria-pressed="false">Narrador MATEO</button>
+                  <button class="btn btn--outline btn-xs" data-audio="narrador" type="button" aria-pressed="false">Solo narrador</button>
+                </div>
                 <button class="btn btn--outline btn-xs" id="btn-subs" type="button" aria-pressed="true">Subtítulos</button>
                 <span class="spacer"></span>
                 <span class="shot-tag" id="shot-tag">—</span>
@@ -275,7 +290,7 @@
         <!-- ── PANEL 2: RADAR ── -->
         <section class="panel" id="panel-radar" aria-label="Radar cenital">
           <div class="panel__header">
-            <span class="panel__title">P2 — Radar cenital 120 × 70 m</span>
+            <span class="panel__title">Radar cenital · 120 × 70 m</span>
             <button class="btn btn--primary btn-xs" id="btn-radar-live" type="button" aria-pressed="true">Datos</button>
             <button class="btn btn--outline btn-xs" id="btn-radar-video" type="button" aria-pressed="false">Video</button>
           </div>
@@ -322,7 +337,7 @@
         <!-- ── PANEL 3: KPIs ── -->
         <section class="panel" id="panel-kpis" aria-label="Métricas tácticas">
           <div class="panel__header">
-            <span class="panel__title">P3 — Métricas tácticas</span>
+            <span class="panel__title">Métricas tácticas</span>
             <span class="chip" id="chip-window-kpi"><span class="chip__dot"></span>W0</span>
           </div>
           <div class="panel__body">
@@ -379,7 +394,7 @@
         <!-- ── PANEL 4: CRÓNICA ── -->
         <section class="panel" id="panel-chronicle" aria-label="Crónica IA">
           <div class="panel__header">
-            <span class="panel__title">P4 — Crónica IA + transcripción</span>
+            <span class="panel__title">Crónica IA y transcripción</span>
             <span class="chip" id="chip-narr-mode"><span class="chip__dot"></span>—</span>
           </div>
           <div class="panel__body">
@@ -400,53 +415,62 @@
             </div>
           </div>
         </section>
+
+        <!-- ── JUGADORES ── -->
+        <aside class="player-sidebar" role="complementary" aria-label="Estadísticas por rastro">
+          <div class="player-sidebar__team-selector">
+            <button class="btn btn--primary btn-sm" id="btn-team-0" type="button" aria-pressed="true">BRA</button>
+            <button class="btn btn--outline btn-sm" id="btn-team-1" type="button" aria-pressed="false">GER</button>
+            <span style="margin-left: auto; align-self: center; font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);">Top 5 rastros</span>
+          </div>
+          <div class="player-sidebar__metric-selector">
+            <span class="text-label" style="width: 100%; margin-bottom: var(--space-1);">Métrica</span>
+            <button class="btn btn--primary btn-xs" data-metric="dist_m" type="button">Distancia</button>
+            <button class="btn btn--outline btn-xs" data-metric="avg_mps" type="button">Vel. media</button>
+            <button class="btn btn--outline btn-xs" data-metric="sprints" type="button">Sprints</button>
+          </div>
+          <p class="player-sidebar__aviso">
+            Un rastro es un seguimiento automático, no un jugador identificado. Su número no es
+            el dorsal y puede mezclar a varias personas: las cifras son aproximadas.
+          </p>
+          <div class="player-sidebar__list" id="player-list"></div>
+    
+          <div class="player-card" id="player-card">
+            <span class="player-card__title" id="pc-title">Selecciona un rastro</span>
+            <div class="player-card__heatmap" aria-label="Mapa de calor del rastro">
+              <svg id="pc-heat" viewBox="0 0 120 70" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="120" height="70" fill="#0E1A16"/>
+              </svg>
+            </div>
+            <div class="player-card__stats">
+              <div class="player-card__stat"><span class="player-card__stat-label">Dist.</span><span class="player-card__stat-value" id="pc-dist">—</span></div>
+              <div class="player-card__stat"><span class="player-card__stat-label">Vel. media</span><span class="player-card__stat-value" id="pc-avg">—</span></div>
+              <div class="player-card__stat"><span class="player-card__stat-label">Sprints</span><span class="player-card__stat-value" id="pc-spr">—</span></div>
+            </div>
+            <span class="text-label" id="pc-foot" style="color: var(--color-text-soft);"></span>
+          </div>
+        </aside>
       </div>
     </main>
 
     <!-- ── SIDEBAR DE JUGADORES ── -->
-    <aside class="player-sidebar" role="complementary" aria-label="Estadísticas de jugadores">
-      <div class="player-sidebar__team-selector">
-        <button class="btn btn--primary btn-sm" id="btn-team-0" type="button" aria-pressed="true">BRA</button>
-        <button class="btn btn--outline btn-sm" id="btn-team-1" type="button" aria-pressed="false">GER</button>
-        <span style="margin-left: auto; align-self: center; font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);">Top 5</span>
-      </div>
-      <div class="player-sidebar__metric-selector">
-        <span class="text-label" style="width: 100%; margin-bottom: var(--space-1);">Métrica</span>
-        <button class="btn btn--primary btn-xs" data-metric="dist_m" type="button">Distancia</button>
-        <button class="btn btn--outline btn-xs" data-metric="avg_mps" type="button">Vel. media</button>
-        <button class="btn btn--outline btn-xs" data-metric="sprints" type="button">Sprints</button>
-      </div>
-      <div class="player-sidebar__list" id="player-list"></div>
+  </div>
 
-      <div class="player-card" id="player-card">
-        <span class="player-card__title" id="pc-title">Selecciona un jugador</span>
-        <div class="player-card__heatmap" aria-label="Mapa de calor del jugador">
-          <svg id="pc-heat" viewBox="0 0 120 70" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect width="120" height="70" fill="#0E1A16"/>
-          </svg>
-        </div>
-        <div class="player-card__stats">
-          <div class="player-card__stat"><span class="player-card__stat-label">Dist.</span><span class="player-card__stat-value" id="pc-dist">—</span></div>
-          <div class="player-card__stat"><span class="player-card__stat-label">Vel. media</span><span class="player-card__stat-value" id="pc-avg">—</span></div>
-          <div class="player-card__stat"><span class="player-card__stat-label">Sprints</span><span class="player-card__stat-value" id="pc-spr">—</span></div>
-        </div>
-        <span class="text-label" id="pc-foot" style="color: var(--color-text-soft);"></span>
-      </div>
-    </aside>
+  <!-- ═══════════════════ ESTADO DEL SISTEMA ═══════════════════ -->
+  <div class="obs-strip" role="region" aria-label="Estado del sistema MATEO" id="obs-strip">
+    <span class="obs-strip__label">Estado del sistema</span>
+      <span class="chip" id="chip-pipeline"><span class="chip__dot"></span>Pipeline —</span>
+      <span class="chip chip--ok"><span class="chip__dot"></span>ibm/granite-4-h-small</span>
   </div>
 
   <!-- ═══════════════════ PIE ═══════════════════ -->
-  <footer class="footer-legend" role="contentinfo">
-    <div class="footer-legend__col"><span class="footer-legend__heading">Creadores</span><span class="footer-legend__value" id="legend-creators">[Equipo Omnimorph — añadir nombres]</span></div>
-    <div class="footer-legend__col"><span class="footer-legend__heading">Programa</span><span class="footer-legend__value" id="legend-program">[Programa / Institución — añadir]</span></div>
-    <div class="footer-legend__col"><span class="footer-legend__heading">Licencia</span><span class="footer-legend__value" id="legend-license">[Licencia — añadir]</span></div>
-    <div class="footer-legend__wordmarks">
-      <span class="footer-legend__wordmark footer-legend__wordmark--primary">OMNIMORPH</span>
-      <span class="footer-legend__wordmark">MATEO · Motor de análisis táctico y estadístico</span>
-    </div>
+  <footer class="site-credit" role="contentinfo">
+    <p class="site-credit__text" id="legend-credit">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab</p>
   </footer>
 
   <script src="../components/site-nav.js"></script>
+  <script src="../components/chat-widget.js"></script>
+  <script src="../components/chat.js"></script>
   <script>
   /**
    * mateo.html — Tablero vivo
@@ -469,7 +493,7 @@
     var lastValid = [];        // último frame con jugadores ≤ i
     var curFrame = -1, curWin = -2;
     var team = 0, metric = 'dist_m', selected = null;
-    var narrationOn = false, subsOn = true, swapped = false, radarMode = 'live';
+    var audioMode = 'original', subsOn = true, swapped = false, radarMode = 'live';
 
     var vMarked = $('v-marked'), vOrig = $('v-original'), vRadar = $('v-radar');
 
@@ -488,12 +512,12 @@
         $('data-notice-text').textContent = location.protocol === 'file:'
           ? 'Abre el tablero con un servidor: python -m http.server 8600 --directory dashboard  →  http://localhost:8600/pages/mateo.html'
           : 'Falta dashboard/data/mateo_data.json — ejecuta: python scripts/export_dashboard_data.py';
+        window.OmniTransicion.falla('No pudimos cargar el tablero');
       });
 
     fetch('../config/ui.config.json').then(function (r) { return r.json(); }).then(function (cfg) {
       var leg = cfg.legend || {};
-      [['legend-creators', leg.creators], ['legend-program', leg.program], ['legend-license', leg.license]]
-        .forEach(function (p) { if (p[1]) $(p[0]).textContent = p[1]; });
+      if (leg.credit) $('legend-credit').textContent = leg.credit;
     }).catch(function () {});
 
     function init(data) {
@@ -508,6 +532,7 @@
       vMarked.addEventListener('error', function () {
         $('data-notice').classList.add('data-notice--on');
         $('data-notice-text').textContent = 'Faltan los videos en dashboard/media/ (no están en Git): el reproductor no funciona, pero datos, radar y línea de tiempo sí. Consulta el README.';
+        window.OmniTransicion.falla('No pudimos cargar los videos');
       });
       vMarked.src = D.media.marked;
       $('v-track').src = D.media.vtt;
@@ -639,7 +664,14 @@
       var t = vMarked.currentTime;
       [vOrig, vRadar].forEach(function (v) {
         if (!v.readyState) return;
-        if (force || Math.abs(v.currentTime - t) > 0.2) v.currentTime = t;
+        var desfase = v.currentTime - t;
+        if (force || Math.abs(desfase) > 0.5) {
+          v.currentTime = t;
+          v.playbackRate = 1;
+        } else {
+          // Corregir poco a poco: saltar en cada desfase haría chasquidos en el audio
+          v.playbackRate = Math.abs(desfase) > 0.04 ? (desfase > 0 ? 0.97 : 1.03) : 1;
+        }
         if (!vMarked.paused && v.paused) v.play().catch(function () {});
         if (vMarked.paused && !v.paused) v.pause();
       });
@@ -805,7 +837,7 @@
         var val = metric === 'dist_m' ? p.dist_m.toFixed(0) + ' m' : metric === 'avg_mps' ? p.avg_mps.toFixed(1) + ' m/s' : String(p.sprints);
         row.innerHTML =
           '<span class="player-row__team" style="background:' + COLORS[p.team] + '"></span>' +
-          '<span class="player-row__track">#' + p.id + '</span>' +
+          '<span class="player-row__track">Rastro ' + p.id + '</span>' +
           '<div class="player-row__bar-wrap"><div class="player-row__bar-fill' + (p.team === 1 ? ' player-row__bar-fill--team-b' : '') +
           '" style="width:' + Math.max(4, p[metric] / max * 100) + '%"></div></div>' +
           '<span class="player-row__value">' + val + '</span>' +
@@ -823,11 +855,11 @@
       var p = D.players.find(function (x) { return x.id === id; });
       document.querySelectorAll('.player-row').forEach(function (r) { r.classList.toggle('player-row--active', Number(r.dataset.id) === id); });
       if (!p) return;
-      $('pc-title').textContent = 'Jugador #' + p.id + ' · ' + TEAM[p.team];
+      $('pc-title').textContent = 'Rastro ' + p.id + ' · ' + TEAM[p.team];
       $('pc-dist').textContent = p.dist_m.toFixed(0) + ' m';
       $('pc-avg').textContent = p.avg_mps.toFixed(1);
       $('pc-spr').textContent = p.sprints;
-      $('pc-foot').textContent = 'Visible ' + (p.frames / FPS).toFixed(1) + ' s en toma abierta · ID cosido M2.2';
+      $('pc-foot').textContent = 'Visible ' + (p.frames / FPS).toFixed(1) + ' s en toma abierta';
       var svg = '<rect width="120" height="70" fill="#0E1A16"/>';
       for (var gx = 0; gx < 12; gx++) for (var gy = 0; gy < 7; gy++) {
         var h = p.heat[gx][gy];
@@ -848,8 +880,22 @@
     }
 
     // ── Interacción ────────────────────────────────────────────────────
+    // El audio de la transmisión viene del video original; la narración, del video con marcas
+    function applyAudio() {
+      vOrig.muted = audioMode === 'narrador';
+      vOrig.volume = audioMode === 'mezcla' ? 0.25 : 1; // de fondo para que se entienda la voz
+      vMarked.muted = audioMode === 'original';
+    }
+
     function setPlaying(on) {
-      if (on) vMarked.play().catch(function () {}); else vMarked.pause();
+      if (on) {
+        // Dentro del clic: algunos navegadores bloquean el sonido si se inicia después
+        applyAudio();
+        vOrig.play().catch(function () {});
+        vMarked.play().catch(function () {});
+      } else {
+        vMarked.pause();
+      }
     }
 
     function bindUI() {
@@ -887,21 +933,26 @@
       // Teclado global
       document.addEventListener('keydown', function (e) {
         var tag = (e.target.tagName || '').toLowerCase();
-        if (tag === 'button' || tag === 'input') return;
+        if (tag === 'button' || tag === 'input' || tag === 'textarea') return;
         if (e.code === 'Space') { setPlaying(vMarked.paused); e.preventDefault(); }
         if (e.target === tl) return;
         if (e.key === 'ArrowRight') seek(vMarked.currentTime + 1);
         if (e.key === 'ArrowLeft') seek(vMarked.currentTime - 1);
       });
 
-      // Narración IA (audio TTS incrustado en el video con marcas)
-      $('btn-narration').addEventListener('click', function () {
-        narrationOn = !narrationOn;
-        vMarked.muted = !narrationOn;
-        this.textContent = narrationOn ? 'Silenciar narración' : 'Activar narración';
-        this.className = 'btn btn-xs ' + (narrationOn ? 'btn--outline' : 'btn--primary');
-        this.setAttribute('aria-pressed', String(narrationOn));
-        if (narrationOn && vMarked.paused) setPlaying(true);
+      // Selector de audio: original, narrador con la transmisión de fondo o solo narrador
+      var botonesAudio = document.querySelectorAll('[data-audio]');
+      botonesAudio.forEach(function (boton) {
+        boton.addEventListener('click', function () {
+          audioMode = boton.dataset.audio;
+          botonesAudio.forEach(function (b) {
+            var activo = b === boton;
+            b.className = 'btn btn-xs ' + (activo ? 'btn--primary' : 'btn--outline');
+            b.setAttribute('aria-pressed', String(activo));
+          });
+          applyAudio();
+          if (audioMode !== 'original' && vMarked.paused) setPlaying(true);
+        });
       });
 
       $('btn-subs').addEventListener('click', function () {
@@ -919,7 +970,7 @@
         var main = $('slot-main'), thumb = $('slot-thumb');
         if (swapped) { main.appendChild(vOrig); thumb.appendChild(vMarked); }
         else { main.appendChild(vMarked); thumb.appendChild(vOrig); }
-        $('p1-title').textContent = swapped ? 'P1 — Video original' : 'P1 — Video con marcas MATEO';
+        $('p1-title').textContent = swapped ? 'Video original' : 'Video con marcas MATEO';
         $('chip-main-label').lastChild.textContent = swapped ? 'Original' : 'Con marcas';
         $('thumb-label').textContent = swapped ? 'Con marcas · MATEO' : 'Original · sin marcas';
         if (wasPlaying) { vMarked.play().catch(function () {}); syncFollowers(true); }

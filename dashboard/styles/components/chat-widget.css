@@ -1,0 +1,215 @@
+/**
+ * styles/components/chat-widget.css
+ * OMNIMORPH — Burbuja flotante del chatbot (la crea components/chat-widget.js).
+ * Encima de la navegación (200) y debajo de la pantalla de transición (10000).
+ */
+
+.chat-widget {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 500;
+}
+
+/* ── Burbuja ────────────────────────────────────────────────────────────── */
+.chat-widget__bubble {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--color-text);
+  color: var(--color-bg);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.chat-widget__bubble:hover {
+  transform: scale(1.06);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.6);
+}
+
+.chat-widget__bubble:focus-visible,
+.chat-widget__close:focus-visible {
+  outline: 2px solid var(--color-ok);
+  outline-offset: 3px;
+}
+
+.chat-widget svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chat-widget__icon-open,
+.chat-widget__icon-close {
+  position: absolute;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.chat-widget__icon-close {
+  opacity: 0;
+  transform: rotate(-90deg);
+}
+
+.chat-widget--open .chat-widget__icon-open {
+  opacity: 0;
+  transform: rotate(90deg);
+}
+
+.chat-widget--open .chat-widget__icon-close {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+/* ── Ventana ────────────────────────────────────────────────────────────── */
+.chat-widget__panel {
+  position: absolute;
+  right: 0;
+  bottom: 72px;
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  height: min(620px, calc(100dvh - 112px));
+  background-color: var(--color-bg);
+  border: var(--border-soft);
+  border-radius: var(--radius-card);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  /* visibility la saca del orden de tabulación mientras está cerrada */
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(12px) scale(0.97);
+  transform-origin: bottom right;
+  transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
+}
+
+.chat-widget--open .chat-widget__panel {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+}
+
+.chat-widget__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border);
+}
+
+.chat-widget__title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.chat-widget__title h2 {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.2;
+}
+
+.chat-widget__close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+/* ── Ajustes del chat dentro de la ventana ──────────────────────────────── */
+.chat-widget .notice {
+  padding-inline: var(--space-4);
+  font-size: 12px;
+}
+
+.chat-widget .notice a {
+  text-decoration: underline;
+}
+
+.chat-widget .chat__log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.chat-widget .chat__empty,
+.chat-widget .suggest,
+.chat-widget .msg {
+  padding-inline: var(--space-4);
+}
+
+.chat-widget .msg {
+  grid-template-columns: 1fr;
+  gap: var(--space-1);
+  padding-block: var(--space-3);
+}
+
+.chat-widget .msg__body {
+  font-size: 14px;
+}
+
+.chat-widget .composer {
+  position: static;
+  padding: var(--space-3) var(--space-4);
+}
+
+.composer__label {
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}
+
+/* ── Teléfono: ocupa toda la pantalla ───────────────────────────────────── */
+@media (max-width: 600px) {
+  .chat-widget__panel {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    border: none;
+  }
+
+  .chat-widget__close {
+    display: flex;
+  }
+
+  .chat-widget--open .chat-widget__bubble {
+    display: none;
+  }
+
+  .chat-widget__head {
+    padding-right: var(--space-2);
+  }
+
+  .chat-widget .composer textarea {
+    font-size: 16px; /* evita el zoom automático en iOS */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-widget__panel,
+  .chat-widget__bubble,
+  .chat-widget__icon-open,
+  .chat-widget__icon-close {
+    transition: none;
+  }
+}

@@ -1,46 +1,63 @@
 {
   "_comment": "logos.manifest.json — Fuente única de verdad para todos los logos. Los componentes leen este archivo; nunca escriben rutas a mano. Añadir un logo: agregar una entrada aquí y colocar el archivo en assets/logos/<categoria>/.",
-
   "logos": [
     {
       "id": "omnimorph-main",
-      "file": "omnimorph/logo_omnimorph.svg",
+      "file": "web/omnimorph-logo-oscuro.png",
       "alt": "Logo OMNIMORPH — cubo de Rubik con wordmark",
       "max_width": 220,
       "variant": "light",
       "status": "OK"
     },
     {
+      "id": "omnimorph-main-claro",
+      "file": "web/omnimorph-logo-claro.png",
+      "alt": "Logo OMNIMORPH — cubo de Rubik con wordmark",
+      "max_width": 220,
+      "variant": "dark",
+      "status": "OK"
+    },
+    {
       "id": "omnimorph-cube",
-      "file": "omnimorph/omnimorph-cube.svg",
+      "file": "web/omnimorph-cubo.png",
       "alt": "Cubo de Rubik OMNIMORPH",
       "max_width": 80,
       "variant": "both",
-      "status": "PENDING"
+      "status": "OK"
     },
     {
       "id": "ibm-main",
-      "file": "ibm/IBM_logo.svg",
+      "file": "web/ibm.png",
       "alt": "IBM",
-      "max_width": 60,
-      "variant": "light",
-      "status": "PENDING — descargar logo oficial IBM de IBM Brand Center"
-    },
-    {
-      "id": "ibm-watsonx",
-      "file": "ibm/watsonx_logo.svg",
-      "alt": "IBM watsonx",
-      "max_width": 100,
-      "variant": "light",
-      "status": "PENDING"
+      "height": 32,
+      "variant": "dark",
+      "status": "OK"
     },
     {
       "id": "ibm-granite",
-      "file": "ibm/granite_logo.svg",
+      "file": "web/granite.png",
       "alt": "IBM Granite",
-      "max_width": 90,
-      "variant": "light",
-      "status": "PENDING"
+      "label": "IBM Granite",
+      "height": 40,
+      "variant": "dark",
+      "status": "OK"
+    },
+    {
+      "id": "ibm-watsonx-orchestrate",
+      "file": "web/watsonx-orchestrate.png",
+      "alt": "IBM watsonx Orchestrate",
+      "height": 18,
+      "variant": "dark",
+      "status": "OK"
+    },
+    {
+      "id": "ibm-bob",
+      "file": "web/ibm-bob.png",
+      "alt": "IBM Bob",
+      "label": "IBM Bob",
+      "height": 40,
+      "variant": "dark",
+      "status": "OK"
     },
     {
       "id": "programa-main",

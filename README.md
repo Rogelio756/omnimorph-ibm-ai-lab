@@ -27,7 +27,7 @@ Para usar el chatbot, edita `.env` antes de arrancar: `IBM_CLOUD_API_KEY`, `WATS
 | Inicio | Portada | Sin el video, muestra un fondo animado |
 | MATEO | Video, radar, métricas y crónica sincronizados | Los videos, para reproducir |
 | Partido | Ficha, comparativa 1T/2T, los 8 goles y gol de Müller | No |
-| Chatbot | Preguntas sobre el partido | Credenciales de watsonx.ai |
+| Burbuja de chat (en MATEO y Partido) | Preguntas sobre el partido | Credenciales de watsonx.ai |
 
 ## Videos
 

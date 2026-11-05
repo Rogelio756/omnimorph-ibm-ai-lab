@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  var TABS = ['ficha', 'comparativa', 'goles', 'muller'];
+  var TABS = ['ficha', 'fichero', 'comparativa', 'goles', 'muller'];
   var PERIODOS = [['primer_tiempo', '1T'], ['segundo_tiempo', '2T'], ['tiempo_completo', 'Total']];
   var EQUIPOS = [['brasil', 'Brasil', 'bra'], ['alemania', 'Alemania', 'ger']];
 
@@ -26,6 +26,8 @@
     ['atajadas_portero', 'Atajadas', 0, ''],
     ['recuperaciones', 'Recuperaciones', 0, ''],
   ];
+
+  var FOTO_ESTADIO = 'https://commons.wikimedia.org/wiki/File:Est%C3%A1dio_Governador_Magalh%C3%A3es_Pinto_-_Belo_Horizonte_-_20240626170354.jpg';
 
   var D = null;
   var metricaActiva = 'tiros_totales';
@@ -74,6 +76,7 @@
     .catch(function () {
       $('data-error').hidden = false;
       $('tabs').hidden = true;
+      window.OmniTransicion.falla('No pudimos cargar los datos del partido');
     });
 
   function iniciar() {
@@ -110,7 +113,7 @@
     if (!dibujado[id]) { dibujado[id] = true; RENDER[id](); }
   }
 
-  var RENDER = { ficha: renderFicha, comparativa: renderComparativa, goles: renderGoles, muller: renderMuller };
+  var RENDER = { ficha: renderFicha, fichero: renderFichero, comparativa: renderComparativa, goles: renderGoles, muller: renderMuller };
 
   // ── Ficha previa ─────────────────────────────────────────────────────────
   function stat(label, valor, hint, esTexto) {
@@ -124,6 +127,16 @@
     var info = D.partido, clima = info.condiciones_climaticas, arb = info.arbitro;
     var host = $('panel-ficha');
     vaciar(host);
+    host.appendChild(el('figure', { class: 'estadio' },
+      el('div', { class: 'estadio__foto' },
+        el('img', { src: '../assets/estadio/mineirao.jpg', alt: 'Fachada de concreto del estadio Mineirão' }),
+        el('div', { class: 'estadio__nombre' },
+          el('strong', { text: 'Mineirão' }),
+          el('span', { text: info.ciudad }))),
+      el('figcaption', { class: 'estadio__credito' }, 'Foto de 2024: ',
+        el('a', { href: FOTO_ESTADIO, target: '_blank', rel: 'noopener', text: 'Rodrigo Rocatto' }), ', ',
+        el('a', { href: 'https://creativecommons.org/licenses/by-sa/4.0/', target: '_blank', rel: 'noopener', text: 'CC BY-SA 4.0' }),
+        ', recortada')));
     host.appendChild(el('div', { class: 'stat-row' },
       stat('Marcador final', info.resultado.marcador_final, 'Descanso ' + info.resultado.primer_tiempo),
       stat('Asistencia', num(info.asistencia, 0), 'Mineirão'),
@@ -146,33 +159,13 @@
           el('span', { class: 'absence__name', text: 'Baja: ' + b.nombre }),
           el('span', { class: 'absence__reason', text: b.motivo })));
       });
-      var jugadores = Object.keys(eq.plantilla).map(function (d) {
-        var j = eq.plantilla[d]; j.dorsal = Number(d); return j;
-      }).sort(function (a, b) { return a.dorsal - b.dorsal; });
-      [['Titulares', true], ['Suplentes', false]].forEach(function (grupo) {
-        col.appendChild(el('div', { class: 'section-label', text: grupo[0] }));
-        col.appendChild(tablaPlantilla(jugadores.filter(function (j) { return j.titular === grupo[1]; })));
-      });
       split.appendChild(col);
     });
     host.appendChild(split);
   }
 
-  function tablaPlantilla(jugadores) {
-    var tbody = el('tbody');
-    jugadores.forEach(function (j) {
-      tbody.appendChild(el('tr', null,
-        el('td', { class: 'num soft', text: String(j.dorsal) }),
-        el('td', { text: j.nombre }),
-        el('td', { class: 'soft', text: j.posicion }),
-        el('td', { class: 'num', text: String(j.minutos) }),
-        el('td', { class: 'soft', text: j.eventos.join(' · ') })));
-    });
-    return el('div', { class: 'table-wrap' }, el('table', { class: 'tbl' },
-      el('thead', null, el('tr', null,
-        el('th', { text: '#' }), el('th', { text: 'Jugador' }), el('th', { text: 'Posición' }),
-        el('th', { class: 'num', text: 'Min' }), el('th', { text: 'Eventos' }))),
-      tbody));
+  function renderFichero() {
+    window.OmniFichero.render($('panel-fichero'), D, el);
   }
 
   // ── Comparativa 1T / 2T ──────────────────────────────────────────────────

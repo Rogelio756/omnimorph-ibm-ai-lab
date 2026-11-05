@@ -11,30 +11,27 @@
   <link rel="stylesheet" href="../styles/components/pill-button.css">
   <link rel="stylesheet" href="../styles/components/status-chips.css">
   <link rel="stylesheet" href="../styles/components/site-header.css">
+  <link rel="stylesheet" href="../styles/components/site-credit.css">
   <link rel="stylesheet" href="../styles/components/site-nav.css">
   <link rel="stylesheet" href="../styles/components/tabs.css">
   <link rel="stylesheet" href="../styles/components/match-hub.css">
+  <link rel="stylesheet" href="../styles/components/fichero.css">
   <style>
     .btn-xs { height: 28px; padding: 0 var(--space-3); font-size: 10px; }
   </style>
+  <link rel="stylesheet" href="../styles/components/chat.css">
+  <link rel="stylesheet" href="../styles/components/chat-widget.css">
+  <link rel="stylesheet" href="../styles/components/transicion.css">
+  <script src="../components/transicion.js"></script>
 </head>
 <body class="page-hub">
 
   <header class="site-header" role="banner">
     <div class="site-header__brand">
-      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="32" aria-hidden="true">
-        <polygon points="20,2 36,9 20,16 4,9" fill="#F5A623"/>
-        <polygon points="4,9 20,16 20,38 4,31" fill="#1FC8B0"/>
-        <polygon points="20,16 36,9 36,31 20,38" fill="#7C5CD8"/>
-        <polyline points="4,9 20,2 36,9 36,31 20,38 4,31 4,9" stroke="#111" stroke-width="0.8" fill="none"/>
-        <line x1="20" y1="2" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
-        <line x1="4" y1="9" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
-        <line x1="36" y1="9" x2="20" y2="16" stroke="#111" stroke-width="0.8"/>
-        <line x1="20" y1="16" x2="20" y2="38" stroke="#111" stroke-width="0.8"/>
-      </svg>
+      <img class="brand-cubo" src="../assets/logos/web/omnimorph-cubo.png" alt="">
       <div class="site-header__titles">
-        <span class="site-header__name">MATEO</span>
-        <span class="site-header__subtitle">Centro de partido</span>
+        <span class="site-header__name">OMNIMORPH</span>
+        <span class="site-header__subtitle">MATEO · Centro de partido</span>
       </div>
     </div>
     <div class="site-header__sep" aria-hidden="true"></div>
@@ -66,21 +63,28 @@
 
     <div class="tabs" id="tabs" role="tablist" aria-label="Secciones del partido">
       <button class="tab" id="tab-ficha" role="tab" aria-controls="panel-ficha" aria-selected="true" type="button">Ficha previa</button>
+      <button class="tab" id="tab-fichero" role="tab" aria-controls="panel-fichero" aria-selected="false" tabindex="-1" type="button">Fichero</button>
       <button class="tab" id="tab-comparativa" role="tab" aria-controls="panel-comparativa" aria-selected="false" tabindex="-1" type="button">Comparativa 1T / 2T</button>
       <button class="tab" id="tab-goles" role="tab" aria-controls="panel-goles" aria-selected="false" tabindex="-1" type="button">Los 8 goles</button>
       <button class="tab" id="tab-muller" role="tab" aria-controls="panel-muller" aria-selected="false" tabindex="-1" type="button">Gol de Müller</button>
     </div>
 
     <section class="panel-body" id="panel-ficha" role="tabpanel" aria-labelledby="tab-ficha"></section>
+    <section class="panel-body" id="panel-fichero" role="tabpanel" aria-labelledby="tab-fichero" hidden></section>
     <section class="panel-body" id="panel-comparativa" role="tabpanel" aria-labelledby="tab-comparativa" hidden></section>
     <section class="panel-body" id="panel-goles" role="tabpanel" aria-labelledby="tab-goles" hidden></section>
     <section class="panel-body" id="panel-muller" role="tabpanel" aria-labelledby="tab-muller" hidden></section>
   </main>
 
-  <footer class="site-footer">MATEO · Omnimorph AI Lab · Datos de la semifinal del Mundial 2014</footer>
+  <footer class="site-credit" role="contentinfo">
+    <p class="site-credit__text">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab</p>
+  </footer>
   <div class="tip" id="tip" hidden></div>
 
   <script src="../components/site-nav.js"></script>
+  <script src="../components/fichero.js"></script>
+  <script src="../components/chat-widget.js"></script>
+  <script src="../components/chat.js"></script>
   <script src="../components/partido.js"></script>
 </body>
 </html>

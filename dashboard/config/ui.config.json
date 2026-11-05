@@ -31,15 +31,15 @@
   ],
 
   "legend": {
-    "creators":  "[Equipo Omnimorph — añadir nombres]",
-    "program":   "[Programa / Institución — añadir]",
+    "credit":    "© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab",
+    "creators":  "Equipo Omnimorph",
+    "program":   "IBM SkillsBuild AI Experiential Learning Lab",
     "license":   "[Licencia — añadir]"
   },
 
   "nav_links": [
     { "label": "Inicio",        "href": "index.html"  },
     { "label": "MATEO",         "href": "mateo.html"  },
-    { "label": "Arquitectura",  "href": "#"           },
     { "label": "Equipo",        "href": "#"           }
   ]
 }

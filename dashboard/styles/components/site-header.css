@@ -24,6 +24,12 @@
   flex-shrink: 0;
 }
 
+.brand-cubo {
+  height: 32px;
+  width: auto;
+  flex-shrink: 0;
+}
+
 .site-header__titles {
   display: flex;
   flex-direction: column;
@@ -60,4 +66,11 @@
   flex: 1;
   flex-wrap: wrap;
   gap: var(--space-2);
+}
+
+/* En teléfono la cabecera ocupa varias líneas: fija taparía demasiada pantalla */
+@media (max-width: 860px) {
+  .site-header {
+    position: static;
+  }
 }

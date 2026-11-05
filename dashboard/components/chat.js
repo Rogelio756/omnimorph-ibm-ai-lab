@@ -1,6 +1,7 @@
 /**
  * components/chat.js
  * OMNIMORPH — Chatbot táctico. Habla con POST /api/chat de serve.py (Granite en watsonx.ai).
+ * Se carga después de chat-widget.js, que crea los elementos que usa este archivo.
  * El texto del modelo se inserta SIEMPRE con textContent, nunca como HTML.
  */
 (function () {
@@ -113,7 +114,7 @@
     var msg = el('article', { class: 'msg msg--' + rol },
       el('span', { class: 'msg__who', text: rol === 'user' ? 'Tú' : 'MATEO' }), cuerpo);
     $('log').appendChild(msg);
-    msg.scrollIntoView({ block: 'end', behavior: 'smooth' });
+    $('log').scrollTo({ top: $('log').scrollHeight, behavior: 'smooth' });
     return msg;
   }
 
@@ -200,6 +201,10 @@
         var cuerpo = el('div', { class: 'msg__body', role: 'alert',
           text: ERRORES[err.estado] || 'No se pudo contactar con el servidor. Inténtalo de nuevo.' });
         agregarMensaje('error', cuerpo).classList.add('msg--assistant');
+        // Límites y validaciones se explican en el chat; esto es para fallas del servicio
+        if (!err.estado || err.estado >= 500) {
+          window.OmniTransicion.falla('No pudimos conectar con el chatbot');
+        }
       })
       .then(function () {
         clearTimeout(temporizador);

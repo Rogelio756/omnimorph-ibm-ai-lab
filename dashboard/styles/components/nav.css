@@ -10,15 +10,7 @@
   content: none;
 }
 
-/* Estado scroll: agrega fondo semitransparente */
-.om-nav--scrolled {
-  background: rgba(11, 11, 11, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: background var(--transition);
-}
-
-/* Enlace activo */
+/* Enlace activo: todos son blancos, así que se marca con una línea */
 .om-nav__link--active {
-  color: var(--color-text);
+  border-bottom-color: var(--color-text);
 }

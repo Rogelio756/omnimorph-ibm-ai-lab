@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="OMNIMORPH — Análisis táctico de fútbol con IA. Ve lo que el ojo no ve.">
   <title>OMNIMORPH — Inicio</title>
+  <link rel="icon" type="image/png" href="../assets/logos/web/omnimorph-cubo.png">
+
   <!-- Hojas de estilo en orden de dependencia -->
   <link rel="stylesheet" href="../styles/tokens.css?v=3">
   <link rel="stylesheet" href="../styles/base.css?v=3">
@@ -15,7 +17,7 @@
   <link rel="stylesheet" href="../styles/components/hero.css?v=3">
   <link rel="stylesheet" href="../styles/components/tiles.css?v=3">
   <link rel="stylesheet" href="../styles/components/powered-by.css?v=3">
-  <link rel="stylesheet" href="../styles/components/footer-legend.css?v=3">
+  <link rel="stylesheet" href="../styles/components/site-credit.css?v=3">
   <style>
     /* Estilos de página que no pertenecen a ningún componente reutilizable */
     .page-index {
@@ -43,23 +45,31 @@
       padding-block: var(--space-9);
     }
   </style>
+  <link rel="stylesheet" href="../styles/components/transicion.css">
+  <script src="../components/transicion.js"></script>
 </head>
 <body class="page-index">
 
   <!-- ── NAVEGACIÓN ─────────────────────────────────────────────────────── -->
   <nav class="om-nav" id="main-nav" role="navigation" aria-label="Navegación principal">
-    <span class="om-nav__wordmark">OMNIMORPH</span>
+    <span class="om-nav__wordmark">
+      <img class="om-nav__cubo" src="../assets/logos/web/omnimorph-cubo.png" alt="">
+      OMNIMORPH
+    </span>
 
-    <ul class="om-nav__links" role="list">
+    <button class="om-nav__toggle" id="nav-toggle" type="button"
+            aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="om-nav__links" id="nav-links" role="list">
       <li><a class="om-nav__link om-nav__link--active" href="index.html">Inicio</a></li>
       <li><a class="om-nav__link" href="mateo.html">MATEO</a></li>
       <li><a class="om-nav__link" href="partido.html">Partido</a></li>
-      <li><a class="om-nav__link" href="chat.html">Chatbot</a></li>
-      <li><a class="om-nav__link" href="#">Arquitectura</a></li>
       <li><a class="om-nav__link" href="#">Equipo</a></li>
     </ul>
 
-    <a class="om-nav__link" href="mateo.html" style="margin-left: var(--space-4);">Abrir tablero</a>
+    <a class="om-nav__link om-nav__cta" href="mateo.html">Abrir tablero</a>
   </nav>
 
   <!-- ── HERO ───────────────────────────────────────────────────────────── -->
@@ -123,15 +133,6 @@
       </div>
     </div>
 
-    <!-- Logo OMNIMORPH — tarjeta oscura, bordes rectos (SVG blanco sobre #111) -->
-    <div class="hero__logo-card" aria-label="Logo OMNIMORPH">
-      <img
-        src="../assets/logos/omnimorph/logo_omnimorph.svg"
-        alt="Logo OMNIMORPH"
-        style="max-width: 220px; width: 100%; display: block; border-radius: 0;"
-      >
-    </div>
-
   </section>
 
   <!-- ── BLOQUES NUMERADOS ─────────────────────────────────────────────── -->
@@ -176,42 +177,9 @@
     </div>
   </section>
 
-  <!-- ── LEYENDA AL PIE ─────────────────────────────────────────────────── -->
-  <footer class="footer-legend" role="contentinfo">
-    <div class="footer-legend__col">
-      <span class="footer-legend__heading">Creadores</span>
-      <span class="footer-legend__value" id="legend-creators">
-        [Equipo Omnimorph — añadir nombres]
-      </span>
-    </div>
-
-    <div class="footer-legend__col">
-      <span class="footer-legend__heading">Programa</span>
-      <span class="footer-legend__value" id="legend-program">
-        [Programa / Institución — añadir]
-      </span>
-    </div>
-
-    <div class="footer-legend__col">
-      <span class="footer-legend__heading">Licencia</span>
-      <span class="footer-legend__value" id="legend-license">
-        [Licencia — añadir]
-      </span>
-    </div>
-
-    <div class="footer-legend__wordmarks" style="display: flex; flex-direction: row; align-items: center; gap: var(--space-4);">
-      <div style="background-color: var(--color-bg); padding: var(--space-3); border-radius: 0; border: var(--border);">
-        <img
-          src="../assets/logos/omnimorph/logo_omnimorph.svg"
-          alt="Logo OMNIMORPH"
-          style="max-width: 140px; width: 100%; display: block; border-radius: 0;"
-        >
-      </div>
-      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1);">
-        <span class="footer-legend__wordmark footer-legend__wordmark--primary">OMNIMORPH</span>
-        <span class="footer-legend__wordmark">MATEO · Motor de análisis táctico y estadístico</span>
-      </div>
-    </div>
+  <!-- ── CRÉDITO AL PIE ─────────────────────────────────────────────────── -->
+  <footer class="site-credit" role="contentinfo">
+    <p class="site-credit__text" id="legend-credit">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab</p>
   </footer>
 
   <!-- ── SCRIPTS ────────────────────────────────────────────────────────── -->
@@ -357,16 +325,26 @@
       }
     }
 
-    // ── Navbar: fondo al hacer scroll ────────────────────────────────────
+    // ── Menú desplegable en pantallas chicas ─────────────────────────────
     const nav = document.getElementById('main-nav');
-    if (nav) {
-      window.addEventListener('scroll', function () {
-        if (window.scrollY > 40) {
-          nav.classList.add('om-nav--scrolled');
-        } else {
-          nav.classList.remove('om-nav--scrolled');
-        }
-      }, { passive: true });
+    const navToggle = document.getElementById('nav-toggle');
+    if (nav && navToggle) {
+      const cerrarMenu = function () {
+        nav.classList.remove('om-nav--open');
+        navToggle.setAttribute('aria-expanded', 'false');
+        navToggle.setAttribute('aria-label', 'Abrir menú');
+      };
+      navToggle.addEventListener('click', function () {
+        const abierto = nav.classList.toggle('om-nav--open');
+        navToggle.setAttribute('aria-expanded', String(abierto));
+        navToggle.setAttribute('aria-label', abierto ? 'Cerrar menú' : 'Abrir menú');
+      });
+      nav.addEventListener('click', function (e) {
+        if (e.target.closest('a')) cerrarMenu();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') cerrarMenu();
+      });
     }
 
     // ── Logos desde manifest ──────────────────────────────────────────────
@@ -376,7 +354,7 @@
         .then(function (r) { return r.json(); })
         .then(function (manifest) {
           manifest.logos
-            .filter(function (l) { return l.id.startsWith('ibm') || l.id.startsWith('programa'); })
+            .filter(function (l) { return l.id.startsWith('ibm'); })
             .forEach(function (logo) {
               const filePath = '../assets/logos/' + logo.file;
               const isPending = logo.status && logo.status.startsWith('PENDING');
@@ -392,9 +370,16 @@
                 wrapper.className = 'powered-by__logo-item';
                 const img = document.createElement('img');
                 img.src = filePath;
-                img.alt = logo.alt;
-                img.style.maxWidth = logo.max_width + 'px';
+                // Con nombre visible al lado, la imagen es decorativa
+                img.alt = logo.label ? '' : logo.alt;
+                img.style.height = logo.height + 'px';
                 wrapper.appendChild(img);
+                if (logo.label) {
+                  const nombre = document.createElement('span');
+                  nombre.className = 'powered-by__logo-name';
+                  nombre.textContent = logo.label;
+                  wrapper.appendChild(nombre);
+                }
                 logosContainer.appendChild(wrapper);
               }
             });
@@ -416,9 +401,7 @@
       .then(function (cfg) {
         var leg = cfg.legend || {};
         var map = {
-          'legend-creators': leg.creators,
-          'legend-program':  leg.program,
-          'legend-license':  leg.license,
+          'legend-credit': leg.credit,
         };
         Object.keys(map).forEach(function (id) {
           var el = document.getElementById(id);
