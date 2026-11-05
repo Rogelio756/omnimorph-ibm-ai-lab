@@ -1,0 +1,210 @@
+[
+  {
+    "orden": 1,
+    "minuto": 11,
+    "segundo_oficial": "10:33",
+    "marcador_momento": "0-1",
+    "equipo_anotador": "Alemania",
+    "anotador": {
+      "nombre": "Thomas Müller",
+      "dorsal": 13
+    },
+    "asistente": {
+      "nombre": "Toni Kroos",
+      "dorsal": 18
+    },
+    "tipo_jugada": "Balón parado (Córner derecho)",
+    "xg": 0.35,
+    "coordenadas_campo_cm": {
+      "pitch_x": 920,
+      "pitch_y": 4150
+    },
+    "distancia_porteria_m": 11.3,
+    "pie_remate": "Derecho (interior de primera)",
+    "zona_remate": "Punto de penalti / Centro del área",
+    "nota_tactica": "Pantalla combinada Klose-Höwedes en el área chica que bloquea la trayectoria defensiva de David Luiz. Müller rompe al espacio libre ganando 3.4m de separación y rematando sin oposición.",
+    "narracion": "Minuto 11: Centro desde el córner derecho de Toni Kroos al punto de penal. David Luiz queda atrapado en el tráfico y Thomas Müller entra completamente desmarcado para rematar con la cara interna del pie derecho. Gol de Alemania."
+  },
+  {
+    "orden": 2,
+    "minuto": 23,
+    "segundo_oficial": "22:04",
+    "marcador_momento": "0-2",
+    "equipo_anotador": "Alemania",
+    "anotador": {
+      "nombre": "Miroslav Klose",
+      "dorsal": 11
+    },
+    "asistente": {
+      "nombre": "Thomas Müller",
+      "dorsal": 13
+    },
+    "tipo_jugada": "Jugada abierta (Ataque combinativo interior)",
+    "xg": 0.65,
+    "coordenadas_campo_cm": {
+      "pitch_x": 680,
+      "pitch_y": 3450
+    },
+    "distancia_porteria_m": 6.8,
+    "pie_remate": "Derecho (rebote tras rechace de Júlio César)",
+    "zona_remate": "Área chica",
+    "nota_tactica": "Triangulación vertical Kroos-Müller-Klose que desmonta el escalonamiento defensivo de Brasil. Tras la parada inicial de Júlio César, Klose captura su propio rebote ante la pasividad de Fernandinho y Dante. Récord de 16 goles en Copas del Mundo.",
+    "narracion": "Minuto 23: Combinación en la corona del área entre Müller y Klose. Klose define de primera, tapa Júlio César dejando rebote y el mismo delantero captura el balón suelto para enviarlo a la red. Gol de Miroslav Klose."
+  },
+  {
+    "orden": 3,
+    "minuto": 24,
+    "segundo_oficial": "23:57",
+    "marcador_momento": "0-3",
+    "equipo_anotador": "Alemania",
+    "anotador": {
+      "nombre": "Toni Kroos",
+      "dorsal": 18
+    },
+    "asistente": {
+      "nombre": "Philipp Lahm",
+      "dorsal": 16
+    },
+    "tipo_jugada": "Jugada abierta (Centro raso y llegada de segunda línea)",
+    "xg": 0.38,
+    "coordenadas_campo_cm": {
+      "pitch_x": 1520,
+      "pitch_y": 3800
+    },
+    "distancia_porteria_m": 15.5,
+    "pie_remate": "Izquierdo (volea frontal al poste)",
+    "zona_remate": "Frontal del área grande",
+    "nota_tactica": "Desborde de Lahm por banda derecha superando a Marcelo. Centro raso pasado que cruza el área sin que la zaga brasileña corte, y Kroos entra en carrera para conectar de sobrepique con pierna zurda.",
+    "narracion": "Minuto 24: Desborde de Philipp Lahm por la derecha y centro raso al área grande. La pelota pasa de largo y llega Toni Kroos de frente para sacar una volea zurda pegada al poste. Alemania 3 a 0."
+  },
+  {
+    "orden": 4,
+    "minuto": 26,
+    "segundo_oficial": "25:38",
+    "marcador_momento": "0-4",
+    "equipo_anotador": "Alemania",
+    "anotador": {
+      "nombre": "Toni Kroos",
+      "dorsal": 18
+    },
+    "asistente": {
+      "nombre": "Sami Khedira",
+      "dorsal": 6
+    },
+    "tipo_jugada": "Jugada abierta (Presión alta y recuperación en salida)",
+    "xg": 0.88,
+    "coordenadas_campo_cm": {
+      "pitch_x": 850,
+      "pitch_y": 3600
+    },
+    "distancia_porteria_m": 8.6,
+    "pie_remate": "Derecho (a puerta vacía)",
+    "zona_remate": "Centro del área",
+    "nota_tactica": "Robo inmediato de Kroos sobre Fernandinho tras el saque de centro en sector medio defensivo de Brasil. Transición rápida 2 vs 1 con Khedira, quien asiste a un toque para empujarla a puerta vacía.",
+    "narracion": "Minuto 26: Error de Fernandinho en la salida ante la presión de Kroos. Kroos toca para Khedira en el área y este se la devuelve con el arco libre para que Kroos firme el 4 a 0."
+  },
+  {
+    "orden": 5,
+    "minuto": 29,
+    "segundo_oficial": "28:44",
+    "marcador_momento": "0-5",
+    "equipo_anotador": "Alemania",
+    "anotador": {
+      "nombre": "Sami Khedira",
+      "dorsal": 6
+    },
+    "asistente": {
+      "nombre": "Mesut Özil",
+      "dorsal": 8
+    },
+    "tipo_jugada": "Jugada abierta (Ataque vertical y pase atrás)",
+    "xg": 0.42,
+    "coordenadas_campo_cm": {
+      "pitch_x": 1120,
+      "pitch_y": 3200
+    },
+    "distancia_porteria_m": 11.6,
+    "pie_remate": "Derecho (raso colocado)",
+    "zona_remate": "Punto de penalti",
+    "nota_tactica": "Conducción vertical de Hummels saltando dos líneas de presión sin oposición. Khedira combina con Özil por carril izquierdo; Özil aguanta la salida de Júlio César y cede atrás para el remate ajustado de Khedira.",
+    "narracion": "Minuto 29: Incursión profunda de Hummels desde la defensa, cede a Khedira que habilita a Özil dentro del área. Özil levanta la cabeza, frena y mete el pase atrás donde Khedira define con un toque colocado al rincón. 5 a 0 en 29 minutos."
+  },
+  {
+    "orden": 6,
+    "minuto": 69,
+    "segundo_oficial": "68:11",
+    "marcador_momento": "0-6",
+    "equipo_anotador": "Alemania",
+    "anotador": {
+      "nombre": "André Schürrle",
+      "dorsal": 9
+    },
+    "asistente": {
+      "nombre": "Philipp Lahm",
+      "dorsal": 16
+    },
+    "tipo_jugada": "Jugada abierta (Desborde exterior y pase atrás)",
+    "xg": 0.45,
+    "coordenadas_campo_cm": {
+      "pitch_x": 1050,
+      "pitch_y": 3750
+    },
+    "distancia_porteria_m": 10.8,
+    "pie_remate": "Derecho (remate de primera cruzado)",
+    "zona_remate": "Centro del área",
+    "nota_tactica": "Desmarque de ruptura exterior de Lahm a la espalda de Marcelo. Pase raso al corazón del área donde Schürrle anticipa la marca de Dante atacando el intervalo.",
+    "narracion": "Minuto 69: Subida de Philipp Lahm por banda derecha ganando la línea de fondo. Envía el centro raso hacia el punto penal y André Schürrle llega en carrera para cruzar el disparo de primera con pierna derecha. 6 a 0."
+  },
+  {
+    "orden": 7,
+    "minuto": 79,
+    "segundo_oficial": "78:20",
+    "marcador_momento": "0-7",
+    "equipo_anotador": "Alemania",
+    "anotador": {
+      "nombre": "André Schürrle",
+      "dorsal": 9
+    },
+    "asistente": {
+      "nombre": "Thomas Müller",
+      "dorsal": 13
+    },
+    "tipo_jugada": "Jugada abierta (Control orientado y volea al ángulo)",
+    "xg": 0.12,
+    "coordenadas_campo_cm": {
+      "pitch_x": 880,
+      "pitch_y": 2450
+    },
+    "distancia_porteria_m": 13.7,
+    "pie_remate": "Izquierdo (disparo potente al larguero y adentro)",
+    "zona_remate": "Sector izquierdo del área",
+    "nota_tactica": "Pase aéreo filtrado de Müller hacia la izquierda del área. Schürrle domina con pierna izquierda en carrera y empalma un disparo seco que impacta la parte inferior del larguero.",
+    "narracion": "Minuto 79: Balón de Thomas Müller hacia la izquierda del área. André Schürrle la acomoda de zurda y sin dejarla caer mete un remate potente que pega en el travesaño antes de ingresar. Golazo de Schürrle, 7 a 0."
+  },
+  {
+    "orden": 8,
+    "minuto": 90,
+    "segundo_oficial": "89:45",
+    "marcador_momento": "1-7",
+    "equipo_anotador": "Brasil",
+    "anotador": {
+      "nombre": "Oscar",
+      "dorsal": 11
+    },
+    "asistente": {
+      "nombre": "Marcelo",
+      "dorsal": 6
+    },
+    "tipo_jugada": "Jugada abierta (Transición rápida y contraataque)",
+    "xg": 0.28,
+    "coordenadas_campo_cm": {
+      "pitch_x": 10850,
+      "pitch_y": 3650
+    },
+    "distancia_porteria_m": 11.6,
+    "pie_remate": "Derecho (definición mano a mano)",
+    "zona_remate": "Interior del área grande",
+    "nota_tactica": "Transición rápida de Brasil tras pérdida alemana en ataque. Pelotazo largo de Marcelo al espacio para la carrera de Oscar, quien gana la espalda a Boateng y bate a Neuer en el mano a mano.",
+    "narracion": "Minuto 90: Salida rápida desde el fondo con pelotazo largo de Marcelo. Oscar gana la espalda de Boateng, recorta hacia adentro dentro del área y define ante la salida de Neuer con tiro cruzado. Descuento para Brasil, 1 a 7."
+  }
+]

@@ -1,10 +1,10 @@
 """
 implementacion/cloud_agent/agent_narrator.py
 =============================================
-Agente Táctico y Narrador — ibm/granite-3-8b-instruct
+Agente Táctico y Narrador — ibm/granite-4-h-small
 
 Lee las 8 ventanas de data/clean/tactical_summaries.json,
-invoca ibm/granite-3-8b-instruct (temperature=0.3, max_new_tokens=220),
+invoca ibm/granite-4-h-small (temperature=0.3, max_tokens=220),
 audita cada respuesta con el Monitor M3 y guarda data/clean/narrations.json.
 
 Credenciales exclusivamente desde .env:
@@ -51,6 +51,9 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from implementacion.cloud_agent.governance_monitor_m3 import GovernanceMonitorM3
+from implementacion.cloud_agent.red_ipv4 import preferir_ipv4_en_ibm
+
+preferir_ipv4_en_ibm()
 
 
 # ---------------------------------------------------------------------------
@@ -134,7 +137,7 @@ def _init_watsonx_model(creds: dict):
 
 def _build_prompt(window: dict) -> str:
     """
-    Construye el prompt para ibm/granite-3-8b-instruct dada una ventana táctica.
+    Construye el prompt para ibm/granite-4-h-small dada una ventana táctica.
     El prompt pide un JSON con {window_id, t0, t1, analisis_tactico, narracion_es}.
     """
     dominant = window["dominant_team"]
@@ -322,13 +325,13 @@ def run_agent_narrator(
     narrations_path: str | pathlib.Path = NARRATIONS_PATH,
 ) -> dict:
     """
-    Procesa las 8 ventanas tácticas con ibm/granite-3-8b-instruct.
+    Procesa las 8 ventanas tácticas con ibm/granite-4-h-small.
     Si las credenciales no están configuradas, ejecuta modo OFFLINE.
 
     Retorna dict con:
         status      : "PASS" | "FAIL"
         narrations  : lista de narraciones generadas
-        mode        : "online" | "offline"
+        mode        : "online" | "offline" | "mixto" (hubo ventanas sin LLM)
         m3_report   : reporte del Monitor M3
     """
     tactical_path = pathlib.Path(tactical_path)
@@ -371,6 +374,7 @@ def run_agent_narrator(
     for window in tactical_summaries:
         wid = window["window_id"]
         print(f"  [{wid}] Generando narración …", end=" ")
+        window_mode = "offline"
 
         if mode == "online" and model is not None:
             prompt = _build_prompt(window)
@@ -380,6 +384,7 @@ def run_agent_narrator(
                 print("(fallback offline)")
                 result, latency_ms, tokens_in, tokens_out = _generate_offline_narration(window)
             else:
+                window_mode = "online"
                 print(f"✓ ({latency_ms:.0f} ms)")
         else:
             result, latency_ms, tokens_in, tokens_out = _generate_offline_narration(window)
@@ -389,7 +394,7 @@ def run_agent_narrator(
         result["latency_ms"] = round(latency_ms, 2)
         result["tokens_in"] = tokens_in
         result["tokens_out"] = tokens_out
-        result["mode"] = mode
+        result["mode"] = window_mode
 
         # Auditar con Monitor M3
         audit = monitor.audit_call(
@@ -399,9 +404,17 @@ def run_agent_narrator(
             latency_ms=latency_ms,
             tokens_in=tokens_in,
             tokens_out=tokens_out,
+            mode=window_mode,
         )
 
         narrations.append(result)
+
+    # El modo global refleja lo que ocurrió, no lo que se intentó
+    window_modes = {n["mode"] for n in narrations}
+    if len(window_modes) > 1:
+        mode = "mixto"
+    elif window_modes:
+        mode = window_modes.pop()
 
     # Guardar narrations.json
     with open(narrations_path, "w", encoding="utf-8") as f:

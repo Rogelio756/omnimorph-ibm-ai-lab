@@ -100,7 +100,7 @@ def load_frames() -> pd.DataFrame | None:
 def load_tactical() -> list | None:
     p = CLEAN_DIR / "tactical_summaries.json"
     if p.exists():
-        with open(p) as f:
+        with open(p, encoding="utf-8") as f:
             return json.load(f)
     return None
 
@@ -109,7 +109,7 @@ def load_tactical() -> list | None:
 def load_narrations() -> list | None:
     p = CLEAN_DIR / "narrations.json"
     if p.exists():
-        with open(p) as f:
+        with open(p, encoding="utf-8") as f:
             return json.load(f)
     return None
 
@@ -119,7 +119,7 @@ def load_monitor(name: str) -> dict | None:
     """Carga el reporte JSON de un monitor (m1, m2, m3, m4)."""
     p = CLEAN_DIR / f"monitor_{name}.json"
     if p.exists():
-        with open(p) as f:
+        with open(p, encoding="utf-8") as f:
             return json.load(f)
     return None
 
@@ -189,7 +189,7 @@ def render_semaphores():
 
 def render_logo():
     if LOGO_PATH.exists():
-        with open(LOGO_PATH) as f:
+        with open(LOGO_PATH, encoding="utf-8") as f:
             svg = f.read()
         st.markdown(f'<div style="text-align:center;padding:8px">{svg}</div>', unsafe_allow_html=True)
     else:

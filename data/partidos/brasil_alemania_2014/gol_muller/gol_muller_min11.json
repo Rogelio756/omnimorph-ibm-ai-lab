@@ -1,0 +1,138 @@
+{
+  "metadatos_jugada": {
+    "partido_id": "WC2014_SF_BRA_GER",
+    "competicion": "Copa Mundial de la FIFA 2014 - Semifinal",
+    "estadio": "Estádio Mineirão, Belo Horizonte",
+    "fecha": "2014-07-08",
+    "minuto_oficial": 11,
+    "reloj_partido": "10:33",
+    "marcador_anterior": "0-0",
+    "marcador_posterior": "0-1",
+    "tipo_jugada": "Balón parado - Saque de esquina derecho",
+    "anotador": {
+      "nombre": "Thomas Müller",
+      "dorsal": 13,
+      "equipo": "Alemania",
+      "team_id": 1
+    },
+    "asistente": {
+      "nombre": "Toni Kroos",
+      "dorsal": 18,
+      "equipo": "Alemania",
+      "team_id": 1
+    },
+    "sistema_referencia": {
+      "pitch_x_rango_cm": [0, 12000],
+      "pitch_y_rango_cm": [0, 7000],
+      "porteria_defendida_brasil_x": 0,
+      "porteria_defendida_alemania_x": 12000,
+      "fps": 25,
+      "unidades": "centímetros y segundos"
+    }
+  },
+  "estadisticas_acumuladas_minuto_11": {
+    "minuto_corte": "10:33",
+    "marcador": "0-1",
+    "resumen_tramo_inicial": "En los primeros 10 minutos, Brasil inició con presión alta empujado por el público, teniendo un tiro desviado de Marcelo a los 3 minutos. Alemania fue ordenando la salida desde el fondo, controló el ritmo con Schweinsteiger y Kroos, tuvo un disparo de Khedira bloqueado al minuto 8 y forzó el córner derecho al minuto 10 que derivó en el 0-1.",
+    "posesion_pct": {
+      "brasil": 50.0,
+      "alemania": 50.0
+    },
+    "tiros_totales": {
+      "brasil": 1,
+      "alemania": 2
+    },
+    "tiros_a_puerta": {
+      "brasil": 0,
+      "alemania": 1
+    },
+    "tiros_desviados_bloqueados": {
+      "brasil": 1,
+      "alemania": 1
+    },
+    "xg_acumulado": {
+      "brasil": 0.03,
+      "alemania": 0.42
+    },
+    "corners": {
+      "brasil": 1,
+      "alemania": 1
+    },
+    "faltas_cometidas": {
+      "brasil": 1,
+      "alemania": 1
+    },
+    "pases_completados_intentados": {
+      "brasil": "38/48",
+      "alemania": "49/56"
+    },
+    "precision_pases_pct": {
+      "brasil": 79.2,
+      "alemania": 87.5
+    }
+  },
+  "ventanas_tacticas": [
+    {
+      "ventana_id": 1,
+      "t0": 0.0,
+      "t1": 4.0,
+      "frame_inicio": 0,
+      "frame_fin": 100,
+      "fase": "Ejecución del córner y pantallas en el área",
+      "texto": "Córner derecho de Kroos al corazón del área penal; pantalla coordinada de Klose y Höwedes sobre David Luiz dejando libre a Müller.",
+      "texto_tactico": "Saque de esquina por derecha a favor de Alemania. Toni Kroos (#18) ejecuta con comba hacia afuera (outswinger) buscando el corazón del área penal. Brasil defiende con sistema mixto: línea zonal pasiva dentro del área chica y emparejamientos individuales sueltos. Klose (#11) y Höwedes (#4) coordinan una pantalla sobre el centro del área chica que frena el intento de salida de David Luiz (#4) y distrae la cobertura de Dante (#13).",
+      "texto_narracion": "Minuto 10 con 29 segundos. Córner desde el costado derecho para Alemania. Toni Kroos acomoda la pelota y envía un centro con efecto hacia afuera sobre el punto de penal. En el área chica, Klose y Höwedes bloquean el paso de la zaga brasileña, permitiendo que Müller inicie su desmarque alejándose del tumulto hacia el centro del área.",
+      "metricas": {
+        "posesion": "Alemania",
+        "posesion_pct_ventana": 100.0,
+        "presion": "Baja (bloque defensivo brasileño replegado en área propia)",
+        "zona_del_balon": "Córner derecho / Sector ofensivo",
+        "coordenadas_saque_cm": {
+          "pitch_x": 35,
+          "pitch_y": 6965
+        },
+        "altura_bloque_defensivo_cm": 680,
+        "densidad_area_chica_brasil": 6,
+        "bloqueo_efectivo": true,
+        "jugadores_clave": [
+          {"dorsal": 18, "rol": "ejecutor", "equipo": "Alemania", "team_id": 1},
+          {"dorsal": 11, "rol": "pantalla_ofensiva", "equipo": "Alemania", "team_id": 1},
+          {"dorsal": 4, "rol": "fijador_central", "equipo": "Alemania", "team_id": 1},
+          {"dorsal": 4, "rol": "marca_bloqueada", "equipo": "Brasil", "team_id": 0}
+        ]
+      }
+    },
+    {
+      "ventana_id": 2,
+      "t0": 4.0,
+      "t1": 8.0,
+      "frame_inicio": 100,
+      "frame_fin": 200,
+      "fase": "Pérdida de marca, remate y gol",
+      "texto": "David Luiz pierde la marca en el área y Müller remata de primera con pierna derecha a 11.3 metros para poner el 0-1.",
+      "texto_tactico": "David Luiz (#4) queda atrapado detrás de la pantalla de Klose y pierde la referencia de Thomas Müller (#13). Müller retrocede hacia el punto penal encontrando un radio de remate completamente libre de 3.4 metros. Define de primera con el interior del pie derecho a 11.3 metros de la portería de Júlio César (#12). Remate raso-cruzado hacia el poste izquierdo a 78.4 km/h con un xG estimado de 0.35.",
+      "texto_narracion": "El centro de Kroos cae limpio al punto penal. David Luiz pierde la marca tras quedar trabado en el tráfico y aparece completamente solo Thomas Müller. De primera y con la cara interna del botín derecho, saca una volea directa al poste izquierdo, imposible para Júlio César. Gol de Alemania, 0-1 al minuto 11.",
+      "metricas": {
+        "posesion": "Alemania",
+        "posesion_pct_ventana": 100.0,
+        "presion": "Nula sobre el rematador (espacio libre concedido)",
+        "zona_del_balon": "Punto de penalti / Área de remate",
+        "coordenadas_remate_cm": {
+          "pitch_x": 920,
+          "pitch_y": 4150
+        },
+        "coordenadas_impacto_porteria_cm": {
+          "pitch_x": 0,
+          "pitch_y": 3820
+        },
+        "distancia_remate_m": 11.3,
+        "separacion_marca_radio_m": 3.4,
+        "tiempo_reaccion_portero_s": 0.41,
+        "velocidad_remate_kmh": 78.4,
+        "velocidad_remate_cm_s": 2177.8,
+        "xg": 0.35,
+        "resultado_jugada": "Gol"
+      }
+    }
+  ]
+}

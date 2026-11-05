@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="../styles/components/player-sidebar.css">
   <link rel="stylesheet" href="../styles/components/footer-legend.css">
   <link rel="stylesheet" href="../styles/components/powered-by.css">
+  <link rel="stylesheet" href="../styles/components/site-nav.css">
 
   <style>
     /* ── Página ──────────────────────────────────────────────────────────── */
@@ -196,7 +197,7 @@
       <span class="chip chip--ok"><span class="chip__dot"></span>ibm/granite-4-h-small</span>
     </div>
 
-    <a class="btn btn--outline mateo-header__back btn-sm" href="index.html">Inicio</a>
+    <nav id="site-nav" class="site-nav mateo-header__back" aria-label="Navegación principal"></nav>
   </header>
 
   <!-- ═══════════════════ OBSERVABILIDAD ═══════════════════ -->
@@ -445,6 +446,7 @@
     </div>
   </footer>
 
+  <script src="../components/site-nav.js"></script>
   <script>
   /**
    * mateo.html — Tablero vivo
@@ -503,6 +505,10 @@
       for (var i = 0; i < NF; i++) { if (D.frames[i].p.length) lv = i; lastValid.push(lv); }
 
       // Medios
+      vMarked.addEventListener('error', function () {
+        $('data-notice').classList.add('data-notice--on');
+        $('data-notice-text').textContent = 'Faltan los videos en dashboard/media/ (no están en Git): el reproductor no funciona, pero datos, radar y línea de tiempo sí. Consulta el README.';
+      });
       vMarked.src = D.media.marked;
       $('v-track').src = D.media.vtt;
       vOrig.src = D.media.original;

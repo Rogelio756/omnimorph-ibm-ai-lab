@@ -1,0 +1,409 @@
+/**
+ * styles/components/match-hub.css
+ * OMNIMORPH — Página del partido (partido.html): rejilla de celdas, tablas y gráfico.
+ * Solo tokens de tokens.css; ningún valor de color a mano.
+ */
+
+.page-hub {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+}
+
+.hub {
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  border-left: var(--border);
+  border-right: var(--border);
+}
+
+.hub-title {
+  padding: var(--space-9) var(--cell-padding-x) var(--space-6);
+  border-bottom: var(--border);
+}
+
+.hub-title h1 {
+  font-size: var(--text-kpi);
+  line-height: 1.1;
+  letter-spacing: var(--ls-kpi);
+}
+
+.hub-title p {
+  margin-top: var(--space-2);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.panel-body {
+  min-height: 320px;
+}
+
+/* ── Celdas de cifras ───────────────────────────────────────────────────── */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  border-bottom: var(--border);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-right: var(--border);
+}
+
+.stat:last-child {
+  border-right: none;
+}
+
+.stat__label {
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.stat__value {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: 32px;
+  letter-spacing: var(--ls-kpi);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Valores que son texto (nombres) y no cifras: más pequeños para no partirse en líneas */
+.stat__value--text {
+  font-size: var(--text-title);
+  line-height: 1.25;
+}
+
+.stat__hint {
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}
+
+.caption {
+  padding: var(--space-3) var(--cell-padding-x);
+  font-size: 13px;
+  color: var(--color-text-soft);
+  border-bottom: var(--border);
+}
+
+/* ── Dos columnas (BRA / GER) ───────────────────────────────────────────── */
+.split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+}
+
+.split > * {
+  min-width: 0;
+  border-right: var(--border);
+}
+
+.split > *:last-child {
+  border-right: none;
+}
+
+.team-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-bottom: var(--border);
+}
+
+.team-head__name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-title);
+}
+
+.team-head__meta {
+  font-size: 13px;
+  color: var(--color-text-soft);
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  background-color: var(--color-text-soft);
+}
+
+.swatch--bra { background-color: var(--color-team-a); }
+.swatch--ger { background-color: var(--color-team-b); }
+
+.absence {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) var(--cell-padding-x);
+  border-bottom: var(--border);
+  border-left: 2px solid var(--color-warn);
+  font-size: 13px;
+}
+
+.absence__name {
+  font-weight: var(--font-weight-medium);
+}
+
+.absence__reason {
+  color: var(--color-text-soft);
+}
+
+.section-label {
+  padding: var(--space-3) var(--cell-padding-x);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  border-bottom: var(--border);
+}
+
+/* ── Tablas ─────────────────────────────────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tbl th,
+.tbl td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  border-bottom: var(--border);
+  vertical-align: top;
+}
+
+.tbl th:first-child,
+.tbl td:first-child {
+  padding-left: var(--cell-padding-x);
+}
+
+.tbl th {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  white-space: nowrap;
+}
+
+.tbl .num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tbl .soft {
+  color: var(--color-text-soft);
+}
+
+.tbl .note {
+  display: block;
+  font-size: var(--text-small);
+  color: var(--color-warn);
+}
+
+.tbl .group {
+  text-align: center;
+  border-left: var(--border);
+}
+
+.tbl .group--bra { color: var(--color-team-a); }
+.tbl .group--ger { color: var(--color-team-b); }
+
+.tbl tr[data-row] {
+  cursor: pointer;
+}
+
+.tbl tr[data-row]:hover,
+.tbl tr[aria-selected="true"] {
+  background-color: var(--color-surface);
+}
+
+.tbl tr[data-row]:focus-visible {
+  outline: 2px solid var(--color-ok);
+  outline-offset: -2px;
+}
+
+.tbl tr[aria-selected="true"] td:first-child {
+  box-shadow: inset 2px 0 0 var(--color-text);
+}
+
+/* ── Selector de métrica y gráfico ──────────────────────────────────────── */
+.pillbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--cell-padding-x);
+  border-bottom: var(--border);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--cell-padding-x) 0;
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}
+
+.legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.chart {
+  position: relative;
+  padding: var(--space-2) var(--cell-padding-x) var(--cell-padding-y);
+  border-bottom: var(--border);
+}
+
+.chart svg {
+  display: block;
+  width: 100%;
+  max-width: 760px;
+  height: auto;
+}
+
+.chart text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--color-text-soft);
+}
+
+.chart .chart__value {
+  font-size: 12px;
+  fill: var(--color-text);
+}
+
+.chart .chart__grid {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.chart .bar { cursor: default; }
+.chart .bar--bra { fill: var(--color-team-a); }
+.chart .bar--ger { fill: var(--color-team-b); }
+
+.chart .bar:hover,
+.chart .bar:focus-visible {
+  stroke: var(--color-text);
+  stroke-width: 1;
+  outline: none;
+}
+
+.chart__note {
+  margin-top: var(--space-2);
+  font-size: var(--text-label);
+  color: var(--color-warn);
+}
+
+.tip {
+  position: fixed;
+  z-index: 200;
+  pointer-events: none;
+  padding: 6px 10px;
+  background-color: var(--color-surface);
+  border: var(--border-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+/* ── Goles y gol de Müller ──────────────────────────────────────────────── */
+.figure {
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-bottom: var(--border);
+}
+
+.figure img {
+  display: block;
+  width: 100%;
+  max-width: 1000px;
+  height: auto;
+  margin: 0 auto;
+  border: var(--border);
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-bottom: var(--border);
+  font-size: 14px;
+}
+
+.detail strong {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.detail p {
+  color: var(--color-text-soft);
+}
+
+details.window {
+  border-bottom: var(--border);
+}
+
+details.window summary {
+  padding: var(--space-3) var(--cell-padding-x);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+details.window summary:focus-visible {
+  outline: 2px solid var(--color-ok);
+  outline-offset: -2px;
+}
+
+details.window[open] summary {
+  color: var(--color-text);
+}
+
+details.window .detail {
+  border-bottom: none;
+  padding-top: 0;
+}
+
+.site-footer {
+  padding: var(--space-4) var(--cell-padding-x);
+  border-top: var(--border);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}
+
+@media (max-width: 720px) {
+  .split > * {
+    border-right: none;
+    border-bottom: var(--border);
+  }
+  .hub-title h1 {
+    font-size: var(--text-title);
+  }
+}

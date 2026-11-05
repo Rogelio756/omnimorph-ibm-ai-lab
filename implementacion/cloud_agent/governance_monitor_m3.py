@@ -4,7 +4,8 @@ implementacion/cloud_agent/governance_monitor_m3.py
 MONITOR M3 — Auditoría LLM y watsonx.governance
 
 Verifica por cada ventana táctica:
-  ✓ El modelo usado es ibm/granite-3-8b-instruct (bloquea cualquier otro)
+  ✓ El modelo usado es un IBM Granite autorizado (bloquea cualquier otro)
+    Las ventanas sin LLM (modo offline) se registran como tales.
   ✓ La salida JSON tiene los campos requeridos: {window_id, t0, t1, analisis_tactico, narracion_es}
   ✓ narracion_es tiene ≤ 45 palabras (para caber en ventana de 4.0 s)
   ✓ Anti-alucinación: equipo dominante coincide con tactical_summaries.json
@@ -17,6 +18,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
@@ -25,12 +27,22 @@ from typing import Any, Dict, Optional
 # Constantes
 # ---------------------------------------------------------------------------
 REQUIRED_MODEL = "ibm/granite-4-h-small"
+AUTHORIZED_MODELS = {"ibm/granite-4-h-small", "ibm/granite-3-8b-instruct"}
 MAX_NARRATION_WORDS = 45
 REQUIRED_FIELDS = {"window_id", "t0", "t1", "analisis_tactico", "narracion_es"}
 
 CLEAN_DIR = pathlib.Path("data/clean")
 AUDIT_LOG = CLEAN_DIR / "governance_audit.jsonl"
 REPORT_PATH = CLEAN_DIR / "monitor_m3.json"
+
+# Menciones válidas de cada equipo. ARG/FRA son las etiquetas históricas del
+# engine; en el clip activo equivalen a Brasil/Alemania.
+TEAM_MENTIONS = {
+    "ARG": r"\b(brasil\w*|bra|argentin\w*|arg|verdeamarela)\b",
+    "BRA": r"\b(brasil\w*|bra|argentin\w*|arg|verdeamarela)\b",
+    "FRA": r"\b(aleman\w*|ger|germany|franc\w*|fra)\b",
+    "GER": r"\b(aleman\w*|ger|germany|franc\w*|fra)\b",
+}
 
 # Costo estimado watsonx.ai en Resource Units (aproximación)
 # Granite 3-8B: ~0.0001 RU / token de entrada, ~0.0003 RU / token de salida
@@ -74,12 +86,14 @@ class GovernanceMonitorM3:
         latency_ms: float,
         tokens_in: int = 0,
         tokens_out: int = 0,
+        mode: str = "online",
     ) -> dict:
         """
         Audita una llamada LLM completa.
 
         Parámetros:
-            model_id      : modelo usado (debe ser ibm/granite-3-8b-instruct)
+            model_id      : modelo usado (debe estar en AUTHORIZED_MODELS)
+            mode          : "online" si respondió el LLM, "offline" si no hubo LLM
             window_id     : identificador de ventana táctica (W0–W7)
             llm_response  : dict parseado de la respuesta LLM (puede ser None si falló)
             latency_ms    : latencia de la llamada en ms
@@ -94,12 +108,12 @@ class GovernanceMonitorM3:
         errors = []
 
         # --- Chequeo 1: modelo correcto (debe ser IBM Granite) ---
-        # Acepta cualquier ibm/granite-* para compatibilidad entre entornos
-        model_ok = model_id.startswith("ibm/granite")
+        # En modo offline no hay modelo que verificar: se deja constancia.
+        model_ok = mode == "offline" or model_id in AUTHORIZED_MODELS
         checks["model_id"] = {
             "pass": model_ok,
-            "expected": "ibm/granite-*",
-            "observed": model_id,
+            "expected": sorted(AUTHORIZED_MODELS),
+            "observed": "sin LLM (offline)" if mode == "offline" else model_id,
         }
         if not model_ok:
             errors.append(f"MODELO PROHIBIDO: '{model_id}'. Solo se permite '{REQUIRED_MODEL}'.")
@@ -142,20 +156,9 @@ class GovernanceMonitorM3:
             narracion = llm_response.get("narracion_es", "").lower()
             text_combined = analisis + " " + narracion
 
-            if expected_dominant in ("ARG", "BRA"):
-                anti_hallucin_ok = (
-                    "arg" in text_combined or "argentina" in text_combined or
-                    "bra" in text_combined or "brasil" in text_combined or "verdeamarela" in text_combined or
-                    "dominant_team" not in llm_response or
-                    llm_response.get("dominant_team", "").upper() in ("ARG", "ARGENTINA", "BRA", "BRASIL")
-                )
-            elif expected_dominant in ("FRA", "GER"):
-                anti_hallucin_ok = (
-                    "fra" in text_combined or "france" in text_combined or "francia" in text_combined or
-                    "ger" in text_combined or "alemania" in text_combined or "germany" in text_combined or
-                    "dominant_team" not in llm_response or
-                    llm_response.get("dominant_team", "").upper() in ("FRA", "FRANCE", "FRANCIA", "GER", "ALEMANIA")
-                )
+            patron = TEAM_MENTIONS.get(expected_dominant)
+            if patron:
+                anti_hallucin_ok = re.search(patron, text_combined) is not None
             else:
                 anti_hallucin_ok = True  # neutro: no hay equipo específico que verificar
         else:
@@ -182,6 +185,7 @@ class GovernanceMonitorM3:
         audit_entry = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "model": model_id,
+            "mode": mode,
             "window_id": window_id,
             "latency_ms": round(latency_ms, 2),
             "tokens_in": tokens_in,
@@ -222,6 +226,7 @@ class GovernanceMonitorM3:
         n_total = len(all_entries)
         n_pass = sum(1 for e in all_entries if e.get("status") == "PASS")
         n_fail = n_total - n_pass
+        n_offline = sum(1 for e in all_entries if e.get("mode") == "offline")
 
         status = "PASS" if n_fail == 0 and n_total > 0 else "FAIL"
 
@@ -240,6 +245,7 @@ class GovernanceMonitorM3:
                 "total_calls": n_total,
                 "passed_calls": n_pass,
                 "failed_calls": n_fail,
+                "offline_calls": n_offline,
                 "model_used": REQUIRED_MODEL,
                 "latency_ms_mean": round(statistics.mean(latencies), 2) if latencies else 0,
                 "latency_ms_max": round(max(latencies), 2) if latencies else 0,
@@ -264,7 +270,7 @@ class GovernanceMonitorM3:
         print(f" MONITOR M3 — {report['name']}")
         print(f" Estado: {icon} {report['status']}")
         s = report["summary"]
-        print(f" Llamadas: {s['total_calls']} total, {s['passed_calls']} PASS, {s['failed_calls']} FAIL")
+        print(f" Llamadas: {s['total_calls']} total, {s['passed_calls']} PASS, {s['failed_calls']} FAIL, {s['offline_calls']} offline")
         print(f" Modelo: {s['model_used']}")
         print(f" Latencia media: {s['latency_ms_mean']} ms")
         print(f" Tokens (in/out media): {s['tokens_in_mean']} / {s['tokens_out_mean']}")

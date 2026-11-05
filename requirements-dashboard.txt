@@ -1,0 +1,11 @@
+# requirements-dashboard.txt
+# Dependencias del tablero web (dashboard/serve.py) y del chatbot con Granite.
+# Probado con Python 3.12. El servidor estático solo usa la biblioteca estándar:
+# sin estos paquetes el tablero funciona igual, pero sin chat.
+
+ibm-watsonx-ai==1.8.1
+python-dotenv==1.2.4
+pandas==2.3.3
+
+# Solo para scripts/export_dashboard_data.py
+pyarrow==26.0.0
