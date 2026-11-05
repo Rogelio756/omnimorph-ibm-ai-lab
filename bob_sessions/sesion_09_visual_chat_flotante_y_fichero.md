@@ -20,11 +20,26 @@
 
 ---
 
-## 2. Hallazgo importante
+## 2. Identificadores repetidos: hallazgo y corrección
 
-Los números del panel de jugadores no son dorsales. `omnimorph_engine.py:337` comprime los identificadores a 11 lugares por equipo con una fórmula, y varias trayectorias acaban con el mismo número. En 829 de 960 cuadros con jugadores (86 %) un número aparece en dos o más personas.
+Los números del panel de jugadores no son dorsales. En 829 de 960 cuadros con jugadores (86 %) un mismo número aparecía en dos o más personas, por dos fallos en `omnimorph_engine.py`:
 
-Distancia, velocidad media, sprints y mapa de calor por rastro pueden mezclar a varias personas. El panel lo avisa, pero el dato **no está corregido**. Al corregirlo hay que regenerar datos con respaldo, porque el pipeline desfasa audio maestro y subtítulos. Falta revisar si las crónicas usan esas cifras.
+- El emparejamiento por cuadro no tenía límite de distancia y reasignaba fragmentos activos.
+- Una fórmula comprimía los identificadores a 25 lugares para cumplir M2.2.
+
+**Corrección:** `phase3_track_stitching` solo une un fragmento a otro que ya terminó, con hasta 1 s de separación, a distancia alcanzable y sin cambiar de equipo.
+
+**Resultado:** 0 de 960 cuadros con números repetidos; 198 fragmentos pasan a 152 rastros, y 102 superan el mínimo para el tablero.
+
+**Cambio de criterio en M2.2:** antes exigía 25 identificadores o menos, condición que solo se cumplía por esa fórmula. Ahora exige que ningún rastro esté en dos personas a la vez y reporta `ids_simultaneos`.
+
+**Efectos y límites:**
+
+- Cambiaron las métricas de las 8 ventanas. Presencia en W0: de BRA 69 % / GER 31 % a 58 % / 42 %.
+- Solo se ejecutó la etapa 2 y la exportación. Narraciones, audio, subtítulos, M3 y M4 no se regeneraron, así que las crónicas se escribieron con las métricas anteriores.
+- Un rastro no es un jugador: la misma persona puede tener varios tras un corte de cámara.
+- La velocidad sigue sin ser fiable: 40,6 % de las observaciones superan 9,5 m/s por saltos de posición dentro de cada fragmento, y «Vel. transición» sale recortada a 9,5.
+- Respaldo: `backups/pre_rastros_2026-11-04/`, con checksums.
 
 ---
 
@@ -50,7 +65,7 @@ Distancia, velocidad media, sprints y mapa de calor por rastro pueden mezclar a 
 
 ## 5. Próximos pasos
 
-1. Corregir los identificadores en el motor y regenerar datos con respaldo.
+1. Revisar la homografía y el suavizado para que distancia y velocidad sean fiables.
 2. Confirmar si el estadio del video de inicio es el Mineirão.
 3. Decidir qué hacer con el enlace Equipo, que no lleva a ninguna parte.
 4. Elegir el motor de voz y ajustar los textos a cada momento.

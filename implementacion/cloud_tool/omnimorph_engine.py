@@ -54,7 +54,9 @@ N_WINDOWS = 8                                    # 8 ventanas de 4.0 s (la ultim
 V_MAX_MPS = 9.5                                  # m/s — velocidad máxima humana
 EMA_ALPHA = 0.3                                  # suavizado homografía
 STITCH_MAX_DIST_CM = 300.0                       # 3 m — umbral costura
-STITCH_TEAM_PENALTY = 1000.0                     # penalización cambio de equipo
+STITCH_MAX_GAP_FRAMES = 30                       # 1 s a 30 fps: más allá se considera otro rastro
+STITCH_FPS = 30.0                                # fps de los parquets de Brasil-Alemania
+STITCH_SIN_ENLACE = 1e9                          # costo de una pareja que no se puede unir
 PITCH_L_CM = 12_000.0
 PITCH_W_CM = 7_000.0
 SAVGOL_WINDOW = 9
@@ -181,185 +183,75 @@ def phase3_track_stitching(
     team_map: Dict[int, Optional[int]],
 ) -> pd.DataFrame:
     """
-    Resuelve fragmentación de IDs de ByteTrack mediante el Algoritmo Húngaro.
+    Une fragmentos de ByteTrack en rastros mediante el Algoritmo Húngaro.
 
-    Para cada par de frames consecutivos, construye una matriz de costos
-    y asigna track_id_stitched de forma consistente.
+    Un fragmento solo continúa a otro que ya terminó, hace poco y a una distancia
+    alcanzable corriendo, sin cambiar de equipo. Así un rastro nunca tiene dos
+    posiciones en el mismo frame. Un rastro no equivale a un jugador: tras un corte
+    de cámara la misma persona empieza otro.
 
-    Costo(i,j) = dist_euclidean(pos_i, pos_j) + λ * |team_i ≠ team_j|
+    Costo(i,j) = distancia entre el final de i y el inicio de j.
+    El rastro conserva el id de su primer fragmento, que ya está en team_map.
 
     Retorna df_track con columna track_id_stitched añadida.
     """
     df = df_track.sort_values(["frame", "track_id"]).copy()
     df["track_id_stitched"] = df["track_id"].astype("Int64")
 
-    if not SCIPY_OK:
+    if not SCIPY_OK or df["track_id"].notna().sum() == 0:
         # Fallback: stitched == original
         return df
 
-    frames_sorted = sorted(df["frame"].unique())
-    if len(frames_sorted) < 2:
-        return df
+    fragmentos = []
+    for tid, grp in df.dropna(subset=["track_id"]).groupby("track_id"):
+        pos = grp.dropna(subset=["pitch_x", "pitch_y"])
+        fragmentos.append({
+            "id": int(tid),
+            "ini": int(grp["frame"].min()),
+            "fin": int(grp["frame"].max()),
+            "equipo": team_map.get(int(tid)),
+            "pos_ini": tuple(pos[["pitch_x", "pitch_y"]].iloc[0]) if len(pos) else None,
+            "pos_fin": tuple(pos[["pitch_x", "pitch_y"]].iloc[-1]) if len(pos) else None,
+        })
+    fragmentos.sort(key=lambda f: (f["ini"], f["id"]))
 
-    # Mapa global: track_id_original → track_id_stitched
     id_remap: Dict[int, int] = {}
+    rastros: List[dict] = []  # final de cada rastro abierto: {id, fin, pos_fin, equipo}
 
-    # Primer frame: inicializar mapa
-    first_frame = frames_sorted[0]
-    first_ids = df[df["frame"] == first_frame]["track_id"].unique()
-    for tid in first_ids:
-        if not (isinstance(tid, float) and np.isnan(tid)):
-            id_remap[int(tid)] = int(tid)
+    for frame in sorted({f["ini"] for f in fragmentos}):
+        nuevos = [f for f in fragmentos if f["ini"] == frame]
+        abiertos = [r for r in rastros if r["fin"] < frame and frame - r["fin"] <= STITCH_MAX_GAP_FRAMES]
 
-    next_new_id = max(id_remap.values()) + 1 if id_remap else 1
+        costos = np.full((len(abiertos), len(nuevos)), STITCH_SIN_ENLACE)
+        for i, r in enumerate(abiertos):
+            for j, f in enumerate(nuevos):
+                if r["pos_fin"] is None or f["pos_ini"] is None:
+                    continue
+                if None not in (r["equipo"], f["equipo"]) and r["equipo"] != f["equipo"]:
+                    continue
+                dist = float(np.hypot(r["pos_fin"][0] - f["pos_ini"][0], r["pos_fin"][1] - f["pos_ini"][1]))
+                alcance = STITCH_MAX_DIST_CM + V_MAX_MPS * 100.0 * (frame - r["fin"]) / STITCH_FPS
+                if dist <= alcance:
+                    costos[i, j] = dist
 
-    prev_data: Dict[int, dict] = {}  # stitched_id → {x, y, team}
+        enlazados = set()
+        if costos.size:
+            for i, j in zip(*linear_sum_assignment(costos)):
+                if costos[i, j] < STITCH_SIN_ENLACE:
+                    r, f = abiertos[i], nuevos[j]
+                    id_remap[f["id"]] = r["id"]
+                    r.update(fin=f["fin"], pos_fin=f["pos_fin"] or r["pos_fin"],
+                             equipo=r["equipo"] if r["equipo"] is not None else f["equipo"])
+                    enlazados.add(j)
 
-    # Inicializar prev_data con el primer frame
-    for _, row in df[df["frame"] == first_frame].iterrows():
-        tid = row["track_id"]
-        if tid is None or (isinstance(tid, float) and np.isnan(tid)):
-            continue
-        stid = id_remap.get(int(tid), int(tid))
-        prev_data[stid] = {
-            "x": float(row.get("pitch_x", 0)),
-            "y": float(row.get("pitch_y", 0)),
-            "team": team_map.get(int(tid)),
-        }
+        for j, f in enumerate(nuevos):
+            if j not in enlazados:
+                id_remap[f["id"]] = f["id"]
+                rastros.append({"id": f["id"], "fin": f["fin"], "pos_fin": f["pos_fin"], "equipo": f["equipo"]})
 
-    for frame_idx in range(1, len(frames_sorted)):
-        cur_frame = frames_sorted[frame_idx]
-        cur_rows = df[df["frame"] == cur_frame]
-
-        cur_ids = []
-        cur_pos = []
-        cur_teams = []
-        cur_orig_ids = []
-
-        for _, row in cur_rows.iterrows():
-            tid = row["track_id"]
-            if tid is None or (isinstance(tid, float) and np.isnan(tid)):
-                continue
-            tid = int(tid)
-            cur_orig_ids.append(tid)
-            cur_ids.append(tid)
-            cur_pos.append((
-                float(row.get("pitch_x", 0)),
-                float(row.get("pitch_y", 0)),
-            ))
-            cur_teams.append(team_map.get(tid))
-
-        if not cur_ids:
-            continue
-
-        prev_stids = list(prev_data.keys())
-        prev_pos = [(v["x"], v["y"]) for v in prev_data.values()]
-        prev_teams = [v["team"] for v in prev_data.values()]
-
-        n_prev = len(prev_stids)
-        n_cur = len(cur_ids)
-
-        if n_prev == 0:
-            # Sin frame anterior: asignar IDs directamente
-            for tid in cur_ids:
-                if tid not in id_remap:
-                    id_remap[tid] = next_new_id
-                    next_new_id += 1
-            continue
-
-        # Construir matriz de costos (n_prev × n_cur)
-        cost_mat = np.full((n_prev, n_cur), 1e6)
-        for i, (px, py) in enumerate(prev_pos):
-            for j, (cx, cy) in enumerate(cur_pos):
-                dist = np.sqrt((px - cx) ** 2 + (py - cy) ** 2)
-                team_penalty = 0.0
-                if prev_teams[i] is not None and cur_teams[j] is not None:
-                    if prev_teams[i] != cur_teams[j]:
-                        team_penalty = STITCH_TEAM_PENALTY
-                cost_mat[i, j] = dist + team_penalty
-
-        # Algoritmo Húngaro
-        row_ind, col_ind = linear_sum_assignment(cost_mat)
-
-        assigned_cur = set()
-        new_prev_data: Dict[int, dict] = {}
-
-        for ri, ci in zip(row_ind, col_ind):
-            if cost_mat[ri, ci] > STITCH_MAX_DIST_CM + STITCH_TEAM_PENALTY:
-                continue  # demasiado lejos o cambio de equipo
-            stid = prev_stids[ri]
-            orig_id = cur_orig_ids[ci]
-            id_remap[orig_id] = stid
-            assigned_cur.add(ci)
-            new_prev_data[stid] = {
-                "x": cur_pos[ci][0],
-                "y": cur_pos[ci][1],
-                "team": cur_teams[ci],
-            }
-
-        # IDs nuevos (no asignados)
-        for j, orig_id in enumerate(cur_orig_ids):
-            if j not in assigned_cur:
-                if orig_id not in id_remap:
-                    id_remap[orig_id] = next_new_id
-                    next_new_id += 1
-                stid = id_remap[orig_id]
-                new_prev_data[stid] = {
-                    "x": cur_pos[j][0],
-                    "y": cur_pos[j][1],
-                    "team": cur_teams[j],
-                }
-
-        prev_data = new_prev_data
-
-    # Aplicar remap al DataFrame
-    def _remap(tid):
-        if tid is None or (isinstance(tid, float) and np.isnan(tid)):
-            return None
-        return id_remap.get(int(tid), int(tid))
-
-    df["track_id_stitched"] = df["track_id"].apply(_remap).astype("Int64")
-
-    # Consolidación de plantilla activa (<= 25 slots: 1..11 Equipo 0, 12..22 Equipo 1, 23..25 Árbitros)
-    # Necesario en videos largos de TV con cambios de toma (cámara abierta -> festejo -> repetición)
-    unique_stitched = [int(x) for x in df["track_id_stitched"].dropna().unique()]
-    if len(unique_stitched) > 25:
-        roster_remap: Dict[int, int] = {}
-        for stid, grp in df.groupby("track_id_stitched"):
-            if stid is None or (isinstance(stid, float) and np.isnan(stid)):
-                continue
-            stid_int = int(stid)
-            # Determinar equipo predominante del tracklet cosido
-            orig_ids = [int(x) for x in grp["track_id"].dropna().unique()]
-            t_candidates = [team_map.get(oid) for oid in orig_ids if team_map.get(oid) is not None]
-            t_val = max(set(t_candidates), key=t_candidates.count) if t_candidates else None
-
-            # Cuantizar por posición media en cancha para asignar dorsal consistente dentro de la plantilla
-            med_x = float(grp["pitch_x"].median()) if "pitch_x" in grp.columns else 6000.0
-            med_y = float(grp["pitch_y"].median()) if "pitch_y" in grp.columns else 3500.0
-            if np.isnan(med_x):
-                med_x = 6000.0
-            if np.isnan(med_y):
-                med_y = 3500.0
-            spatial_hash = int(abs(round(med_x / 1100.0) * 3 + round(med_y / 1000.0)))
-
-            if t_val == 0:
-                slot = 1 + ( (stid_int + spatial_hash) % 11 )       # 1..11
-            elif t_val == 1:
-                slot = 12 + ( (stid_int + spatial_hash) % 11 )      # 12..22
-            else:
-                slot = 23 + ( (stid_int + spatial_hash) % 3 )       # 23..25
-            roster_remap[stid_int] = slot
-            team_map[slot] = t_val
-
-        df["track_id_stitched"] = df["track_id_stitched"].apply(
-            lambda x: roster_remap.get(int(x), int(x)) if pd.notna(x) else None
-        ).astype("Int64")
-    else:
-        for orig_id, stid in id_remap.items():
-            if stid not in team_map and orig_id in team_map:
-                team_map[stid] = team_map[orig_id]
-
+    df["track_id_stitched"] = df["track_id"].map(
+        lambda tid: id_remap.get(int(tid)) if pd.notna(tid) else None
+    ).astype("Int64")
     return df
 
 
@@ -606,17 +498,23 @@ def run_stage_monitors(
     if "track_id_stitched" in df_track_clean.columns:
         n_stitched = int(df_track_clean["track_id_stitched"].nunique())
         n_original = int(df_track_clean["track_id"].nunique())
+        por_frame = df_track_clean.groupby(["frame", "track_id_stitched"]).size()
+        n_simultaneos = int((por_frame > 1).sum())
     else:
         n_stitched = int(df_track_clean["track_id"].nunique())
         n_original = n_stitched
+        n_simultaneos = 0
+    # En TV hay más rastros que personas (cambios de toma): el criterio es que ningún
+    # rastro esté en dos personas a la vez, no que queden 25 o menos.
     checks["M2.2"] = {
         "monitor": "M2.2",
         "name": "Track Stitching (Algoritmo Húngaro)",
-        "pass": n_stitched <= 25,
+        "pass": n_simultaneos == 0 and n_stitched <= n_original,
         "details": {
             "n_original_ids": n_original,
             "n_stitched_ids": n_stitched,
             "reduction": n_original - n_stitched,
+            "ids_simultaneos": n_simultaneos,
         },
     }
 
