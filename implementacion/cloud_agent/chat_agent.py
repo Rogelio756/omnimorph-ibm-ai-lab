@@ -279,7 +279,6 @@ def _ventanas_clip() -> list[dict]:
                     "contexto_presion": v["pressure_context"],
                     "altura_bloque_m": round(v["block_height_m"], 2),
                     "compacidad_bloque_m": round(v["block_compactness_m"], 2),
-                    "velocidad_transicion_mps": round(v["transition_speed_mps"], 2),
                 }
                 for v in json.load(f)
             ]
@@ -296,7 +295,6 @@ def _ventanas_clip() -> list[dict]:
                 "contexto_presion": v["pressure"],
                 "altura_bloque_m": round(v["block_height_m"], 2),
                 "compacidad_bloque_m": round(v["compactness_m"], 2),
-                "velocidad_transicion_mps": round(v["transition_mps"], 2),
             }
             for v in json.load(f)["windows"]
         ]

@@ -38,8 +38,9 @@ OUT_MEDIA = DASH / "media"
 
 PITCH_W, PITCH_H = 12000.0, 7000.0   # cm
 V_MAX = 9.5                           # m/s (M2.3)
-SPRINT_V = 7.0                        # m/s umbral de sprint
-SPRINT_MIN_FRAMES = 10                # ≥ 0.33 s a 30 fps
+MEDIANA_FRAMES = 31                   # 1 s a 30 fps
+PASO_FRAMES = 30                      # medir cada 1 s
+HUECO_MAX_FRAMES = 3                  # más separación corta el tramo
 
 
 def _load_json(p: pathlib.Path):
@@ -79,8 +80,29 @@ def build_frames(df_tr: pd.DataFrame, df_ball: pd.DataFrame, n_frames: int) -> l
     return frames
 
 
+def distancia_filtrada(fr: np.ndarray, x: np.ndarray, y: np.ndarray, fps: float) -> tuple:
+    """Distancia en metros y segundos medidos, con la posición filtrada en ventanas de 1 s.
+
+    La calibración salta en cada cuadro: una mediana móvil y un paso de 1 s evitan contar
+    esos saltos como carrera. Los tramos de menos de 1 s no se miden.
+    """
+    dist, segundos = 0.0, 0.0
+    cortes = np.where(np.diff(fr) > HUECO_MAX_FRAMES)[0] + 1
+    for tramo in np.split(np.arange(len(fr)), cortes):
+        if len(tramo) <= PASO_FRAMES:
+            continue
+        xm = pd.Series(x[tramo]).rolling(MEDIANA_FRAMES, center=True, min_periods=1).median().to_numpy()
+        ym = pd.Series(y[tramo]).rolling(MEDIANA_FRAMES, center=True, min_periods=1).median().to_numpy()
+        i = np.arange(0, len(tramo), PASO_FRAMES)
+        dt = np.diff(fr[tramo][i]) / fps
+        v = np.clip(np.hypot(np.diff(xm[i]), np.diff(ym[i])) / dt, 0, V_MAX)
+        dist += float(np.sum(v * dt))
+        segundos += float(np.sum(dt))
+    return dist, segundos
+
+
 def build_players(df_tr: pd.DataFrame, fps: float) -> list:
-    """Estadísticas por jugador cosido (M2.2): distancia, v. máx, sprints y mapa de calor 12×7."""
+    """Por rastro: distancia aproximada, segundos medidos y mapa de calor 12×7."""
     players = []
     for tid, g in df_tr.groupby("track_id_stitched"):
         g = g.sort_values("frame")
@@ -91,23 +113,10 @@ def build_players(df_tr: pd.DataFrame, fps: float) -> list:
         if (g["class_id"] == 3).mean() > 0.5:
             team = 2
 
-        x = inb.pitch_x_smooth.to_numpy() / 100.0   # m
-        y = inb.pitch_y_smooth.to_numpy() / 100.0
-        fr = inb.frame.to_numpy()
-        dt = np.diff(fr) / fps
-        step = np.hypot(np.diff(x), np.diff(y))
-        contiguous = (np.diff(fr) <= 3) & (dt > 0)
-        v = np.zeros_like(step)
-        v[contiguous] = step[contiguous] / dt[contiguous]
-        v = np.clip(v, 0, V_MAX)
-        dist = float(np.sum(v[contiguous] * dt[contiguous]))
-        vmax = float(v.max()) if len(v) else 0.0
-
-        sprints, run = 0, 0
-        for is_fast in (v >= SPRINT_V):
-            run = run + 1 if is_fast else 0
-            if run == SPRINT_MIN_FRAMES:
-                sprints += 1
+        dist, segundos = distancia_filtrada(inb.frame.to_numpy(), inb.pitch_x.to_numpy() / 100.0,
+                                            inb.pitch_y.to_numpy() / 100.0, fps)
+        if segundos == 0:
+            continue
 
         heat, _, _ = np.histogram2d(
             inb.pitch_x_smooth, inb.pitch_y_smooth,
@@ -120,8 +129,7 @@ def build_players(df_tr: pd.DataFrame, fps: float) -> list:
             "team": team,
             "frames": int(len(inb)),
             "dist_m": round(dist, 1),
-            "vmax_mps": round(vmax, 2),
-            "sprints": int(sprints),
+            "segundos": round(segundos, 1),
             "heat": heat,   # [12][7] normalizado 0..1
         })
     return players

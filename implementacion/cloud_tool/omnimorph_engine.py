@@ -268,6 +268,7 @@ def phase2_kinematics(df_track: pd.DataFrame) -> pd.DataFrame:
     """
     # Reset index para garantizar indices posicionales 0..N-1
     df = df_track.copy().sort_values(["track_id_stitched", "frame"]).reset_index(drop=True)
+    fps = 30.0 if len(df) and df["frame"].max() >= 1000 else FPS
 
     n_total = len(df)
     smooth_x = np.full(n_total, np.nan)
@@ -300,8 +301,8 @@ def phase2_kinematics(df_track: pd.DataFrame) -> pd.DataFrame:
         smooth_y[pos] = sy
 
         if n >= 2:
-            dx = np.diff(sx, prepend=sx[0]) * FPS / 100.0   # m/s
-            dy = np.diff(sy, prepend=sy[0]) * FPS / 100.0
+            dx = np.diff(sx, prepend=sx[0]) * fps / 100.0   # m/s
+            dy = np.diff(sy, prepend=sy[0]) * fps / 100.0
             spd = np.sqrt(dx**2 + dy**2)
             vx_arr[pos] = dx
             vy_arr[pos] = dy

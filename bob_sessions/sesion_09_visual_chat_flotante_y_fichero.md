@@ -29,7 +29,7 @@ Los números del panel de jugadores no son dorsales. En 829 de 960 cuadros con j
 
 **Corrección:** `phase3_track_stitching` solo une un fragmento a otro que ya terminó, con hasta 1 s de separación, a distancia alcanzable y sin cambiar de equipo.
 
-**Resultado:** 0 de 960 cuadros con números repetidos; 198 fragmentos pasan a 152 rastros, y 102 superan el mínimo para el tablero.
+**Resultado:** 0 de 960 cuadros con números repetidos; 198 fragmentos pasan a 152 rastros, y 102 superaban el mínimo del tablero antes del filtro de velocidad.
 
 **Cambio de criterio en M2.2:** antes exigía 25 identificadores o menos, condición que solo se cumplía por esa fórmula. Ahora exige que ningún rastro esté en dos personas a la vez y reporta `ids_simultaneos`.
 
@@ -38,7 +38,9 @@ Los números del panel de jugadores no son dorsales. En 829 de 960 cuadros con j
 - Cambiaron las métricas de las 8 ventanas. Presencia en W0: de BRA 69 % / GER 31 % a 58 % / 42 %.
 - Solo se ejecutó la etapa 2 y la exportación. Narraciones, audio, subtítulos, M3 y M4 no se regeneraron, así que las crónicas se escribieron con las métricas anteriores.
 - Un rastro no es un jugador: la misma persona puede tener varios tras un corte de cámara.
-- La velocidad sigue sin ser fiable: 40,6 % de las observaciones superan 9,5 m/s por saltos de posición dentro de cada fragmento, y «Vel. transición» sale recortada a 9,5.
+- La calibración cámara-cancha salta en cada cuadro (correlación 0,01 entre movimiento en pantalla y en cancha). Por eso se corrigió el cálculo a 30 fps, distancia y velocidad media por rastro usan un filtro de 1 s, y se retiraron Sprints, velocidad máxima y Vel. transición de la web y del contexto del chat.
+- Con el filtro, la velocidad media por rastro tiene mediana 3,2 m/s, pero las cifras siguen siendo aproximadas y el radar no cambia. El tablero conserva 67 rastros con al menos 1 s medido; la velocidad solo se ordena con 5 s o más.
+- La página Streamlit de respaldo (`implementacion/dashboard/app.py`) aún muestra Trans. Speed.
 - Respaldo: `backups/pre_rastros_2026-11-04/`, con checksums.
 
 ---
@@ -65,7 +67,7 @@ Los números del panel de jugadores no son dorsales. En 829 de 960 cuadros con j
 
 ## 5. Próximos pasos
 
-1. Revisar la homografía y el suavizado para que distancia y velocidad sean fiables.
+1. Recalibrar la cámara desde los puntos guardados de forma estable en el tiempo.
 2. Confirmar si el estadio del video de inicio es el Mineirão.
 3. Decidir qué hacer con el enlace Equipo, que no lleva a ninguna parte.
 4. Elegir el motor de voz y ajustar los textos a cada momento.

@@ -139,6 +139,7 @@
     .centroid-line__track { position: absolute; left: 0; right: 0; top: 12px; height: 1px; background: var(--color-pitch-lines); }
     .centroid-line__mid { position: absolute; left: 50%; top: 4px; width: 1px; height: 17px; background: var(--color-pitch-lines); }
     .centroid-line__dot { position: absolute; top: 6px; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-6px); transition: left var(--transition); border: 1px solid var(--color-bg); }
+    .kpi-grid > .kpi-card:nth-child(3) { grid-column: 1 / -1; border-right: none; }
     .kpi-row { padding: var(--space-3) var(--cell-padding-x); border-bottom: var(--border); }
 
     /* ── Panel 4: crónica ────────────────────────────────────────────────── */
@@ -353,11 +354,6 @@
                 <div class="spark" id="spark-bh" aria-label="Evolución por ventana"></div>
               </div>
               <div class="kpi-card">
-                <span class="kpi-card__label">Vel. transición</span>
-                <div><span class="kpi-card__value" id="kpi-ts-val">—</span><span class="kpi-card__unit">m/s</span></div>
-                <div class="spark" id="spark-ts" aria-label="Evolución por ventana"></div>
-              </div>
-              <div class="kpi-card">
                 <span class="kpi-card__label">Compacidad</span>
                 <div><span class="kpi-card__value" id="kpi-cp-val" style="font-size: 32px;">—</span><span class="kpi-card__unit">m</span></div>
                 <div class="spark" id="spark-cp" aria-label="Evolución por ventana"></div>
@@ -427,11 +423,10 @@
             <span class="text-label" style="width: 100%; margin-bottom: var(--space-1);">Métrica</span>
             <button class="btn btn--primary btn-xs" data-metric="dist_m" type="button">Distancia</button>
             <button class="btn btn--outline btn-xs" data-metric="avg_mps" type="button">Vel. media</button>
-            <button class="btn btn--outline btn-xs" data-metric="sprints" type="button">Sprints</button>
           </div>
           <p class="player-sidebar__aviso">
             Un rastro es un seguimiento automático, no un jugador identificado. Su número no es
-            el dorsal y una misma persona puede tener varios rastros: las cifras son aproximadas.
+            el dorsal, y una misma persona puede tener varios rastros. Distancia y velocidad media son aproximadas: se estiman con un filtro de 1 s, y la velocidad solo se ordena con 5 s medidos o más.
           </p>
           <div class="player-sidebar__list" id="player-list"></div>
     
@@ -445,7 +440,6 @@
             <div class="player-card__stats">
               <div class="player-card__stat"><span class="player-card__stat-label">Dist.</span><span class="player-card__stat-value" id="pc-dist">—</span></div>
               <div class="player-card__stat"><span class="player-card__stat-label">Vel. media</span><span class="player-card__stat-value" id="pc-avg">—</span></div>
-              <div class="player-card__stat"><span class="player-card__stat-label">Sprints</span><span class="player-card__stat-value" id="pc-spr">—</span></div>
             </div>
             <span class="text-label" id="pc-foot" style="color: var(--color-text-soft);"></span>
           </div>
@@ -523,7 +517,7 @@
     function init(data) {
       D = data;
       FPS = D.meta.fps; NF = D.meta.n_frames; DUR = D.meta.duration_s;
-      D.players.forEach(function (p) { p.avg_mps = p.frames ? p.dist_m / (p.frames / FPS) : 0; });
+      D.players.forEach(function (p) { p.avg_mps = p.dist_m / p.segundos; });
 
       var lv = -1;
       for (var i = 0; i < NF; i++) { if (D.frames[i].p.length) lv = i; lastValid.push(lv); }
@@ -602,7 +596,7 @@
 
     // ── Sparklines por ventana ─────────────────────────────────────────
     function buildSparks() {
-      [['spark-bh', 'block_height_m'], ['spark-ts', 'transition_mps'], ['spark-cp', 'compactness_m']].forEach(function (s) {
+      [['spark-bh', 'block_height_m'], ['spark-cp', 'compactness_m']].forEach(function (s) {
         var host = $(s[0]);
         var max = Math.max.apply(null, D.windows.map(function (w) { return w[s[1]] || 0; })) || 1;
         D.windows.forEach(function (w, i) {
@@ -773,7 +767,6 @@
       chipW.lastChild.textContent = w.id + ' · ' + w.t0.toFixed(1) + '–' + w.t1.toFixed(1) + ' s';
 
       $('kpi-bh-val').textContent = fmt(w.block_height_m, 1);
-      $('kpi-ts-val').textContent = fmt(w.transition_mps, 1);
       $('kpi-cp-val').textContent = fmt(w.compactness_m, 1);
       $('kpi-pressure-val').textContent = 'Presión · ' + (w.pressure || '—');
 
@@ -824,7 +817,8 @@
     // ── Jugadores ──────────────────────────────────────────────────────
     function renderPlayers() {
       var host = $('player-list');
-      var list = D.players.filter(function (p) { return p.team === team; })
+      // Con pocos segundos medidos, la velocidad media sale en el tope y desplaza a los demás
+      var list = D.players.filter(function (p) { return p.team === team && (metric !== 'avg_mps' || p.segundos >= 5); })
         .sort(function (a, b) { return b[metric] - a[metric]; }).slice(0, 5);
       host.innerHTML = '';
       if (!list.length) { host.innerHTML = '<div class="player-empty">Sin jugadores con datos suficientes.</div>'; return; }
@@ -834,7 +828,7 @@
         row.className = 'player-row' + (selected === p.id ? ' player-row--active' : '');
         row.dataset.id = p.id;
         row.tabIndex = 0;
-        var val = metric === 'dist_m' ? p.dist_m.toFixed(0) + ' m' : metric === 'avg_mps' ? p.avg_mps.toFixed(1) + ' m/s' : String(p.sprints);
+        var val = metric === 'dist_m' ? p.dist_m.toFixed(0) + ' m' : p.avg_mps.toFixed(1) + ' m/s';
         row.innerHTML =
           '<span class="player-row__team" style="background:' + COLORS[p.team] + '"></span>' +
           '<span class="player-row__track">Rastro ' + p.id + '</span>' +
@@ -858,7 +852,6 @@
       $('pc-title').textContent = 'Rastro ' + p.id + ' · ' + TEAM[p.team];
       $('pc-dist').textContent = p.dist_m.toFixed(0) + ' m';
       $('pc-avg').textContent = p.avg_mps.toFixed(1);
-      $('pc-spr').textContent = p.sprints;
       $('pc-foot').textContent = 'Visible ' + (p.frames / FPS).toFixed(1) + ' s en toma abierta';
       var svg = '<rect width="120" height="70" fill="#0E1A16"/>';
       for (var gx = 0; gx < 12; gx++) for (var gy = 0; gy < 7; gy++) {
