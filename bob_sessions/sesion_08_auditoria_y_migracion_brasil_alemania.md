@@ -3,7 +3,7 @@
 **Proyecto:** Omnimorph — Análisis Táctico de Fútbol con IA (MATEO)  
 **Agente:** Claude Code  
 **Rama activa:** `feat-dashboard-mejoras`  
-**Estado:** frontend web y chat en GitHub (`0e9b51d`); arranque desde clon limpio probado, sin commit
+**Estado:** todo en GitHub (`fc2f21a`) con el PR #1 abierto y sin fusionar; revisión previa a la fusión en la sección 13
 
 ---
 
@@ -222,8 +222,29 @@ El repositorio no tenía `README` ni dependencias para la web y el chat. Se aña
 
 1. Decidir cómo distribuir los videos.
 2. Fusionar la rama en `master`.
-3. Reiniciar el servidor del puerto 8600: sin eso sigue con el código anterior y sin chat.
+3. Reiniciar el servidor del puerto 8600 después de fusionar, para que use el código final.
 4. Avisar a Fer de las correcciones para llevarlas al repo de origen.
 5. Integrar audio maestro y subtítulos en el pipeline.
 6. Añadir los textos de licencia OFL de las fuentes.
 7. Al hacer commit, usar rutas explícitas. No usar `git add data/`, que subiría también `data/clean/`.
+
+---
+
+## 13. Revisión previa a la fusión del PR #1
+
+PR: https://github.com/Rogelio756/omnimorph-ibm-ai-lab/pull/1 (10 commits, sin conflictos, sin CI).
+
+Se probó `feat-dashboard-mejoras` en un servidor nuevo, puerto 8601, sin tocar el del 8600.
+
+- **Páginas:** inicio, MATEO, Partido y Chatbot cargan. Los tres videos y el audio responden. Solo falta `favicon.ico` (404).
+- **Móvil (375 px):** sin desbordes horizontales en esas páginas ni en las 4 pestañas de Partido. Solo se comprobó por medidas del DOM: las capturas no llegaron, así que falta mirarlo a ojo.
+- **Límite de 30 preguntas:** funciona, probado con respuestas simuladas para no gastar cuota. El HTML de una respuesta se muestra como texto.
+- **Seguridad:** sin archivos prohibidos ni secretos en el diff. `/.env` da 404.
+- **Chat real:** 7 preguntas, 5 a Granite (0,5–1 s) y 2 por regla. 6 respuestas fueron correctas.
+- **Respuesta descartada:** en «¿Quién dio más asistencias?» Granite dijo que Kroos dio 2 (fueron 1). El verificador la bloqueó, pero el usuario no recibe la respuesta correcta (Müller y Lahm, 2 cada uno).
+
+Observaciones sin corregir:
+
+- `serve.py` escucha en `0.0.0.0` por defecto: la red local ve los archivos de `dashboard/`, incluido `serve.py`. El chat sigue limitado a conexiones locales.
+- `/api/chat` devuelve `atribucion_incorrecta` vacío en respuestas bloqueadas. El motivo real queda en `data/clean/chat_audit.jsonl`.
+- La descripción del PR no menciona The Architect (`tools/the-architect/`, `.claude/commands/`), que es la mayor parte de las 32 000 líneas.
