@@ -65,31 +65,50 @@ Si el partido activo no tiene `partido/contexto_partido.json`:
 - Con "Audio original" se decodifica el audio del original y el video de marcas queda en silencio.
 - Con "Narrador MATEO" suenan los dos: el original al 25 % y la voz encima, con 0.13 s de diferencia entre videos.
 
-## 5. Comercial de entrada
+## 5. Comercial y fondo de la portada
 
-El usuario eligió una intro a pantalla completa antes de la portada.
+**Resultado final:** la portada vuelve a tener de fondo el video original del estadio (`assets/hero/demo_omni.mp4`). El comercial de 21 s que armó Claude va en una sección propia, **arriba de la franja de logos de IBM**.
 
-- **El video lo edita el usuario a mano.** Vive en `dashboard/assets/intro/comercial_omnimorph.mp4` (MP4 H.264, no versionado por `*.mp4`); para cambiarlo, se reemplaza el archivo con el mismo nombre.
-- **Versión provisional:** Claude armó una de 21 s con un script que después se borró, para que no pisara la edición manual. Tenía:
-  1. Portada OMNIMORPH.
-  2. Referencia: s 3–8 de `outputs/experiment/TODOS_JUNTOS.mp4`.
-  3. Brasil: s 5–10 de `backups/clip_13_estable/videos_clip_13/VIDEO_OMNIMORPH_POST_MATEMATICA.mp4`, con marcador 0-0 y sin goles.
-  4. Costa Rica: s 8–15 del video con marcas.
-  5. Cierre MATEO · IBM Granite.
-- **`index.html`:**
-  - La intro se ve una vez por sesión y `?intro=1` la repite.
-  - Tiene botón "Saltar presentación", tecla Esc y barra de progreso.
-  - No sale con `prefers-reduced-motion`.
-  - Si el navegador bloquea la reproducción automática, se cierra sola y deja la portada.
-- **Verificado en el navegador:** reproducción, rótulos, Saltar y que no vuelva a salir en la misma sesión.
+- **Sección "Demostración":**
+  - Texto a la izquierda y video a la derecha; en móvil, uno debajo del otro.
+  - Usa los tokens del tablero y un video con controles: `assets/intro/comercial_omnimorph.mp4` (no versionado). Para cambiarlo, se reemplaza el archivo.
+  - Arranca solo, en silencio, al entrar en pantalla y se pausa al salir. No arranca solo si el usuario lo pausó o si el sistema pide movimiento reducido; en ese caso se usa el botón de reproducir.
+- **Historia del cambio:**
+  1. Claude armó un comercial provisional y lo puso en una intro a pantalla completa.
+  2. El usuario quiso editarlo a mano, así que se borró el script del comercial.
+  3. El usuario entregó una edición propia, que pasó a ser el fondo (convertida a `assets/hero/fondo_inicio.mp4`, 1080p, 41 MB) y se quitó la intro.
+  4. El usuario descartó ese fondo y pidió volver al estadio, con el comercial de Claude en una sección junto a los logos.
+- **Verificado en el navegador:**
+  - El fondo es `demo_omni.mp4` y la sección queda entre las tarjetas y los logos.
+  - El video dura 21 s a 1280×720 y se reproduce.
+  - El observador arranca y pausa con el desplazamiento (probado simulando una configuración sin movimiento reducido, porque el navegador de pruebas lo tiene activado).
+  - En móvil (375 px) no hay desplazamiento horizontal.
+- **Archivos que ya no se usan:** `assets/hero/fondo_inicio.mp4` y `assets/intro/demo_omni (1).mp4`, ambos fuera de Git.
 
 ## 6. Riesgo visible para la demo
 
 En los videos con marcas, muchos jugadores muestran **9.5 m/s**, que es el tope del filtro M2.3. Pasa también en el tramo de Brasil. Son jugadores trotando, y un analista lo va a notar. Es el ruido de velocidad de la sesión 12: la mediana de `v_mps` es de 10 m/s.
 
+### 6.1 Diagnóstico (prototipos fuera del repo, sin aplicar)
+
+- **Cómo se calcula:** la velocidad sale de `phase2_kinematics`. Usa Savitzky-Golay de 9 cuadros (0.3 s) y `np.diff` cuadro a cuadro.
+- **Los huecos no son la causa:** solo hay 154 de 17 500 pasos con cuadros saltados.
+- **Ruido de posición:** entre cuadros seguidos un jugador "salta" 33 cm de mediana, lo que equivale a 9.8 m/s aunque esté quieto. De esos 33 cm, 20 son comunes a todos los jugadores (homografía) y 24 son propios de cada uno (caja de detección).
+- **Causa principal:** hay segundos en los que el equipo entero "se mueve" 10–12 m con la cámara quieta (paneo de 0 px, por ejemplo en los segundos 3, 17 y 28). Pasa porque la homografía se calcula con solo 7–8 puntos de confianza, casi todos de la línea central y el círculo, y salta en escalón cuando cambia el conjunto de puntos visibles.
+
+| Variante | Mediana v | p90 | Etiquetas ≥ 9.5 m/s |
+|---|---|---|---|
+| Actual (H guardada, SG 9) | 9.3 m/s | 41 | 49 % |
+| Solo puntos con conf ≥ 0.5, SG 9 | 7.1 | 47 | 41 % |
+| H guardada, SG 31 (1 s) | 7.6 | 28 | 39 % |
+| Conf ≥ 0.5 + H suavizada 15 cuadros + SG 31 | 5.3 | 31 | 28 % |
+| Flujo óptico de cámara + corrección lenta con puntos de cancha + SG 31 | 6.1 | 22 | 32 % |
+
+Ninguna variante llega a lo creíble, que sería una mediana de 1.5–3 m/s. En la fusión con flujo óptico se rechazaron entre 755 y 925 de 1080 cuadros de puntos de cancha. Una hipótesis, sin verificar: las vallas LED animadas y el público contaminan el flujo óptico. **Recomendación para la demo:** ocultar las etiquetas de velocidad en los videos con marcas. Las cifras por jugador del tablero ya usan un filtro de 1 s.
+
 ## 7. Pendiente
 
-- **Ruido de velocidad:** corregirlo u ocultar las etiquetas de velocidad en los videos (sección 6).
+- **Ruido de velocidad:** corregirlo u ocultar las etiquetas de velocidad en los videos (sección 6). Diagnóstico en la sección 6.1.
 - **`scripts/finalize_mvp_perception.py`:** tiene el mismo bug de fps; `VIDEO_UNIFICADO_TODOS_JUNTOS.mp4` dura 37.2 s. El tablero no lo usa.
 - **Velocidad de transición:** sale topada en 9.5 m/s en las 8 ventanas de Costa Rica. Como métrica no aporta y no se investigó.
 - **Video de la portada:** `assets/hero/demo_omni.mp4` parece la Arena Fonte Nova (Salvador), no el Mineirão.

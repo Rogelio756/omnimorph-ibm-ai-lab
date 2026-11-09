@@ -45,106 +45,57 @@
       padding-block: var(--space-9);
     }
 
-    /* Comercial de entrada: pantalla completa, una vez por sesión (?intro=1 lo repite) */
-    .intro {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: var(--color-bg-deep);
+    /* Comercial: texto a la izquierda y video a la derecha; en móvil, uno debajo del otro */
+    .comercial {
       display: grid;
-      place-items: center;
-      transition: opacity 0.6s ease;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      gap: var(--space-9);
+      align-items: center;
+      padding: var(--space-12) var(--cell-padding-x);
+      border-top: var(--border);
     }
-    .intro[hidden] { display: none; }
-    .intro--saliendo { opacity: 0; pointer-events: none; }
-    .intro__video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: var(--color-bg-deep);
+    .comercial__etiqueta {
+      font-family: var(--font-ui);
+      font-size: var(--text-label);
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: var(--color-ok);
     }
-    .intro__saltar {
-      position: absolute;
-      right: var(--space-5, 24px);
-      bottom: var(--space-5, 24px);
-      padding: 10px 18px;
-      border-radius: 999px;
-      border: 1px solid var(--color-border-soft);
-      background: rgba(10, 10, 10, 0.7);
+    .comercial__titulo {
+      font-family: var(--font-headline);
+      font-weight: var(--font-weight-medium);
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1.15;
+      margin: var(--space-3) 0 var(--space-4);
       color: var(--color-text);
-      font: inherit;
-      font-size: 14px;
-      letter-spacing: 0.04em;
-      cursor: pointer;
     }
-    .intro__saltar:hover,
-    .intro__saltar:focus-visible { border-color: var(--color-text); outline: none; }
-    .intro__barra {
-      position: absolute;
-      left: 0; right: 0; bottom: 0;
-      height: 3px;
-      background: var(--color-border);
+    .comercial__descripcion {
+      font-family: var(--font-ui);
+      color: var(--color-text-soft);
+      line-height: 1.6;
+      margin: 0;
     }
-    .intro__barra span {
+    .comercial__video {
       display: block;
-      height: 100%;
-      width: 0;
-      background: var(--color-ok);
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--color-bg-deep);
+      border: var(--border);
     }
+    @media (max-width: 768px) {
+      .comercial {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+        padding-block: var(--space-9);
+      }
+    }
+
   </style>
   <link rel="stylesheet" href="../styles/components/transicion.css">
   <script src="../components/transicion.js"></script>
 </head>
 <body class="page-index">
 
-  <!-- ── COMERCIAL DE ENTRADA ────────────────────────────────────────────
-       Video editado a mano: dashboard/assets/intro/comercial_omnimorph.mp4
-       (MP4 H.264, no está en Git). Reemplazarlo con el mismo nombre. -->
-
-  <div class="intro" id="intro" role="dialog" aria-label="Presentación de OMNIMORPH" hidden>
-    <video class="intro__video" id="intro-video" muted playsinline preload="auto"></video>
-    <button class="intro__saltar" id="intro-saltar" type="button">Saltar presentación ›</button>
-    <div class="intro__barra" aria-hidden="true"><span id="intro-progreso"></span></div>
-  </div>
-  <script>
-  (function () {
-    'use strict';
-    var intro = document.getElementById('intro');
-    var forzar = /[?&]intro=1\b/.test(location.search);
-    var vista = false;
-    try { vista = sessionStorage.getItem('om-intro') === 'vista'; } catch (e) {}
-    var reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!forzar && (vista || reducido)) return;
-
-    var video = document.getElementById('intro-video');
-    var barra = document.getElementById('intro-progreso');
-    var cerrado = false;
-
-    function cerrar() {
-      if (cerrado) return;
-      cerrado = true;
-      try { sessionStorage.setItem('om-intro', 'vista'); } catch (e) {}
-      video.pause();
-      intro.classList.add('intro--saliendo');
-      setTimeout(function () { intro.remove(); }, 650);
-      document.removeEventListener('keydown', alTeclear);
-    }
-    function alTeclear(e) { if (e.key === 'Escape') cerrar(); }
-
-    intro.hidden = false;
-    video.addEventListener('ended', cerrar);
-    video.addEventListener('error', cerrar);
-    video.addEventListener('timeupdate', function () {
-      if (video.duration) barra.style.width = (video.currentTime / video.duration * 100) + '%';
-    });
-    document.getElementById('intro-saltar').addEventListener('click', cerrar);
-    document.addEventListener('keydown', alTeclear);
-    video.src = '../assets/intro/comercial_omnimorph.mp4';
-    var p = video.play();
-    if (p && p.catch) p.catch(cerrar);
-    document.getElementById('intro-saltar').focus();
-  })();
-  </script>
 
   <!-- ── NAVEGACIÓN ─────────────────────────────────────────────────────── -->
   <nav class="om-nav" id="main-nav" role="navigation" aria-label="Navegación principal">
@@ -262,6 +213,44 @@
     </article>
 
   </section>
+
+  <!-- ── COMERCIAL ───────────────────────────────────────────────────────
+       Video: dashboard/assets/intro/comercial_omnimorph.mp4 (no está en Git).
+       Para cambiarlo, reemplazar el archivo con el mismo nombre. -->
+  <section class="comercial" aria-labelledby="comercial-titulo">
+    <div class="comercial__texto">
+      <span class="comercial__etiqueta">Demostración · 21 s</span>
+      <h2 class="comercial__titulo" id="comercial-titulo">De la cámara táctica a la transmisión de TV</h2>
+      <p class="comercial__descripcion">
+        La misma IA sobre tres videos: una cámara táctica de referencia, la señal del Mundial 2014
+        y, hoy, Costa Rica vs. San Cristóbal y Nieves con narración de IBM Granite.
+      </p>
+    </div>
+    <video class="comercial__video" id="comercial-video" controls muted loop playsinline preload="metadata"
+           src="../assets/intro/comercial_omnimorph.mp4"
+           aria-label="Comercial de OMNIMORPH: análisis de tres videos de fútbol"></video>
+  </section>
+  <script>
+  (function () {
+    'use strict';
+    var v = document.getElementById('comercial-video');
+    if (!v || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var pausadoPorUsuario = false, porCodigo = false;
+    v.addEventListener('pause', function () { if (!porCodigo) pausadoPorUsuario = true; porCodigo = false; });
+    v.addEventListener('play', function () { pausadoPorUsuario = false; });
+    new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (e.isIntersecting && !pausadoPorUsuario) {
+          v.play().catch(function () {});
+        } else if (!e.isIntersecting && !v.paused) {
+          porCodigo = true;
+          v.pause();
+        }
+      });
+    }, { threshold: 0.5 }).observe(v);
+  })();
+  </script>
 
   <!-- ── FRANJA "IMPULSADO POR IBM" ────────────────────────────────────── -->
   <section class="powered-by" aria-label="Herramientas que impulsan OMNIMORPH">
