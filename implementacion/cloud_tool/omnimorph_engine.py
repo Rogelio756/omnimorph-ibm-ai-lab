@@ -55,7 +55,7 @@ V_MAX_MPS = 9.5                                  # m/s — velocidad máxima hum
 EMA_ALPHA = 0.3                                  # suavizado homografía
 STITCH_MAX_DIST_CM = 300.0                       # 3 m — umbral costura
 STITCH_MAX_GAP_FRAMES = 30                       # 1 s a 30 fps: más allá se considera otro rastro
-STITCH_FPS = 30.0                                # fps de los parquets de Brasil-Alemania
+STITCH_FPS = 30.0                                # fps aproximados de los clips reales (alcance de costura)
 STITCH_SIN_ENLACE = 1e9                          # costo de una pareja que no se puede unir
 PITCH_L_CM = 12_000.0
 PITCH_W_CM = 7_000.0
@@ -63,6 +63,14 @@ SAVGOL_WINDOW = 9
 SAVGOL_POLY = 3
 
 CLEAN_DIR = pathlib.Path("data/clean")
+
+
+def _fps_clip(total_frames: int) -> float:
+    """FPS del clip: los datos sintéticos tienen N_FRAMES a 25 fps; los reales, los del partido activo."""
+    if total_frames <= N_FRAMES:
+        return FPS
+    from implementacion import partido_config
+    return partido_config.activo().fps
 
 
 # ===========================================================================
@@ -268,7 +276,7 @@ def phase2_kinematics(df_track: pd.DataFrame) -> pd.DataFrame:
     """
     # Reset index para garantizar indices posicionales 0..N-1
     df = df_track.copy().sort_values(["track_id_stitched", "frame"]).reset_index(drop=True)
-    fps = 30.0 if len(df) and df["frame"].max() >= 1000 else FPS
+    fps = _fps_clip(int(df["frame"].max()) + 1) if len(df) else FPS
 
     n_total = len(df)
     smooth_x = np.full(n_total, np.nan)
@@ -339,7 +347,12 @@ def phase5_tactical_windows(
     """
     max_frame = int(df_track_clean["frame"].max()) + 1 if len(df_track_clean) > 0 else N_FRAMES
     total_frames = max(max_frame, N_FRAMES)
-    fps_clip = 30.0 if total_frames > 1000 else FPS
+    fps_clip = _fps_clip(total_frames)
+    if total_frames > N_FRAMES:
+        from implementacion import partido_config
+        equipos = partido_config.activo().equipos
+    else:
+        equipos = None  # datos sintéticos: códigos legados ARG/FRA
     win_frames = max(int(np.ceil(total_frames / N_WINDOWS)), WINDOW_SIZE_FRAMES)
     win_s = round(win_frames / fps_clip, 2)
 
@@ -407,13 +420,19 @@ def phase5_tactical_windows(
         if np.isnan(centroid_fra_x):
             centroid_fra_x = 6000.0
 
-        # pressure_context y dominant_team
-        if centroid_arg_x > 6000:
+        # pressure_context y dominant_team: un equipo domina si su centroide
+        # está en campo rival según hacia dónde ataca. Se revisa primero el team_id 0.
+        cod0, cod1 = ("ARG", "FRA") if equipos is None else (equipos[0].codigo, equipos[1].codigo)
+        dir0 = "+x" if equipos is None else equipos[0].ataca_hacia
+        mitad = PITCH_L_CM / 2
+        t0_en_campo_rival = centroid_arg_x > mitad if dir0 == "+x" else centroid_arg_x < mitad
+        t1_en_campo_rival = centroid_fra_x < mitad if dir0 == "+x" else centroid_fra_x > mitad
+        if t0_en_campo_rival:
             pressure_context = "ataque"
-            dominant_team = "ARG"
-        elif centroid_fra_x < 6000:
+            dominant_team = cod0
+        elif t1_en_campo_rival:
             pressure_context = "defensa"
-            dominant_team = "FRA"
+            dominant_team = cod1
         else:
             pressure_context = "neutro"
             dominant_team = "neutro"

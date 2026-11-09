@@ -35,3 +35,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+
+# Marca local de qué partido trae data/raw (la escribe dataset_manager)
+data/raw/origen.json

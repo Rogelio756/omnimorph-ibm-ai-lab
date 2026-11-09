@@ -35,14 +35,17 @@ CLEAN_DIR = pathlib.Path("data/clean")
 AUDIT_LOG = CLEAN_DIR / "governance_audit.jsonl"
 REPORT_PATH = CLEAN_DIR / "monitor_m3.json"
 
-# Menciones válidas de cada equipo. ARG/FRA son las etiquetas históricas del
-# engine; en el clip activo equivalen a Brasil/Alemania.
-TEAM_MENTIONS = {
-    "ARG": r"\b(brasil\w*|bra|argentin\w*|arg|verdeamarela)\b",
-    "BRA": r"\b(brasil\w*|bra|argentin\w*|arg|verdeamarela)\b",
-    "FRA": r"\b(aleman\w*|ger|germany|franc\w*|fra)\b",
-    "GER": r"\b(aleman\w*|ger|germany|franc\w*|fra)\b",
-}
+
+
+def _patron_menciones(codigo: str) -> Optional[str]:
+    """Regex de menciones válidas del equipo según el partido activo.
+
+    Acepta también los códigos históricos del engine (ARG = team_id 0,
+    FRA = team_id 1). Devuelve None para "neutro" o códigos desconocidos.
+    """
+    from implementacion import partido_config
+    equipo = partido_config.activo().equipo_por_codigo(codigo)
+    return equipo.patron_menciones if equipo else None
 
 # Costo estimado watsonx.ai en Resource Units (aproximación)
 # Granite 3-8B: ~0.0001 RU / token de entrada, ~0.0003 RU / token de salida
@@ -156,7 +159,7 @@ class GovernanceMonitorM3:
             narracion = llm_response.get("narracion_es", "").lower()
             text_combined = analisis + " " + narracion
 
-            patron = TEAM_MENTIONS.get(expected_dominant)
+            patron = _patron_menciones(expected_dominant)
             if patron:
                 anti_hallucin_ok = re.search(patron, text_combined) is not None
             else:

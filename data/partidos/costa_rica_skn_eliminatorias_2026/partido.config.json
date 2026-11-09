@@ -1,0 +1,31 @@
+{
+  "id": "costa_rica_skn_eliminatorias_2026",
+  "titulo": "Costa Rica vs. San Cristóbal y Nieves",
+  "competicion": "Eliminatorias Concacaf Mundial 2026 — Segunda ronda, jornada 1",
+  "video": {
+    "archivo": "data/videos/candidatos_720p/HP3zxNuoWXE-720-15.mp4",
+    "dataset_id": "HP3zxNuoWXE-720-15.mp4",
+    "fps": 29.97,
+    "n_frames": 1080,
+    "nota": "Solo segundos 0-36 del clip: un plano táctico continuo. Después hay repetición en primer plano."
+  },
+  "percepcion_dir": "outputs/mvp_pruebas/eliminatorias_2026_costa_rica_skn/clip_15",
+  "pendiente": [
+    "Confirmar qué team_id es cada equipo cuando Gemini corra la percepción (KMeans no fija el orden).",
+    "Confirmar hacia dónde ataca cada equipo en el clip (pestaña Clip_15 de la plantilla)."
+  ],
+  "equipos": {
+    "0": {
+      "codigo": "CRC",
+      "nombre": "Costa Rica",
+      "menciones": ["costa\\s*rica\\w*", "costarricense\\w*", "tico\\w*", "crc", "la sele"],
+      "ataca_hacia": "+x"
+    },
+    "1": {
+      "codigo": "SKN",
+      "nombre": "San Cristóbal y Nieves",
+      "menciones": ["san crist[oó]bal\\w*", "nieves", "kitts\\w*", "skn", "sugar boyz"],
+      "ataca_hacia": "-x"
+    }
+  }
+}

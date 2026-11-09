@@ -32,6 +32,8 @@ RUN pip install --no-cache-dir -r requirements-api.txt
 # Solo los módulos necesarios para la API (sin datos pesados ni .venv)
 COPY implementacion/ ./implementacion/
 COPY data/raw/ ./data/raw/
+# Configuración del partido activo (fps, equipos, sentido de ataque) que lee el engine
+COPY data/partidos/ ./data/partidos/
 
 # Puerto expuesto
 EXPOSE 8000

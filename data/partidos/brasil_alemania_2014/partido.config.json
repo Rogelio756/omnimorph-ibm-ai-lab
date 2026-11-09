@@ -1,0 +1,26 @@
+{
+  "id": "brasil_alemania_2014",
+  "titulo": "Brasil vs. Alemania",
+  "competicion": "Copa Mundial de la FIFA Brasil 2014 — Semifinal",
+  "video": {
+    "archivo": "data/videos/mundial_2014_720p_hd/L6sbfskaTDQ-720-13.mp4",
+    "dataset_id": "L6sbfskaTDQ-720-13.mp4",
+    "fps": 30.0,
+    "n_frames": 1800
+  },
+  "percepcion_dir": "outputs/mvp_pruebas/mundial_2014_brasil_alemania/clip_13",
+  "equipos": {
+    "0": {
+      "codigo": "BRA",
+      "nombre": "Brasil",
+      "menciones": ["brasil\\w*", "bra", "verdeamarela"],
+      "ataca_hacia": "+x"
+    },
+    "1": {
+      "codigo": "GER",
+      "nombre": "Alemania",
+      "menciones": ["aleman\\w*", "ger", "germany"],
+      "ataca_hacia": "-x"
+    }
+  }
+}

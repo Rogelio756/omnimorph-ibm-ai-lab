@@ -352,7 +352,12 @@ def run_pipeline(
     now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     print(f"  Fecha/Hora: {now_str}")
     print(f"  Modelo LLM: ibm/granite-4-h-small")
-    clip_label = "L6sbfskaTDQ-720-13.mp4 (Mundial 2014 BRA vs GER, 1800 frames)" if use_real else "Simulacion sintetica (750 frames)"
+    if use_real:
+        from implementacion import partido_config
+        _p = partido_config.activo()
+        clip_label = f"{_p.video_dataset_id} ({_p.titulo}, {_p.n_frames} frames, partido '{_p.id}')"
+    else:
+        clip_label = "Simulacion sintetica (750 frames)"
     print(f"  Dataset: QimingLi/video_human_select_Soccer -> {clip_label}")
     print(f"  Modo datos: {'real' if use_real else 'sintetico (generado)'}")
 

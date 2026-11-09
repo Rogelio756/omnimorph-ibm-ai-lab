@@ -43,6 +43,7 @@ from implementacion.cloud_agent.governance_monitor_m3 import (
     RU_PER_TOKEN_OUT,
 )
 from implementacion.dashboard import partido_data
+from implementacion import partido_config
 
 CHAT_PARAMS = {"temperature": 0.1, "max_tokens": 500}
 MAX_MENSAJES_HISTORIAL = 6
@@ -50,8 +51,9 @@ MAX_CARACTERES_PREGUNTA = 500
 CLEAN_DIR = _ROOT / "data" / "clean"
 CHAT_AUDIT_LOG = CLEAN_DIR / "chat_audit.jsonl"
 
-# Etiquetas históricas del engine -> equipos del clip activo
-EQUIPO_CLIP = {"ARG": "Brasil", "BRA": "Brasil", "FRA": "Alemania", "GER": "Alemania"}
+def _nombre_equipo(codigo: str, defecto: str) -> str:
+    """Código del engine (actual o histórico ARG/FRA) -> nombre del equipo del partido activo."""
+    return partido_config.activo().nombre_de(codigo, defecto)
 
 SYSTEM_PROMPT = """Eres MATEO, analista táctico de fútbol del partido Brasil 1-7 Alemania (semifinal del Mundial 2014).
 
@@ -275,7 +277,7 @@ def _ventanas_clip() -> list[dict]:
                     "ventana": v["window_id"],
                     "t0_s": v["t0"],
                     "t1_s": v["t1"],
-                    "equipo_dominante": EQUIPO_CLIP.get(v["dominant_team"], v["dominant_team"]),
+                    "equipo_dominante": _nombre_equipo(v["dominant_team"], v["dominant_team"]),
                     "contexto_presion": v["pressure_context"],
                     "altura_bloque_m": round(v["block_height_m"], 2),
                     "compacidad_bloque_m": round(v["block_compactness_m"], 2),
@@ -291,7 +293,7 @@ def _ventanas_clip() -> list[dict]:
                 "ventana": v["id"],
                 "t0_s": v["t0"],
                 "t1_s": v["t1"],
-                "equipo_dominante": EQUIPO_CLIP.get(v["dominant"], v["dominant"]),
+                "equipo_dominante": _nombre_equipo(v["dominant"], v["dominant"]),
                 "contexto_presion": v["pressure"],
                 "altura_bloque_m": round(v["block_height_m"], 2),
                 "compacidad_bloque_m": round(v["compactness_m"], 2),

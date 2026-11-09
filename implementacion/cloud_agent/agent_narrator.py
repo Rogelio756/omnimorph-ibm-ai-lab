@@ -51,6 +51,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from implementacion.cloud_agent.governance_monitor_m3 import GovernanceMonitorM3
+from implementacion import partido_config
 from implementacion.cloud_agent.red_ipv4 import preferir_ipv4_en_ibm
 
 preferir_ipv4_en_ibm()
@@ -149,18 +150,19 @@ def _build_prompt(window: dict) -> str:
     t1 = window["t1"]
     wid = window["window_id"]
 
-    # Descripción de dominio (Semifinal Copa del Mundo 2014: Brasil vs. Alemania)
-    if dominant in ("ARG", "BRA"):
-        team_label = "Brasil (BRA)"
-        dominio_texto = "Brasil adelanta sus líneas en sector ofensivo buscando descontar en campo contrario."
-    elif dominant in ("FRA", "GER"):
-        team_label = "Alemania (GER)"
-        dominio_texto = "Alemania repliega con orden y ejecuta transiciones verticales letales hacia el área rival."
+    # Descripción de dominio según el partido activo (data/partidos/<id>/partido.config.json)
+    partido = partido_config.activo()
+    eq0, eq1 = partido.equipos
+    equipo_dom = partido.equipo_por_codigo(dominant)
+    if equipo_dom is not None:
+        rival = eq1 if equipo_dom.team_id == 0 else eq0
+        team_label = f"{equipo_dom.nombre} ({equipo_dom.codigo})"
+        dominio_texto = f"{equipo_dom.nombre} tiene su bloque en campo de {rival.nombre}."
     else:
         team_label = "Neutro (Disputa en mediocampo)"
         dominio_texto = "El juego está equilibrado en el mediocampo, sin dominio claro."
 
-    prompt = f"""Eres un analista táctico de fútbol especializado en el partido Brasil vs Alemania (Semifinal Copa del Mundo FIFA 2014).
+    prompt = f"""Eres un analista táctico de fútbol especializado en el partido {partido.titulo} ({partido.competicion}).
 
 Se te proporcionan las métricas tácticas de la ventana {wid} (t={t0:.1f}s – {t1:.1f}s):
 - Contexto de presión: {pressure}
@@ -170,7 +172,7 @@ Se te proporcionan las métricas tácticas de la ventana {wid} (t={t0:.1f}s – 
 - Compacidad del bloque: {block_c:.2f} m
 - Velocidad de transición del balón: {trans_spd:.2f} m/s
 
-Genera un análisis táctico breve en español (2-3 oraciones técnicas mencionando a Brasil o Alemania según corresponda) y una narración deportiva en español de MÁXIMO 30 PALABRAS pensada para comentario de audio en vivo de 4 segundos.
+Genera un análisis táctico breve en español (2-3 oraciones técnicas mencionando a {eq0.nombre} o {eq1.nombre} según corresponda; usa solo las métricas dadas, sin inventar jugadores, goles ni marcador) y una narración deportiva en español de MÁXIMO 30 PALABRAS pensada para comentario de audio en vivo de 4 segundos.
 
 Responde EXCLUSIVAMENTE con un objeto JSON válido (sin texto antes ni después) con el siguiente esquema:
 {{
@@ -261,38 +263,28 @@ def _generate_offline_narration(window: dict) -> tuple[dict, float, int, int]:
     block_h = window["block_height_m"]
     trans_spd = window["transition_speed_mps"]
 
-    # Análisis táctico basado en datos reales (Brasil vs. Alemania — Mundial 2014)
-    if dominant in ("ARG", "BRA"):
+    # Análisis táctico basado en las métricas de la ventana y el partido activo
+    partido = partido_config.activo()
+    eq0, eq1 = partido.equipos
+    equipo_dom = partido.equipo_por_codigo(dominant)
+    if equipo_dom is not None:
+        rival = eq1 if equipo_dom.team_id == 0 else eq0
         analisis = (
-            f"Brasil adelanta sus líneas en campo rival con un bloque de {block_h:.1f} m de amplitud. "
+            f"{equipo_dom.nombre} adelanta sus líneas en campo de {rival.nombre} con un bloque de {block_h:.1f} m de amplitud. "
             f"La velocidad de transición alcanza {trans_spd:.1f} m/s en fase de {pressure}. "
-            f"La escuadra brasileña intenta romper el cerco alemán por el carril central."
-        )
-        if pressure == "ataque":
-            narracion = (
-                "Brasil adelanta líneas con intensidad buscando abrir espacios ante la defensa de Alemania."
-            )
-        else:
-            narracion = (
-                "Brasil circula el balón en mediocampo intentando reorganizar su bloque ofensivo."
-            )
-    elif dominant in ("FRA", "GER"):
-        analisis = (
-            f"Alemania articula un bloque compacto ({block_h:.1f} m) y lanza el contragolpe vertical. "
-            f"Las transiciones alemanas progresan a {trans_spd:.1f} m/s aprovechando la espalda defensiva. "
-            f"Superioridad posicional de Alemania en la definición de la jugada."
+            f"{rival.nombre} se repliega para cerrar los espacios por dentro."
         )
         narracion = (
-            "Alemania rompe líneas a gran velocidad y define con precisión letal en el área brasileña."
+            f"{equipo_dom.nombre} adelanta líneas buscando abrir espacios ante la defensa de {rival.nombre}."
         )
     else:
         analisis = (
             f"Disputa táctica equilibrada en el mediocampo ({block_h:.1f} m de dispersión vertical). "
-            f"Brasil y Alemania alternan posesión a {trans_spd:.1f} m/s sin un dominador claro. "
+            f"{eq0.nombre} y {eq1.nombre} alternan posesión a {trans_spd:.1f} m/s sin un dominador claro. "
             f"Fase de transición neutral con presión recíproca."
         )
         narracion = (
-            "Brasil y Alemania disputan con intensidad el control del mediocampo."
+            f"{eq0.nombre} y {eq1.nombre} disputan con intensidad el control del mediocampo."
         )
 
     # Asegurar límite de 45 palabras

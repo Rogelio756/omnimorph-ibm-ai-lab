@@ -91,14 +91,14 @@ Estas carpetas las está cambiando Claude Code en paralelo. Si las tocas, habrá
 - `run_pipeline.py`
 - `dashboard/`
 - `data/raw/`: **no copies ahí los parquets nuevos.** Claude los integra con respaldo previo.
-- `data/partidos/`
+- `data/partidos/`: cuando sepas qué `team_id` es cada equipo, **anótalo en tu bitácora**. Claude actualiza `data/partidos/costa_rica_skn_eliminatorias_2026/partido.config.json`.
 
 Tampoco subas a Git `.mp4`, `.pt`, `.parquet`, `.env` ni nada de `outputs/`. Si encuentras un bug fuera de `scripts/`, anótalo en la bitácora y no lo arregles.
 
 ## 5. Entregables
 
 1. Commits en `feat-costa-rica` solo con los cambios a `scripts/run_mvp_perception.py` y `scripts/finalize_mvp_perception.py`. Mensaje en español, con el formato `tipo(ámbito): descripción`, igual que el historial.
-2. `bob_sessions/sesion_10_percepcion_costa_rica_gemini.md` con:
+2. `bob_sessions/sesion_11_percepcion_costa_rica_gemini.md` con (la sesión 10 es de Claude Code):
    - El comando exacto que corriste
    - La tabla de la sección 3 con tus números
    - El mapeo `team_id 0 = …`, `team_id 1 = …`

@@ -589,23 +589,37 @@ def get_parquets(
         print("[dataset_manager] Forzando generación sintética …")
         return generate_sample_parquets(raw_dir)
 
-    # Priorizar los parquets reales del MVP (clip_13 Mundial 2014) o en su defecto C_data
-    root_dir = pathlib.Path(__file__).parent.parent.parent
-    candidate_dirs = [
-        root_dir / "outputs" / "mvp_pruebas" / "mundial_2014_brasil_alemania" / "clip_13",
-        root_dir / "outputs" / "experiment" / "C_data",
-    ]
-    for cand_dir in candidate_dirs:
-        cand_frames = cand_dir / "frames.parquet"
-        cand_objects = cand_dir / "objects.parquet"
-        if cand_frames.exists() and cand_objects.exists():
-            import shutil
-            dest = pathlib.Path(raw_dir)
-            dest.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(str(cand_frames), str(dest / "frames.parquet"))
-            shutil.copy2(str(cand_objects), str(dest / "objects.parquet"))
-            print(f"[dataset_manager] Sincronizados parquets reales desde {cand_dir} → {dest}")
-            break
+    # Priorizar los parquets de percepción del partido activo (data/partidos/<id>/partido.config.json)
+    import sys
+    root_dir = str(pathlib.Path(__file__).resolve().parents[2])
+    if root_dir not in sys.path:
+        sys.path.insert(0, root_dir)
+    from implementacion import partido_config
+    partido = partido_config.activo()
+    cand_dir = partido.percepcion_dir
+    cand_frames = cand_dir / "frames.parquet"
+    cand_objects = cand_dir / "objects.parquet"
+    dest = pathlib.Path(raw_dir)
+    origen_path = dest / "origen.json"
+    if cand_frames.exists() and cand_objects.exists():
+        import shutil
+        dest.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(str(cand_frames), str(dest / "frames.parquet"))
+        shutil.copy2(str(cand_objects), str(dest / "objects.parquet"))
+        with open(origen_path, "w", encoding="utf-8") as f:
+            json.dump({"partido": partido.id,
+                       "percepcion_dir": cand_dir.relative_to(partido_config.ROOT).as_posix()},
+                      f, ensure_ascii=False, indent=2)
+        print(f"[dataset_manager] Partido {partido.id}: parquets sincronizados desde {cand_dir} → {dest}")
+    else:
+        print(f"[dataset_manager] AVISO: no hay parquets de percepción para {partido.id} en {cand_dir}.")
+        origen = None
+        if origen_path.exists():
+            with open(origen_path, encoding="utf-8") as f:
+                origen = json.load(f).get("partido")
+        if origen != partido.id:
+            print(f"[dataset_manager] AVISO: {raw_dir} trae datos de '{origen or 'origen desconocido'}', "
+                  f"no de '{partido.id}'. Corre la percepción del partido activo antes de confiar en el resultado.")
 
     df_frames, df_objects = load_local_parquets(raw_dir)
     if df_frames is not None:

@@ -24,6 +24,7 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_07_arquitectura_hibrida_y_the_architect.md` | 2026-11-04 | Análisis híbrido (Fernando Maciel), repo Brasil-Alemania, The Architect y ramas Git |
 | `sesion_08_auditoria_y_migracion_brasil_alemania.md` | 2026-11-04 | Auditoría del repo, migración corregida de datos, página de análisis y chatbot con Granite |
 | `sesion_09_visual_chat_flotante_y_fichero.md` | 2026-11-04 | Mejora visual, transiciones, audio de MATEO, chat flotante, fichero de jugadores y hallazgo de identificadores repetidos |
+| `sesion_10_cambio_a_costa_rica_y_partido_configurable.md` | 2026-11-09 | Elección del clip de Costa Rica vs. San Cristóbal y Nieves por cortes de cámara, reparto entre agentes y partido configurable en engine, narrador, M3 y chatbot |
 
 
 ---
