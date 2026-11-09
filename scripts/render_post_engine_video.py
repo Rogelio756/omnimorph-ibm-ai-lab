@@ -368,9 +368,9 @@ def main() -> None:
                         else:
                             t_clean = int(t_clean)
                     lookup_list.append(t_clean)
-                    v_val = r.get("v_clipped", 0.0)
-                    v_val = 0.0 if pd.isna(v_val) else float(v_val)
-                    labels_list.append(f"#{stid} {v_val:.1f}m/s")
+                    # Sin velocidad por jugador: la homografía salta entre cuadros y la
+                    # velocidad instantánea sale topada en 9.5 m/s (diagnóstico en la sesión 13).
+                    labels_list.append(f"#{stid}")
 
                 dets = sv.Detections(
                     xyxy=xyxy_arr,
@@ -511,7 +511,7 @@ def main() -> None:
             )
             cv2.putText(
                 img,
-                f"Vel Trans: {active_w['transition_speed_mps']:.1f} m/s | Compac: {active_w['block_compactness_m']:.1f}m",
+                f"Altura bloque: {active_w['block_height_m']:.1f} m | Compac: {active_w['block_compactness_m']:.1f} m",
                 (wx1 + 12, wy1 + 48),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.44,
@@ -520,7 +520,7 @@ def main() -> None:
             )
             cv2.putText(
                 img,
-                "Filtro Savitzky-Golay v<=9.5m/s | 22 IDs",
+                f"Presion: {active_w['pressure_context']} | ventana {active_w['t0']:.1f}-{active_w['t1']:.1f} s",
                 (wx1 + 12, wy1 + 68),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.42,

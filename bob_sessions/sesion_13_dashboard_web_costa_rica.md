@@ -104,12 +104,34 @@ En los videos con marcas, muchos jugadores muestran **9.5 m/s**, que es el tope 
 | Conf ≥ 0.5 + H suavizada 15 cuadros + SG 31 | 5.3 | 31 | 28 % |
 | Flujo óptico de cámara + corrección lenta con puntos de cancha + SG 31 | 6.1 | 22 | 32 % |
 
-Ninguna variante llega a lo creíble, que sería una mediana de 1.5–3 m/s. En la fusión con flujo óptico se rechazaron entre 755 y 925 de 1080 cuadros de puntos de cancha. Una hipótesis, sin verificar: las vallas LED animadas y el público contaminan el flujo óptico. **Recomendación para la demo:** ocultar las etiquetas de velocidad en los videos con marcas. Las cifras por jugador del tablero ya usan un filtro de 1 s.
+Ninguna variante llega a lo creíble, que sería una mediana de 1.5–3 m/s. En la fusión con flujo óptico se rechazaron entre 755 y 925 de 1080 cuadros de puntos de cancha. Una hipótesis, sin verificar: las vallas LED animadas y el público contaminan el flujo óptico.
+
+### 6.2 Medidas para la demo (aprobadas por el usuario)
+
+- **`render_post_engine_video.py`:**
+  - Cada jugador lleva solo su número (`#id`), sin velocidad.
+  - El panel del video muestra altura del bloque, compacidad, presión y tramo de la ventana. Se quitaron "Vel Trans" y el texto fijo "v<=9.5m/s | 22 IDs".
+- **Narrador:** la velocidad de transición del balón también salía topada en 9.5 m/s en las 8 ventanas. Por eso Granite decía "transición rápida" y una narración citaba "9.50 m/s". Se quitó del prompt y de la narración offline, y el prompt prohíbe ahora inventar velocidades.
+- **Pipeline completo con Granite real:** 9 de 9 en PASS, 8 de 8 llamadas en PASS. Ninguna narración nueva menciona velocidad ni "rápido".
+- **Videos y tablero:** se volvieron a renderizar y exportar los videos de Costa Rica.
+- **Comercial:** se volvió a armar con los tramos de Brasil y Costa Rica sin velocidades. El tramo de Brasil se renderizó con `OMNIMORPH_PARTIDO=brasil_alemania_2014` sobre una copia del respaldo, para no modificar `backups/`. El script del comercial vive solo en la carpeta temporal de la sesión, no en el repo. El tramo de Brasil ya no lleva los puntos de cancha, porque la copia no incluía `json_por_modelo/`.
+- **Verificado:** etiquetas solo con número en el video del tablero y en el comercial, narraciones nuevas en la crónica y en la transcripción, y videos de 36 s.
+
+### 6.3 Hallazgo: los equipos de Brasil-Alemania parecen invertidos
+
+Al volver a renderizar el tramo de Brasil, los jugadores de amarillo (Brasil) salen con el color del `team_id 1` y los de Alemania con el del `team_id 0`. La configuración de Brasil, el tablero y las narraciones anteriores asumen lo contrario (0 = BRA). **Probable** inversión desde el clip 13 original; solo se vio en dos cuadros y no se midió. No afecta a la demo porque el partido activo es Costa Rica. Antes de volver a usar Brasil hay que verificarlo y, si se confirma, intercambiar los equipos en `brasil_alemania_2014/partido.config.json`.
 
 ## 7. Pendiente
 
-- **Ruido de velocidad:** corregirlo u ocultar las etiquetas de velocidad en los videos (sección 6). Diagnóstico en la sección 6.1.
+- **Ruido de velocidad:** corregir de fondo la homografía (sección 6.1). En los videos ya no se muestra velocidad (6.2).
+- **Barra lateral de MATEO (resuelto en la demo):** "Distancia" y "Vel. media" por rastro salían infladas aunque usaban un filtro de 1 s: velocidad media mediana de 5.4 m/s, unos 190 m en 36 s. El usuario aprobó ocultarlas.
+  - La lista ordena ahora por tiempo visible en toma abierta.
+  - La tarjeta muestra "Visible", "Zona habitual" (tercio izquierdo, centro o tercio derecho del radar, según el mapa de calor) y el mapa de calor.
+  - El aviso explica que la distancia y la velocidad no se muestran mientras se mejora la calibración.
+  - Verificado en el navegador: sin "m/s" en la página y sin errores nuevos en consola.
+  - Los datos (`dist_m`, `segundos`) siguen en `mateo_data.json` para cuando se corrija la homografía.
+- **Equipos de Brasil invertidos:** verificar (6.3).
 - **`scripts/finalize_mvp_perception.py`:** tiene el mismo bug de fps; `VIDEO_UNIFICADO_TODOS_JUNTOS.mp4` dura 37.2 s. El tablero no lo usa.
-- **Velocidad de transición:** sale topada en 9.5 m/s en las 8 ventanas de Costa Rica. Como métrica no aporta y no se investigó.
+- **Velocidad de transición:** sigue en los datos del engine (topada en 9.5 m/s), pero ya no llega a la narración.
 - **Video de la portada:** `assets/hero/demo_omni.mp4` parece la Arena Fonte Nova (Salvador), no el Mineirão.
 - **Streamlit:** no se actualizó, porque el tablero objetivo es el web.

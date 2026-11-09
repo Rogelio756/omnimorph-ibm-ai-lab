@@ -420,13 +420,12 @@
             <span style="margin-left: auto; align-self: center; font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);">Top 5 rastros</span>
           </div>
           <div class="player-sidebar__metric-selector">
-            <span class="text-label" style="width: 100%; margin-bottom: var(--space-1);">Métrica</span>
-            <button class="btn btn--primary btn-xs" data-metric="dist_m" type="button">Distancia</button>
-            <button class="btn btn--outline btn-xs" data-metric="avg_mps" type="button">Vel. media</button>
+            <span class="text-label" style="width: 100%;">Ordenados por tiempo visible en toma abierta</span>
           </div>
           <p class="player-sidebar__aviso">
             Un rastro es un seguimiento automático, no un jugador identificado. Su número no es
-            el dorsal, y una misma persona puede tener varios rastros. Distancia y velocidad media son aproximadas: se estiman con un filtro de 1 s, y la velocidad solo se ordena con 5 s medidos o más.
+            el dorsal, y una misma persona puede tener varios rastros. La distancia y la velocidad
+            por jugador no se muestran mientras se mejora la calibración de la cancha.
           </p>
           <div class="player-sidebar__list" id="player-list"></div>
     
@@ -438,8 +437,8 @@
               </svg>
             </div>
             <div class="player-card__stats">
-              <div class="player-card__stat"><span class="player-card__stat-label">Dist.</span><span class="player-card__stat-value" id="pc-dist">—</span></div>
-              <div class="player-card__stat"><span class="player-card__stat-label">Vel. media</span><span class="player-card__stat-value" id="pc-avg">—</span></div>
+              <div class="player-card__stat"><span class="player-card__stat-label">Visible</span><span class="player-card__stat-value" id="pc-visible">—</span></div>
+              <div class="player-card__stat"><span class="player-card__stat-label">Zona habitual</span><span class="player-card__stat-value" id="pc-zona">—</span></div>
             </div>
             <span class="text-label" id="pc-foot" style="color: var(--color-text-soft);"></span>
           </div>
@@ -487,7 +486,7 @@
     var FPS = 30, NF = 1800, DUR = 60;
     var lastValid = [];        // último frame con jugadores ≤ i
     var curFrame = -1, curWin = -2;
-    var team = 0, metric = 'dist_m', selected = null;
+    var team = 0, metric = 'visible_s', selected = null;
     var audioMode = 'original', subsOn = true, swapped = false, radarMode = 'live';
 
     var vMarked = $('v-marked'), vOrig = $('v-original'), vRadar = $('v-radar');
@@ -534,7 +533,7 @@
       D = data;
       FPS = D.meta.fps; NF = D.meta.n_frames; DUR = D.meta.duration_s;
       aplicarEquipos(D.meta);
-      D.players.forEach(function (p) { p.avg_mps = p.dist_m / p.segundos; });
+      D.players.forEach(function (p) { p.visible_s = p.frames / FPS; });
 
       var lv = -1;
       for (var i = 0; i < NF; i++) { if (D.frames[i].p.length) lv = i; lastValid.push(lv); }
@@ -834,8 +833,7 @@
     // ── Jugadores ──────────────────────────────────────────────────────
     function renderPlayers() {
       var host = $('player-list');
-      // Con pocos segundos medidos, la velocidad media sale en el tope y desplaza a los demás
-      var list = D.players.filter(function (p) { return p.team === team && (metric !== 'avg_mps' || p.segundos >= 5); })
+      var list = D.players.filter(function (p) { return p.team === team; })
         .sort(function (a, b) { return b[metric] - a[metric]; }).slice(0, 5);
       host.innerHTML = '';
       if (!list.length) { host.innerHTML = '<div class="player-empty">Sin jugadores con datos suficientes.</div>'; return; }
@@ -845,7 +843,7 @@
         row.className = 'player-row' + (selected === p.id ? ' player-row--active' : '');
         row.dataset.id = p.id;
         row.tabIndex = 0;
-        var val = metric === 'dist_m' ? p.dist_m.toFixed(0) + ' m' : p.avg_mps.toFixed(1) + ' m/s';
+        var val = p.visible_s.toFixed(1) + ' s';
         row.innerHTML =
           '<span class="player-row__team" style="background:' + COLORS[p.team] + '"></span>' +
           '<span class="player-row__track">Rastro ' + p.id + '</span>' +
@@ -861,15 +859,24 @@
       updatePlayerLive(Math.max(0, curFrame));
     }
 
+    // Tercio del largo de la cancha (vista del radar) donde se concentra el mapa de calor
+    function zonaHabitual(heat) {
+      var suma = 0, peso = 0;
+      for (var gx = 0; gx < 12; gx++) for (var gy = 0; gy < 7; gy++) { suma += heat[gx][gy] * (gx * 10 + 5); peso += heat[gx][gy]; }
+      if (!peso) return '—';
+      var x = suma / peso;
+      return x < 40 ? 'Tercio izq.' : x > 80 ? 'Tercio der.' : 'Centro';
+    }
+
     function selectPlayer(id) {
       selected = id;
       var p = D.players.find(function (x) { return x.id === id; });
       document.querySelectorAll('.player-row').forEach(function (r) { r.classList.toggle('player-row--active', Number(r.dataset.id) === id); });
       if (!p) return;
       $('pc-title').textContent = 'Rastro ' + p.id + ' · ' + TEAM[p.team];
-      $('pc-dist').textContent = p.dist_m.toFixed(0) + ' m';
-      $('pc-avg').textContent = p.avg_mps.toFixed(1);
-      $('pc-foot').textContent = 'Visible ' + (p.frames / FPS).toFixed(1) + ' s en toma abierta';
+      $('pc-visible').textContent = p.visible_s.toFixed(1) + ' s';
+      $('pc-zona').textContent = zonaHabitual(p.heat);
+      $('pc-foot').textContent = 'Mapa de calor de sus posiciones en toma abierta';
       var svg = '<rect width="120" height="70" fill="#0E1A16"/>';
       for (var gx = 0; gx < 12; gx++) for (var gy = 0; gy < 7; gy++) {
         var h = p.heat[gx][gy];
@@ -1011,15 +1018,6 @@
             var b = $('btn-team-' + k);
             b.className = 'btn btn-sm ' + (k === tm ? 'btn--primary' : 'btn--outline');
             b.setAttribute('aria-pressed', String(k === tm));
-          });
-          renderPlayers();
-        });
-      });
-      document.querySelectorAll('[data-metric]').forEach(function (b) {
-        b.addEventListener('click', function () {
-          metric = b.dataset.metric;
-          document.querySelectorAll('[data-metric]').forEach(function (x) {
-            x.className = 'btn btn-xs ' + (x === b ? 'btn--primary' : 'btn--outline');
           });
           renderPlayers();
         });

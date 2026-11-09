@@ -145,7 +145,6 @@ def _build_prompt(window: dict) -> str:
     pressure = window["pressure_context"]
     block_h = window["block_height_m"]
     block_c = window["block_compactness_m"]
-    trans_spd = window["transition_speed_mps"]
     t0 = window["t0"]
     t1 = window["t1"]
     wid = window["window_id"]
@@ -170,9 +169,8 @@ Se te proporcionan las métricas tácticas de la ventana {wid} (t={t0:.1f}s – 
 - {dominio_texto}
 - Altura del bloque defensivo: {block_h:.2f} m
 - Compacidad del bloque: {block_c:.2f} m
-- Velocidad de transición del balón: {trans_spd:.2f} m/s
 
-Genera un análisis táctico breve en español (2-3 oraciones técnicas mencionando a {eq0.nombre} o {eq1.nombre} según corresponda; usa solo las métricas dadas, sin inventar jugadores, goles ni marcador) y una narración deportiva en español de MÁXIMO 30 PALABRAS pensada para comentario de audio en vivo de 4 segundos.
+Genera un análisis táctico breve en español (2-3 oraciones técnicas mencionando a {eq0.nombre} o {eq1.nombre} según corresponda; usa solo las métricas dadas, sin inventar jugadores, goles, marcador ni velocidades) y una narración deportiva en español de MÁXIMO 30 PALABRAS pensada para comentario de audio en vivo de 4 segundos.
 
 Responde EXCLUSIVAMENTE con un objeto JSON válido (sin texto antes ni después) con el siguiente esquema:
 {{
@@ -261,7 +259,6 @@ def _generate_offline_narration(window: dict) -> tuple[dict, float, int, int]:
     t0 = window["t0"]
     t1 = window["t1"]
     block_h = window["block_height_m"]
-    trans_spd = window["transition_speed_mps"]
 
     # Análisis táctico basado en las métricas de la ventana y el partido activo
     partido = partido_config.activo()
@@ -271,7 +268,7 @@ def _generate_offline_narration(window: dict) -> tuple[dict, float, int, int]:
         rival = eq1 if equipo_dom.team_id == 0 else eq0
         analisis = (
             f"{equipo_dom.nombre} adelanta sus líneas en campo de {rival.nombre} con un bloque de {block_h:.1f} m de amplitud. "
-            f"La velocidad de transición alcanza {trans_spd:.1f} m/s en fase de {pressure}. "
+            f"Fase de {pressure} con el bloque en campo rival. "
             f"{rival.nombre} se repliega para cerrar los espacios por dentro."
         )
         narracion = (
@@ -280,7 +277,7 @@ def _generate_offline_narration(window: dict) -> tuple[dict, float, int, int]:
     else:
         analisis = (
             f"Disputa táctica equilibrada en el mediocampo ({block_h:.1f} m de dispersión vertical). "
-            f"{eq0.nombre} y {eq1.nombre} alternan posesión a {trans_spd:.1f} m/s sin un dominador claro. "
+            f"{eq0.nombre} y {eq1.nombre} se reparten el mediocampo sin un dominador claro. "
             f"Fase de transición neutral con presión recíproca."
         )
         narracion = (
