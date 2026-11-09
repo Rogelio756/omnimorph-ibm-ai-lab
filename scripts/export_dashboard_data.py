@@ -144,15 +144,27 @@ def build_players(df_tr: pd.DataFrame, fps: float) -> list:
 
 
 def recortar_video(src: pathlib.Path, dst: pathlib.Path, n_frames: int) -> None:
-    """Copia los primeros n_frames del video en H.264 sin audio, para que dure lo mismo que el análisis."""
+    """Copia los primeros n_frames del video (H.264) y el mismo tramo de su audio (AAC).
+
+    El audio original es el que suena en los modos "Audio original" y "Narrador MATEO" del tablero.
+    """
     import av
     tmp = dst.with_suffix(".tmp.mp4")
-    with av.open(str(src)) as inp, av.open(str(tmp), "w") as out:
+    with av.open(str(src)) as inp, av.open(str(src)) as inp_audio, \
+            av.open(str(tmp), "w", options={"movflags": "+faststart"}) as out:
         v_in = inp.streams.video[0]
+        # Las dos pistas se declaran antes de escribir el primer paquete
         v_out = out.add_stream("libx264", rate=v_in.average_rate)
         v_out.width, v_out.height = v_in.codec_context.width, v_in.codec_context.height
         v_out.pix_fmt = "yuv420p"
-        v_out.options = {"crf": "20", "preset": "veryfast", "movflags": "+faststart"}
+        v_out.options = {"crf": "20", "preset": "veryfast"}
+        a_in = inp_audio.streams.audio[0] if inp_audio.streams.audio else None
+        if a_in is not None:
+            sr = a_in.codec_context.sample_rate
+            a_out = out.add_stream("aac", rate=sr)
+            a_out.layout = "stereo"
+            remuestreo = av.AudioResampler(format="fltp", layout="stereo", rate=sr)
+
         for i, frame in enumerate(inp.decode(v_in)):
             if i >= n_frames:
                 break
@@ -160,6 +172,21 @@ def recortar_video(src: pathlib.Path, dst: pathlib.Path, n_frames: int) -> None:
                 out.mux(pkt)
         for pkt in v_out.encode():
             out.mux(pkt)
+
+        if a_in is not None:
+            limite = int(n_frames / float(v_in.average_rate) * sr)
+            muestras = 0
+            for frame in inp_audio.decode(a_in):
+                if muestras >= limite:
+                    break
+                frame.pts = None
+                for f in remuestreo.resample(frame):
+                    f.pts = muestras
+                    muestras += f.samples
+                    for pkt in a_out.encode(f):
+                        out.mux(pkt)
+            for pkt in a_out.encode():
+                out.mux(pkt)
     tmp.replace(dst)
 
 

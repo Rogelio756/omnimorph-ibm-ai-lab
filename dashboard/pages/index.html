@@ -44,11 +44,107 @@
     .powered-by {
       padding-block: var(--space-9);
     }
+
+    /* Comercial de entrada: pantalla completa, una vez por sesión (?intro=1 lo repite) */
+    .intro {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--color-bg-deep);
+      display: grid;
+      place-items: center;
+      transition: opacity 0.6s ease;
+    }
+    .intro[hidden] { display: none; }
+    .intro--saliendo { opacity: 0; pointer-events: none; }
+    .intro__video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: var(--color-bg-deep);
+    }
+    .intro__saltar {
+      position: absolute;
+      right: var(--space-5, 24px);
+      bottom: var(--space-5, 24px);
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--color-border-soft);
+      background: rgba(10, 10, 10, 0.7);
+      color: var(--color-text);
+      font: inherit;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+    }
+    .intro__saltar:hover,
+    .intro__saltar:focus-visible { border-color: var(--color-text); outline: none; }
+    .intro__barra {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 3px;
+      background: var(--color-border);
+    }
+    .intro__barra span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--color-ok);
+    }
   </style>
   <link rel="stylesheet" href="../styles/components/transicion.css">
   <script src="../components/transicion.js"></script>
 </head>
 <body class="page-index">
+
+  <!-- ── COMERCIAL DE ENTRADA ────────────────────────────────────────────
+       Video editado a mano: dashboard/assets/intro/comercial_omnimorph.mp4
+       (MP4 H.264, no está en Git). Reemplazarlo con el mismo nombre. -->
+
+  <div class="intro" id="intro" role="dialog" aria-label="Presentación de OMNIMORPH" hidden>
+    <video class="intro__video" id="intro-video" muted playsinline preload="auto"></video>
+    <button class="intro__saltar" id="intro-saltar" type="button">Saltar presentación ›</button>
+    <div class="intro__barra" aria-hidden="true"><span id="intro-progreso"></span></div>
+  </div>
+  <script>
+  (function () {
+    'use strict';
+    var intro = document.getElementById('intro');
+    var forzar = /[?&]intro=1\b/.test(location.search);
+    var vista = false;
+    try { vista = sessionStorage.getItem('om-intro') === 'vista'; } catch (e) {}
+    var reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!forzar && (vista || reducido)) return;
+
+    var video = document.getElementById('intro-video');
+    var barra = document.getElementById('intro-progreso');
+    var cerrado = false;
+
+    function cerrar() {
+      if (cerrado) return;
+      cerrado = true;
+      try { sessionStorage.setItem('om-intro', 'vista'); } catch (e) {}
+      video.pause();
+      intro.classList.add('intro--saliendo');
+      setTimeout(function () { intro.remove(); }, 650);
+      document.removeEventListener('keydown', alTeclear);
+    }
+    function alTeclear(e) { if (e.key === 'Escape') cerrar(); }
+
+    intro.hidden = false;
+    video.addEventListener('ended', cerrar);
+    video.addEventListener('error', cerrar);
+    video.addEventListener('timeupdate', function () {
+      if (video.duration) barra.style.width = (video.currentTime / video.duration * 100) + '%';
+    });
+    document.getElementById('intro-saltar').addEventListener('click', cerrar);
+    document.addEventListener('keydown', alTeclear);
+    video.src = '../assets/intro/comercial_omnimorph.mp4';
+    var p = video.play();
+    if (p && p.catch) p.catch(cerrar);
+    document.getElementById('intro-saltar').focus();
+  })();
+  </script>
 
   <!-- ── NAVEGACIÓN ─────────────────────────────────────────────────────── -->
   <nav class="om-nav" id="main-nav" role="navigation" aria-label="Navegación principal">

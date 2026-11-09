@@ -55,9 +55,41 @@ Si el partido activo no tiene `partido/contexto_partido.json`:
 - **`partido.html`:** aviso "En preparación".
 - **Chat:** estado listo y sugeridas de Costa Rica.
 
-## 5. Pendiente
+### Corrección: audio del video original
 
-- **Comercial de entrada** con el video de ejemplo y el de Brasil.
+**Lo detectó el usuario:** el recorte del original de Costa Rica descartaba su pista de audio. Por eso "Audio original" quedaba en silencio y "Narrador MATEO" solo tenía la voz, sin el sonido del estadio de fondo.
+
+**Corrección:** `recortar_video()` copia ahora los mismos 36 s de audio, de MP3 a AAC estéreo a 44.1 kHz. Las dos pistas se declaran antes de escribir y el audio se lee desde una segunda apertura del archivo.
+
+**Verificado en el navegador:**
+- Con "Audio original" se decodifica el audio del original y el video de marcas queda en silencio.
+- Con "Narrador MATEO" suenan los dos: el original al 25 % y la voz encima, con 0.13 s de diferencia entre videos.
+
+## 5. Comercial de entrada
+
+El usuario eligió una intro a pantalla completa antes de la portada.
+
+- **El video lo edita el usuario a mano.** Vive en `dashboard/assets/intro/comercial_omnimorph.mp4` (MP4 H.264, no versionado por `*.mp4`); para cambiarlo, se reemplaza el archivo con el mismo nombre.
+- **Versión provisional:** Claude armó una de 21 s con un script que después se borró, para que no pisara la edición manual. Tenía:
+  1. Portada OMNIMORPH.
+  2. Referencia: s 3–8 de `outputs/experiment/TODOS_JUNTOS.mp4`.
+  3. Brasil: s 5–10 de `backups/clip_13_estable/videos_clip_13/VIDEO_OMNIMORPH_POST_MATEMATICA.mp4`, con marcador 0-0 y sin goles.
+  4. Costa Rica: s 8–15 del video con marcas.
+  5. Cierre MATEO · IBM Granite.
+- **`index.html`:**
+  - La intro se ve una vez por sesión y `?intro=1` la repite.
+  - Tiene botón "Saltar presentación", tecla Esc y barra de progreso.
+  - No sale con `prefers-reduced-motion`.
+  - Si el navegador bloquea la reproducción automática, se cierra sola y deja la portada.
+- **Verificado en el navegador:** reproducción, rótulos, Saltar y que no vuelva a salir en la misma sesión.
+
+## 6. Riesgo visible para la demo
+
+En los videos con marcas, muchos jugadores muestran **9.5 m/s**, que es el tope del filtro M2.3. Pasa también en el tramo de Brasil. Son jugadores trotando, y un analista lo va a notar. Es el ruido de velocidad de la sesión 12: la mediana de `v_mps` es de 10 m/s.
+
+## 7. Pendiente
+
+- **Ruido de velocidad:** corregirlo u ocultar las etiquetas de velocidad en los videos (sección 6).
 - **`scripts/finalize_mvp_perception.py`:** tiene el mismo bug de fps; `VIDEO_UNIFICADO_TODOS_JUNTOS.mp4` dura 37.2 s. El tablero no lo usa.
 - **Velocidad de transición:** sale topada en 9.5 m/s en las 8 ventanas de Costa Rica. Como métrica no aporta y no se investigó.
 - **Video de la portada:** `assets/hero/demo_omni.mp4` parece la Arena Fonte Nova (Salvador), no el Mineirão.
