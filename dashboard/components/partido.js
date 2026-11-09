@@ -72,15 +72,32 @@
   // ── Datos ────────────────────────────────────────────────────────────────
   fetch('../data/partido/partido.json')
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (data) { D = data; iniciar(); })
+    .then(function (data) { D = data; if (D.pendiente) enPreparacion(); else iniciar(); })
     .catch(function () {
       $('data-error').hidden = false;
       $('tabs').hidden = true;
       window.OmniTransicion.falla('No pudimos cargar los datos del partido');
     });
 
+  // Partido activo sin datos verificados todavía: no se muestran pestañas ni cifras.
+  function enPreparacion() {
+    document.title = 'MATEO — ' + D.titulo;
+    $('hub-titulo').textContent = D.titulo;
+    $('subtitle').textContent = D.competicion;
+    if (D.etiqueta) $('hub-chip').textContent = D.etiqueta;
+    $('hub-calidad').hidden = true;
+    $('hub-pendiente').hidden = false;
+    $('tabs').hidden = true;
+  }
+
   function iniciar() {
     var info = D.partido;
+    var nombres = EQUIPOS.map(function (e) { return D.equipos[e[0]].pais; });
+    var titulo = nombres[0] + ' ' + String(info.resultado.marcador_final).replace('-', '–') + ' ' + nombres[1];
+    $('hub-titulo').textContent = titulo;
+    document.title = 'MATEO — ' + titulo;
+    $('hub-chip').textContent = EQUIPOS.map(function (e) { return D.equipos[e[0]].codigo; }).join(' vs ') +
+      ' · ' + String(info.fecha).slice(0, 4);
     $('subtitle').textContent = info.fase + ' · ' + info.competicion + ' · ' + info.fecha +
       ' · ' + info.estadio + ', ' + info.ciudad;
 

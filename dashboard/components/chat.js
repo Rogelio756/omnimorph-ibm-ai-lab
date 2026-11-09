@@ -9,13 +9,8 @@
 
   var MAX_PREGUNTAS = 30;
   var TIMEOUT_MS = 90000;
-  var SUGERIDAS = [
-    '¿Quién marcó cada gol y en qué minuto?',
-    '¿Cómo cambió el partido del 1T al 2T?',
-    'Compara el xG de ambos equipos en cada tiempo.',
-    '¿Cómo se generó el gol de Müller?',
-    '¿Qué bajas tuvo Brasil?',
-  ];
+  // Las preguntas sugeridas las manda el servidor según el partido activo (/api/chat/estado).
+  var sugeridasPintadas = false;
   var ERRORES = {
     503: 'El chat no está disponible en este momento.',
     429: 'Demasiadas preguntas seguidas. Espera un minuto e inténtalo de nuevo.',
@@ -79,6 +74,7 @@
     maxPregunta = info.max_pregunta || maxPregunta;
     $('pregunta').maxLength = maxPregunta;
     listo = info.estado === 'listo';
+    if (!sugeridasPintadas && info.sugeridas && info.sugeridas.length) pintarSugeridas(info.sugeridas);
     var aviso = $('estado-aviso');
     // Rojo solo cuando algo falla; cargar es normal
     aviso.classList.toggle('notice--alert', info.estado !== 'cargando');
@@ -228,12 +224,17 @@
     $('contador').textContent = $('pregunta').value.length + ' / ' + maxPregunta;
   }
 
-  function iniciar() {
-    SUGERIDAS.forEach(function (s) {
+  function pintarSugeridas(lista) {
+    sugeridasPintadas = true;
+    lista.forEach(function (s) {
       var b = el('button', { class: 'btn btn--outline btn-xs', type: 'button', text: s });
       b.addEventListener('click', function () { enviar(s); });
       $('sugeridas').appendChild(b);
     });
+    $('pregunta').placeholder = lista[0];
+  }
+
+  function iniciar() {
     $('form').addEventListener('submit', function (e) { e.preventDefault(); enviar($('pregunta').value); });
     $('pregunta').addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); enviar($('pregunta').value); }

@@ -27,10 +27,16 @@ import numpy as np
 import pandas as pd
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+import sys
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from implementacion import partido_config
+
+PARTIDO = partido_config.activo()
 CLEAN = ROOT / "data" / "clean"
 AUDIO = ROOT / "data" / "audio"
-CLIP_DIR = ROOT / "outputs" / "mvp_pruebas" / "mundial_2014_brasil_alemania" / "clip_13"
-ORIG_VIDEO = ROOT / "data" / "videos" / "mundial_2014_720p_hd" / "L6sbfskaTDQ-720-13.mp4"
+CLIP_DIR = PARTIDO.percepcion_dir
+ORIG_VIDEO = ROOT / PARTIDO.video_archivo
 
 DASH = ROOT / "dashboard"
 OUT_DATA = DASH / "data"
@@ -49,7 +55,9 @@ def _load_json(p: pathlib.Path):
 
 
 def _team_label(v) -> str:
-    return {"ARG": "BRA", "FRA": "GER"}.get(v, v)
+    """Código del engine (actual o histórico ARG/FRA) -> código del equipo del partido activo."""
+    e = PARTIDO.equipo_por_codigo(v)
+    return e.codigo if e else v
 
 
 def build_frames(df_tr: pd.DataFrame, df_ball: pd.DataFrame, n_frames: int) -> list:
@@ -135,7 +143,27 @@ def build_players(df_tr: pd.DataFrame, fps: float) -> list:
     return players
 
 
-PARTIDO_SRC = ROOT / "data" / "partidos" / "brasil_alemania_2014"
+def recortar_video(src: pathlib.Path, dst: pathlib.Path, n_frames: int) -> None:
+    """Copia los primeros n_frames del video en H.264 sin audio, para que dure lo mismo que el análisis."""
+    import av
+    tmp = dst.with_suffix(".tmp.mp4")
+    with av.open(str(src)) as inp, av.open(str(tmp), "w") as out:
+        v_in = inp.streams.video[0]
+        v_out = out.add_stream("libx264", rate=v_in.average_rate)
+        v_out.width, v_out.height = v_in.codec_context.width, v_in.codec_context.height
+        v_out.pix_fmt = "yuv420p"
+        v_out.options = {"crf": "20", "preset": "veryfast", "movflags": "+faststart"}
+        for i, frame in enumerate(inp.decode(v_in)):
+            if i >= n_frames:
+                break
+            for pkt in v_out.encode(frame):
+                out.mux(pkt)
+        for pkt in v_out.encode():
+            out.mux(pkt)
+    tmp.replace(dst)
+
+
+PARTIDO_SRC = PARTIDO.datos_dir
 OUT_PARTIDO = OUT_DATA / "partido"
 
 
@@ -144,8 +172,17 @@ def export_partido() -> None:
     Copia los datos de Brasil 1-7 Alemania (data/partidos/) al frontend.
     Genera dashboard/data/partido/partido.json y copia los SVG y PROCEDENCIA.md.
     """
-    if not PARTIDO_SRC.exists():
-        print(f"[!!] Falta {PARTIDO_SRC}")
+    OUT_PARTIDO.mkdir(parents=True, exist_ok=True)
+    out = OUT_PARTIDO / "partido.json"
+    if not (PARTIDO_SRC / "partido" / "contexto_partido.json").exists():
+        # Aún no llegan los datos verificados del partido: la página lo dice en vez de mostrar otro partido.
+        data = {"pendiente": True, "id": PARTIDO.id, "titulo": PARTIDO.titulo,
+                "competicion": PARTIDO.competicion, "etiqueta": PARTIDO.etiqueta_corta}
+        with open(out, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+        for viejo in ("mapa_8_goles.svg", "radar_gol_muller.svg", "PROCEDENCIA.md"):
+            (OUT_PARTIDO / viejo).unlink(missing_ok=True)
+        print(f"[OK] {out}  (pendiente: faltan los datos verificados de {PARTIDO.id})")
         return
     contexto = _load_json(PARTIDO_SRC / "partido" / "contexto_partido.json")
     data = {
@@ -155,8 +192,6 @@ def export_partido() -> None:
         "goles": _load_json(PARTIDO_SRC / "partido" / "cronologia_goles.json"),
         "gol_muller": _load_json(PARTIDO_SRC / "gol_muller" / "gol_muller_min11.json"),
     }
-    OUT_PARTIDO.mkdir(parents=True, exist_ok=True)
-    out = OUT_PARTIDO / "partido.json"
     with open(out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
     for origen in (
@@ -183,7 +218,7 @@ def main() -> None:
     df = pd.read_parquet(CLEAN / "objects_cleaned.parquet")
     df_frm = pd.read_parquet(CLEAN / "frames_clean.parquet")
     n_frames = int(len(df_frm))
-    fps = 30.0 if n_frames > 1000 else 25.0
+    fps = PARTIDO.fps
 
     df_tr = df[df.source == "track"].copy()
     df_tr = df_tr[df_tr.track_id_stitched.notna()]
@@ -236,15 +271,20 @@ def main() -> None:
         "marked": "VIDEO_OMNIMORPH_POST_MATEMATICA.mp4",
         "radar": "VIDEO_RADAR_POST_MATEMATICA.mp4",
         "raw": "VIDEO_UNIFICADO_TODOS_JUNTOS.mp4",
-        "original": "ORIGINAL_L6sbfskaTDQ-720-13.mp4",
+        "original": f"ORIGINAL_{PARTIDO.video_dataset_id}",
         "audio": "NARRACION_COMPLETA_60S.wav",
         "vtt": "narrations_es.vtt",
     }
 
     data = {
         "meta": {
-            "match": "BRA vs GER · Mundial 2014 · Semifinal",
-            "team_a": "BRA", "team_b": "GER",
+            "match": f"{PARTIDO.equipo(0).codigo} vs {PARTIDO.equipo(1).codigo} · {PARTIDO.competicion}",
+            "partido_id": PARTIDO.id,
+            "titulo": PARTIDO.titulo,
+            "team_a": PARTIDO.equipo(0).codigo, "team_b": PARTIDO.equipo(1).codigo,
+            "team_a_name": PARTIDO.equipo(0).nombre, "team_b_name": PARTIDO.equipo(1).nombre,
+            "team_a_color": PARTIDO.equipo(0).color_ui, "team_b_color": PARTIDO.equipo(1).color_ui,
+            "etiqueta": PARTIDO.etiqueta_corta,
             "fps": fps, "n_frames": n_frames, "duration_s": round(n_frames / fps, 2),
             "pitch_cm": [PITCH_W, PITCH_H],
             "coord_unit": "dm",
@@ -275,6 +315,10 @@ def main() -> None:
             media_names["vtt"]: CLEAN / media_names["vtt"],
         }
         for name, src in sources.items():
+            if name == media_names["original"] and src.exists():
+                recortar_video(src, OUT_MEDIA / name, n_frames)
+                print(f"[OK] media/{name}  (primeros {n_frames} cuadros del original)")
+                continue
             if src.exists():
                 shutil.copy2(src, OUT_MEDIA / name)
                 print(f"[OK] media/{name}  ({src.stat().st_size / (1024 * 1024):.1f} MB)")

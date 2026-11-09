@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MATEO — Brasil 1-7 Alemania: ficha previa, comparativa por tiempo, los 8 goles y el gol de Müller">
-  <title>MATEO — Brasil 1–7 Alemania</title>
+  <meta name="description" content="MATEO — Centro de partido: ficha, fichero y comparativa del partido analizado">
+  <title>MATEO — Partido</title>
 
   <link rel="stylesheet" href="../styles/tokens.css">
   <link rel="stylesheet" href="../styles/base.css">
@@ -36,18 +36,25 @@
     </div>
     <div class="site-header__sep" aria-hidden="true"></div>
     <div class="site-header__chips">
-      <span class="chip chip--team-a"><span class="chip__dot"></span>BRA vs GER · 2014</span>
+      <span class="chip chip--team-a"><span class="chip__dot"></span><span id="hub-chip">—</span></span>
     </div>
     <nav id="site-nav" class="site-nav" aria-label="Navegación principal"></nav>
   </header>
 
   <main class="hub">
     <section class="hub-title">
-      <h1>Brasil 1–7 Alemania</h1>
-      <p id="subtitle">Semifinal · Mundial 2014</p>
+      <h1 id="hub-titulo">&nbsp;</h1>
+      <p id="subtitle">&nbsp;</p>
     </section>
 
-    <div class="notice" role="note">
+    <div class="notice" role="note" id="hub-pendiente" hidden>
+      <span class="notice__tag">En preparación</span>
+      <span>El equipo de análisis está verificando la ficha, las alineaciones y las estadísticas de este partido con fuentes oficiales.
+        Aquí no se muestra ninguna cifra sin fuente. Mientras tanto, el análisis del clip con IA está en
+        <a href="mateo.html" style="text-decoration: underline;">MATEO</a>.</span>
+    </div>
+
+    <div class="notice" role="note" id="hub-calidad">
       <span class="notice__tag">Calidad de los datos</span>
       <span>Los desgloses por tiempo y la posesión total no tienen confirmación oficial, y el xG es estimado.
         Los tiros a puerta de Alemania por tiempo son derivados.

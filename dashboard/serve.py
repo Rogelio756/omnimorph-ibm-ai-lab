@@ -96,6 +96,7 @@ class ChatBackend:
             "motivo": self.motivo,
             "modelo": getattr(self.agente, "REQUIRED_MODEL", "ibm/granite-4-h-small"),
             "max_pregunta": getattr(self.agente, "MAX_CARACTERES_PREGUNTA", 500),
+            "sugeridas": self.agente.preguntas_sugeridas(self.datos) if self.datos else [],
         }
 
     def permitir(self) -> bool:
@@ -129,7 +130,7 @@ class ChatBackend:
                 contexto,
                 metricas,
                 origen=origen,
-                hechos=self.datos["hechos"],
+                hechos=self.datos.get("hechos"),
                 bloquear=True,
             )
         bloqueada = auditoria["bloqueada"]

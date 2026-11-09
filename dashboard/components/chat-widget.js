@@ -37,7 +37,7 @@
       '<form class="composer" id="form" autocomplete="off">' +
         '<div class="composer__field">' +
           '<label class="composer__label" for="pregunta">Pregunta sobre el partido</label>' +
-          '<textarea id="pregunta" rows="1" maxlength="500" disabled placeholder="¿Qué bajas tuvo Brasil?"></textarea>' +
+          '<textarea id="pregunta" rows="1" maxlength="500" disabled placeholder="Pregunta sobre el clip analizado"></textarea>' +
           '<span class="composer__count" id="contador">0 / 500</span>' +
         '</div>' +
         '<button class="btn btn--primary btn-xs" id="enviar" type="submit" disabled>Enviar</button>' +

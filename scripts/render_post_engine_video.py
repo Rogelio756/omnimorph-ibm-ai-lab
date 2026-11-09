@@ -30,6 +30,20 @@ import supervision as sv
 from sports.annotators.soccer import draw_pitch, draw_points_on_pitch
 from sports.configs.soccer import SoccerPitchConfiguration
 
+import sys
+import unicodedata
+
+_ROOT = pathlib.Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+from implementacion import partido_config
+
+
+def _ascii(texto: str) -> str:
+    """cv2.putText no dibuja acentos: 'San Cristóbal' -> 'San Cristobal'."""
+    return unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("ascii")
+
+
 REFEREE_CLASS_ID = 3
 CONFIG = SoccerPitchConfiguration()
 COLORS = ["#FF1493", "#00BFFF", "#FF6347", "#FFD700"]
@@ -134,7 +148,7 @@ def mux_wav_into_mp4(video_path: pathlib.Path, wav_path: pathlib.Path) -> None:
     with av.open(str(video_path)) as v_in, av.open(str(wav_path)) as a_in:
         v_stream_in = v_in.streams.video[0]
         a_stream_in = a_in.streams.audio[0]
-        fps = int(round(float(v_stream_in.average_rate)))
+        fps = v_stream_in.average_rate  # fracción exacta (p. ej. 30000/1001), no un entero redondeado
 
         with av.open(str(tmp_out), mode="w", options={"movflags": "faststart"}) as out:
             # Copiar frames de video re-empacados o recodificados rápidos
@@ -170,7 +184,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--source",
-        default="data/videos/mundial_2014_720p_hd/L6sbfskaTDQ-720-13.mp4",
+        default=partido_config.activo().video_archivo,
     )
     parser.add_argument(
         "--clean-dir",
@@ -178,7 +192,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--outdir",
-        default="outputs/mvp_pruebas/mundial_2014_brasil_alemania/clip_13",
+        default=str(partido_config.activo().percepcion_dir),
     )
     parser.add_argument(
         "--overlay-radar",
@@ -261,8 +275,10 @@ def main() -> None:
 
     raw_info = sv.VideoInfo.from_video_path(args.source)
     n_frames_target = len(df_frm)
-    fps = float(raw_info.fps)
-    fps_int = int(round(fps))
+    # supervision trunca los fps a entero (29.97 -> 29) y desfasa el video del audio y los subtítulos.
+    with av.open(args.source) as _src:
+        fps_exacto = _src.streams.video[0].average_rate
+    fps = float(fps_exacto)
 
     # Construir audio maestro 60s y subtítulos WebVTT
     master_wav, vtt_path = build_master_audio_and_vtt(
@@ -279,9 +295,10 @@ def main() -> None:
     vertex_annotator = sv.VertexAnnotator(color=sv.Color.from_hex("#A020F0"), radius=6)
     colors = [sv.Color.from_hex(c) for c in COLORS]
 
+    eq0, eq1 = partido_config.activo().equipos
     legend = [
-        ("Brasil (Moda M2.0)", colors[0]),
-        ("Alemania (Moda M2.0)", colors[1]),
+        (f"{_ascii(eq0.nombre)} (Moda M2.0)", colors[0]),
+        (f"{_ascii(eq1.nombre)} (Moda M2.0)", colors[1]),
         ("Arbitro", colors[3]),
         ("Homografia EMA (M2.1)", sv.Color.from_hex("#A020F0")),
         ("Balon Suavizado (M2.3)", sv.Color.from_hex("#FFA500")),
@@ -301,13 +318,13 @@ def main() -> None:
         av.open(str(out_video_path), mode="w", options={"movflags": "faststart"}) as v_container,
         av.open(str(out_radar_path), mode="w", options={"movflags": "faststart"}) as r_container,
     ):
-        v_stream = v_container.add_stream("libx264", rate=fps_int)
+        v_stream = v_container.add_stream("libx264", rate=fps_exacto)
         v_stream.width = raw_info.width
         v_stream.height = raw_info.height
         v_stream.pix_fmt = "yuv420p"
         v_stream.options = {"preset": "veryfast", "crf": "23"}
 
-        r_stream = r_container.add_stream("libx264", rate=fps_int)
+        r_stream = r_container.add_stream("libx264", rate=fps_exacto)
         r_stream.width = rad_w_even
         r_stream.height = rad_h_even
         r_stream.pix_fmt = "yuv420p"

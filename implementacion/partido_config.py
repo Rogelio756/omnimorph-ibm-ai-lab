@@ -35,6 +35,7 @@ class Equipo:
     nombre: str
     menciones: tuple
     ataca_hacia: str  # "+x" (hacia x=12000) o "-x" (hacia x=0)
+    color_ui: str = "#9CA3AF"  # color del equipo en el tablero y los videos
 
     @property
     def patron_menciones(self) -> str:
@@ -46,6 +47,7 @@ class Partido:
     id: str
     titulo: str
     competicion: str
+    etiqueta_corta: str
     fps: float
     n_frames: int
     video_archivo: str
@@ -104,6 +106,7 @@ def cargar(partido_id: Optional[str] = None) -> Partido:
             nombre=e["nombre"],
             menciones=tuple(e["menciones"]),
             ataca_hacia=e["ataca_hacia"],
+            color_ui=e.get("color_ui", "#9CA3AF"),
         ))
     if equipos[0].ataca_hacia == equipos[1].ataca_hacia:
         raise ValueError(f"{cfg_path}: los dos equipos no pueden atacar hacia el mismo lado")
@@ -113,6 +116,7 @@ def cargar(partido_id: Optional[str] = None) -> Partido:
         id=cfg["id"],
         titulo=cfg["titulo"],
         competicion=cfg["competicion"],
+        etiqueta_corta=cfg.get("etiqueta_corta", cfg["titulo"]),
         fps=float(v["fps"]),
         n_frames=int(v["n_frames"]),
         video_archivo=v["archivo"],
