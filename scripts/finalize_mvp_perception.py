@@ -47,6 +47,26 @@ def main() -> None:
         default="outputs/mvp_pruebas/mundial_2014_brasil_alemania/clip_13",
     )
     parser.add_argument("--max-frames", type=int, default=None)
+    parser.add_argument(
+        "--team0-label",
+        default="Brasil (Eq 0)",
+        help="Etiqueta del equipo 0 (team_id=0) en la leyenda del video unificado",
+    )
+    parser.add_argument(
+        "--team1-label",
+        default="Alemania (Eq 1)",
+        help="Etiqueta del equipo 1 (team_id=1) en la leyenda del video unificado",
+    )
+    parser.add_argument(
+        "--match-label",
+        default="Brasil vs. Alemania (1-7) — Semifinal",
+        help="Nombre del partido para TELEMETRIA_UNIFICADA_COMPLETA.json",
+    )
+    parser.add_argument(
+        "--project-label",
+        default="Omnimorph MVP — Mundial FIFA Brasil 2014",
+        help="Nombre del proyecto para TELEMETRIA_UNIFICADA_COMPLETA.json",
+    )
     args = parser.parse_args()
 
     out_root = pathlib.Path(args.outdir)
@@ -213,8 +233,8 @@ def main() -> None:
     uni_ball_annotator = BallAnnotator(radius=6, buffer_size=10)
     colors = [sv.Color.from_hex(c) for c in soccer.COLORS]
     legend = [
-        ("Brasil (Eq 0)", colors[0]),
-        ("Alemania (Eq 1)", colors[1]),
+        (args.team0_label, colors[0]),
+        (args.team1_label, colors[1]),
         ("Arbitro", colors[3]),
         ("Cancha (Keypoints)", sv.Color.from_hex("#A020F0")),
         ("Balon (Rastro)", sv.Color.from_hex("#FFFFFF")),
@@ -384,8 +404,8 @@ def main() -> None:
     }
 
     unified_master_json = {
-        "project": "Omnimorph MVP — Mundial FIFA Brasil 2014",
-        "match": "Brasil vs. Alemania (1-7) — Semifinal",
+        "project": args.project_label,
+        "match": args.match_label,
         "source_video": args.source,
         "resolution": f"{video_info.width}x{video_info.height}",
         "fps": fps,
