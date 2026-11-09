@@ -26,6 +26,7 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_09_visual_chat_flotante_y_fichero.md` | 2026-11-04 | Mejora visual, transiciones, audio de MATEO, chat flotante, fichero de jugadores y hallazgo de identificadores repetidos |
 | `sesion_10_cambio_a_costa_rica_y_partido_configurable.md` | 2026-11-09 | Elección del clip de Costa Rica vs. San Cristóbal y Nieves por cortes de cámara, reparto entre agentes y partido configurable en engine, narrador, M3 y chatbot |
 | `sesion_11_percepcion_costa_rica_gemini.md` | 2026-11-09 | Ejecución de los 6 modelos de percepción sobre Costa Rica vs. San Cristóbal y Nieves (clip 15, 1080 frames), parametrización de etiquetas en scripts y verificación cuantitativa (Gemini) |
+| `sesion_12_costa_rica_activo_pipeline.md` | 2026-11-09 | Revisión de la percepción de Gemini, Costa Rica como partido activo y pipeline 9/9 con Granite real |
 
 
 ---

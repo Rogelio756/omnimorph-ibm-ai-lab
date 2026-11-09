@@ -1,4 +1,4 @@
 {
-  "activo": "brasil_alemania_2014",
-  "nota": "Carpeta de data/partidos/ que usa el pipeline. La variable de entorno OMNIMORPH_PARTIDO tiene prioridad sobre este archivo."
+  "activo": "costa_rica_skn_eliminatorias_2026",
+  "nota": "Carpeta de data/partidos/ que usa el pipeline. La variable de entorno OMNIMORPH_PARTIDO tiene prioridad sobre este archivo. Para volver a Brasil: brasil_alemania_2014."
 }
