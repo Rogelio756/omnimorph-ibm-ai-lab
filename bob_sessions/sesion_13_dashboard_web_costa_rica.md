@@ -84,6 +84,17 @@ Si el partido activo no tiene `partido/contexto_partido.json`:
   - El observador arranca y pausa con el desplazamiento (probado simulando una configuración sin movimiento reducido, porque el navegador de pruebas lo tiene activado).
   - En móvil (375 px) no hay desplazamiento horizontal.
 - **Archivos que ya no se usan:** `assets/hero/fondo_inicio.mp4` y `assets/intro/demo_omni (1).mp4`, ambos fuera de Git.
+- **Sonido y arranque automático (pedido del usuario):**
+  - **Portada:** el video del estadio intenta sonar al 35 % al cargar. Los navegadores bloquean el sonido sin un gesto; en ese caso se activa con el primer clic, toque o tecla en cualquier parte, salvo sobre el botón de sonido, que decide por su cuenta.
+  - **Al bajar:** con la portada visible menos del 35 %, se silencia; al volver, el sonido regresa. "Silenciar" se guarda en la sesión y manda sobre lo demás.
+  - **Comercial:** arranca en silencio al llegar a su sección, también con "reducir movimiento" activado, porque así lo pidió el usuario. Se pausa al salir.
+  - **Verificado en el navegador,** con desplazamiento real:
+    - Al cargar suena (este navegador ya tenía interacción previa, así que no hubo bloqueo).
+    - Un gesto simulado activa el sonido.
+    - Al bajar, la portada se silencia y el comercial arranca (2.2 s reproducidos).
+    - Al subir, vuelve el sonido y el comercial se pausa.
+    - "Silenciar" se respeta al bajar y subir.
+  - **Sin verificar:** el bloqueo real de sonido en un navegador sin interacción previa con el sitio. La lógica se probó simulando el gesto.
 
 ## 6. Riesgo visible para la demo
 

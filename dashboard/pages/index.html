@@ -235,7 +235,8 @@
     'use strict';
     var v = document.getElementById('comercial-video');
     if (!v || !('IntersectionObserver' in window)) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Arranca siempre al llegar (pedido del usuario), también con "reducir movimiento":
+    // va en silencio, tiene controles y se pausa al salir de pantalla.
     var pausadoPorUsuario = false, porCodigo = false;
     v.addEventListener('pause', function () { if (!porCodigo) pausadoPorUsuario = true; porCodigo = false; });
     v.addEventListener('play', function () { pausadoPorUsuario = false; });
@@ -309,38 +310,66 @@
     }
 
     // ── Audio del video de portada ────────────────────────────────────────
+    // Suena mientras la portada está en pantalla. Los navegadores no dejan sonar
+    // sin un gesto (clic o tecla): si bloquean el intento, se activa con el primero.
+    // "Silenciar" manda sobre todo lo demás durante la sesión.
     const btnAudio = document.getElementById('btn-audio');
+    const hero = document.getElementById('hero');
+    const VOLUMEN = 0.35;
+    let quiereSonido = true;
+    let heroVisible = true;
+    try { quiereSonido = sessionStorage.getItem('om-audio') !== 'off'; } catch (e) {}
 
-    function enableAudio() {
+    function pintarBoton() {
+      if (!btnAudio) return;
+      const sonando = video && !video.muted;
+      btnAudio.textContent = sonando ? 'Silenciar' : 'Activar sonido';
+      btnAudio.setAttribute('aria-label', sonando ? 'Silenciar el audio de fondo' : 'Activar sonido del video de fondo');
+    }
+
+    function aplicarSonido() {
       if (!video) return;
-      video.muted = false;
-      video.volume = 0.35;
-      video.play().catch(function () {});
-      sessionStorage.setItem('om-audio', 'on');
-      if (btnAudio) {
-        btnAudio.textContent = 'Silenciar';
-        btnAudio.setAttribute('aria-label', 'Silenciar el audio de fondo');
+      if (quiereSonido && heroVisible) {
+        video.muted = false;
+        video.volume = VOLUMEN;
+        const p = video.play();
+        if (p && p.catch) p.catch(function () { video.muted = true; video.play().catch(function () {}); pintarBoton(); });
+      } else {
+        video.muted = true;
       }
+      pintarBoton();
     }
 
-    function disableAudio() {
-      if (video) video.muted = true;
-      sessionStorage.setItem('om-audio', 'off');
-      if (btnAudio) {
-        btnAudio.textContent = 'Activar sonido';
-        btnAudio.setAttribute('aria-label', 'Activar sonido del video de fondo');
-      }
-    }
+    function guardar(valor) { try { sessionStorage.setItem('om-audio', valor); } catch (e) {} }
 
     if (btnAudio) {
-      btnAudio.addEventListener('click', function () {
-        if (video && !video.muted) {
-          disableAudio();
-        } else {
-          enableAudio();
-        }
+      btnAudio.addEventListener('click', function (e) {
+        e.stopPropagation();
+        quiereSonido = !(video && !video.muted);
+        guardar(quiereSonido ? 'on' : 'off');
+        aplicarSonido();
       });
     }
+
+    // Primer gesto en cualquier parte: si el navegador bloqueó el sonido, se activa ahora
+    function primerGesto(e) {
+      if (btnAudio && e && btnAudio.contains(e.target)) return; // el botón decide por su cuenta
+      if (quiereSonido && heroVisible && video && video.muted) aplicarSonido();
+      if (video && !video.muted) {
+        ['pointerdown', 'keydown', 'touchend'].forEach(function (t) { document.removeEventListener(t, primerGesto, true); });
+      }
+    }
+    ['pointerdown', 'keydown', 'touchend'].forEach(function (t) { document.addEventListener(t, primerGesto, true); });
+
+    // Al bajar de la portada se silencia; al volver, regresa el sonido
+    if (hero && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entradas) {
+        heroVisible = entradas[0].isIntersecting;
+        aplicarSonido();
+      }, { threshold: 0.35 }).observe(hero);
+    }
+
+    aplicarSonido();
 
     // ── Cancha animada (fallback canvas) ─────────────────────────────────
     const canvas = document.getElementById('hero-canvas');
