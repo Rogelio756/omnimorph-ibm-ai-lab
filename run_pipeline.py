@@ -242,7 +242,7 @@ def run_etapa2() -> dict:
 # ---------------------------------------------------------------------------
 
 def run_etapa3() -> dict:
-    _section(3, "Agente Narrador (ibm/granite-3-8b-instruct) + MONITOR M3")
+    _section(3, "Agente Narrador (ibm/granite-4-h-small) + MONITOR M3")
 
     tactical_path = CLEAN_DIR / "tactical_summaries.json"
     if not tactical_path.exists():
@@ -351,7 +351,7 @@ def run_pipeline(
 
     now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     print(f"  Fecha/Hora: {now_str}")
-    print(f"  Modelo LLM: ibm/granite-3-8b-instruct")
+    print(f"  Modelo LLM: ibm/granite-4-h-small")
     clip_label = "L6sbfskaTDQ-720-13.mp4 (Mundial 2014 BRA vs GER, 1800 frames)" if use_real else "Simulacion sintetica (750 frames)"
     print(f"  Dataset: QimingLi/video_human_select_Soccer -> {clip_label}")
     print(f"  Modo datos: {'real' if use_real else 'sintetico (generado)'}")

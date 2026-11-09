@@ -19,6 +19,12 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_03_arquitectura_accesibilidad.md` | 2026-10-15 | Arquitectura formal + analisis `worldcupvoice` + prompt accesibilidad visual (frame 300) |
 | `sesion_04_pipeline_omnimorph_9monitores.md` | 2026-11-02 | Implementacion completa Etapas 1-5 + 9 monitores PASS + `ibm/granite-4-h-small` online |
 | `sesion_05_deploy_orchestrate_github.md` | 2026-11-04 | FastAPI + IBM watsonx Orchestrate + GitHub + bob_sessions |
+| `sesion_06_mateo_dashboard.md` | 2026-11-04 | Dashboard MATEO en paralelo H.264, radar 2D independiente y audio TTS 60s |
+| `sesion_dashboard_omnimorph_2026-11-04.md` | 2026-11-04 | Construcción de la capa visual en `dashboard/`: sistema de diseño, páginas HTML y componentes CSS |
+| `sesion_07_arquitectura_hibrida_y_the_architect.md` | 2026-11-04 | Análisis híbrido (Fernando Maciel), repo Brasil-Alemania, The Architect y ramas Git |
+| `sesion_08_auditoria_y_migracion_brasil_alemania.md` | 2026-11-04 | Auditoría del repo, migración corregida de datos, página de análisis y chatbot con Granite |
+| `sesion_09_visual_chat_flotante_y_fichero.md` | 2026-11-04 | Mejora visual, transiciones, audio de MATEO, chat flotante, fichero de jugadores y hallazgo de identificadores repetidos |
+
 
 ---
 

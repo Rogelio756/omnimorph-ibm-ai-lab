@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OMNIMORPH — Página no encontrada</title>
+  <!-- Rutas absolutas: el servidor entrega esta página en cualquier dirección que no exista -->
+  <link rel="stylesheet" href="/styles/components/transicion.css">
+  <script src="/components/transicion.js"></script>
+</head>
+<body>
+  <noscript><a href="/pages/index.html">Volver al inicio</a></noscript>
+  <script>
+    OmniTransicion.falla('Esta página no existe. Te llevamos al inicio.', function () {
+      location.replace('/pages/index.html');
+    });
+  </script>
+</body>
+</html>

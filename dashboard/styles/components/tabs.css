@@ -1,0 +1,71 @@
+/**
+ * styles/components/tabs.css
+ * OMNIMORPH — Pestañas en píldora y utilidades compartidas por partido.html y mateo.html
+ */
+
+[hidden] {
+  display: none !important;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--cell-padding-x);
+  border-bottom: var(--border);
+}
+
+.tab {
+  height: 32px;
+  padding: 0 var(--space-4);
+  border: var(--border-width) solid var(--color-border-soft);
+  border-radius: var(--radius-pill);
+  background-color: transparent;
+  color: var(--color-text-soft);
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--transition), background-color var(--transition);
+}
+
+.tab:hover {
+  color: var(--color-text);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--color-ok);
+  outline-offset: 3px;
+}
+
+.tab[aria-selected="true"] {
+  background-color: var(--color-text);
+  border-color: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* Aviso de calidad de datos / errores */
+.notice {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--cell-padding-x);
+  border-bottom: var(--border);
+  font-size: 13px;
+  color: var(--color-text-soft);
+}
+
+.notice__tag {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-warn);
+}
+
+.notice--alert .notice__tag {
+  color: var(--color-alert);
+}

@@ -12,6 +12,7 @@
 *.mkv
 data/videos/
 data/audio/
+data/clean/chat_audit.jsonl
 dashboard/media/
 
 # Pesos de modelos

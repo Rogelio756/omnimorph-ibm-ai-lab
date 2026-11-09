@@ -1,0 +1,20 @@
+/**
+ * styles/components/site-credit.css
+ * OMNIMORPH — Crédito al pie de la portada.
+ * El texto viene de legend.credit en config/ui.config.json.
+ */
+
+.site-credit {
+  padding: var(--space-9) var(--cell-padding-x);
+  background-color: var(--color-bg-deep);
+  text-align: center;
+}
+
+.site-credit__text {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: var(--lh-body);
+  letter-spacing: 0.02em;
+  color: var(--color-text-soft);
+}

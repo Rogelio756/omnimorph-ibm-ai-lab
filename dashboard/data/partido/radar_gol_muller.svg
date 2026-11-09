@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 560" width="100%" height="auto">
+  <defs>
+    <style>
+      .pitch-bg { fill: #0d2316; }
+      .pitch-stripes { fill: rgba(255, 255, 255, 0.025); }
+      .line { stroke: rgba(255, 255, 255, 0.55); stroke-width: 2; fill: none; }
+      .spot { fill: rgba(255, 255, 255, 0.85); }
+      .txt-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 700; fill: #ffffff; font-size: 16px; }
+      .txt-sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; fill: rgba(255, 255, 255, 0.7); }
+      .txt-player { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 600; fill: #ffffff; }
+      .txt-tactical { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: rgba(255, 255, 255, 0.85); }
+      .player-ger { fill: #10b981; stroke: #ffffff; stroke-width: 2; }
+      .player-bra { fill: #f59e0b; stroke: #ffffff; stroke-width: 2; }
+    </style>
+    <marker id="arrow-corner" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-shot" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+  </defs>
+
+  <!-- Fondo -->
+  <rect x="0" y="0" width="850" height="560" fill="#09180f" rx="12"/>
+
+  <!-- Encabezado -->
+  <text x="30" y="32" class="txt-title">RADAR CENITAL 2D: PRIMER GOL — THOMAS MÜLLER (11', Reloj 10:33)</text>
+  <text x="30" y="49" class="txt-sub">Módulo 01_primer_gol_muller/gol_muller_min11.json | Enfoque de área defensiva de Brasil [0, 3200] × [1200, 7000] cm</text>
+
+  <!-- Campo Zoom (Línea de meta en x=40, Y de 70 a 530) -->
+  <g id="pitch-zoom">
+    <rect x="40" y="70" width="770" height="460" class="pitch-bg" rx="6"/>
+
+    <!-- Línea de meta de Brasil (x=0) -->
+    <line x1="40" y1="70" x2="40" y2="530" class="line" stroke-width="3"/>
+
+    <!-- Portería física de Júlio César (x=0, y=3500 centro) -->
+    <!-- y va de 250 a 350 px aprox -->
+    <rect x="22" y="255" width="18" height="90" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-width="2.5"/>
+    <text x="25" y="245" class="txt-sub" font-size="10">Meta Brasil</text>
+
+    <!-- Área chica (profundidad 120 px, alto 220 px) -->
+    <rect x="40" y="190" width="120" height="220" class="line"/>
+
+    <!-- Área grande (profundidad 350 px, alto 400 px) -->
+    <rect x="40" y="100" width="360" height="400" class="line"/>
+
+    <!-- Punto de penal (x = 11m -> 240px desde línea de meta) -->
+    <circle cx="280" cy="300" r="3.5" class="spot"/>
+    <!-- Arco del área penal -->
+    <path d="M 400 200 A 120 120 0 0 1 400 400" class="line"/>
+  </g>
+
+  <!-- TÁCTICA FASE 1: Córner de Toni Kroos (#18) -->
+  <!-- Esquina inferior derecha (x=35, y=6965 en coordenadas reales -> x=45, y=520 en svg) -->
+  <g id="kroos-corner">
+    <!-- Punto de cobro de Kroos -->
+    <circle cx="45" cy="520" r="8" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>
+    <text x="60" y="525" class="txt-player" fill="#38bdf8">Kroos (#18) Córner</text>
+
+    <!-- Trayectoria outswinger con comba hacia el corazón del área -->
+    <path d="M 45 520 Q 230 460 270 330" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6 3" marker-end="url(#arrow-corner)"/>
+    <rect x="110" y="475" width="170" height="20" rx="4" fill="rgba(56,189,248,0.15)" stroke="#38bdf8" stroke-width="1"/>
+    <text x="116" y="489" class="txt-tactical" fill="#38bdf8" font-size="10">Comba outswinger al punto penal</text>
+  </g>
+
+  <!-- TÁCTICA FASE 2: Pantalla combinada Klose (#11) + Höwedes (#4) sobre David Luiz (#4) -->
+  <g id="screen-tactics">
+    <!-- Zona de bloqueo delimitada -->
+    <rect x="135" y="240" width="85" height="75" rx="8" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <text x="140" y="235" class="txt-tactical" fill="#ef4444" font-size="10" font-weight="700">Zona de Pantalla</text>
+
+    <!-- Klose (#11) fijador -->
+    <circle cx="155" cy="260" r="7" class="player-ger"/>
+    <text x="168" y="264" class="txt-player">Klose #11</text>
+
+    <!-- Höwedes (#4) fijador -->
+    <circle cx="155" cy="285" r="7" class="player-ger"/>
+    <text x="168" y="289" class="txt-player">Höwedes #4</text>
+
+    <!-- David Luiz (#4) atrapado detrás -->
+    <circle cx="140" cy="275" r="7" class="player-bra"/>
+    <text x="75" y="278" class="txt-player" fill="#f59e0b">D. Luiz #4</text>
+    <path d="M 133 275 L 115 275" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2 2"/>
+
+    <!-- Dante (#13) fijado en cobertura -->
+    <circle cx="125" cy="325" r="7" class="player-bra"/>
+    <text x="75" y="328" class="txt-player" fill="#f59e0b">Dante #13</text>
+  </g>
+
+  <!-- TÁCTICA FASE 3: Desmarque y Remate de Thomas Müller (#13) -->
+  <g id="muller-shot">
+    <!-- Radio de desmarque libre de 3.4 m (diámetro ~6.8 m) -->
+    <circle cx="270" cy="330" r="55" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <text x="235" y="398" class="txt-tactical" fill="#10b981" font-size="10" font-weight="600">Separación de marca: 3.4 m</text>
+
+    <!-- Müller (#13) punto de impacto (x=920, y=4150) -->
+    <circle cx="270" cy="330" r="9" fill="#10b981" stroke="#ffffff" stroke-width="2.5"/>
+    <text x="285" y="335" class="txt-player" font-weight="700">Müller (#13)</text>
+
+    <!-- Trayectoria del remate a portería (11.3 m de distancia, 78.4 km/h) -->
+    <line x1="270" y1="330" x2="45" y2="280" stroke="#f43f5e" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-shot)"/>
+    <rect x="90" y="350" width="160" height="20" rx="4" fill="rgba(244,63,94,0.2)" stroke="#f43f5e" stroke-width="1"/>
+    <text x="96" y="364" class="txt-tactical" fill="#f43f5e" font-size="10" font-weight="bold">Remate con derecha (xG: 0.35)</text>
+
+    <!-- Portero Júlio César (#12) -->
+    <circle cx="50" cy="300" r="7" class="player-bra"/>
+    <text x="62" y="304" class="txt-player" fill="#f59e0b">Júlio César #12</text>
+  </g>
+
+  <!-- Panel Lateral Informativo: Ventanas OMNIMORPH -->
+  <g id="contract-box">
+    <rect x="520" y="85" width="280" height="210" rx="8" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <text x="535" y="108" class="txt-player" fill="#38bdf8" font-size="12">VENTANA 1 [t0: 0.0s — t1: 4.0s]</text>
+    <text x="535" y="126" class="txt-tactical" font-size="11">Fase: Ejecución de córner y pantallas</text>
+    <text x="535" y="144" class="txt-sub" font-size="10">• Kroos envía outswinger al punto penal</text>
+    <text x="535" y="160" class="txt-sub" font-size="10">• Klose y Höwedes fijan y bloquean a David Luiz</text>
+    <text x="535" y="176" class="txt-sub" font-size="10">• Posesión: 100% Alemania | Presión: Baja</text>
+
+    <line x1="535" y1="190" x2="785" y2="190" stroke="rgba(255,255,255,0.15)"/>
+
+    <text x="535" y="210" class="txt-player" fill="#10b981" font-size="12">VENTANA 2 [t0: 4.0s — t1: 8.0s]</text>
+    <text x="535" y="228" class="txt-tactical" font-size="11">Fase: Desmarque y Remate de primera</text>
+    <text x="535" y="246" class="txt-sub" font-size="10">• Müller libre con 3.4 m de separación</text>
+    <text x="535" y="262" class="txt-sub" font-size="10">• Volea con derecha a 11.3 m de portería</text>
+    <text x="535" y="278" class="txt-sub" font-size="10">• Velocidad: 78.4 km/h | xG: 0.35 (Gol 0–1)</text>
+  </g>
+
+  <!-- Métricas físicas del remate -->
+  <g id="metrics-summary">
+    <rect x="520" y="310" width="280" height="95" rx="8" fill="rgba(0,0,0,0.4)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <text x="535" y="332" class="txt-player" fill="#ffffff" font-size="11">MÉTRICAS TÁCTICAS DEL REMATE</text>
+    <text x="535" y="352" class="txt-sub" font-size="10">Coordenadas de tiro: <tspan fill="#ffffff" font-weight="bold">x=920, y=4150 cm</tspan></text>
+    <text x="535" y="368" class="txt-sub" font-size="10">Tiempo reacción arquero: <tspan fill="#ffffff" font-weight="bold">0.41 s</tspan></text>
+    <text x="535" y="384" class="txt-sub" font-size="10">Impacto en red: <tspan fill="#ffffff" font-weight="bold">Poste izquierdo raso (x=0, y=3820)</tspan></text>
+  </g>
+
+  <!-- Leyenda de colores -->
+  <circle cx="535" cy="430" r="6" class="player-ger"/>
+  <text x="548" y="434" class="txt-tactical" font-size="10">Alemania (#13 Müller, #18 Kroos, #11 Klose, #4 Höwedes)</text>
+  <circle cx="535" cy="450" r="6" class="player-bra"/>
+  <text x="548" y="454" class="txt-tactical" font-size="10">Brasil (#12 Júlio César, #4 David Luiz, #13 Dante)</text>
+</svg>

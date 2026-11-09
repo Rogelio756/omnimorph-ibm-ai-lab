@@ -1,0 +1,5229 @@
+{
+  "metadata": {
+    "version_schema": "OMNIMORPH-TELEMETRY-v2.0",
+    "partido": "Brasil vs Alemania 2014",
+    "evento": "Gol 1 - Thomas Müller (11')",
+    "duracion_total_s": 8.0,
+    "total_frames_analizados": 201,
+    "intervalo_muestreo_frames": 10,
+    "coordenadas_unidad": "centimetros (cm)",
+    "dimensiones_campo_cm": {
+      "largo_x": 12000,
+      "ancho_y": 7000
+    },
+    "equipos": {
+      "0": "Brasil (Defendiendo x=0)",
+      "1": "Alemania (Atacando hacia x=0)"
+    }
+  },
+  "frames": [
+    {
+      "frame": 0,
+      "timestamp_s": 0.0,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 35.0,
+          "pitch_y": 6965.0,
+          "speed_cm_s": 0.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 45.0,
+          "pitch_y": 6950.0,
+          "speed_cm_s": 180.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1350.0,
+          "pitch_y": 4700.0,
+          "speed_cm_s": 350.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 650.0,
+          "pitch_y": 4300.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 730.0,
+          "pitch_y": 4450.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 760.0,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1650.0,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 380.0,
+          "pitch_y": 6400.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2140.0,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1750.0,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2680.0,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7800.0,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3550.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1280.0,
+          "pitch_y": 4600.0,
+          "speed_cm_s": 280.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 520.0,
+          "pitch_y": 3900.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 365.0,
+          "pitch_y": 4850.0,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1450.0,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 880.0,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1575.0,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2250.0,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2800.0,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2710.0,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3600.0,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1850.0,
+          "pitch_y": 2600.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 10,
+      "timestamp_s": 0.4,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 35.0,
+          "pitch_y": 6965.0,
+          "speed_cm_s": 0.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 51.7,
+          "pitch_y": 6944.7,
+          "speed_cm_s": 180.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1315.6,
+          "pitch_y": 4656.0,
+          "speed_cm_s": 359.6,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 656.0,
+          "pitch_y": 4308.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 730.6,
+          "pitch_y": 4456.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 759.2,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1658.0,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 389.5,
+          "pitch_y": 6388.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2139.7,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1753.6,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2679.9,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7800.8,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3562.6,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1256.0,
+          "pitch_y": 4580.8,
+          "speed_cm_s": 280.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 523.2,
+          "pitch_y": 3904.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 364.7,
+          "pitch_y": 4846.0,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1453.6,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 886.0,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1574.7,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2249.8,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2804.8,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2710.1,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3601.2,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1854.2,
+          "pitch_y": 2606.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 20,
+      "timestamp_s": 0.8,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 94.0,
+          "pitch_y": 6850.1,
+          "speed_cm_s": 2160.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 58.3,
+          "pitch_y": 6939.3,
+          "speed_cm_s": 180.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1281.2,
+          "pitch_y": 4612.0,
+          "speed_cm_s": 369.2,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 661.7,
+          "pitch_y": 4316.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 732.3,
+          "pitch_y": 4462.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 756.8,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1665.7,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 398.5,
+          "pitch_y": 6376.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2138.9,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1757.1,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2679.6,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7801.6,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3573.9,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1232.0,
+          "pitch_y": 4561.6,
+          "speed_cm_s": 280.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 526.3,
+          "pitch_y": 3908.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 363.8,
+          "pitch_y": 4842.2,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1457.1,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 891.7,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1573.7,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2249.4,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2809.6,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2710.5,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3602.4,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1858.3,
+          "pitch_y": 2612.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 30,
+      "timestamp_s": 1.2,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 172.7,
+          "pitch_y": 6691.4,
+          "speed_cm_s": 2106.7,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 65.0,
+          "pitch_y": 6934.0,
+          "speed_cm_s": 180.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1246.8,
+          "pitch_y": 4568.0,
+          "speed_cm_s": 378.8,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 666.9,
+          "pitch_y": 4324.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 735.0,
+          "pitch_y": 4468.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 753.0,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1673.1,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 406.4,
+          "pitch_y": 6364.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2137.4,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1760.6,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2679.1,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7802.4,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3582.8,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1208.0,
+          "pitch_y": 4542.4,
+          "speed_cm_s": 280.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 529.2,
+          "pitch_y": 3912.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 362.4,
+          "pitch_y": 4838.7,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1460.6,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 896.9,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1572.2,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2248.6,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2814.3,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2711.1,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3603.6,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1862.3,
+          "pitch_y": 2618.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 40,
+      "timestamp_s": 1.6,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 251.3,
+          "pitch_y": 6520.0,
+          "speed_cm_s": 2053.3,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 71.7,
+          "pitch_y": 6928.7,
+          "speed_cm_s": 180.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1212.4,
+          "pitch_y": 4524.0,
+          "speed_cm_s": 388.4,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 671.5,
+          "pitch_y": 4332.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 738.5,
+          "pitch_y": 4474.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 747.9,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1679.9,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 412.8,
+          "pitch_y": 6352.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2135.5,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1763.9,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2678.5,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7803.2,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3588.3,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1184.0,
+          "pitch_y": 4523.2,
+          "speed_cm_s": 280.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 531.9,
+          "pitch_y": 3916.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 360.5,
+          "pitch_y": 4835.7,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1463.9,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 901.5,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1570.1,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2247.5,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2818.9,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2712.0,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3604.8,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1866.2,
+          "pitch_y": 2624.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 50,
+      "timestamp_s": 2.0,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 330.0,
+          "pitch_y": 6329.8,
+          "speed_cm_s": 2000.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 78.3,
+          "pitch_y": 6923.3,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1178.0,
+          "pitch_y": 4480.0,
+          "speed_cm_s": 398.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 675.2,
+          "pitch_y": 4340.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 742.8,
+          "pitch_y": 4480.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 741.6,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1685.9,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 417.3,
+          "pitch_y": 6340.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2133.0,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1766.9,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2677.6,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7804.0,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3590.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1160.0,
+          "pitch_y": 4504.0,
+          "speed_cm_s": 280.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 534.3,
+          "pitch_y": 3920.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 358.1,
+          "pitch_y": 4833.2,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1466.9,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 905.2,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1567.4,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2246.1,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2823.4,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2713.2,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3606.0,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1869.8,
+          "pitch_y": 2630.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 60,
+      "timestamp_s": 2.4,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 408.7,
+          "pitch_y": 6116.0,
+          "speed_cm_s": 1946.7,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 85.0,
+          "pitch_y": 6918.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1143.6,
+          "pitch_y": 4436.0,
+          "speed_cm_s": 407.6,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 678.0,
+          "pitch_y": 4348.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 747.4,
+          "pitch_y": 4486.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 734.5,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1691.0,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 419.7,
+          "pitch_y": 6328.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2130.1,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1769.8,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2676.6,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7804.8,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3587.6,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1136.0,
+          "pitch_y": 4484.8,
+          "speed_cm_s": 280.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 536.4,
+          "pitch_y": 3924.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 355.4,
+          "pitch_y": 4831.4,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1469.8,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 908.0,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1564.3,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2244.3,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2827.7,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2714.5,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3607.1,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1873.1,
+          "pitch_y": 2636.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 70,
+      "timestamp_s": 2.8,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 487.3,
+          "pitch_y": 5876.0,
+          "speed_cm_s": 1893.3,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 91.7,
+          "pitch_y": 6912.7,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1109.2,
+          "pitch_y": 4392.0,
+          "speed_cm_s": 417.2,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 679.6,
+          "pitch_y": 4356.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 752.2,
+          "pitch_y": 4492.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 726.8,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1695.0,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 419.8,
+          "pitch_y": 6316.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2126.7,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1772.3,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2675.4,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7805.5,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3581.4,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1141.7,
+          "pitch_y": 4486.2,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 538.0,
+          "pitch_y": 3928.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 352.5,
+          "pitch_y": 4830.3,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1472.3,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 909.6,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1560.9,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2242.4,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2831.9,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2716.1,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3608.3,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1876.1,
+          "pitch_y": 2642.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 80,
+      "timestamp_s": 3.2,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 566.0,
+          "pitch_y": 5608.9,
+          "speed_cm_s": 1840.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1074.8,
+          "pitch_y": 4348.0,
+          "speed_cm_s": 426.8,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 680.0,
+          "pitch_y": 4364.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 756.8,
+          "pitch_y": 4498.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 718.8,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1697.9,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 417.6,
+          "pitch_y": 6304.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2122.9,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1774.6,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2674.1,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7806.3,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3572.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1142.9,
+          "pitch_y": 4475.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 539.2,
+          "pitch_y": 3932.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 349.6,
+          "pitch_y": 4830.0,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1474.6,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 910.0,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1557.2,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2240.1,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2835.8,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2717.9,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3609.4,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1878.7,
+          "pitch_y": 2648.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 90,
+      "timestamp_s": 3.6,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 644.7,
+          "pitch_y": 5315.9,
+          "speed_cm_s": 1786.7,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1040.4,
+          "pitch_y": 4304.0,
+          "speed_cm_s": 436.4,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 679.2,
+          "pitch_y": 4372.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 761.1,
+          "pitch_y": 4504.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 710.9,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1699.6,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 413.3,
+          "pitch_y": 6292.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2118.9,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1776.5,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2672.6,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7807.0,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3560.3,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1127.6,
+          "pitch_y": 4470.1,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 539.8,
+          "pitch_y": 3936.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 346.6,
+          "pitch_y": 4830.5,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1476.5,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 909.2,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1553.3,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2237.6,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2839.6,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2719.9,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3610.6,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1880.9,
+          "pitch_y": 2654.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 100,
+      "timestamp_s": 4.0,
+      "ventana_activa": 1,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 723.3,
+          "pitch_y": 5000.5,
+          "speed_cm_s": 1733.3,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 1006.0,
+          "pitch_y": 4260.0,
+          "speed_cm_s": 446.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 677.3,
+          "pitch_y": 4380.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 764.7,
+          "pitch_y": 4510.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 703.4,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1700.0,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 407.0,
+          "pitch_y": 6280.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2114.5,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1778.0,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2670.9,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7807.8,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3547.7,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1115.3,
+          "pitch_y": 4477.9,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 540.0,
+          "pitch_y": 3940.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 343.8,
+          "pitch_y": 4831.8,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1478.0,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 907.3,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1549.3,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2234.8,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2843.0,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2722.1,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3611.7,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1882.6,
+          "pitch_y": 2660.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 110,
+      "timestamp_s": 4.4,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 802.0,
+          "pitch_y": 4667.7,
+          "speed_cm_s": 1680.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 971.6,
+          "pitch_y": 4216.0,
+          "speed_cm_s": 455.6,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 674.3,
+          "pitch_y": 4388.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 767.5,
+          "pitch_y": 4516.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 696.5,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1699.1,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 399.2,
+          "pitch_y": 6268.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2109.9,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1779.1,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2669.1,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7808.5,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3535.2,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1121.7,
+          "pitch_y": 4488.3,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 539.6,
+          "pitch_y": 3944.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 341.2,
+          "pitch_y": 4833.8,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1479.1,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 904.3,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1545.3,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2231.9,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2846.2,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2724.5,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3612.8,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1883.9,
+          "pitch_y": 2666.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 120,
+      "timestamp_s": 4.8,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 880.7,
+          "pitch_y": 4323.8,
+          "speed_cm_s": 1626.7,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 937.2,
+          "pitch_y": 4172.0,
+          "speed_cm_s": 465.2,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 670.3,
+          "pitch_y": 4396.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 769.3,
+          "pitch_y": 4522.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 690.5,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1697.0,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 390.3,
+          "pitch_y": 6256.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2105.2,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1779.7,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2667.2,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7809.2,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 180.0,
+          "pitch_y": 3524.3,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1138.7,
+          "pitch_y": 4488.2,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 538.8,
+          "pitch_y": 3948.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 338.9,
+          "pitch_y": 4836.5,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1479.7,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 900.3,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1541.4,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2228.7,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2849.2,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2727.1,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3613.9,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1884.7,
+          "pitch_y": 2672.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 130,
+      "timestamp_s": 5.2,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 798.0,
+          "pitch_y": 4106.0,
+          "speed_cm_s": 2177.8,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 923.0,
+          "pitch_y": 4146.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 665.5,
+          "pitch_y": 4404.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 770.0,
+          "pitch_y": 4528.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 685.7,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1693.7,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 380.9,
+          "pitch_y": 6244.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2100.4,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1780.0,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2665.2,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7809.9,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 174.0,
+          "pitch_y": 3567.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1114.0,
+          "pitch_y": 4460.0,
+          "speed_cm_s": 380.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 537.5,
+          "pitch_y": 3952.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 337.1,
+          "pitch_y": 4839.7,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1480.0,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 895.5,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1537.8,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2225.3,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2851.7,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2729.8,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3614.9,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1885.0,
+          "pitch_y": 2678.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 140,
+      "timestamp_s": 5.6,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 554.0,
+          "pitch_y": 4018.0,
+          "speed_cm_s": 2177.8,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 929.0,
+          "pitch_y": 4138.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 660.0,
+          "pitch_y": 4412.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 769.5,
+          "pitch_y": 4534.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 682.3,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1689.2,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 371.3,
+          "pitch_y": 6232.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2095.6,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1779.8,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2663.1,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7810.6,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 162.0,
+          "pitch_y": 3601.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1082.0,
+          "pitch_y": 4420.0,
+          "speed_cm_s": 380.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 535.7,
+          "pitch_y": 3956.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 335.9,
+          "pitch_y": 4843.3,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1479.8,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 890.0,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1534.5,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2221.8,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2854.0,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2732.6,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3615.9,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1884.8,
+          "pitch_y": 2684.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 150,
+      "timestamp_s": 6.0,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 310.0,
+          "pitch_y": 3930.0,
+          "speed_cm_s": 2177.8,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 935.0,
+          "pitch_y": 4130.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 654.2,
+          "pitch_y": 4420.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 767.9,
+          "pitch_y": 4540.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 680.4,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1683.8,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 362.3,
+          "pitch_y": 6220.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2090.9,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1779.2,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2660.9,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7811.3,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 150.0,
+          "pitch_y": 3635.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1050.0,
+          "pitch_y": 4380.0,
+          "speed_cm_s": 380.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 533.5,
+          "pitch_y": 3960.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 335.2,
+          "pitch_y": 4847.2,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1479.2,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 884.2,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1531.6,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2218.1,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2855.9,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2735.5,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3616.9,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1884.1,
+          "pitch_y": 2690.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 160,
+      "timestamp_s": 6.4,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 66.0,
+          "pitch_y": 3842.0,
+          "speed_cm_s": 2177.8,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 941.0,
+          "pitch_y": 4122.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 648.2,
+          "pitch_y": 4428.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 765.3,
+          "pitch_y": 4546.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 680.1,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1677.5,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 354.3,
+          "pitch_y": 6208.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2086.3,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1778.2,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2658.6,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7811.9,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 138.0,
+          "pitch_y": 3669.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 1018.0,
+          "pitch_y": 4340.0,
+          "speed_cm_s": 380.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 531.0,
+          "pitch_y": 3964.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 335.0,
+          "pitch_y": 4851.2,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1478.2,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 878.2,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1529.1,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2214.3,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2857.5,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2738.5,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3617.9,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1882.9,
+          "pitch_y": 2696.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 170,
+      "timestamp_s": 6.8,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 5.0,
+          "pitch_y": 3820.0,
+          "speed_cm_s": 0.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 947.0,
+          "pitch_y": 4114.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 642.3,
+          "pitch_y": 4436.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 761.8,
+          "pitch_y": 4552.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 681.3,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1670.5,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 347.7,
+          "pitch_y": 6196.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2081.9,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1776.8,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2656.3,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7812.6,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 126.0,
+          "pitch_y": 3703.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 986.0,
+          "pitch_y": 4300.0,
+          "speed_cm_s": 380.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 528.2,
+          "pitch_y": 3968.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 335.5,
+          "pitch_y": 4855.1,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1476.8,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 872.3,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1527.2,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2210.5,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2858.7,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2741.6,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3618.9,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1881.2,
+          "pitch_y": 2702.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 180,
+      "timestamp_s": 7.2,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 5.0,
+          "pitch_y": 3820.0,
+          "speed_cm_s": 0.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 953.0,
+          "pitch_y": 4106.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 636.7,
+          "pitch_y": 4444.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 757.6,
+          "pitch_y": 4558.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 684.1,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1662.9,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 343.0,
+          "pitch_y": 6184.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2077.8,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1774.9,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2653.9,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7813.2,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 114.0,
+          "pitch_y": 3737.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 954.0,
+          "pitch_y": 4260.0,
+          "speed_cm_s": 380.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 525.2,
+          "pitch_y": 3972.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 336.5,
+          "pitch_y": 4858.9,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1474.9,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 866.7,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1525.9,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2206.5,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2859.5,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2744.8,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3619.8,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1879.1,
+          "pitch_y": 2708.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 190,
+      "timestamp_s": 7.6,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 5.0,
+          "pitch_y": 3820.0,
+          "speed_cm_s": 0.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 959.0,
+          "pitch_y": 4098.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 631.6,
+          "pitch_y": 4452.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 753.0,
+          "pitch_y": 4564.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 688.4,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1655.1,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 340.5,
+          "pitch_y": 6172.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2074.0,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1772.8,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2651.5,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7813.8,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 102.0,
+          "pitch_y": 3771.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 922.0,
+          "pitch_y": 4220.0,
+          "speed_cm_s": 380.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 522.0,
+          "pitch_y": 3976.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 338.1,
+          "pitch_y": 4862.2,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1472.8,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 861.6,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1525.1,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2202.5,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2859.9,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2748.0,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3620.7,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1876.6,
+          "pitch_y": 2714.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    },
+    {
+      "frame": 200,
+      "timestamp_s": 8.0,
+      "ventana_activa": 2,
+      "total_objetos_detectados": 24,
+      "objetos": [
+        {
+          "id": "ball",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Balon",
+          "pitch_x": 5.0,
+          "pitch_y": 3820.0,
+          "speed_cm_s": 0.0,
+          "rol_jugada": "balon_en_juego"
+        },
+        {
+          "id": "ger_18",
+          "team": 1,
+          "dorsal": 18,
+          "jugador": "Toni Kroos",
+          "pitch_x": 95.0,
+          "pitch_y": 6910.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "ejecutor_corner"
+        },
+        {
+          "id": "ger_13",
+          "team": 1,
+          "dorsal": 13,
+          "jugador": "Thomas Müller",
+          "pitch_x": 965.0,
+          "pitch_y": 4090.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "rematador_desmarcado"
+        },
+        {
+          "id": "ger_11",
+          "team": 1,
+          "dorsal": 11,
+          "jugador": "Miroslav Klose",
+          "pitch_x": 627.3,
+          "pitch_y": 4460.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_4",
+          "team": 1,
+          "dorsal": 4,
+          "jugador": "Benedikt Höwedes",
+          "pitch_x": 748.3,
+          "pitch_y": 4570.0,
+          "speed_cm_s": 125.0,
+          "rol_jugada": "bloqueador_pantalla"
+        },
+        {
+          "id": "ger_5",
+          "team": 1,
+          "dorsal": 5,
+          "jugador": "Mats Hummels",
+          "pitch_x": 693.9,
+          "pitch_y": 3200.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "fijador_segundo_palo"
+        },
+        {
+          "id": "ger_6",
+          "team": 1,
+          "dorsal": 6,
+          "jugador": "Sami Khedira",
+          "pitch_x": 1647.1,
+          "pitch_y": 3800.0,
+          "speed_cm_s": 130.0,
+          "rol_jugada": "rebote_frontal"
+        },
+        {
+          "id": "ger_8",
+          "team": 1,
+          "dorsal": 8,
+          "jugador": "Mesut Özil",
+          "pitch_x": 340.2,
+          "pitch_y": 6160.0,
+          "speed_cm_s": 160.0,
+          "rol_jugada": "distractor_corto"
+        },
+        {
+          "id": "ger_16",
+          "team": 1,
+          "dorsal": 16,
+          "jugador": "Philipp Lahm",
+          "pitch_x": 2070.5,
+          "pitch_y": 5100.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_20",
+          "team": 1,
+          "dorsal": 20,
+          "jugador": "Jérôme Boateng",
+          "pitch_x": 1770.3,
+          "pitch_y": 4400.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "vigilancia_ofensiva"
+        },
+        {
+          "id": "ger_7",
+          "team": 1,
+          "dorsal": 7,
+          "jugador": "Bastian Schweinsteiger",
+          "pitch_x": 2649.1,
+          "pitch_y": 3300.0,
+          "speed_cm_s": 90.0,
+          "rol_jugada": "equilibrio_medio"
+        },
+        {
+          "id": "ger_1",
+          "team": 1,
+          "dorsal": 1,
+          "jugador": "Manuel Neuer",
+          "pitch_x": 7814.3,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 40.0,
+          "rol_jugada": "portero_libero"
+        },
+        {
+          "id": "bra_12",
+          "team": 0,
+          "dorsal": 12,
+          "jugador": "Júlio César",
+          "pitch_x": 90.0,
+          "pitch_y": 3805.0,
+          "speed_cm_s": 140.0,
+          "rol_jugada": "portero"
+        },
+        {
+          "id": "bra_4",
+          "team": 0,
+          "dorsal": 4,
+          "jugador": "David Luiz",
+          "pitch_x": 890.0,
+          "pitch_y": 4180.0,
+          "speed_cm_s": 380.0,
+          "rol_jugada": "marca_individual_bloqueada"
+        },
+        {
+          "id": "bra_13",
+          "team": 0,
+          "dorsal": 13,
+          "jugador": "Dante",
+          "pitch_x": 518.8,
+          "pitch_y": 3980.0,
+          "speed_cm_s": 95.0,
+          "rol_jugada": "zona_central_chica"
+        },
+        {
+          "id": "bra_6",
+          "team": 0,
+          "dorsal": 6,
+          "jugador": "Marcelo",
+          "pitch_x": 340.2,
+          "pitch_y": 4865.1,
+          "speed_cm_s": 75.0,
+          "rol_jugada": "primer_palo"
+        },
+        {
+          "id": "bra_23",
+          "team": 0,
+          "dorsal": 23,
+          "jugador": "Maicon",
+          "pitch_x": 1470.3,
+          "pitch_y": 5200.0,
+          "speed_cm_s": 65.0,
+          "rol_jugada": "zona_lateral"
+        },
+        {
+          "id": "bra_17",
+          "team": 0,
+          "dorsal": 17,
+          "jugador": "Luiz Gustavo",
+          "pitch_x": 857.3,
+          "pitch_y": 3450.0,
+          "speed_cm_s": 110.0,
+          "rol_jugada": "marca_zonal_area"
+        },
+        {
+          "id": "bra_5",
+          "team": 0,
+          "dorsal": 5,
+          "jugador": "Fernandinho",
+          "pitch_x": 1525.0,
+          "pitch_y": 3600.0,
+          "speed_cm_s": 105.0,
+          "rol_jugada": "frontal_area"
+        },
+        {
+          "id": "bra_11",
+          "team": 0,
+          "dorsal": 11,
+          "jugador": "Oscar",
+          "pitch_x": 2198.5,
+          "pitch_y": 4200.0,
+          "speed_cm_s": 80.0,
+          "rol_jugada": "vigilancia_rebote"
+        },
+        {
+          "id": "bra_7",
+          "team": 0,
+          "dorsal": 7,
+          "jugador": "Hulk",
+          "pitch_x": 2860.0,
+          "pitch_y": 5800.0,
+          "speed_cm_s": 70.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_20",
+          "team": 0,
+          "dorsal": 20,
+          "jugador": "Bernard",
+          "pitch_x": 2751.2,
+          "pitch_y": 1500.0,
+          "speed_cm_s": 60.0,
+          "rol_jugada": "salida_contraataque"
+        },
+        {
+          "id": "bra_9",
+          "team": 0,
+          "dorsal": 9,
+          "jugador": "Fred",
+          "pitch_x": 3621.5,
+          "pitch_y": 3500.0,
+          "speed_cm_s": 45.0,
+          "rol_jugada": "descolgado"
+        },
+        {
+          "id": "ref_1",
+          "team": null,
+          "dorsal": null,
+          "jugador": "Marco Rodríguez (Árbitro)",
+          "pitch_x": 1873.6,
+          "pitch_y": 2720.0,
+          "speed_cm_s": 85.0,
+          "rol_jugada": "arbitro_posicionamiento"
+        }
+      ]
+    }
+  ]
+}

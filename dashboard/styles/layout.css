@@ -118,7 +118,8 @@
   left: 0;
   right: 0;
   z-index: 200;
-  background: transparent;
+  background: var(--color-bg-deep);
+  border-bottom: var(--border);
 }
 
 .om-nav__wordmark {
@@ -129,6 +130,40 @@
   text-transform: uppercase;
   color: var(--color-text);
   margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.om-nav__cubo {
+  height: 28px;
+  width: auto;
+}
+
+.om-nav__cta {
+  margin-left: var(--space-4);
+}
+
+/* Botón del menú: solo aparece en pantallas chicas */
+.om-nav__toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.om-nav__toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: var(--color-text);
 }
 
 .om-nav__links {
@@ -140,15 +175,17 @@
 .om-nav__link {
   font-size: var(--text-label);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text-soft);
+  color: var(--color-text);
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
-  transition: color var(--transition);
+  padding-block: var(--space-1);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition);
 }
 
 .om-nav__link:hover,
 .om-nav__link:focus-visible {
-  color: var(--color-text);
+  border-bottom-color: var(--color-text-soft);
 }
 
 /* ── Sidebar de jugadores (tablero) ─────────────────────────────────────── */
@@ -212,8 +249,37 @@
     border-top: var(--border);
   }
 
+  .om-nav {
+    flex-wrap: wrap;
+    gap: 0;
+    padding-block: var(--space-2);
+  }
+
+  .om-nav__toggle {
+    display: flex;
+  }
+
+  .om-nav__cta {
+    display: none; /* lleva al mismo lugar que MATEO */
+  }
+
   .om-nav__links {
-    display: none; /* en móvil se ocultaría en un menú hamburguesa futuro */
+    display: none;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding-block: var(--space-2);
+  }
+
+  .om-nav--open .om-nav__links {
+    display: flex;
+  }
+
+  .om-nav__links .om-nav__link {
+    display: block;
+    padding-block: var(--space-3);
+    font-size: 14px;
   }
 
   .text-hero {

@@ -1,0 +1,76 @@
+/**
+ * styles/components/site-header.css
+ * OMNIMORPH — Cabecera de las páginas del partido y del chatbot.
+ * Mismo aspecto que la cabecera de mateo.html (que conserva sus reglas en línea).
+ */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-3) var(--cell-padding-x);
+  background-color: var(--color-bg);
+  border-bottom: var(--border);
+}
+
+.site-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.brand-cubo {
+  height: 32px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.site-header__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.site-header__name {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: 18px;
+  letter-spacing: var(--ls-wordmark);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+.site-header__subtitle {
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--color-text-soft);
+}
+
+.site-header__sep {
+  width: 1px;
+  height: 28px;
+  flex-shrink: 0;
+  background-color: var(--color-border);
+}
+
+.site-header__chips {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* En teléfono la cabecera ocupa varias líneas: fija taparía demasiada pantalla */
+@media (max-width: 860px) {
+  .site-header {
+    position: static;
+  }
+}

@@ -73,7 +73,7 @@
 .hero__title {
   font-family: var(--font-headline);
   font-weight: var(--font-weight-medium);
-  font-size: var(--text-hero);
+  font-size: clamp(32px, 11vw, var(--text-hero));
   line-height: var(--lh-hero);
   text-transform: uppercase;
   color: var(--color-text);
@@ -132,28 +132,5 @@
   .hero__dot {
     animation: none;
     opacity: 1;
-  }
-}
-
-/* Logo OMNIMORPH al costado del hero — fondo oscuro para SVG en blanco */
-.hero__logo-card {
-  position: absolute;
-  right: var(--cell-padding-x);
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 4;
-  background-color: var(--color-bg);
-  border: var(--border);
-  padding: var(--space-6);
-  border-radius: var(--radius-card);
-  max-width: 260px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (max-width: 900px) {
-  .hero__logo-card {
-    display: none;
   }
 }

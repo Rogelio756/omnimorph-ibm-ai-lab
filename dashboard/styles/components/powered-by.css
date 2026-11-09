@@ -1,15 +1,19 @@
 /**
  * styles/components/powered-by.css
  * OMNIMORPH — Franja "Impulsado por herramientas de IBM"
+ * Va sobre fondo claro: los logos de IBM son azules y negros, no se recolorean
+ * y sobre #111 no se leerían.
  */
 
 .powered-by {
   padding: var(--space-6) var(--cell-padding-x);
   border-top: var(--border);
   border-bottom: var(--border);
+  background-color: var(--color-bg-light);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-6);
 }
 
@@ -19,7 +23,7 @@
   font-size: var(--text-label);
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
-  color: var(--color-text-soft);
+  color: var(--color-text-soft-light);
   flex-shrink: 0;
   white-space: nowrap;
 }
@@ -29,22 +33,33 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-6) var(--space-9);
+  max-width: 100%;
 }
 
-/* Cada logo: máx-ancho viene del manifest */
+/* Cada logo: la altura viene del manifest */
 .powered-by__logo-item {
   display: flex;
   align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
 }
 
 .powered-by__logo-item img,
 .powered-by__logo-item svg {
-  max-height: 28px;
+  max-width: 100%;
   width: auto;
+  object-fit: contain;
   display: block;
-  /* Espacio libre mínimo alrededor del logo IBM: 1× su altura = 28 px
-     Lo gestiona el gap del contenedor padre */
+  /* El espacio libre alrededor del logo lo gestiona el gap del contenedor */
+}
+
+.powered-by__logo-name {
+  font-family: var(--font-ui);
+  font-weight: var(--font-weight-medium);
+  font-size: 15px;
+  color: var(--color-text-light);
+  white-space: nowrap;
 }
 
 /* Placeholder mientras falta el archivo del logo */

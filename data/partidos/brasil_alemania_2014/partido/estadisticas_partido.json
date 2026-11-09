@@ -1,0 +1,312 @@
+{
+  "resumen_comparativo": {
+    "primer_tiempo": {
+      "marcador": "0-5",
+      "posesion_pct": {
+        "brasil": 47.0,
+        "alemania": 53.0
+      },
+      "tiros_totales": {
+        "brasil": 2,
+        "alemania": 10
+      },
+      "tiros_a_puerta": {
+        "brasil": 1,
+        "alemania": 7
+      },
+      "tiros_fuera_bloqueados": {
+        "brasil": 1,
+        "alemania": 3
+      },
+      "tiros_dentro_area": {
+        "brasil": 1,
+        "alemania": 9
+      },
+      "tiros_fuera_area": {
+        "brasil": 1,
+        "alemania": 1
+      },
+      "xg_esperado": {
+        "brasil": 0.12,
+        "alemania": 2.84
+      },
+      "pases_completados_intentados": {
+        "brasil": "182/228",
+        "alemania": "265/298"
+      },
+      "precision_pases_pct": {
+        "brasil": 79.8,
+        "alemania": 88.9
+      },
+      "corners": {
+        "brasil": 3,
+        "alemania": 4
+      },
+      "faltas_cometidas": {
+        "brasil": 5,
+        "alemania": 6
+      },
+      "fueras_de_juego": {
+        "brasil": 1,
+        "alemania": 0
+      },
+      "atajadas_portero": {
+        "brasil": 2,
+        "alemania": 1
+      },
+      "recuperaciones": {
+        "brasil": 19,
+        "alemania": 26
+      }
+    },
+    "segundo_tiempo": {
+      "marcador": "1-2",
+      "posesion_pct": {
+        "brasil": 56.0,
+        "alemania": 44.0
+      },
+      "tiros_totales": {
+        "brasil": 16,
+        "alemania": 4
+      },
+      "tiros_a_puerta": {
+        "brasil": 7,
+        "alemania": 3
+      },
+      "tiros_fuera_bloqueados": {
+        "brasil": 9,
+        "alemania": 1
+      },
+      "tiros_dentro_area": {
+        "brasil": 10,
+        "alemania": 3
+      },
+      "tiros_fuera_area": {
+        "brasil": 6,
+        "alemania": 1
+      },
+      "xg_esperado": {
+        "brasil": 1.13,
+        "alemania": 0.91
+      },
+      "pases_completados_intentados": {
+        "brasil": "220/280",
+        "alemania": "247/296"
+      },
+      "precision_pases_pct": {
+        "brasil": 78.6,
+        "alemania": 83.4
+      },
+      "corners": {
+        "brasil": 4,
+        "alemania": 1
+      },
+      "faltas_cometidas": {
+        "brasil": 6,
+        "alemania": 8
+      },
+      "fueras_de_juego": {
+        "brasil": 2,
+        "alemania": 0
+      },
+      "atajadas_portero": {
+        "brasil": 1,
+        "alemania": 6
+      },
+      "recuperaciones": {
+        "brasil": 29,
+        "alemania": 28
+      }
+    },
+    "tiempo_completo": {
+      "marcador": "1-7",
+      "posesion_pct": {
+        "brasil": 52.0,
+        "alemania": 48.0
+      },
+      "tiros_totales": {
+        "brasil": 18,
+        "alemania": 14
+      },
+      "tiros_a_puerta": {
+        "brasil": 8,
+        "alemania": 10
+      },
+      "tiros_fuera": {
+        "brasil": 5,
+        "alemania": 2
+      },
+      "tiros_bloqueados": {
+        "brasil": 5,
+        "alemania": 2
+      },
+      "tiros_dentro_area": {
+        "brasil": 11,
+        "alemania": 12
+      },
+      "tiros_fuera_area": {
+        "brasil": 7,
+        "alemania": 2
+      },
+      "xg_esperado": {
+        "brasil": 1.25,
+        "alemania": 3.75
+      },
+      "pases_completados_intentados": {
+        "brasil": "402/508",
+        "alemania": "512/594"
+      },
+      "precision_pases_pct": {
+        "brasil": 79.1,
+        "alemania": 86.2
+      },
+      "corners": {
+        "brasil": 7,
+        "alemania": 5
+      },
+      "faltas_cometidas": {
+        "brasil": 11,
+        "alemania": 14
+      },
+      "tarjetas_amarillas": {
+        "brasil": 1,
+        "alemania": 0
+      },
+      "tarjetas_rojas": {
+        "brasil": 0,
+        "alemania": 0
+      },
+      "fueras_de_juego": {
+        "brasil": 3,
+        "alemania": 0
+      },
+      "atajadas_portero": {
+        "brasil": 3,
+        "alemania": 7
+      },
+      "recuperaciones": {
+        "brasil": 48,
+        "alemania": 54
+      },
+      "distribucion_zonas_balon_pct": {
+        "tercio_defensivo_brasil_ofensivo_alemania": 31.0,
+        "tercio_medio": 46.0,
+        "tercio_ofensivo_brasil_defensivo_alemania": 23.0
+      }
+    }
+  },
+  "rendimiento_individual_destacado": [
+    {
+      "jugador": "Toni Kroos",
+      "dorsal": 18,
+      "equipo": "Alemania",
+      "posicion": "Mediocentro ofensivo",
+      "goles": 2,
+      "asistencias": 1,
+      "tiros_a_puerta": 2,
+      "pases_totales": 71,
+      "pases_completados": 66,
+      "precision_pases_pct": 93.0,
+      "recuperaciones": 6,
+      "distancia_recorrida_km": 11.5
+    },
+    {
+      "jugador": "Thomas Müller",
+      "dorsal": 13,
+      "equipo": "Alemania",
+      "posicion": "Extremo / Delantero",
+      "goles": 1,
+      "asistencias": 2,
+      "tiros_a_puerta": 2,
+      "pases_totales": 34,
+      "pases_completados": 29,
+      "precision_pases_pct": 85.3,
+      "distancia_recorrida_km": 11.8
+    },
+    {
+      "jugador": "Sami Khedira",
+      "dorsal": 6,
+      "equipo": "Alemania",
+      "posicion": "Interior mixto",
+      "goles": 1,
+      "asistencias": 1,
+      "tiros_a_puerta": 1,
+      "pases_totales": 42,
+      "pases_completados": 38,
+      "precision_pases_pct": 90.5,
+      "recuperaciones": 4,
+      "distancia_recorrida_km": 9.4
+    },
+    {
+      "jugador": "André Schürrle",
+      "dorsal": 9,
+      "equipo": "Alemania",
+      "posicion": "Extremo",
+      "goles": 2,
+      "asistencias": 0,
+      "tiros_a_puerta": 2,
+      "pases_totales": 16,
+      "pases_completados": 14,
+      "precision_pases_pct": 87.5,
+      "minutos_jugados": 32,
+      "distancia_recorrida_km": 4.5
+    },
+    {
+      "jugador": "Manuel Neuer",
+      "dorsal": 1,
+      "equipo": "Alemania",
+      "posicion": "Portero",
+      "atajadas": 7,
+      "goles_recibidos": 1,
+      "pases_completados": 29,
+      "precision_pases_pct": 90.6,
+      "distancia_recorrida_km": 5.4
+    },
+    {
+      "jugador": "Oscar",
+      "dorsal": 11,
+      "equipo": "Brasil",
+      "posicion": "Mediapunta",
+      "goles": 1,
+      "asistencias": 0,
+      "tiros_a_puerta": 3,
+      "pases_totales": 48,
+      "pases_completados": 39,
+      "precision_pases_pct": 81.3,
+      "distancia_recorrida_km": 10.7
+    },
+    {
+      "jugador": "David Luiz",
+      "dorsal": 4,
+      "equipo": "Brasil",
+      "posicion": "Defensa central (C)",
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_a_puerta": 1,
+      "perdidas_balon": 12,
+      "distancia_recorrida_km": 9.9
+    },
+    {
+      "jugador": "Júlio César",
+      "dorsal": 12,
+      "equipo": "Brasil",
+      "posicion": "Portero",
+      "atajadas": 3,
+      "goles_recibidos": 7,
+      "pases_largos_completados": 6
+    }
+  ],
+  "notas_calidad_datos": {
+    "posesion_total": {
+      "valor_usado": "52-48 (FIFA, vía Wikipedia ref. 29)",
+      "otras_fuentes": {
+        "ESPN": "51-49",
+        "footballcritic": "47-53"
+      }
+    },
+    "posesion_por_tiempo": "Sin fuente pública localizada; no verificado.",
+    "tiros_a_puerta_alemania_por_tiempo": "Derivado: goles + atajadas de cada tiempo. El reparto de atajadas por tiempo tampoco está verificado.",
+    "tiros_a_puerta_fifa": "El reporte FIFA da 18/13 y 14/12; su segundo número equivale a a_puerta + bloqueados (8+5 y 10+2).",
+    "xg": "Estimado con modelos genéricos; no es un dato oficial."
+  }
+}
