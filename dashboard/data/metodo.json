@@ -61,5 +61,308 @@
   "jugadores": 10,
   "rastros": 13,
   "validado": false
- }
+ },
+ "monitores_detalle": [
+  {
+   "id": "M1",
+   "checks": [
+    {
+     "descripcion": "Cuadros en el dataset",
+     "observado": 1080,
+     "limite": 750,
+     "unidad": "mín.",
+     "pass": true
+    },
+    {
+     "descripcion": "Cuadros con homografía calculada",
+     "observado": 100.0,
+     "limite": 95,
+     "unidad": "% mín.",
+     "pass": true
+    },
+    {
+     "descripcion": "Filas de jugadores",
+     "observado": 17620,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Filas de balón",
+     "observado": 860,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    }
+   ],
+   "nombre": "Percepción y dataset",
+   "estado": "PASS"
+  },
+  {
+   "id": "M2.0",
+   "checks": [
+    {
+     "descripcion": "Filas de jugadores",
+     "observado": 17620,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Filas de balón",
+     "observado": 860,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Identificadores de rastro",
+     "observado": 112,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Rastros con equipo asignado",
+     "observado": 112,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    }
+   ],
+   "nombre": "Separación jugadores/balón y equipo",
+   "estado": "PASS"
+  },
+  {
+   "id": "M2.1",
+   "checks": [
+    {
+     "descripcion": "Homografía calculada (cruda) (%)",
+     "observado": 100.0,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Homografía calculada (suavizada EMA) (%)",
+     "observado": 100.0,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Matriz suavizada presente",
+     "observado": true,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Matriz normalizada presente",
+     "observado": true,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    }
+   ],
+   "nombre": "Homografía EMA",
+   "estado": "PASS"
+  },
+  {
+   "id": "M2.2",
+   "checks": [
+    {
+     "descripcion": "Identificadores antes de unir",
+     "observado": 112,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Identificadores después de unir",
+     "observado": 93,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Identificadores unidos",
+     "observado": 19,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Identificadores repetidos en un mismo cuadro",
+     "observado": 0,
+     "limite": 0,
+     "unidad": "",
+     "pass": true
+    }
+   ],
+   "nombre": "Unión de rastros (algoritmo húngaro)",
+   "estado": "PASS"
+  },
+  {
+   "id": "M2.3",
+   "checks": [
+    {
+     "descripcion": "Velocidades dentro del tope (%)",
+     "observado": 100.0,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Muestras dentro del tope",
+     "observado": 17612,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Muestras totales",
+     "observado": 17612,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Tope físico (m/s)",
+     "observado": 9.5,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Coordenadas suavizadas presentes",
+     "observado": true,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    }
+   ],
+   "nombre": "Cinemática Savitzky-Golay",
+   "estado": "PASS"
+  },
+  {
+   "id": "M2.4",
+   "checks": [
+    {
+     "descripcion": "Ventanas generadas",
+     "observado": 8,
+     "limite": 8,
+     "unidad": "de",
+     "pass": true
+    }
+   ],
+   "nombre": "Ventanas tácticas",
+   "estado": "PASS"
+  },
+  {
+   "id": "M2.5",
+   "checks": [
+    {
+     "descripcion": "Datos limpios presentes",
+     "observado": true,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Coordenadas suavizadas presentes",
+     "observado": true,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Velocidad calculada",
+     "observado": true,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "Ventanas tácticas",
+     "observado": 8,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    }
+   ],
+   "nombre": "Integridad del pipeline",
+   "estado": "PASS"
+  },
+  {
+   "id": "M3",
+   "checks": [
+    {
+     "descripcion": "Llamadas con modelo IBM Granite autorizado",
+     "observado": 8,
+     "limite": 8,
+     "unidad": "de",
+     "pass": true
+    },
+    {
+     "descripcion": "Respuestas con formato JSON válido",
+     "observado": 8,
+     "limite": 8,
+     "unidad": "de",
+     "pass": true
+    },
+    {
+     "descripcion": "Palabras de la narración más larga",
+     "observado": 18,
+     "limite": 45,
+     "unidad": "máx.",
+     "pass": true
+    },
+    {
+     "descripcion": "Equipo dominante coherente con los datos",
+     "observado": 8,
+     "limite": 8,
+     "unidad": "de",
+     "pass": true
+    },
+    {
+     "descripcion": "Llamadas sin conexión (modo offline)",
+     "observado": 0,
+     "limite": 0,
+     "unidad": "",
+     "pass": true
+    }
+   ],
+   "nombre": "Auditoría de IBM Granite",
+   "estado": "PASS"
+  },
+  {
+   "id": "M4",
+   "checks": [
+    {
+     "descripcion": "Audios generados",
+     "observado": 8,
+     "limite": 8,
+     "unidad": "de",
+     "pass": true
+    },
+    {
+     "descripcion": "Duración del audio más largo (s)",
+     "observado": 3.9,
+     "limite": 4.0,
+     "unidad": "máx.",
+     "pass": true
+    },
+    {
+     "descripcion": "Desfase de reloj máximo (ms)",
+     "observado": 19.02,
+     "limite": 40.0,
+     "unidad": "máx.",
+     "pass": true
+    }
+   ],
+   "nombre": "Sincronización de voz y tablero",
+   "estado": "PASS"
+  }
+ ]
 }

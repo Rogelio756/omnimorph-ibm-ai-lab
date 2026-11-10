@@ -84,6 +84,78 @@
     return claves.every(function (k) { return mon[k] === 'PASS'; }) ? 'PASS' : 'FAIL';
   }
 
+  // ── Diagrama de flujo en SVG (horizontal en escritorio, vertical en móvil) ──
+  var NS = 'http://www.w3.org/2000/svg';
+  function s(tag, attrs, texto) {
+    var n = document.createElementNS(NS, tag);
+    Object.keys(attrs).forEach(function (k) { if (attrs[k] !== '') n.setAttribute(k, attrs[k]); });
+    if (texto != null) n.textContent = texto;
+    return n;
+  }
+
+  function caja(g, e, x, y, w, h) {
+    g.appendChild(s('rect', { x: x, y: y, width: w, height: h, rx: 10,
+      class: 'caja' + (e.ibm ? ' caja--ibm' : '') + (e.humano ? ' caja--humano' : '') }));
+    g.appendChild(s('text', { x: x + 14, y: y + 28, class: 'titulo' }, e.t));
+    e.d.forEach(function (linea, i) { g.appendChild(s('text', { x: x + 14, y: y + 52 + i * 18, class: 'dato' }, linea)); });
+    if (e.m) {
+      var ok = e.m[1] === 'PASS' || e.m[1] === 'VALIDADOS';
+      var pendiente = e.humano && !ok;
+      g.appendChild(s('text', { x: x + 14, y: y + h - 14, class: ok || pendiente ? 'monitor-ok' : 'monitor-fail',
+        style: pendiente ? 'fill: var(--color-warn)' : '' }, '● ' + e.m[0] + ' · ' + (e.m[1] || '—')));
+    }
+  }
+
+  function flecha(g, d, humano) {
+    g.appendChild(s('path', { d: d, class: 'flecha' + (humano ? ' flecha--humano' : '') }));
+  }
+
+  function punta(g, x, y, dir, humano) {
+    var p = dir === 'der' ? [x, y, x - 8, y - 5, x - 8, y + 5] :
+            dir === 'abajo' ? [x, y, x - 5, y - 8, x + 5, y - 8] : [x, y, x - 5, y + 8, x + 5, y + 8];
+    g.appendChild(s('polygon', { points: p.join(' '), class: 'punta' + (humano ? ' punta--humano' : '') }));
+  }
+
+  function diagrama(etapas, datos, vertical) {
+    var svg, g = s('g', {});
+    if (!vertical) {
+      var W = 180, H = 124, paso = 208, y = 16;
+      svg = s('svg', { viewBox: '0 0 1236 290', class: 'diagrama__horizontal', 'aria-hidden': 'true' });
+      etapas.forEach(function (e, i) {
+        var x = 8 + i * paso;
+        caja(g, e, x, y, W, H);
+        if (i < etapas.length - 1) {
+          flecha(g, 'M' + (x + W) + ' ' + (y + H / 2) + ' H' + (x + paso - 2));
+          punta(g, x + paso, y + H / 2, 'der');
+        }
+      });
+      var xd = 8 + 3 * paso, yd = 172, wd = 2 * W + 28;
+      caja(g, datos, xd, yd, wd, 100);
+      var xt = 8 + 5 * paso + W / 2;
+      flecha(g, 'M' + (xd + wd) + ' ' + (yd + 50) + ' H' + xt + ' V' + (y + H + 10), true);
+      punta(g, xt, y + H + 2, 'arriba', true);
+    } else {
+      var Wv = 380, Hv = 112, pasoV = 140, x0 = 20;
+      var alto = 20 + (etapas.length + 1) * pasoV;
+      svg = s('svg', { viewBox: '0 0 420 ' + alto, class: 'diagrama__vertical', 'aria-hidden': 'true' });
+      etapas.forEach(function (e, i) {
+        var yv = 20 + i * pasoV;
+        caja(g, e, x0, yv, Wv, Hv);
+        if (i < etapas.length - 1) {
+          flecha(g, 'M' + (x0 + Wv / 2) + ' ' + (yv + Hv) + ' V' + (yv + pasoV - 2));
+          punta(g, x0 + Wv / 2, yv + pasoV, 'abajo');
+        }
+      });
+      var ydv = 20 + etapas.length * pasoV;
+      caja(g, datos, x0, ydv, Wv, Hv);
+      var yTab = 20 + (etapas.length - 1) * pasoV + Hv;
+      flecha(g, 'M' + (x0 + Wv / 2) + ' ' + ydv + ' V' + (yTab + 10), true);
+      punta(g, x0 + Wv / 2, yTab + 2, 'arriba', true);
+    }
+    svg.appendChild(g);
+    return svg;
+  }
+
   function render(D) {
     var P = D.partido, C = D.corrida, m1 = D.m1, m2 = D.m2, m3 = D.m3, m4 = D.m4, dor = D.dorsales;
     var mon = C.monitores || {};
@@ -101,6 +173,47 @@
 
     if (!D.coincide_partido) document.getElementById('metodo-otra-corrida').hidden = false;
 
+    // 0 · Ficha técnica del MVP ----------------------------------------------
+    host.appendChild(seccion('Ficha técnica del MVP'));
+    host.appendChild(tabla(['Campo', 'Detalle'], [
+      ['Producto', 'MATEO, el MVP de Omnimorph: análisis táctico de video de fútbol con IA y narración en español'],
+      ['Partido', P.titulo + ' · ' + P.competicion],
+      ['Clip analizado', num(P.duracion_s, 0) + ' s · ' + num(m1.frames) + ' cuadros a ' + num(P.fps, 2) + ' fps · transmisión de TV'],
+      ['Percepción', 'Seis modelos de roboflow/sports: líneas del campo, jugadores y balón (YOLOv8), seguimiento (ByteTrack), clasificación por equipo y radar'],
+      ['Motor táctico', 'Homografía suavizada (EMA) · unión de rastros con el algoritmo húngaro · trayectorias Savitzky-Golay · ventanas de ' +
+        num(m2.ventana_s, 1) + ' s'],
+      ['Modelo de lenguaje', (m3.modelo || '—') + ' en IBM watsonx.ai, para el narrador y el chat'],
+      ['Voz', 'Síntesis local (' + (m4.motor_tts || '—') + '), sincronizada con el video'],
+      ['Interfaz', 'Web estática (HTML, CSS y JavaScript) con un servidor local en Python'],
+      ['Gobernanza', num(C.n_total) + ' monitores en cada corrida y registro de cada llamada a Granite'],
+      ['Ejecución', 'Local. IBM watsonx.ai es el único servicio externo'],
+      ['Datos del partido', num(P.n_fuentes) + ' fuentes públicas · ' + (validado ? 'validados por el equipo de análisis' : 'pendientes de validación')],
+      ['Última corrida', (C.fecha ? new Date(C.fecha).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) : '—') +
+        ' · ' + num(C.n_pass) + '/' + num(C.n_total) + ' monitores PASS en ' + num(C.duracion_s, 1) + ' s']
+    ]));
+
+    // 0b · Diagrama de flujo -------------------------------------------------
+    host.appendChild(seccion('Diagrama de flujo'));
+    var etapas = [
+      { t: 'Video', d: ['Transmisión de TV', num(m1.frames) + ' cuadros · ' + num(P.fps, 2) + ' fps'], m: null },
+      { t: 'Percepción', d: ['6 modelos · YOLOv8, ByteTrack', num(m1.filas_jugadores) + ' posiciones'], m: ['M1', mon.M1] },
+      { t: 'Motor táctico', d: [num(m2.ids_crudos) + ' → ' + num(m2.ids_cosidos) + ' rastros', num(m2.n_ventanas) + ' ventanas de ' + num(m2.ventana_s, 1) + ' s'],
+        m: ['M2.0–M2.5', estadoGrupo(mon, 'M2.')] },
+      { t: 'Narrador Granite', d: [(m3.modelo || '—').replace('ibm/', ''), num(m3.llamadas) + ' textos · ' + num(m3.latencia_ms_media, 0) + ' ms'],
+        m: ['M3', mon.M3], ibm: true },
+      { t: 'Voz', d: ['Síntesis local', num(m4.clips) + ' audios · ' + num(m4.desfase_ms_max, 1) + ' ms'], m: ['M4', mon.M4] },
+      { t: 'Tablero', d: ['MATEO · Partido · Método', 'Operaciones'], m: [num(C.n_pass) + '/' + num(C.n_total), C.todos_pass ? 'PASS' : 'FAIL'] }
+    ];
+    var datosPartido = { t: 'Datos del partido', d: [num(P.n_fuentes) + ' fuentes públicas', 'validación humana'],
+      m: ['Datos', validado ? 'VALIDADOS' : 'POR VALIDAR'], humano: true };
+    host.appendChild(el('div', { class: 'diagrama', role: 'img',
+        'aria-label': 'Flujo: ' + etapas.map(function (e) { return e.t; }).join(' → ') +
+          '. Los datos del partido llegan al tablero tras validación humana.' },
+      diagrama(etapas, datosPartido, false), diagrama(etapas, datosPartido, true)));
+    host.appendChild(el('p', { class: 'caption' }, 'Las cifras salen de la última corrida. ',
+      el('a', { href: 'operaciones.html', style: 'text-decoration: underline;',
+        text: 'Ver cada monitor y el consumo del chat en Operaciones →' })));
+
     // 1 · Principios ---------------------------------------------------------
     host.appendChild(seccion('Principios de investigación'));
     host.appendChild(el('div', { class: 'stat-row' },
@@ -113,40 +226,6 @@
       'lo que dicen las fuentes públicas del partido y lo que redacta la IA. Cada una tiene su nivel de confianza ' +
       'y la página lo dice en el lugar donde aparece el dato.',
       'Si un dato no está en ninguna fuente, se muestra «—». No lo completamos con promedios ni con estimaciones.'
-    ]));
-
-    // 2 · Flujo --------------------------------------------------------------
-    host.appendChild(seccion('Flujo de trabajo, de extremo a extremo'));
-    host.appendChild(el('div', { class: 'stat-row' },
-      stat('1 · Video', num(m1.frames), 'cuadros a ' + num(P.fps, 2) + ' fps', false, chip(mon.M1, 'M1')),
-      stat('2 · Motor táctico', num(m2.ids_cosidos), 'rastros, de ' + num(m2.ids_crudos) + ' identificadores', false,
-        chip(estadoGrupo(mon, 'M2.'), 'M2')),
-      stat('3 · Narrador', num(m3.llamadas), 'narraciones de ' + (m3.modelo || '—'), false, chip(mon.M3, 'M3')),
-      stat('4 · Voz', num(m4.clips), 'audios, desfase máximo ' + num(m4.desfase_ms_max, 1) + ' ms', false, chip(mon.M4, 'M4')),
-      stat('5 · Tablero', num(C.n_pass) + '/' + num(C.n_total), 'monitores en ' + num(C.duracion_s, 1) + ' s', false,
-        chip(C.todos_pass ? 'PASS' : 'FAIL', 'Todo'))));
-    host.appendChild(tabla(['Etapa', 'Qué hace', 'Resultado de la corrida'], [
-      ['Video y percepción',
-        'Seis modelos de visión: líneas del campo, jugadores, balón, seguimiento de cada jugador, ' +
-        'clasificación por equipo y proyección al campo.',
-        num(m1.frames) + ' cuadros · ' + num(m1.filas_jugadores) + ' posiciones de jugadores · ' +
-        num(m1.filas_balon) + ' detecciones del balón'],
-      ['Motor táctico',
-        'Lleva cada posición a un campo de 120 × 70 m, une tramos del mismo jugador, suaviza las trayectorias ' +
-        'y resume el juego en ventanas de tiempo.',
-        num(m2.ids_crudos) + ' → ' + num(m2.ids_cosidos) + ' rastros · ' + num(m2.n_ventanas) + ' ventanas de ' +
-        num(m2.ventana_s, 1) + ' s · tope físico ' + num(m2.v_max_mps, 1) + ' m/s'],
-      ['Narrador IBM Granite',
-        'Recibe solo las cifras de cada ventana, nunca el video, y redacta un párrafo en español.',
-        num(m3.pass) + '/' + num(m3.llamadas) + ' llamadas aprobadas · ' + num(m3.latencia_ms_media, 0) +
-        ' ms de media · ' + num(m3.costo_ru, 2) + ' RU'],
-      ['Voz',
-        'Convierte cada párrafo en audio local y lo alinea con el video.',
-        num(m4.clips) + ' audios · desfase máximo ' + num(m4.desfase_ms_max, 1) + ' ms (límite ' +
-        num(m4.desfase_ms_limite, 0) + ' ms)'],
-      ['Tablero',
-        'Publica el video, el radar, la narración y los datos del partido en esta web.',
-        num(C.n_pass) + ' de ' + num(C.n_total) + ' monitores en PASS · corrida de ' + num(C.duracion_s, 1) + ' s']
     ]));
 
     // 3 · Niveles de confianza -----------------------------------------------

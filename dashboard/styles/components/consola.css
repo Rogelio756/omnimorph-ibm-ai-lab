@@ -1,0 +1,166 @@
+/* components/consola.css — Página Operaciones: tarjetas de monitores, terminal y diagrama de Método.
+   Solo usa tokens de tokens.css. */
+
+/* ── Franja de servicios ─────────────────────────────────────────────── */
+.servicios {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-bottom: var(--border);
+}
+
+.servicios__hora {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}
+
+/* ── Tarjetas de monitores ───────────────────────────────────────────── */
+.monitores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  border-bottom: var(--border);
+}
+
+.monitor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-right: var(--border);
+  border-bottom: var(--border);
+  min-width: 0;
+}
+
+.monitor__cab {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.monitor__id {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: var(--ls-label);
+  color: var(--color-text-soft);
+}
+
+.monitor__nombre {
+  font-family: var(--font-headline);
+  font-weight: var(--font-weight-medium);
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.monitor__check {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px var(--space-2);
+  font-size: 13px;
+}
+
+.monitor__check-desc { color: var(--color-text-soft); }
+
+.monitor__check-val {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.monitor__check--fail .monitor__check-val { color: var(--color-alert); }
+
+.monitor__barra {
+  grid-column: 1 / -1;
+  height: 4px;
+  background-color: var(--color-border);
+}
+
+.monitor__barra > span {
+  display: block;
+  height: 100%;
+  background-color: var(--color-ok);
+}
+
+.monitor__check--fail .monitor__barra > span { background-color: var(--color-alert); }
+
+/* ── Terminal ────────────────────────────────────────────────────────── */
+.terminal {
+  margin: var(--cell-padding-y) var(--cell-padding-x);
+  border: var(--border);
+  border-radius: var(--radius-card);
+  background-color: var(--color-bg-deep);
+  overflow: hidden;
+}
+
+.terminal__barra {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+}
+
+.terminal__barra .chip__dot { margin-right: 0; }
+
+.terminal__cuerpo {
+  max-height: 340px;
+  overflow: auto;
+  padding: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.terminal__linea--granite { color: var(--color-text); }
+.terminal__linea--regla { color: var(--color-text-soft); }
+.terminal__linea--alerta { color: var(--color-alert); }
+.terminal__linea--info { color: var(--color-ok); }
+
+.terminal__pregunta { color: var(--color-text-soft); }
+
+/* ── Diagrama de flujo (Método) ──────────────────────────────────────── */
+.diagrama {
+  padding: var(--cell-padding-y) var(--cell-padding-x);
+  border-bottom: var(--border);
+}
+
+.diagrama svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.diagrama .diagrama__vertical { display: none; }
+
+@media (max-width: 900px) {
+  .diagrama .diagrama__horizontal { display: none; }
+  .diagrama .diagrama__vertical { display: block; max-width: 420px; margin: 0 auto; }
+}
+
+.diagrama .caja { fill: var(--color-surface); stroke: var(--color-border); stroke-width: 1.5; }
+.diagrama .caja--ibm { stroke: var(--color-ok); }
+.diagrama .caja--humano { stroke: var(--color-warn); stroke-dasharray: 5 4; }
+.diagrama .titulo { fill: var(--color-text); font-family: var(--font-headline); font-size: 15px; font-weight: 500; }
+.diagrama .dato { fill: var(--color-text-soft); font-family: var(--font-ui); font-size: 12px; }
+.diagrama .monitor-ok { fill: var(--color-ok); font-family: var(--font-mono); font-size: 11px; }
+.diagrama .monitor-fail { fill: var(--color-alert); font-family: var(--font-mono); font-size: 11px; }
+.diagrama .flecha { stroke: var(--color-text-soft); stroke-width: 1.5; fill: none; }
+.diagrama .flecha--humano { stroke: var(--color-warn); stroke-dasharray: 5 4; }
+.diagrama .punta { fill: var(--color-text-soft); }
+.diagrama .punta--humano { fill: var(--color-warn); }
+
+/* Chips largos (región y latencia) se parten en móvil en vez de desbordar */
+.servicios .chip {
+  max-width: 100%;
+  white-space: normal;
+  height: auto;
+  min-height: 28px;
+}

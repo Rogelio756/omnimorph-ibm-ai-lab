@@ -10,6 +10,9 @@ seek regresan a 0. Este servidor sí lo soporta y no tiene dependencias externas
 Además expone el chatbot táctico (ibm/granite-4-h-small):
     POST /api/chat          {"pregunta": "...", "historial": [{"role", "content"}]}
     GET  /api/chat/estado   {"estado": "cargando|listo|no_disponible|desactivado", ...}
+Y la página Operaciones (también solo local):
+    GET  /api/operaciones/chat   últimas llamadas del chat y totales de tokens y RU
+    GET  /api/operaciones/ibm    IBM Cloud IAM y watsonx.ai sin generar texto (0 RU); ?forzar=1
 El endpoint gasta cuota de watsonx.ai, así que solo atiende conexiones locales
 (127.0.0.1 / ::1), exige Host y Origin locales, limita las peticiones por minuto y
 el tamaño del cuerpo. Si no hay credenciales o SDK, el resto del tablero funciona igual.
@@ -154,6 +157,151 @@ class ChatBackend:
 CHAT = ChatBackend()
 
 
+# ---------------------------------------------------------------------------
+# Operaciones: consumo del chat y conexión con IBM (página Operaciones)
+# ---------------------------------------------------------------------------
+CHAT_AUDIT = os.path.join(PROJECT_ROOT, "data", "clean", "chat_audit.jsonl")
+IAM_URL = "https://iam.cloud.ibm.com/identity/token"
+MODELO_GRANITE = "ibm/granite-4-h-small"
+CACHE_IBM_S = 60
+MIN_ENTRE_COMPROBACIONES_S = 10
+
+
+def resumen_chat(ultimas: int = 15) -> dict:
+    """Últimas llamadas del chat y totales, desde chat_audit.jsonl. Sin respuestas ni contexto."""
+    from datetime import date, datetime
+
+    registros = []
+    if os.path.exists(CHAT_AUDIT):
+        with open(CHAT_AUDIT, encoding="utf-8") as f:
+            for linea in f:
+                try:
+                    registros.append(json.loads(linea))
+                except ValueError:
+                    continue
+
+    def totales(regs: list) -> dict:
+        granite = [r for r in regs if r.get("origen") == "granite"]
+        lat = [r["latency_ms"] for r in granite if r.get("latency_ms")]
+        return {
+            "preguntas": len(regs),
+            "por_regla": sum(1 for r in regs if r.get("origen") == "regla"),
+            "a_granite": len(granite),
+            "bloqueadas": sum(1 for r in regs if r.get("bloqueada")),
+            "errores": sum(1 for r in regs if r.get("error")),
+            "tokens_in": sum(r.get("tokens_in") or 0 for r in granite),
+            "tokens_out": sum(r.get("tokens_out") or 0 for r in granite),
+            "ru": round(sum(r.get("cost_ru_est") or 0 for r in granite), 4),
+            "latencia_ms_media": round(sum(lat) / len(lat), 1) if lat else None,
+        }
+
+    hoy = date.today()
+
+    def es_hoy(r: dict) -> bool:
+        try:
+            return datetime.fromisoformat(r["timestamp"]).astimezone().date() == hoy
+        except (KeyError, ValueError):
+            return False
+
+    entradas = []
+    for r in registros[-ultimas:]:
+        pregunta = str(r.get("pregunta") or "")
+        entradas.append({
+            "timestamp": r.get("timestamp"),
+            "origen": r.get("origen"),
+            "modelo": r.get("model"),
+            "pregunta": pregunta[:80] + ("…" if len(pregunta) > 80 else ""),
+            "tokens_in": r.get("tokens_in"),
+            "tokens_out": r.get("tokens_out"),
+            "latency_ms": r.get("latency_ms"),
+            "primer_token_ms": r.get("primer_token_ms"),
+            "ru": r.get("cost_ru_est"),
+            "status": r.get("status"),
+            "bloqueada": bool(r.get("bloqueada")),
+            "error": bool(r.get("error")),
+        })
+    return {
+        "entradas": entradas,
+        "hoy": totales([r for r in registros if es_hoy(r)]),
+        "historico": totales(registros),
+    }
+
+
+class EstadoIBM:
+    """Comprueba IBM Cloud IAM y watsonx.ai sin generar texto (0 RU). Nunca devuelve la clave ni el token."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._ultimo: dict | None = None
+        self._t = 0.0
+
+    @staticmethod
+    def _credenciales() -> tuple[str, str]:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(os.path.join(PROJECT_ROOT, ".env"))
+        except ImportError:
+            pass
+        return (os.environ.get("IBM_CLOUD_API_KEY", "").strip(),
+                os.environ.get("WATSONX_URL", "").strip().rstrip("/"))
+
+    @staticmethod
+    def _peticion(req) -> tuple[bool, float, object]:
+        import urllib.request
+        inicio = time.perf_counter()
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            cuerpo = json.loads(resp.read().decode("utf-8"))
+        return True, round((time.perf_counter() - inicio) * 1000, 1), cuerpo
+
+    def _comprobar(self) -> dict:
+        import urllib.parse
+        import urllib.request
+
+        clave, url = self._credenciales()
+        iam = {"ok": False, "motivo": "sin credenciales en .env"}
+        if clave:
+            try:
+                datos = urllib.parse.urlencode({
+                    "grant_type": "urn:ibm:params:oauth:grant-type:apikey", "apikey": clave}).encode()
+                req = urllib.request.Request(IAM_URL, data=datos, method="POST", headers={
+                    "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"})
+                ok, ms, cuerpo = self._peticion(req)
+                iam = {"ok": ok and bool(cuerpo.get("access_token")), "ms": ms}
+            except Exception as exc:  # sin red, clave inválida, etc.: solo el tipo de error
+                iam = {"ok": False, "motivo": type(exc).__name__}
+
+        wx = {"ok": False, "motivo": "sin WATSONX_URL en .env"}
+        if url:
+            try:
+                q = urllib.parse.urlencode({"version": "2024-05-01", "filters": "modelid_" + MODELO_GRANITE})
+                req = urllib.request.Request(f"{url}/ml/v1/foundation_model_specs?{q}",
+                                             headers={"Accept": "application/json"})
+                ok, ms, cuerpo = self._peticion(req)
+                disponible = any(r.get("model_id") == MODELO_GRANITE for r in cuerpo.get("resources", []))
+                wx = {"ok": disponible, "ms": ms, "region": urllib.parse.urlparse(url).netloc,
+                      "modelo": MODELO_GRANITE,
+                      **({} if disponible else {"motivo": "modelo no listado en la región"})}
+            except Exception as exc:
+                wx = {"ok": False, "motivo": type(exc).__name__}
+
+        return {"comprobado": time.time(), "iam": iam, "watsonx": wx}
+
+    def estado(self, forzar: bool = False) -> dict:
+        with self._lock:
+            edad = time.time() - self._t
+            if self._ultimo is None or edad > CACHE_IBM_S or (forzar and edad > MIN_ENTRE_COMPROBACIONES_S):
+                self._ultimo = self._comprobar()
+                self._t = time.time()
+            ultimo = dict(self._ultimo)
+        chat = CHAT.info()
+        ultimo["chat"] = {"estado": chat["estado"], "motivo": chat["motivo"], "modelo": chat["modelo"]}
+        ultimo["orchestrate"] = {"estado": "probado", "nota": "Integración probada en desarrollo · sin comprobación en vivo"}
+        return ultimo
+
+
+IBM = EstadoIBM()
+
+
 def _historial_valido(crudo) -> list:
     """Solo mensajes {role: user|assistant, content: str}; el resto se descarta."""
     if not isinstance(crudo, list):
@@ -256,6 +404,13 @@ class RangeHandler(SimpleHTTPRequestHandler):
             if not self._origen_local():
                 return self._json(403, {"error": "solo_local"})
             return self._json(200, CHAT.info())
+        ruta = self.path.split("?")[0]
+        if ruta in ("/api/operaciones/chat", "/api/operaciones/ibm"):
+            if not self._origen_local():
+                return self._json(403, {"error": "solo_local"})
+            if ruta.endswith("/chat"):
+                return self._json(200, resumen_chat())
+            return self._json(200, IBM.estado(forzar="forzar=1" in self.path))
         if self.path in ("/", ""):
             self.send_response(302)
             self.send_header("Location", "/pages/index.html")

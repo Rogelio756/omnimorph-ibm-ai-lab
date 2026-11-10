@@ -327,6 +327,113 @@ def export_partido() -> None:
     print(f"[OK] {out}  ({out.stat().st_size / 1024:.0f} KB){extra}")
 
 
+# Nombres en español de los monitores (AGENTS.md §5) y de los campos de M2, para la página Operaciones
+NOMBRES_MONITOR = {
+    "M1": "Percepción y dataset",
+    "M2.0": "Separación jugadores/balón y equipo",
+    "M2.1": "Homografía EMA",
+    "M2.2": "Unión de rastros (algoritmo húngaro)",
+    "M2.3": "Cinemática Savitzky-Golay",
+    "M2.4": "Ventanas tácticas",
+    "M2.5": "Integridad del pipeline",
+    "M3": "Auditoría de IBM Granite",
+    "M4": "Sincronización de voz y tablero",
+}
+ETIQUETAS_M2 = {
+    "n_track_rows": "Filas de jugadores", "n_ball_rows": "Filas de balón",
+    "n_unique_track_ids": "Identificadores de rastro", "team_map_entries": "Rastros con equipo asignado",
+    "homography_raw_valid_rate": "Homografía calculada (cruda)",
+    "homography_ema_valid_rate": "Homografía calculada (suavizada EMA)",
+    "has_H_ema": "Matriz suavizada presente", "has_H_norm": "Matriz normalizada presente",
+    "n_original_ids": "Identificadores antes de unir", "n_stitched_ids": "Identificadores después de unir",
+    "reduction": "Identificadores unidos", "ids_simultaneos": "Identificadores repetidos en un mismo cuadro",
+    "v_clipped_in_range_rate": "Velocidades dentro del tope", "n_in_range": "Muestras dentro del tope",
+    "n_total": "Muestras totales", "v_max_clipped_mps": "Tope físico (m/s)",
+    "has_smooth_coordinates": "Coordenadas suavizadas presentes", "n_windows": "Ventanas generadas",
+    "has_cleaned_data": "Datos limpios presentes", "has_velocity": "Velocidad calculada",
+    "n_tactical_windows": "Ventanas tácticas",
+}
+
+
+def _check(descripcion, observado, limite=None, ok=True, unidad="") -> dict:
+    return {"descripcion": descripcion, "observado": observado, "limite": limite, "unidad": unidad, "pass": bool(ok)}
+
+
+def monitores_detalle(m1: dict, m2: dict, m3: dict, m4: dict, estados: dict) -> list:
+    """Normaliza los monitores de la última corrida a {id, nombre, estado, checks[]}.
+
+    Cada monitor guarda su JSON con otra forma (checks, details o summary). Aquí no se inventa
+    ningún umbral: si el monitor no guarda límite, `limite` es None.
+    """
+    salida = []
+    c1 = m1.get("checks", {})
+    fr, hv = c1.get("frames_total", {}), c1.get("homography_valid_rate", {})
+    salida.append({"id": "M1", "checks": [
+        _check("Cuadros en el dataset", fr.get("observed"), fr.get("expected"), fr.get("pass"), "mín."),
+        _check("Cuadros con homografía calculada", round(100 * hv.get("observed_rate", 0), 1), 95, hv.get("pass"), "% mín."),
+        _check("Filas de jugadores", c1.get("source_track_present", {}).get("observed_count"), None,
+               c1.get("source_track_present", {}).get("pass")),
+        _check("Filas de balón", c1.get("source_ball_present", {}).get("observed_count"), None,
+               c1.get("source_ball_present", {}).get("pass")),
+    ]})
+
+    for mid, chk in m2.get("checks", {}).items():
+        det = chk.get("details", {}) or {}
+        filas = []
+        for k, v in det.items():
+            if isinstance(v, (list, dict)):
+                continue
+            if k == "expected":
+                continue
+            etiqueta = ETIQUETAS_M2.get(k, k)
+            limite, unidad = None, ""
+            if k.endswith("_rate"):
+                v = round(100 * float(v), 1)
+                etiqueta += " (%)"
+            if k == "n_windows":
+                limite, unidad = det.get("expected"), "de"
+            if k == "ids_simultaneos":
+                limite = 0
+            filas.append(_check(etiqueta, v, limite, chk.get("pass"), unidad))
+        salida.append({"id": mid, "checks": filas})
+
+    # M3: agrega las comprobaciones de cada llamada registradas en governance_audit.jsonl
+    llamadas = []
+    audit = CLEAN / "governance_audit.jsonl"
+    if audit.exists():
+        with open(audit, encoding="utf-8") as f:
+            llamadas = [json.loads(l) for l in f if l.strip()]
+    n = len(llamadas)
+    def cuantas(nombre):
+        return sum(1 for c in llamadas if c.get("checks", {}).get(nombre, {}).get("pass"))
+    palabras = [c.get("checks", {}).get("narration_length", {}).get("word_count") for c in llamadas]
+    palabras = [p for p in palabras if p is not None]
+    max_pal = llamadas[0].get("checks", {}).get("narration_length", {}).get("max_allowed") if llamadas else None
+    s3 = m3.get("summary", {})
+    salida.append({"id": "M3", "checks": [
+        _check("Llamadas con modelo IBM Granite autorizado", cuantas("model_id"), n, cuantas("model_id") == n, "de"),
+        _check("Respuestas con formato JSON válido", cuantas("json_format"), n, cuantas("json_format") == n, "de"),
+        _check("Palabras de la narración más larga", max(palabras) if palabras else None, max_pal,
+               cuantas("narration_length") == n, "máx."),
+        _check("Equipo dominante coherente con los datos", cuantas("anti_hallucination"), n,
+               cuantas("anti_hallucination") == n, "de"),
+        _check("Llamadas sin conexión (modo offline)", s3.get("offline_calls"), 0, s3.get("offline_calls") == 0),
+    ]})
+
+    c4 = m4.get("checks", {})
+    fg, du, co = c4.get("files_generated", {}), c4.get("duration_within_limit", {}), c4.get("clock_offset", {})
+    salida.append({"id": "M4", "checks": [
+        _check("Audios generados", fg.get("observed"), fg.get("expected"), fg.get("pass"), "de"),
+        _check("Duración del audio más largo (s)", du.get("max_observed_s"), du.get("limit_s"), du.get("pass"), "máx."),
+        _check("Desfase de reloj máximo (ms)", co.get("max_observed_ms"), co.get("limit_ms"), co.get("pass"), "máx."),
+    ]})
+
+    for m in salida:
+        m["nombre"] = NOMBRES_MONITOR.get(m["id"], m["id"])
+        m["estado"] = estados.get(m["id"], "—")
+    return salida
+
+
 def export_metodo() -> None:
     """
     Exporta dashboard/data/metodo.json: las cifras reales de la última corrida del pipeline
@@ -430,6 +537,7 @@ def export_metodo() -> None:
             "desfase_ms_limite": c4.get("clock_offset", {}).get("limit_ms"),
         },
         "dorsales": dorsales,
+        "monitores_detalle": monitores_detalle(m1, m2, m3, m4, estados),
     }
     out = OUT_DATA / "metodo.json"
     with open(out, "w", encoding="utf-8") as f:

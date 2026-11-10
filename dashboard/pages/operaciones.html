@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MATEO — Operaciones: monitores de la última corrida, consumo del chat y conexión con IBM">
+  <title>MATEO — Operaciones</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/components/pill-button.css">
+  <link rel="stylesheet" href="../styles/components/status-chips.css">
+  <link rel="stylesheet" href="../styles/components/site-header.css">
+  <link rel="stylesheet" href="../styles/components/site-credit.css">
+  <link rel="stylesheet" href="../styles/components/site-nav.css">
+  <link rel="stylesheet" href="../styles/components/tabs.css">
+  <link rel="stylesheet" href="../styles/components/match-hub.css">
+  <link rel="stylesheet" href="../styles/components/consola.css">
+  <link rel="stylesheet" href="../styles/components/chat.css">
+  <link rel="stylesheet" href="../styles/components/chat-widget.css">
+  <link rel="stylesheet" href="../styles/components/transicion.css">
+  <script src="../components/transicion.js"></script>
+</head>
+<body class="page-hub">
+
+  <header class="site-header" role="banner">
+    <div class="site-header__brand">
+      <img class="brand-cubo" src="../assets/logos/web/omnimorph-cubo.png" alt="">
+      <div class="site-header__titles">
+        <span class="site-header__name">OMNIMORPH</span>
+        <span class="site-header__subtitle">MATEO · Operaciones</span>
+      </div>
+    </div>
+    <div class="site-header__sep" aria-hidden="true"></div>
+    <div class="site-header__chips">
+      <span class="chip" id="op-chip"><span class="chip__dot"></span><span id="op-chip-texto">—</span></span>
+    </div>
+    <nav id="site-nav" class="site-nav" aria-label="Navegación principal"></nav>
+  </header>
+
+  <main class="hub">
+    <section class="hub-title">
+      <h1>Operaciones</h1>
+      <p id="op-subtitulo">Monitores · consumo del chat · conexión con IBM</p>
+    </section>
+
+    <div class="notice notice--alert" id="data-error" hidden>
+      <span class="notice__tag">Sin datos</span>
+      <span>No se pudo cargar <code>data/metodo.json</code>. Ejecuta
+        <code>python scripts/export_dashboard_data.py --solo-partido</code>.</span>
+    </div>
+
+    <div class="section-label">Servicios</div>
+    <div class="servicios" id="servicios" aria-live="polite"></div>
+
+    <div class="section-label" id="monitores-titulo">Monitores de la última corrida</div>
+    <div class="monitores" id="monitores"></div>
+
+    <div class="section-label">Terminal · consumo del chat con IBM Granite</div>
+    <div class="terminal" role="log" aria-live="polite" aria-label="Registro de llamadas del chat">
+      <div class="terminal__barra">
+        <span class="chip__dot" id="term-punto"></span>
+        <span id="term-estado">conectando…</span>
+      </div>
+      <div class="terminal__cuerpo" id="terminal" tabindex="0"></div>
+    </div>
+    <div class="stat-row" id="totales"></div>
+    <p class="caption">El chat responde algunas preguntas con reglas sobre los datos, sin llamar al modelo (0 RU).
+      Los RU son una estimación con las tarifas por token del monitor M3. Las preguntas se muestran recortadas;
+      las respuestas no se registran aquí.</p>
+
+    <div class="section-label">Narrador · última corrida del pipeline</div>
+    <div class="stat-row" id="narrador"></div>
+  </main>
+
+  <footer class="site-credit" role="contentinfo">
+    <p class="site-credit__text">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab</p>
+  </footer>
+
+  <script src="../components/site-nav.js"></script>
+  <script src="../components/chat-widget.js"></script>
+  <script src="../components/chat.js"></script>
+  <script src="../components/operaciones.js"></script>
+</body>
+</html>
