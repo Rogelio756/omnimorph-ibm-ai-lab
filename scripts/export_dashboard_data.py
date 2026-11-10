@@ -9,6 +9,7 @@ al frontend estático `dashboard/`, dejándolo AUTOCONTENIDO para:
 
 Salidas:
   dashboard/data/mateo_data.json   ← JSON compacto que consume pages/mateo.html
+  dashboard/data/metodo.json       ← cifras de los monitores para pages/metodo.html
   dashboard/media/*.mp4|.wav|.vtt  ← videos H.264, audio maestro TTS y subtítulos
 
 Uso:
@@ -303,6 +304,117 @@ def export_partido() -> None:
     print(f"[OK] {out}  ({out.stat().st_size / 1024:.0f} KB){extra}")
 
 
+def export_metodo() -> None:
+    """
+    Exporta dashboard/data/metodo.json: las cifras reales de la última corrida del pipeline
+    (monitores M1–M4) para la página Método. La página no escribe ninguna cifra a mano.
+
+    data/clean/ guarda solo la última corrida. Si sus frames no coinciden con el partido
+    activo, `coincide_partido` es false y la página lo avisa en vez de mezclar partidos.
+    """
+    def leer(nombre: str) -> dict:
+        p = CLEAN / nombre
+        return _load_json(p) if p.exists() else {}
+
+    resumen = leer("pipeline_summary.json")
+    m1, m2, m3, m4 = (leer(f"monitor_m{i}.json") for i in (1, 2, 3, 4))
+    c1 = m1.get("checks", {})
+    c2 = {k: v.get("details", {}) for k, v in m2.get("checks", {}).items()}
+    s3 = m3.get("summary", {})
+    c4 = m4.get("checks", {})
+    tactical = leer("tactical_summaries.json") or []
+    ventana_s = None
+    if tactical:
+        ventana_s = round(float(tactical[0]["t1"]) - float(tactical[0]["t0"]), 2)
+
+    # Límite de palabras que aplicó M3, tal como quedó en el registro de auditoría
+    max_palabras = None
+    audit = CLEAN / "governance_audit.jsonl"
+    if audit.exists():
+        with open(audit, encoding="utf-8") as f:
+            for linea in f:
+                if linea.strip():
+                    max_palabras = (json.loads(linea).get("checks", {})
+                                    .get("narration_length", {}).get("max_allowed"))
+                    break
+
+    frames_corrida = c1.get("frames_total", {}).get("observed")
+    estados = resumen.get("monitor_results", {})
+
+    contexto_p = PARTIDO_SRC / "partido" / "contexto_partido.json"
+    validado = None
+    n_fuentes = 0
+    if contexto_p.exists():
+        proc = _load_json(contexto_p).get("procedencia")
+        validado = bool(proc.get("validado", True)) if isinstance(proc, dict) else True
+        n_fuentes = len(proc.get("fuentes", [])) if isinstance(proc, dict) else 0
+
+    dorsales = {"jugadores": 0, "rastros": 0, "validado": None}
+    for nombre, val in (("rastros_dorsales.json", True), ("rastros_dorsales_borrador.json", False)):
+        ruta = PARTIDO_SRC / nombre
+        if ruta.exists():
+            asignados = _load_json(ruta).get("asignados", [])
+            dorsales = {
+                "jugadores": len(asignados),
+                "rastros": sum(len(a.get("rastros", [])) for a in asignados),
+                "validado": val,
+            }
+            break
+
+    data = {
+        "partido": {
+            "id": PARTIDO.id, "titulo": PARTIDO.titulo, "competicion": PARTIDO.competicion,
+            "fps": PARTIDO.fps, "n_frames": PARTIDO.n_frames,
+            "duracion_s": round(PARTIDO.n_frames / PARTIDO.fps, 1),
+            "datos_validados": validado, "n_fuentes": n_fuentes,
+        },
+        "coincide_partido": frames_corrida == PARTIDO.n_frames,
+        "corrida": {
+            "fecha": resumen.get("timestamp"),
+            "duracion_s": resumen.get("elapsed_s"),
+            "todos_pass": resumen.get("all_pass"),
+            "monitores": estados,
+            "n_pass": sum(1 for v in estados.values() if v == "PASS"),
+            "n_total": len(estados),
+        },
+        "m1": {
+            "frames": frames_corrida,
+            "filas_jugadores": c1.get("source_track_present", {}).get("observed_count"),
+            "filas_balon": c1.get("source_ball_present", {}).get("observed_count"),
+            "homografia_calculada_pct": round(100 * c1.get("homography_valid_rate", {}).get("observed_rate", 0), 1),
+        },
+        "m2": {
+            "ids_crudos": c2.get("M2.2", {}).get("n_original_ids"),
+            "ids_cosidos": c2.get("M2.2", {}).get("n_stitched_ids"),
+            "v_max_mps": c2.get("M2.3", {}).get("v_max_clipped_mps"),
+            "n_ventanas": c2.get("M2.4", {}).get("n_windows"),
+            "ventana_s": ventana_s,
+        },
+        "m3": {
+            "modelo": s3.get("model_used"),
+            "llamadas": s3.get("total_calls"),
+            "pass": s3.get("passed_calls"),
+            "offline": s3.get("offline_calls"),
+            "latencia_ms_media": s3.get("latency_ms_mean"),
+            "latencia_ms_max": s3.get("latency_ms_max"),
+            "costo_ru": s3.get("total_cost_ru_est"),
+            "max_palabras": max_palabras,
+        },
+        "m4": {
+            "motor_tts": m4.get("engine_used"),
+            "clips": c4.get("files_generated", {}).get("observed"),
+            "desfase_ms_max": c4.get("clock_offset", {}).get("max_observed_ms"),
+            "desfase_ms_limite": c4.get("clock_offset", {}).get("limit_ms"),
+        },
+        "dorsales": dorsales,
+    }
+    out = OUT_DATA / "metodo.json"
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+    aviso = "" if data["coincide_partido"] else "  (AVISO: data/clean es de otro partido)"
+    print(f"[OK] {out}{aviso}")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-media", action="store_true", help="No copiar videos/audio")
@@ -312,6 +424,7 @@ def main() -> None:
 
     OUT_DATA.mkdir(parents=True, exist_ok=True)
     export_partido()
+    export_metodo()
     if args.solo_partido:
         return
 

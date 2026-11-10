@@ -32,6 +32,9 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_15_dorsales_bob.md` | 2026-11-10 | Experimento de reconocimiento de dorsales con dataset de Roboflow (4,114 imgs, CC BY 4.0). YOLOv8n-cls: 84.3 % original / 69.2 % degradado. Cobertura en clip TV 720p: 0/20 rastros. Conclusión: no sirve en transmisión TV; propuesta IBM Granite Vision (IBM Bob) |
 | `sesion_16_identificacion_manual_dorsales.md` | 2026-11-09 | Revisión del experimento de Bob (el modelo falla, el video sí deja leer dorsales), identificación manual de 10 jugadores en 13 rastros y nombres "por validar" en MATEO |
 | `sesion_17_pagina_partido_gemini.md` | 2026-11-09 | Conversión de plantilla a JSON (`contexto_partido`, `estadisticas_partido`, `cronologia_goles`), generalización de `export_partido()`, `partido.js`, `fichero.js` y `partido.html` para mostrar Costa Rica vs. SKN y verificación en navegador (Gemini) |
+| `sesion_18_propuesta_pagina_metodo_bob.md` | 2026-11-09 | Propuesta de Bob (modo Ask) para una página "Método" ante un club profesional, con la tabla de correcciones de cifras de Claude Code |
+| `sesion_19_pagina_metodo.md` | 2026-11-09 | Página "Método" (principios, flujo con monitores, niveles de confianza, límites y gobernanza) con todas las cifras exportadas de los monitores en `metodo.json` |
+| `sesion_20_requerimientos_y_mejoras.md` | 2026-11-10 | Auditoría de requerimientos y plan de mejora: 28 reqs, 6 Sugeridos, matriz de cumplimiento 9/9 PASS, plan antes/después de la demo con 6 mejoras priorizadas (IBM Bob, modo Plan). Revisión de Claude Code: el riesgo del SYSTEM_PROMPT de Brasil ya estaba cubierto por la protección `chat_datos_completos` (commit 9cd476f) |
 
 ---
 

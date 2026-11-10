@@ -10,6 +10,7 @@
     ['Inicio', 'index.html'],
     ['MATEO', 'mateo.html'],
     ['Partido', 'partido.html'],
+    ['Método', 'metodo.html'],
   ];
 
   var host = document.getElementById('site-nav');
