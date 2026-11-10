@@ -84,6 +84,28 @@
     return claves.every(function (k) { return mon[k] === 'PASS'; }) ? 'PASS' : 'FAIL';
   }
 
+  /** Franja de logos IBM (mismo componente que la portada), desde logos.manifest.json. */
+  function logosIBM() {
+    var franja = el('section', { class: 'powered-by', 'aria-label': 'Tecnología de IBM en el MVP' },
+      el('span', { class: 'powered-by__label', text: 'Tecnología de IBM en el MVP' }));
+    var cont = el('div', { class: 'powered-by__logos' });
+    franja.appendChild(cont);
+    fetch('../assets/logos/logos.manifest.json')
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (manifest) {
+        manifest.logos
+          .filter(function (l) { return l.id.indexOf('ibm') === 0 && !(l.status && l.status.indexOf('PENDING') === 0); })
+          .forEach(function (logo) {
+            var img = el('img', { src: '../assets/logos/' + logo.file, alt: logo.label ? '' : logo.alt });
+            img.style.height = logo.height + 'px';
+            cont.appendChild(el('span', { class: 'powered-by__logo-item' }, img,
+              logo.label ? el('span', { class: 'powered-by__logo-name', text: logo.label }) : null));
+          });
+      })
+      .catch(function () { franja.hidden = true; });
+    return franja;
+  }
+
   // ── Diagrama de flujo en SVG (horizontal en escritorio, vertical en móvil) ──
   var NS = 'http://www.w3.org/2000/svg';
   function s(tag, attrs, texto) {
@@ -191,6 +213,8 @@
       ['Última corrida', (C.fecha ? new Date(C.fecha).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) : '—') +
         ' · ' + num(C.n_pass) + '/' + num(C.n_total) + ' monitores PASS en ' + num(C.duracion_s, 1) + ' s']
     ]));
+
+    host.appendChild(logosIBM());
 
     // 0b · Diagrama de flujo -------------------------------------------------
     host.appendChild(seccion('Diagrama de flujo'));

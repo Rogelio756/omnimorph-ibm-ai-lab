@@ -75,3 +75,7 @@ Las dos rutas nuevas son solo locales, igual que el chat:
 ## 4. Hallazgo
 
 `monitor_m2.json` llama al M2.4 "Ventanas Tácticas de 4.0 s", pero las ventanas reales duran 4.5 s (`tactical_summaries.json`). La página muestra el nombre en español sin la duración, para no repetir el dato equivocado. Falta corregir ese texto en el monitor del engine.
+
+## 5. Añadido: logos de IBM en la ficha técnica
+
+A pedido del usuario, la ficha técnica de Método lleva debajo la franja "Tecnología de IBM en el MVP": IBM, IBM Granite, IBM watsonx Orchestrate e IBM Bob. Usa el mismo componente de la portada (`powered-by.css`) y lee los logos de `assets/logos/logos.manifest.json` (entradas `ibm-*`), así que no hay rutas escritas a mano. Se verificó a 1009 px y a 375 px: los 4 logos cargan y no hay scroll horizontal.
