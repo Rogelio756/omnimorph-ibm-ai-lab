@@ -34,8 +34,8 @@ Se generaron los tres archivos estructurados en `data/partidos/costa_rica_skn_el
   - Eliminado `EQUIPOS` escrito a mano y las referencias fijas a Brasil, Alemania, Müller y Mineirão.
   - Aplicación dinámica de `--color-team-a` y `--color-team-b` desde `D.colores` y `D.equipos_orden`.
   - Construcción dinámica de las pestañas según los datos disponibles: `Ficha previa`, `Fichero`, `Comparativa` (muestra una única columna `Total` por selección y gráfico de barras `Total` cuando 1T y 2T son `null`), `Los 4 goles` (sin mapa SVG cuando no hay coordenadas) y ocultación automática de la pestaña `muller` cuando `D.gol_muller` no existe.
-  - Aviso superior de calidad (`#hub-calidad`): cuando `D.validado === false`, muestra *"Datos públicos recopilados por IA con sus fuentes, pendientes de validación por el equipo de análisis."* con enlace interactivo a la lista desplegable de las 15 fuentes (`#fuentes-partido`) en `Ficha previa`.
-  - Imagen del estadio: se omitió en Costa Rica por no contar con descarga de archivo libre en el entorno aislado (`dashboard/assets/estadio/`), conservando `mineirao.jpg` con su crédito para Brasil.
+  - Aviso superior de calidad (`#hub-calidad`): cuando `D.validado === false`, muestra *"Datos públicos recopilados por IA con sus fuentes, pendientes de validación por el equipo de análisis."* con enlace interactivo a la lista desplegable de las 16 fuentes (`#fuentes-partido`) en `Ficha previa`.
+  - Imagen del estadio y clima (a solicitud del usuario): se incorporó `dashboard/assets/estadio/estadio_nacional_cr.jpg` (documentado en `dashboard/assets/estadio/README.md`) con el banner estilo FIFA del **Estadio Nacional de Costa Rica** (`San José, Costa Rica · Parque Metropolitano La Sabana`) al inicio de `Ficha previa`, y las condiciones meteorológicas históricas de la noche del 2024-06-06 en San José (`20 °C`, `Nublado (lluvia previa) · humedad 88% · viento 11 km/h`, fuente `F16`).
 - **`dashboard/components/fichero.js`:**
   - Eliminado `EQUIPOS` fijo y estado inicial `equipo: 'brasil'`; ahora usa `datos.equipos_orden` (seleccionando inicialmente `equipos_orden[0]`, es decir, `San Cristóbal y Nieves` en Costa Rica y `Brasil` en Brasil).
   - Añadida la insignia `"Visto en el clip"` para los 10 jugadores identificados en `rastros_dorsales_borrador.json` (7 de Costa Rica y 3 de San Cristóbal y Nieves).
@@ -49,7 +49,6 @@ Se generaron los tres archivos estructurados en `data/partidos/costa_rica_skn_el
 Siguiendo la regla estricta de no estimar ni completar ningún dato ausente en las fuentes públicas:
 
 1. **`contexto_partido.json`:**
-   - `partido_info.condiciones_climaticas`: `null` (clima nocturno no reportado en actas públicas).
    - `partido_info.resultado.clasificado`: `null` (partido de fase de grupos, Jornada 1).
 2. **`estadisticas_partido.json`:**
    - En `primer_tiempo` y `segundo_tiempo`: todas las métricas salvo `marcador` y `goles` (`1-0` en 1T y `3-0` en 2T) quedaron en `null` para ambos equipos (`posesion_pct`, `tiros_totales`, `tiros_a_puerta`, `tiros_fuera`, `tiros_bloqueados`, `tiros_dentro_area`, `tiros_fuera_area`, `pases_completados`, `pases_intentados`, `pases_completados_intentados`, `precision_pases_pct`, `corners`, `faltas_cometidas`, `fueras_de_juego`, `tarjetas_amarillas`, `tarjetas_rojas`, `atajadas_portero`, `recuperaciones`, `xg_esperado`).

@@ -246,6 +246,7 @@
     var host = $('panel-ficha');
     vaciar(host);
     var esMineirao = info.id === 'WC2014_SF_BRA_GER';
+    var esEstadioNacionalCR = info.id === 'CONCACAF_WCQ2026_R2_CRC_SKN';
     if (esMineirao) {
       host.appendChild(el('figure', { class: 'estadio' },
         el('div', { class: 'estadio__foto' },
@@ -257,6 +258,15 @@
           el('a', { href: FOTO_MINEIRAO, target: '_blank', rel: 'noopener', text: 'Rodrigo Rocatto' }), ', ',
           el('a', { href: 'https://creativecommons.org/licenses/by-sa/4.0/', target: '_blank', rel: 'noopener', text: 'CC BY-SA 4.0' }),
           ', recortada')));
+    } else if (esEstadioNacionalCR) {
+      host.appendChild(el('figure', { class: 'estadio' },
+        el('div', { class: 'estadio__foto' },
+          el('img', { src: '../assets/estadio/estadio_nacional_cr.jpg', alt: 'Vista panorámica del ' + info.estadio }),
+          el('div', { class: 'estadio__nombre' },
+            el('strong', { text: info.estadio }),
+            el('span', { text: info.ciudad + ' · Parque Metropolitano La Sabana' }))),
+        el('figcaption', { class: 'estadio__credito',
+          text: 'Estadio Nacional de Costa Rica (La Sabana, San José) · Capacidad: 35 175 espectadores · Recreación editorial Omnimorph' })));
     }
 
     var statClima = (clima && clima.temperatura_c != null)

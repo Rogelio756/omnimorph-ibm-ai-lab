@@ -15,7 +15,12 @@
       "asistente_2": "Cristian Alvarado (Guatemala)",
       "cuarto_arbitro": "Cristhofer Corado (Guatemala)"
     },
-    "condiciones_climaticas": null,
+    "condiciones_climaticas": {
+      "temperatura_c": 20,
+      "humedad_pct": 88,
+      "cielo": "Nublado (lluvia previa)",
+      "viento_kmh": 11
+    },
     "resultado": {
       "marcador_final": "4-0",
       "primer_tiempo": "1-0",
@@ -539,6 +544,13 @@
         "url": "https://www.futbol24.com/match/costa-rica-vs-st-kitts-nevis-2374665/",
         "datos": "Verificación de dorsales completos del plantel de San Cristóbal y Nieves (1 al 23) y sustitución de Gvaune Amory (#7) por Tyrese Shade (#10) al 77'.",
         "fecha_consulta": "2026-11-09"
+      },
+      {
+        "id": "F16",
+        "nombre": "WeatherSpark / Registro meteorológico histórico San José (MROC)",
+        "url": "https://es.weatherspark.com/h/d/15463/2024/6/6/Tiempo-hist%C3%B3rico-el-jueves-6-de-junio-de-2024-en-San-Jos%C3%A9-Costa-Rica",
+        "datos": "Clima nocturno en San José el 2024-06-06 (20 °C, nublado tras lluvia vespertina, humedad 88%, viento 11 km/h)",
+        "fecha_consulta": "2026-04-19"
       }
     ]
   }
