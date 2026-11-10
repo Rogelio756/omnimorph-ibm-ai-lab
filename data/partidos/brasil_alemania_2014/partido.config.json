@@ -3,6 +3,7 @@
   "titulo": "Brasil vs. Alemania",
   "competicion": "Copa Mundial de la FIFA Brasil 2014 — Semifinal",
   "etiqueta_corta": "BRA vs GER · 2014",
+  "chat_datos_completos": true,
   "video": {
     "archivo": "data/videos/mundial_2014_720p_hd/L6sbfskaTDQ-720-13.mp4",
     "dataset_id": "L6sbfskaTDQ-720-13.mp4",

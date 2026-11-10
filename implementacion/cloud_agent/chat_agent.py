@@ -321,7 +321,9 @@ def preguntas_sugeridas(datos: dict) -> list[str]:
 def cargar_datos() -> dict:
     """Reúne los datos que puede usar el asistente."""
     partido = partido_config.activo()
-    if not (partido.datos_dir / "partido" / "contexto_partido.json").exists():
+    # El modo completo usa partido_data y SYSTEM_PROMPT, que hoy son de Brasil-Alemania.
+    # Solo se activa si la configuración del partido lo declara (chat_datos_completos).
+    if not partido.chat_datos_completos:
         return _datos_solo_clip(partido)
     contexto_partido = partido_data.cargar_contexto()
     estadisticas = partido_data.cargar_estadisticas()

@@ -48,6 +48,7 @@ class Partido:
     titulo: str
     competicion: str
     etiqueta_corta: str
+    chat_datos_completos: bool
     fps: float
     n_frames: int
     video_archivo: str
@@ -117,6 +118,7 @@ def cargar(partido_id: Optional[str] = None) -> Partido:
         titulo=cfg["titulo"],
         competicion=cfg["competicion"],
         etiqueta_corta=cfg.get("etiqueta_corta", cfg["titulo"]),
+        chat_datos_completos=bool(cfg.get("chat_datos_completos", False)),
         fps=float(v["fps"]),
         n_frames=int(v["n_frames"]),
         video_archivo=v["archivo"],
