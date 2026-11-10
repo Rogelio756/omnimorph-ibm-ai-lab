@@ -160,16 +160,39 @@ def cargar_dorsales() -> dict:
         datos = _load_json(ruta)
         mapa = {}
         for a in datos.get("asignados", []):
-            for tid in a["rastros"]:
-                mapa[int(tid)] = {
+            rastros = [int(t) for t in a["rastros"]]
+            for tid in rastros:
+                mapa[tid] = {
                     "dorsal": a["dorsal"],
                     "jugador": a["jugador"],
                     "certeza": a.get("certeza", "media"),
                     "validado": validado,
+                    "rastros": rastros,
                 }
         print(f"[OK] dorsales: {len(mapa)} rastros desde {ruta.name} ({'validado' if validado else 'por validar'})")
         return mapa
     return {}
+
+
+def fusionar_rastros(df_tr: pd.DataFrame, dorsales: dict) -> pd.DataFrame:
+    """Une en un solo rastro los tramos que la identificación manual asignó al mismo jugador.
+
+    El tracking pierde a un jugador cuando sale de cuadro y le da otro número (p. ej. 12 y 59).
+    Todos sus tramos pasan a usar el primer número de la lista, para que el radar y la lista
+    de jugadores lo muestren una sola vez. Si dos tramos coinciden en un cuadro, se queda uno.
+    """
+    canon = {tid: info["rastros"][0] for tid, info in dorsales.items()
+             if len(info.get("rastros", [])) > 1 and tid != info["rastros"][0]}
+    if not canon:
+        return df_tr
+    df_tr = df_tr.copy()
+    df_tr["track_id_stitched"] = df_tr["track_id_stitched"].replace(canon)
+    antes = len(df_tr)
+    df_tr = df_tr.drop_duplicates(["frame", "track_id_stitched"], keep="first")
+    pares = ", ".join(f"{t}→{c}" for t, c in sorted(canon.items()))
+    print(f"[OK] rastros fusionados por identificación manual: {pares} "
+          f"({antes - len(df_tr)} filas duplicadas descartadas)")
+    return df_tr
 
 
 def recortar_video(src: pathlib.Path, dst: pathlib.Path, n_frames: int) -> None:
@@ -436,6 +459,8 @@ def main() -> None:
     df_tr = df[df.source == "track"].copy()
     df_tr = df_tr[df_tr.track_id_stitched.notna()]
     df_tr["track_id_stitched"] = df_tr["track_id_stitched"].astype(int)
+    dorsales = cargar_dorsales()
+    df_tr = fusionar_rastros(df_tr, dorsales)
     # Moda de equipo por jugador cosido (M2.0) → sin parpadeos de color
     mode = (df_tr.dropna(subset=["team"]).groupby("track_id_stitched")["team"]
             .agg(lambda s: int(s.mode().iloc[0])))
@@ -507,7 +532,7 @@ def main() -> None:
         "media": {k: f"../media/{v}" for k, v in media_names.items()},
         "monitors": monitors,
         "windows": windows,
-        "players": build_players(df_tr, fps, cargar_dorsales()),
+        "players": build_players(df_tr, fps, dorsales),
         "frames": build_frames(df_tr, df_ball, n_frames),
     }
 

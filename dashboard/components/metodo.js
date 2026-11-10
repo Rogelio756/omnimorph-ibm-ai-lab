@@ -186,7 +186,9 @@
     host.appendChild(limite('Rastros partidos',
       'El seguimiento pierde a un jugador cuando sale de cuadro o se cruza con otro. Después de unir tramos quedan ' +
       num(m2.ids_cosidos) + ' identificadores para unas 25 personas en el campo, así que un mismo jugador puede ' +
-      'aparecer con dos números.'));
+      'aparecer con dos números.' +
+      (hayDorsales && dor.rastros > dor.jugadores
+        ? ' Los tramos que el equipo identificó a mano ya se muestran unidos en MATEO.' : '')));
     host.appendChild(limite('Un clip, no el partido',
       'El análisis de video cubre ' + num(P.duracion_s, 0) + ' s. Las cifras del clip no describen el partido completo; ' +
       'las del partido vienen de fuentes públicas.'));

@@ -892,7 +892,8 @@
       $('pc-visible').textContent = p.visible_s.toFixed(1) + ' s';
       $('pc-zona').textContent = zonaHabitual(p.heat);
       $('pc-foot').textContent = p.dorsal != null
-        ? 'Rastro ' + p.id + ' · dorsal leído a mano, certeza ' + p.certeza + (p.validado ? ' · validado' : ' · por validar')
+        ? (p.rastros && p.rastros.length > 1 ? 'Rastros ' + p.rastros.join(' y ') + ' unidos' : 'Rastro ' + p.id) +
+          ' · dorsal leído a mano, certeza ' + p.certeza + (p.validado ? ' · validado' : ' · por validar')
         : 'Mapa de calor de sus posiciones en toma abierta';
       var svg = '<rect width="120" height="70" fill="#0E1A16"/>';
       for (var gx = 0; gx < 12; gx++) for (var gy = 0; gy < 7; gy++) {
