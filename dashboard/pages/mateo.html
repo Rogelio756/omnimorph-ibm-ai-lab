@@ -158,6 +158,7 @@
     .player-row__live { font-family: var(--font-mono); font-size: 9px; color: var(--color-ok); min-width: 30px; text-align: right; }
     .player-sidebar__aviso { margin: 0; padding: var(--space-3) var(--space-4); border-bottom: var(--border); font-size: var(--text-label); line-height: 1.5; color: var(--color-text-soft); }
     .player-row__track { white-space: nowrap; }
+    .player-row__pv { margin-left: var(--space-1); padding: 1px 6px; border: 1px solid var(--color-warn); border-radius: var(--radius-pill); font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-warn); vertical-align: middle; }
     .player-empty { padding: var(--space-4); font-size: var(--text-label); color: var(--color-text-soft); }
 
     /* ── Aviso de datos ──────────────────────────────────────────────────── */
@@ -423,8 +424,9 @@
             <span class="text-label" style="width: 100%;">Ordenados por tiempo visible en toma abierta</span>
           </div>
           <p class="player-sidebar__aviso">
-            Un rastro es un seguimiento automático, no un jugador identificado. Su número no es
-            el dorsal, y una misma persona puede tener varios rastros. La distancia y la velocidad
+            Un rastro es un seguimiento automático y una misma persona puede tener varios. Donde se
+            lee el dorsal en el video, el rastro muestra el nombre del jugador; la identificación es
+            manual y está <strong>por validar</strong> con el equipo de análisis. La distancia y la velocidad
             por jugador no se muestran mientras se mejora la calibración de la cancha.
           </p>
           <div class="player-sidebar__list" id="player-list"></div>
@@ -846,7 +848,9 @@
         var val = p.visible_s.toFixed(1) + ' s';
         row.innerHTML =
           '<span class="player-row__team" style="background:' + COLORS[p.team] + '"></span>' +
-          '<span class="player-row__track">Rastro ' + p.id + '</span>' +
+          '<span class="player-row__track">' + escapar(etiquetaJugador(p)) +
+            (p.dorsal != null && !p.validado ? ' <span class="player-row__pv" title="Identificación manual pendiente de validar">por validar</span>' : '') +
+          '</span>' +
           '<div class="player-row__bar-wrap"><div class="player-row__bar-fill' + (p.team === 1 ? ' player-row__bar-fill--team-b' : '') +
           '" style="width:' + Math.max(4, p[metric] / max * 100) + '%"></div></div>' +
           '<span class="player-row__value">' + val + '</span>' +
@@ -857,6 +861,17 @@
       });
       if (selected == null || !list.some(function (p) { return p.id === selected; })) selectPlayer(list[0].id);
       updatePlayerLive(Math.max(0, curFrame));
+    }
+
+    // Nombre del jugador si el rastro está identificado (dorsal leído a mano); si no, el número de rastro
+    function nombreJugador(s) {
+      return String(s).toLowerCase().replace(/(^|[\s-])(\S)/g, function (m, sep, c) { return sep + c.toUpperCase(); });
+    }
+    function etiquetaJugador(p) {
+      return p.dorsal != null ? '#' + p.dorsal + ' ' + nombreJugador(p.jugador) : 'Rastro ' + p.id;
+    }
+    function escapar(s) {
+      return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
     }
 
     // Tercio del largo de la cancha (vista del radar) donde se concentra el mapa de calor
@@ -873,10 +888,12 @@
       var p = D.players.find(function (x) { return x.id === id; });
       document.querySelectorAll('.player-row').forEach(function (r) { r.classList.toggle('player-row--active', Number(r.dataset.id) === id); });
       if (!p) return;
-      $('pc-title').textContent = 'Rastro ' + p.id + ' · ' + TEAM[p.team];
+      $('pc-title').textContent = etiquetaJugador(p) + ' · ' + TEAM[p.team];
       $('pc-visible').textContent = p.visible_s.toFixed(1) + ' s';
       $('pc-zona').textContent = zonaHabitual(p.heat);
-      $('pc-foot').textContent = 'Mapa de calor de sus posiciones en toma abierta';
+      $('pc-foot').textContent = p.dorsal != null
+        ? 'Rastro ' + p.id + ' · dorsal leído a mano, certeza ' + p.certeza + (p.validado ? ' · validado' : ' · por validar')
+        : 'Mapa de calor de sus posiciones en toma abierta';
       var svg = '<rect width="120" height="70" fill="#0E1A16"/>';
       for (var gx = 0; gx < 12; gx++) for (var gy = 0; gy < 7; gy++) {
         var h = p.heat[gx][gy];

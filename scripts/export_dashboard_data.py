@@ -109,7 +109,7 @@ def distancia_filtrada(fr: np.ndarray, x: np.ndarray, y: np.ndarray, fps: float)
     return dist, segundos
 
 
-def build_players(df_tr: pd.DataFrame, fps: float) -> list:
+def build_players(df_tr: pd.DataFrame, fps: float, dorsales: dict | None = None) -> list:
     """Por rastro: distancia aproximada, segundos medidos y mapa de calor 12×7."""
     players = []
     for tid, g in df_tr.groupby("track_id_stitched"):
@@ -132,15 +132,43 @@ def build_players(df_tr: pd.DataFrame, fps: float) -> list:
         )
         heat = (heat / heat.max()).round(2).tolist() if heat.max() > 0 else heat.tolist()
 
-        players.append({
+        jugador = {
             "id": int(tid),
             "team": team,
             "frames": int(len(inb)),
             "dist_m": round(dist, 1),
             "segundos": round(segundos, 1),
             "heat": heat,   # [12][7] normalizado 0..1
-        })
+        }
+        if dorsales and int(tid) in dorsales:
+            jugador.update(dorsales[int(tid)])
+        players.append(jugador)
     return players
+
+
+def cargar_dorsales() -> dict:
+    """Rastro -> {dorsal, jugador, certeza, validado} desde la identificación manual del partido activo.
+
+    Usa rastros_dorsales.json (validado por el equipo de análisis) si existe; si no,
+    rastros_dorsales_borrador.json, marcado como no validado.
+    """
+    for nombre, validado in (("rastros_dorsales.json", True), ("rastros_dorsales_borrador.json", False)):
+        ruta = PARTIDO.datos_dir / nombre
+        if not ruta.exists():
+            continue
+        datos = _load_json(ruta)
+        mapa = {}
+        for a in datos.get("asignados", []):
+            for tid in a["rastros"]:
+                mapa[int(tid)] = {
+                    "dorsal": a["dorsal"],
+                    "jugador": a["jugador"],
+                    "certeza": a.get("certeza", "media"),
+                    "validado": validado,
+                }
+        print(f"[OK] dorsales: {len(mapa)} rastros desde {ruta.name} ({'validado' if validado else 'por validar'})")
+        return mapa
+    return {}
 
 
 def recortar_video(src: pathlib.Path, dst: pathlib.Path, n_frames: int) -> None:
@@ -321,7 +349,7 @@ def main() -> None:
         "media": {k: f"../media/{v}" for k, v in media_names.items()},
         "monitors": monitors,
         "windows": windows,
-        "players": build_players(df_tr, fps),
+        "players": build_players(df_tr, fps, cargar_dorsales()),
         "frames": build_frames(df_tr, df_ball, n_frames),
     }
 

@@ -1,0 +1,24 @@
+{
+  "_descripcion": "BORRADOR de identificación manual: rastro (track_id_stitched de data/clean/objects_cleaned.parquet) -> dorsal. Lo hizo Claude Code leyendo recortes del video el 2026-11-09. Falta que Fer lo valide en la pestaña Quien_es_quien de la plantilla. No usar en pantalla como dato confirmado hasta entonces.",
+  "clip": "HP3zxNuoWXE-720-15.mp4, cuadros 0-1079 (minuto ~1:03-1:39 del partido: solo titulares en cancha)",
+  "fuente_alineaciones": "PLANTILLA_datos_partido.xlsx, pestaña Alineaciones (llenada por Gemini, commit d2ce7cd, sin validar)",
+  "criterio": "Solo se asigna un dorsal si se lee en el recorte y existe entre los titulares del equipo de ese color. 'alta' = se lee claro en 3 o más cuadros; 'media' = se lee en 1-2 cuadros o con dudas en una cifra.",
+  "asignados": [
+    {"rastros": [6], "equipo": "Costa Rica", "dorsal": 14, "jugador": "GALO", "certeza": "alta", "cuadros_evidencia": [235, 315, 395, 472]},
+    {"rastros": [12, 59], "equipo": "Costa Rica", "dorsal": 17, "jugador": "MADRIGAL", "certeza": "alta", "cuadros_evidencia": [486, 894, 953, 1010], "nota": "Mismo jugador partido en dos rastros: T12 termina y T59 empieza en el cuadro 545."},
+    {"rastros": [2, 74], "equipo": "Costa Rica", "dorsal": 9, "jugador": "UGALDE", "certeza": "alta", "cuadros_evidencia": [355, 411, 467, 848, 936, 1027], "nota": "Mismo jugador partido en dos rastros: T2 termina en 527 y T74 empieza en 659."},
+    {"rastros": [69], "equipo": "Costa Rica", "dorsal": 21, "jugador": "ZAMORA", "certeza": "alta", "cuadros_evidencia": [689, 833, 925, 1016]},
+    {"rastros": [18, 70], "equipo": "Costa Rica", "dorsal": 11, "jugador": "LASSITER", "certeza": "alta", "cuadros_evidencia": [703, 748, 884, 1027], "nota": "T70 se lee claro. T18 (cuadros 44-435) se asignó por la hoja de contactos de Bob, donde también se ve un 11; no se solapa con T70 (649-1073). Confirmar T18."},
+    {"rastros": [33], "equipo": "Costa Rica", "dorsal": 6, "jugador": "CASCANTE", "certeza": "media", "cuadros_evidencia": [429, 609], "nota": "Claro en el cuadro 429; en 609 parece 6."},
+    {"rastros": [28], "equipo": "Costa Rica", "dorsal": 13, "jugador": "BRENES", "certeza": "media", "cuadros_evidencia": [388], "nota": "Solo un cuadro de espaldas; el 1 se distingue mejor que el 3."},
+    {"rastros": [1], "equipo": "San Cristóbal y Nieves", "dorsal": 11, "jugador": "ROGERS", "certeza": "media", "cuadros_evidencia": [387, 474]},
+    {"rastros": [36], "equipo": "San Cristóbal y Nieves", "dorsal": 15, "jugador": "LEWIS", "certeza": "media", "cuadros_evidencia": [395, 876]},
+    {"rastros": [98], "equipo": "San Cristóbal y Nieves", "dorsal": 22, "jugador": "STERLING-JAMES", "certeza": "media", "cuadros_evidencia": [], "nota": "Se lee 22 en la hoja de contactos de Bob (rastro 98, cuadros 863-1073). Fuera del top 20 revisado aquí."}
+  ],
+  "sin_asignar": [
+    {"rastros": [29], "motivo": "Cambio de identidad: es un jugador de San Cristóbal (verde) hasta ~cuadro 700 y después sigue a un jugador de Costa Rica. Gemini ya lo había detectado en la sesión 11."},
+    {"rastros": [25, 8, 66, 73, 3], "motivo": "San Cristóbal: casi siempre de frente o borroso; no se ve el dorsal."},
+    {"rastros": [30, 60, 20], "motivo": "Costa Rica: no se ve el dorsal en los cuadros revisados."}
+  ],
+  "resumen": "13 rastros asignados a 10 jugadores (7 de Costa Rica, 3 de San Cristóbal): 5 jugadores con certeza alta (Galo, Madrigal, Ugalde, Zamora, Lassiter) y 5 con certeza media. De los 20 rastros principales, 9 quedan sin dorsal."
+}

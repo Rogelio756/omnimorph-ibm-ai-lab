@@ -30,6 +30,7 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_13_dashboard_web_costa_rica.md` | 2026-11-09 | Dashboard web con Costa Rica, corrección de fps en videos, página Partido en preparación, chatbot en modo solo clip, sección del comercial junto a los logos de IBM y diagnóstico del ruido de velocidad |
 | `sesion_14_datos_partido_gemini.md` | 2026-11-09 | Investigación y llenado completo de `PLANTILLA_datos_partido.xlsx` (Ficha, Alineaciones, Estadísticas, Eventos y 15 Fuentes públicas) para Costa Rica vs. San Cristóbal y Nieves (Gemini) |
 | `sesion_15_dorsales_bob.md` | 2026-11-10 | Experimento de reconocimiento de dorsales con dataset de Roboflow (4,114 imgs, CC BY 4.0). YOLOv8n-cls: 84.3 % original / 69.2 % degradado. Cobertura en clip TV 720p: 0/20 rastros. Conclusión: no sirve en transmisión TV; propuesta IBM Granite Vision (IBM Bob) |
+| `sesion_16_identificacion_manual_dorsales.md` | 2026-11-09 | Revisión del experimento de Bob (el modelo falla, el video sí deja leer dorsales), identificación manual de 10 jugadores en 13 rastros y nombres "por validar" en MATEO |
 
 ---
 
