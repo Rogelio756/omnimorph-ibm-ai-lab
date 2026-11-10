@@ -54,11 +54,9 @@
         <a href="mateo.html" style="text-decoration: underline;">MATEO</a>.</span>
     </div>
 
-    <div class="notice" role="note" id="hub-calidad">
+    <div class="notice" role="note" id="hub-calidad" hidden>
       <span class="notice__tag">Calidad de los datos</span>
-      <span>Los desgloses por tiempo y la posesión total no tienen confirmación oficial, y el xG es estimado.
-        Los tiros a puerta de Alemania por tiempo son derivados.
-        <a href="../data/partido/PROCEDENCIA.md" style="text-decoration: underline;">Ver procedencia y correcciones</a>.</span>
+      <span id="hub-calidad-texto"></span>
     </div>
 
     <div class="notice notice--alert" id="data-error" hidden>
@@ -72,8 +70,8 @@
       <button class="tab" id="tab-ficha" role="tab" aria-controls="panel-ficha" aria-selected="true" type="button">Ficha previa</button>
       <button class="tab" id="tab-fichero" role="tab" aria-controls="panel-fichero" aria-selected="false" tabindex="-1" type="button">Fichero</button>
       <button class="tab" id="tab-comparativa" role="tab" aria-controls="panel-comparativa" aria-selected="false" tabindex="-1" type="button">Comparativa 1T / 2T</button>
-      <button class="tab" id="tab-goles" role="tab" aria-controls="panel-goles" aria-selected="false" tabindex="-1" type="button">Los 8 goles</button>
-      <button class="tab" id="tab-muller" role="tab" aria-controls="panel-muller" aria-selected="false" tabindex="-1" type="button">Gol de Müller</button>
+      <button class="tab" id="tab-goles" role="tab" aria-controls="panel-goles" aria-selected="false" tabindex="-1" type="button">Goles</button>
+      <button class="tab" id="tab-muller" role="tab" aria-controls="panel-muller" aria-selected="false" tabindex="-1" type="button" hidden></button>
     </div>
 
     <section class="panel-body" id="panel-ficha" role="tabpanel" aria-labelledby="tab-ficha"></section>

@@ -224,38 +224,83 @@ OUT_PARTIDO = OUT_DATA / "partido"
 
 def export_partido() -> None:
     """
-    Copia los datos de Brasil 1-7 Alemania (data/partidos/) al frontend.
-    Genera dashboard/data/partido/partido.json y copia los SVG y PROCEDENCIA.md.
+    Exporta los datos del partido activo (data/partidos/<id>/) al frontend.
+    Genera dashboard/data/partido/partido.json y copia los SVG y PROCEDENCIA.md si existen.
     """
     OUT_PARTIDO.mkdir(parents=True, exist_ok=True)
     out = OUT_PARTIDO / "partido.json"
+    opcionales = (
+        PARTIDO_SRC / "assets" / "mapa_8_goles.svg",
+        PARTIDO_SRC / "assets" / "radar_gol_muller.svg",
+        PARTIDO_SRC / "PROCEDENCIA.md",
+    )
     if not (PARTIDO_SRC / "partido" / "contexto_partido.json").exists():
         # Aún no llegan los datos verificados del partido: la página lo dice en vez de mostrar otro partido.
         data = {"pendiente": True, "id": PARTIDO.id, "titulo": PARTIDO.titulo,
                 "competicion": PARTIDO.competicion, "etiqueta": PARTIDO.etiqueta_corta}
         with open(out, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
-        for viejo in ("mapa_8_goles.svg", "radar_gol_muller.svg", "PROCEDENCIA.md"):
-            (OUT_PARTIDO / viejo).unlink(missing_ok=True)
+        for origen in opcionales:
+            (OUT_PARTIDO / origen.name).unlink(missing_ok=True)
         print(f"[OK] {out}  (pendiente: faltan los datos verificados de {PARTIDO.id})")
         return
+
     contexto = _load_json(PARTIDO_SRC / "partido" / "contexto_partido.json")
+    equipos = contexto["equipos"]
+    equipos_orden = [
+        k for k, _ in sorted(equipos.items(), key=lambda kv: int(kv[1].get("team_id", 0)))
+    ]
+    colores = {
+        k: PARTIDO.equipo(int(equipos[k]["team_id"])).color_ui
+        for k in equipos_orden
+    }
+    procedencia = contexto.get("procedencia")
+    validado = bool(procedencia.get("validado", True)) if isinstance(procedencia, dict) else True
+
     data = {
         "partido": contexto["partido_info"],
-        "equipos": contexto["equipos"],
+        "equipos": equipos,
         "estadisticas": _load_json(PARTIDO_SRC / "partido" / "estadisticas_partido.json"),
         "goles": _load_json(PARTIDO_SRC / "partido" / "cronologia_goles.json"),
-        "gol_muller": _load_json(PARTIDO_SRC / "gol_muller" / "gol_muller_min11.json"),
     }
+    muller_path = PARTIDO_SRC / "gol_muller" / "gol_muller_min11.json"
+    if muller_path.exists():
+        data["gol_muller"] = _load_json(muller_path)
+    data["equipos_orden"] = equipos_orden
+    data["colores"] = colores
+    data["validado"] = validado
+    if isinstance(procedencia, dict):
+        data["procedencia"] = procedencia
+
+    for nombre_rastro in ("rastros_dorsales.json", "rastros_dorsales_borrador.json"):
+        ruta_rastro = PARTIDO_SRC / nombre_rastro
+        if ruta_rastro.exists():
+            raw_rastro = _load_json(ruta_rastro)
+            por_pais = {v.get("pais"): k for k, v in equipos.items()}
+            vistos: dict[str, list[int]] = {}
+            for a in raw_rastro.get("asignados", []):
+                eq_k = por_pais.get(a.get("equipo"))
+                if eq_k and a.get("dorsal") is not None:
+                    vistos.setdefault(eq_k, [])
+                    if int(a["dorsal"]) not in vistos[eq_k]:
+                        vistos[eq_k].append(int(a["dorsal"]))
+            if vistos:
+                data["vistos_en_clip"] = vistos
+            break
+
     with open(out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
-    for origen in (
-        PARTIDO_SRC / "assets" / "mapa_8_goles.svg",
-        PARTIDO_SRC / "assets" / "radar_gol_muller.svg",
-        PARTIDO_SRC / "PROCEDENCIA.md",
-    ):
-        shutil.copy2(origen, OUT_PARTIDO / origen.name)
-    print(f"[OK] {out}  ({out.stat().st_size / 1024:.0f} KB) + 2 SVG + PROCEDENCIA.md")
+
+    copiados = []
+    for origen in opcionales:
+        destino = OUT_PARTIDO / origen.name
+        if origen.exists():
+            shutil.copy2(origen, destino)
+            copiados.append(origen.name)
+        else:
+            destino.unlink(missing_ok=True)
+    extra = f" + {', '.join(copiados)}" if copiados else ""
+    print(f"[OK] {out}  ({out.stat().st_size / 1024:.0f} KB){extra}")
 
 
 def main() -> None:

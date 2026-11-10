@@ -1,0 +1,253 @@
+{
+  "resumen_comparativo": {
+    "primer_tiempo": {
+      "marcador": "1-0",
+      "goles": {
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 0
+      },
+      "posesion_pct": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_totales": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_a_puerta": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_fuera": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_bloqueados": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_dentro_area": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_fuera_area": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "pases_completados": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "pases_intentados": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "precision_pases_pct": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "corners": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "faltas_cometidas": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "fueras_de_juego": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tarjetas_amarillas": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tarjetas_rojas": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "atajadas_portero": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "recuperaciones": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "xg_esperado": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "pases_completados_intentados": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      }
+    },
+    "segundo_tiempo": {
+      "marcador": "3-0",
+      "goles": {
+        "costa_rica": 3,
+        "san_cristobal_y_nieves": 0
+      },
+      "posesion_pct": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_totales": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_a_puerta": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_fuera": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_bloqueados": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_dentro_area": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tiros_fuera_area": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "pases_completados": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "pases_intentados": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "precision_pases_pct": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "corners": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "faltas_cometidas": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "fueras_de_juego": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tarjetas_amarillas": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "tarjetas_rojas": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "atajadas_portero": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "recuperaciones": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "xg_esperado": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "pases_completados_intentados": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      }
+    },
+    "tiempo_completo": {
+      "marcador": "4-0",
+      "goles": {
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 0
+      },
+      "posesion_pct": {
+        "costa_rica": 65,
+        "san_cristobal_y_nieves": 35
+      },
+      "tiros_totales": {
+        "costa_rica": 15,
+        "san_cristobal_y_nieves": 4
+      },
+      "tiros_a_puerta": {
+        "costa_rica": 7,
+        "san_cristobal_y_nieves": 1
+      },
+      "tiros_fuera": {
+        "costa_rica": 8,
+        "san_cristobal_y_nieves": 3
+      },
+      "tiros_bloqueados": {
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 1
+      },
+      "tiros_dentro_area": {
+        "costa_rica": 10,
+        "san_cristobal_y_nieves": 1
+      },
+      "tiros_fuera_area": {
+        "costa_rica": 5,
+        "san_cristobal_y_nieves": 3
+      },
+      "pases_completados": {
+        "costa_rica": 485,
+        "san_cristobal_y_nieves": 222
+      },
+      "pases_intentados": {
+        "costa_rica": 571,
+        "san_cristobal_y_nieves": 300
+      },
+      "precision_pases_pct": {
+        "costa_rica": 85,
+        "san_cristobal_y_nieves": 74
+      },
+      "corners": {
+        "costa_rica": 5,
+        "san_cristobal_y_nieves": 3
+      },
+      "faltas_cometidas": {
+        "costa_rica": 11,
+        "san_cristobal_y_nieves": 13
+      },
+      "fueras_de_juego": {
+        "costa_rica": 2,
+        "san_cristobal_y_nieves": 3
+      },
+      "tarjetas_amarillas": {
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 3
+      },
+      "tarjetas_rojas": {
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 0
+      },
+      "atajadas_portero": {
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 3
+      },
+      "recuperaciones": {
+        "costa_rica": null,
+        "san_cristobal_y_nieves": null
+      },
+      "xg_esperado": {
+        "costa_rica": 2.51,
+        "san_cristobal_y_nieves": 0.2
+      },
+      "pases_completados_intentados": {
+        "costa_rica": "485/571",
+        "san_cristobal_y_nieves": "222/300"
+      }
+    }
+  }
+}

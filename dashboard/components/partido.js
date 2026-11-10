@@ -1,38 +1,25 @@
 /**
  * components/partido.js
- * OMNIMORPH — Página del partido Brasil 1-7 Alemania.
+ * OMNIMORPH — Página del partido activo.
  * Fuente: ../data/partido/partido.json (scripts/export_dashboard_data.py).
  * Todo el texto de los datos se inserta con textContent, nunca como HTML.
  */
 (function () {
   'use strict';
 
-  var TABS = ['ficha', 'fichero', 'comparativa', 'goles', 'muller'];
-  var PERIODOS = [['primer_tiempo', '1T'], ['segundo_tiempo', '2T'], ['tiempo_completo', 'Total']];
-  var EQUIPOS = [['brasil', 'Brasil', 'bra'], ['alemania', 'Alemania', 'ger']];
+  var TODOS_TABS = ['ficha', 'fichero', 'comparativa', 'goles', 'muller'];
+  var TABS = ['ficha', 'fichero'];
+  var PERIODOS_TODOS = [['primer_tiempo', '1T'], ['segundo_tiempo', '2T'], ['tiempo_completo', 'Total']];
+  var CLASES_EQ = ['bra', 'ger'];
+  var EQUIPOS = [];
 
-  // [clave, etiqueta, decimales, nota]
-  var METRICAS = [
-    ['posesion_pct', 'Posesión (%)', 1, 'por tiempo sin confirmar'],
-    ['tiros_totales', 'Tiros totales', 0, ''],
-    ['tiros_a_puerta', 'Tiros a puerta', 0, 'Alemania por tiempo: derivado'],
-    ['tiros_dentro_area', 'Tiros dentro del área', 0, ''],
-    ['tiros_fuera_area', 'Tiros fuera del área', 0, ''],
-    ['xg_esperado', 'xG (estimado)', 2, 'estimado, no oficial'],
-    ['precision_pases_pct', 'Precisión de pases (%)', 1, ''],
-    ['corners', 'Córners', 0, ''],
-    ['faltas_cometidas', 'Faltas cometidas', 0, ''],
-    ['fueras_de_juego', 'Fueras de juego', 0, ''],
-    ['atajadas_portero', 'Atajadas', 0, ''],
-    ['recuperaciones', 'Recuperaciones', 0, ''],
-  ];
-
-  var FOTO_ESTADIO = 'https://commons.wikimedia.org/wiki/File:Est%C3%A1dio_Governador_Magalh%C3%A3es_Pinto_-_Belo_Horizonte_-_20240626170354.jpg';
+  var FOTO_MINEIRAO = 'https://commons.wikimedia.org/wiki/File:Est%C3%A1dio_Governador_Magalh%C3%A3es_Pinto_-_Belo_Horizonte_-_20240626170354.jpg';
 
   var D = null;
   var metricaActiva = 'tiros_totales';
   var golActivo = 0;
   var dibujado = {};
+  var eventosEnlazados = false;
 
   function $(id) { return document.getElementById(id); }
 
@@ -64,10 +51,43 @@
   }
 
   function num(v, dec) {
+    if (v == null || v === '' || isNaN(Number(v))) return '—';
     return Number(v).toLocaleString('es-MX', { minimumFractionDigits: dec, maximumFractionDigits: dec });
   }
 
   function vaciar(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+  function metricasDefinidas() {
+    var ncd = (D && D.estadisticas && D.estadisticas.notas_calidad_datos) || null;
+    var xgEstimado = Boolean(ncd && ncd.xg);
+    return [
+      ['posesion_pct', 'Posesión (%)', 1, ncd && ncd.posesion_por_tiempo ? 'por tiempo sin confirmar' : ''],
+      ['tiros_totales', 'Tiros totales', 0, ''],
+      ['tiros_a_puerta', 'Tiros a puerta', 0, ncd && ncd.tiros_a_puerta_alemania_por_tiempo ? EQUIPOS[1][1] + ' por tiempo: derivado' : ''],
+      ['tiros_dentro_area', 'Tiros dentro del área', 0, ''],
+      ['tiros_fuera_area', 'Tiros fuera del área', 0, ''],
+      ['xg_esperado', xgEstimado ? 'xG (estimado)' : 'xG', 2, xgEstimado ? 'estimado, no oficial' : ''],
+      ['precision_pases_pct', 'Precisión de pases (%)', 1, ''],
+      ['corners', 'Córners', 0, ''],
+      ['faltas_cometidas', 'Faltas cometidas', 0, ''],
+      ['fueras_de_juego', 'Fueras de juego', 0, ''],
+      ['atajadas_portero', 'Atajadas', 0, ''],
+      ['recuperaciones', 'Recuperaciones', 0, ''],
+    ];
+  }
+
+  function tienePorTiempo() {
+    var rc = D && D.estadisticas && D.estadisticas.resumen_comparativo;
+    if (!rc || !rc.primer_tiempo || !rc.segundo_tiempo) return false;
+    return metricasDefinidas().some(function (m) {
+      var c = m[0];
+      return rc.primer_tiempo[c] && EQUIPOS.some(function (e) { return rc.primer_tiempo[c][e[0]] != null; });
+    });
+  }
+
+  function periodosActivos() {
+    return tienePorTiempo() ? PERIODOS_TODOS : [['tiempo_completo', 'Total']];
+  }
 
   // ── Datos ────────────────────────────────────────────────────────────────
   fetch('../data/partido/partido.json')
@@ -90,26 +110,107 @@
     $('tabs').hidden = true;
   }
 
+  function pintarAvisoCalidad() {
+    var aviso = $('hub-calidad');
+    var avisoTexto = $('hub-calidad-texto');
+    if (!aviso || !avisoTexto) return;
+    vaciar(avisoTexto);
+    if (D.validado === false) {
+      aviso.hidden = false;
+      var linkFuentes = el('a', {
+        href: '#fuentes-partido',
+        style: 'text-decoration: underline;',
+        text: 'Ver fuentes consultadas'
+      });
+      linkFuentes.addEventListener('click', function (e) {
+        e.preventDefault();
+        mostrar('ficha');
+        var det = $('fuentes-partido');
+        if (det) {
+          det.open = true;
+          det.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+      avisoTexto.appendChild(document.createTextNode(
+        'Datos públicos recopilados por IA con sus fuentes, pendientes de validación por el equipo de análisis. '
+      ));
+      avisoTexto.appendChild(linkFuentes);
+      avisoTexto.appendChild(document.createTextNode('.'));
+    } else if (D.estadisticas && D.estadisticas.notas_calidad_datos) {
+      aviso.hidden = false;
+      avisoTexto.appendChild(document.createTextNode(
+        'Los desgloses por tiempo y la posesión total no tienen confirmación oficial, y el xG es estimado. ' +
+        'Los tiros a puerta de ' + EQUIPOS[1][1] + ' por tiempo son derivados. '
+      ));
+      avisoTexto.appendChild(el('a', {
+        href: '../data/partido/PROCEDENCIA.md',
+        style: 'text-decoration: underline;',
+        text: 'Ver procedencia y correcciones'
+      }));
+      avisoTexto.appendChild(document.createTextNode('.'));
+    } else {
+      aviso.hidden = true;
+    }
+  }
+
   function iniciar() {
     var info = D.partido;
-    var nombres = EQUIPOS.map(function (e) { return D.equipos[e[0]].pais; });
-    var titulo = nombres[0] + ' ' + String(info.resultado.marcador_final).replace('-', '–') + ' ' + nombres[1];
+    var orden = (D.equipos_orden && D.equipos_orden.length) ? D.equipos_orden : Object.keys(D.equipos);
+    EQUIPOS = orden.map(function (k, i) {
+      return [k, D.equipos[k].pais, CLASES_EQ[i] || 'bra', D.equipos[k].codigo];
+    });
+
+    if (D.colores && orden.length >= 2) {
+      var root = document.documentElement.style;
+      if (D.colores[orden[0]]) root.setProperty('--color-team-a', D.colores[orden[0]]);
+      if (D.colores[orden[1]]) root.setProperty('--color-team-b', D.colores[orden[1]]);
+    }
+
+    var clavesMarcador = Object.keys(D.equipos);
+    var nombresMarcador = clavesMarcador.map(function (k) { return D.equipos[k].pais; });
+    var codigosMarcador = clavesMarcador.map(function (k) { return D.equipos[k].codigo; });
+    var titulo = nombresMarcador[0] + ' ' + String(info.resultado.marcador_final).replace('-', '–') + ' ' + nombresMarcador[1];
     $('hub-titulo').textContent = titulo;
     document.title = 'MATEO — ' + titulo;
-    $('hub-chip').textContent = EQUIPOS.map(function (e) { return D.equipos[e[0]].codigo; }).join(' vs ') +
-      ' · ' + String(info.fecha).slice(0, 4);
+    $('hub-chip').textContent = codigosMarcador.join(' vs ') + ' · ' + String(info.fecha).slice(0, 4);
     $('subtitle').textContent = info.fase + ' · ' + info.competicion + ' · ' + info.fecha +
       ' · ' + info.estadio + ', ' + info.ciudad;
 
-    TABS.forEach(function (id) {
-      $('tab-' + id).addEventListener('click', function () { mostrar(id); });
-      $('tab-' + id).addEventListener('keydown', function (e) {
-        var i = TABS.indexOf(id);
-        if (e.key === 'ArrowRight') mostrar(TABS[(i + 1) % TABS.length], true);
-        if (e.key === 'ArrowLeft') mostrar(TABS[(i + TABS.length - 1) % TABS.length], true);
-      });
+    pintarAvisoCalidad();
+
+    TABS = ['ficha', 'fichero'];
+    if (D.estadisticas && D.estadisticas.resumen_comparativo) {
+      TABS.push('comparativa');
+      $('tab-comparativa').textContent = tienePorTiempo() ? 'Comparativa 1T / 2T' : 'Comparativa';
+    }
+    if (D.goles && D.goles.length > 0) {
+      TABS.push('goles');
+      $('tab-goles').textContent = D.goles.length === 1 ? 'El gol' : 'Los ' + D.goles.length + ' goles';
+    }
+    if (D.gol_muller) {
+      TABS.push('muller');
+      var apellido = D.gol_muller.metadatos_jugada.anotador.nombre.split(' ').pop();
+      $('tab-muller').textContent = 'Gol de ' + apellido;
+    }
+
+    TODOS_TABS.forEach(function (id) {
+      var visible = TABS.indexOf(id) >= 0;
+      $('tab-' + id).hidden = !visible;
+      if (!visible) $('panel-' + id).hidden = true;
     });
-    window.addEventListener('hashchange', function () { mostrar(desdeHash(), false, true); });
+
+    if (!eventosEnlazados) {
+      eventosEnlazados = true;
+      TABS.forEach(function (id) {
+        $('tab-' + id).addEventListener('click', function () { mostrar(id); });
+        $('tab-' + id).addEventListener('keydown', function (e) {
+          var i = TABS.indexOf(id);
+          if (e.key === 'ArrowRight') mostrar(TABS[(i + 1) % TABS.length], true);
+          if (e.key === 'ArrowLeft') mostrar(TABS[(i + TABS.length - 1) % TABS.length], true);
+        });
+      });
+      window.addEventListener('hashchange', function () { mostrar(desdeHash(), false, true); });
+    }
     mostrar(desdeHash(), false, true);
   }
 
@@ -144,24 +245,36 @@
     var info = D.partido, clima = info.condiciones_climaticas, arb = info.arbitro;
     var host = $('panel-ficha');
     vaciar(host);
-    host.appendChild(el('figure', { class: 'estadio' },
-      el('div', { class: 'estadio__foto' },
-        el('img', { src: '../assets/estadio/mineirao.jpg', alt: 'Fachada de concreto del estadio Mineirão' }),
-        el('div', { class: 'estadio__nombre' },
-          el('strong', { text: 'Mineirão' }),
-          el('span', { text: info.ciudad }))),
-      el('figcaption', { class: 'estadio__credito' }, 'Foto de 2024: ',
-        el('a', { href: FOTO_ESTADIO, target: '_blank', rel: 'noopener', text: 'Rodrigo Rocatto' }), ', ',
-        el('a', { href: 'https://creativecommons.org/licenses/by-sa/4.0/', target: '_blank', rel: 'noopener', text: 'CC BY-SA 4.0' }),
-        ', recortada')));
+    var esMineirao = info.id === 'WC2014_SF_BRA_GER';
+    if (esMineirao) {
+      host.appendChild(el('figure', { class: 'estadio' },
+        el('div', { class: 'estadio__foto' },
+          el('img', { src: '../assets/estadio/mineirao.jpg', alt: 'Fachada de concreto del estadio ' + info.estadio }),
+          el('div', { class: 'estadio__nombre' },
+            el('strong', { text: 'Mineirão' }),
+            el('span', { text: info.ciudad }))),
+        el('figcaption', { class: 'estadio__credito' }, 'Foto de 2024: ',
+          el('a', { href: FOTO_MINEIRAO, target: '_blank', rel: 'noopener', text: 'Rodrigo Rocatto' }), ', ',
+          el('a', { href: 'https://creativecommons.org/licenses/by-sa/4.0/', target: '_blank', rel: 'noopener', text: 'CC BY-SA 4.0' }),
+          ', recortada')));
+    }
+
+    var statClima = (clima && clima.temperatura_c != null)
+      ? stat('Clima', clima.temperatura_c + ' °C',
+          clima.cielo + ' · humedad ' + clima.humedad_pct + '% · viento ' + clima.viento_kmh + ' km/h')
+      : stat('Clima', '—', 'Sin dato en fuentes públicas');
+
     host.appendChild(el('div', { class: 'stat-row' },
       stat('Marcador final', info.resultado.marcador_final, 'Descanso ' + info.resultado.primer_tiempo),
-      stat('Asistencia', num(info.asistencia, 0), 'Mineirão'),
-      stat('Clima', clima.temperatura_c + ' °C',
-        clima.cielo + ' · humedad ' + clima.humedad_pct + '% · viento ' + clima.viento_kmh + ' km/h'),
+      stat('Asistencia', info.asistencia != null ? num(info.asistencia, 0) : '—', esMineirao ? 'Mineirão' : info.estadio),
+      statClima,
       stat('Árbitro', arb.principal, arb.pais, true)));
     host.appendChild(el('p', { class: 'caption',
       text: 'Asistentes: ' + arb.asistente_1 + ' y ' + arb.asistente_2 + ' · Cuarto árbitro: ' + arb.cuarto_arbitro }));
+
+    if (info.contexto_previo) {
+      host.appendChild(el('p', { class: 'caption', text: info.contexto_previo }));
+    }
 
     var split = el('div', { class: 'split' });
     EQUIPOS.forEach(function (e) {
@@ -171,7 +284,7 @@
         el('div', { class: 'team-head__name' }, el('span', { class: 'swatch swatch--' + e[2] }), eq.pais),
         el('span', { class: 'team-head__meta',
           text: 'Entrenador: ' + eq.entrenador + ' · Esquema: ' + eq.esquema_inicial + ' · Capitán: ' + eq.capitan })));
-      eq.bajas_previas.forEach(function (b) {
+      (eq.bajas_previas || []).forEach(function (b) {
         col.appendChild(el('div', { class: 'absence' },
           el('span', { class: 'absence__name', text: 'Baja: ' + b.nombre }),
           el('span', { class: 'absence__reason', text: b.motivo })));
@@ -179,22 +292,60 @@
       split.appendChild(col);
     });
     host.appendChild(split);
+
+    if (D.procedencia && D.procedencia.fuentes && D.procedencia.fuentes.length) {
+      var fuentesLista = el('div', { class: 'detail' });
+      D.procedencia.fuentes.forEach(function (f) {
+        var obj = typeof f === 'string' ? { id: '', nombre: f, url: f, datos: '' } : f;
+        var p = el('p', null);
+        if (obj.id) p.appendChild(el('strong', { text: obj.id + ' · ' }));
+        p.appendChild(el('a', {
+          href: obj.url,
+          target: '_blank',
+          rel: 'noopener',
+          style: 'text-decoration: underline;',
+          text: obj.nombre || obj.url
+        }));
+        if (obj.datos) p.appendChild(document.createTextNode(' — ' + obj.datos));
+        fuentesLista.appendChild(p);
+      });
+      host.appendChild(el('details', { class: 'window', id: 'fuentes-partido' },
+        el('summary', { text: 'Fuentes públicas consultadas (' + D.procedencia.fuentes.length + ')' }),
+        fuentesLista));
+    }
   }
 
   function renderFichero() {
     window.OmniFichero.render($('panel-fichero'), D, el);
   }
 
-  // ── Comparativa 1T / 2T ──────────────────────────────────────────────────
+  // ── Comparativa ──────────────────────────────────────────────────────────
   function metricaPorClave(clave) {
-    return METRICAS.filter(function (m) { return m[0] === clave; })[0];
+    return metricasDefinidas().filter(function (m) { return m[0] === clave; })[0];
+  }
+
+  function valor(clave, periodo, equipo) {
+    var rc = D.estadisticas && D.estadisticas.resumen_comparativo;
+    if (!rc || !rc[periodo] || !rc[periodo][clave]) return null;
+    return rc[periodo][clave][equipo];
+  }
+
+  function metricaDisponible(clave) {
+    return periodosActivos().some(function (p) {
+      return EQUIPOS.some(function (e) { return valor(clave, p[0], e[0]) != null; });
+    });
   }
 
   function renderComparativa() {
     var host = $('panel-comparativa');
     vaciar(host);
+    var listaMetricas = metricasDefinidas();
+    var disponibles = listaMetricas.filter(function (m) { return metricaDisponible(m[0]); });
+    if (disponibles.length && !metricaDisponible(metricaActiva)) {
+      metricaActiva = disponibles[0][0];
+    }
     var pills = el('div', { class: 'pillbar', role: 'group', 'aria-label': 'Métrica' });
-    METRICAS.forEach(function (m) {
+    disponibles.forEach(function (m) {
       var b = el('button', { class: 'btn btn--outline btn-xs', type: 'button', 'data-metrica': m[0],
         'aria-pressed': m[0] === metricaActiva ? 'true' : 'false', text: m[1] });
       b.addEventListener('click', function () { metricaActiva = m[0]; marcarPills(); dibujarGrafico(); });
@@ -202,8 +353,9 @@
     });
     host.appendChild(pills);
     host.appendChild(el('div', { class: 'legend', 'aria-label': 'Leyenda' },
-      el('span', { class: 'legend__item' }, el('span', { class: 'swatch swatch--bra' }), 'Brasil'),
-      el('span', { class: 'legend__item' }, el('span', { class: 'swatch swatch--ger' }), 'Alemania')));
+      EQUIPOS.map(function (e) {
+        return el('span', { class: 'legend__item' }, el('span', { class: 'swatch swatch--' + e[2] }), e[1]);
+      })));
     host.appendChild(el('div', { class: 'chart', id: 'chart' }));
     host.appendChild(el('div', { class: 'section-label', text: 'Todas las métricas' }));
     host.appendChild(tablaCompleta());
@@ -215,10 +367,6 @@
       b.setAttribute('aria-pressed', b.getAttribute('data-metrica') === metricaActiva ? 'true' : 'false');
       b.className = 'btn btn-xs ' + (b.getAttribute('data-metrica') === metricaActiva ? 'btn--primary' : 'btn--outline');
     });
-  }
-
-  function valor(clave, periodo, equipo) {
-    return D.estadisticas.resumen_comparativo[periodo][clave][equipo];
   }
 
   function techoGrafico(max) {
@@ -236,14 +384,21 @@
     vaciar(host);
 
     var W = 640, H = 300, ML = 44, MR = 12, MT = 28, MB = 34;
-    var series = [['1T', 'primer_tiempo'], ['2T', 'segundo_tiempo']];
+    var porTiempo = tienePorTiempo();
+    var series = porTiempo ? [['1T', 'primer_tiempo'], ['2T', 'segundo_tiempo']] : [['Total', 'tiempo_completo']];
     var maxV = 0;
-    series.forEach(function (s) { EQUIPOS.forEach(function (e) { maxV = Math.max(maxV, valor(m[0], s[1], e[0])); }); });
+    series.forEach(function (s) {
+      EQUIPOS.forEach(function (e) {
+        var v = valor(m[0], s[1], e[0]);
+        if (v != null) maxV = Math.max(maxV, Number(v));
+      });
+    });
     var techo = techoGrafico(maxV);
     var y = function (v) { return MT + (H - MT - MB) * (1 - v / techo); };
 
+    var descEtiqueta = porTiempo ? 'en el primer y segundo tiempo' : 'en el total del partido';
     var s = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
-      'aria-label': m[1] + ' de Brasil y Alemania en el primer y segundo tiempo' });
+      'aria-label': m[1] + ' de ' + EQUIPOS[0][1] + ' y ' + EQUIPOS[1][1] + ' ' + descEtiqueta });
     for (var t = 0; t <= 4; t++) {
       var v = techo * t / 4;
       s.appendChild(svg('line', { class: 'chart__grid', x1: ML, x2: W - MR, y1: y(v), y2: y(v) }));
@@ -255,15 +410,16 @@
       var cx = ML + ancho * i + ancho / 2;
       EQUIPOS.forEach(function (e, j) {
         var val = valor(m[0], ser[1], e[0]);
+        var valNum = val != null ? Number(val) : 0;
         var x = cx + (j === 0 ? -barra - 1 : 1);
-        var alto = Math.max(H - MB - y(val), 0);
+        var alto = Math.max(H - MB - y(valNum), 0);
         var r = svg('rect', { class: 'bar bar--' + e[2], x: x, y: H - MB - alto, width: barra, height: alto,
           rx: 3, tabindex: 0, 'data-tip': e[1] + ' · ' + ser[0] + ': ' + num(val, m[2]) + ' ' + m[1].toLowerCase(),
           'aria-label': e[1] + ', ' + ser[0] + ', ' + m[1] + ': ' + num(val, m[2]) });
         s.appendChild(r);
         s.appendChild(svg('text', { class: 'chart__value', x: x + barra / 2, y: H - MB - alto - 6,
           'text-anchor': 'middle', text: num(val, m[2]) }));
-        s.appendChild(svg('text', { x: x + barra / 2, y: H - MB + 14, 'text-anchor': 'middle', text: e[2].toUpperCase() }));
+        s.appendChild(svg('text', { x: x + barra / 2, y: H - MB + 14, 'text-anchor': 'middle', text: (e[3] || e[2]).toUpperCase() }));
       });
       s.appendChild(svg('text', { x: cx, y: H - 6, 'text-anchor': 'middle', text: ser[0] }));
     });
@@ -292,18 +448,21 @@
   }
 
   function tablaCompleta() {
+    var per = periodosActivos();
+    var nCols = String(per.length);
     var thead = el('thead', null,
       el('tr', null, el('th', { rowspan: '2', text: 'Métrica' }),
-        el('th', { class: 'group group--bra', colspan: '3', text: 'Brasil' }),
-        el('th', { class: 'group group--ger', colspan: '3', text: 'Alemania' })),
-      el('tr', null, PERIODOS.concat(PERIODOS).map(function (p, i) {
-        return el('th', { class: 'num' + (i % 3 === 0 ? ' group' : ''), text: p[1] });
+        EQUIPOS.map(function (e) {
+          return el('th', { class: 'group group--' + e[2], colspan: nCols, text: e[1] });
+        })),
+      el('tr', null, per.concat(per).map(function (p, i) {
+        return el('th', { class: 'num' + (i % per.length === 0 ? ' group' : ''), text: p[1] });
       })));
     var tbody = el('tbody');
-    METRICAS.forEach(function (m) {
+    metricasDefinidas().forEach(function (m) {
       var fila = el('tr', null, el('td', null, m[1], m[3] ? el('span', { class: 'note', text: m[3] }) : null));
       EQUIPOS.forEach(function (e) {
-        PERIODOS.forEach(function (p, i) {
+        per.forEach(function (p, i) {
           fila.appendChild(el('td', { class: 'num' + (i === 0 ? ' group' : ''), text: num(valor(m[0], p[0], e[0]), m[2]) }));
         });
       });
@@ -312,23 +471,26 @@
     return el('div', { class: 'table-wrap' }, el('table', { class: 'tbl' }, thead, tbody));
   }
 
-  // ── Los 8 goles ──────────────────────────────────────────────────────────
+  // ── Goles ────────────────────────────────────────────────────────────────
   function renderGoles() {
     var host = $('panel-goles');
     vaciar(host);
-    host.appendChild(el('div', { class: 'figure' }, el('img', { src: '../data/partido/mapa_8_goles.svg',
-      alt: 'Mapa de la cancha con la posición de remate de los 8 goles' })));
-    host.appendChild(el('p', { class: 'caption',
-      text: 'El tamaño de cada punto indica el xG estimado. Las coordenadas están normalizadas: Alemania siempre ataca hacia la izquierda, también en el 2T.' }));
+    var hayCoordenadas = D.goles.some(function (g) { return g.coordenadas_campo_cm != null; });
+    if (hayCoordenadas) {
+      host.appendChild(el('div', { class: 'figure' }, el('img', { src: '../data/partido/mapa_8_goles.svg',
+        alt: 'Mapa de la cancha con la posición de remate de los ' + D.goles.length + ' goles' })));
+      host.appendChild(el('p', { class: 'caption',
+        text: 'El tamaño de cada punto indica el xG estimado. Las coordenadas están normalizadas: ' + EQUIPOS[1][1] + ' siempre ataca hacia la izquierda, también en el 2T.' }));
+    }
 
     var tbody = el('tbody');
     D.goles.forEach(function (g, i) {
       var fila = el('tr', { 'data-row': String(i), tabindex: 0, 'aria-selected': i === golActivo ? 'true' : 'false' },
         el('td', { class: 'num', text: g.minuto + "'" }),
         el('td', { class: 'num', text: g.marcador_momento }),
-        el('td', { text: g.anotador.nombre }),
-        el('td', { class: 'soft', text: g.asistente.nombre }),
-        el('td', { class: 'soft', text: g.tipo_jugada }),
+        el('td', { text: g.anotador ? g.anotador.nombre : '—' }),
+        el('td', { class: 'soft', text: g.asistente && g.asistente.nombre ? g.asistente.nombre : '—' }),
+        el('td', { class: 'soft', text: g.tipo_jugada || '—' }),
         el('td', { class: 'num', text: num(g.xg, 2) }),
         el('td', { class: 'num', text: num(g.distancia_porteria_m, 1) }));
       var elegir = function () { golActivo = i; marcarGol(); };
@@ -352,21 +514,22 @@
     var g = D.goles[golActivo], box = $('detalle-gol');
     vaciar(box);
     box.appendChild(el('p', null, el('strong', { text: g.minuto + "' · " + g.anotador.nombre + ' (' + g.marcador_momento + ')' })));
-    box.appendChild(el('p', null, el('strong', { text: 'Análisis táctico. ' }), g.nota_tactica));
-    box.appendChild(el('p', null, el('strong', { text: 'Relato. ' }), g.narracion));
+    if (g.nota_tactica) box.appendChild(el('p', null, el('strong', { text: 'Análisis táctico. ' }), g.nota_tactica));
+    if (g.narracion) box.appendChild(el('p', null, el('strong', { text: 'Relato. ' }), g.narracion));
   }
 
-  // ── Gol de Müller ────────────────────────────────────────────────────────
+  // ── Gol destacado (opcional, ej. Müller) ─────────────────────────────────
   function renderMuller() {
     var host = $('panel-muller');
     vaciar(host);
+    if (!D.gol_muller) return;
     var jugada = D.gol_muller.metadatos_jugada;
     var ventanas = D.gol_muller.ventanas_tacticas;
     var met = ventanas[ventanas.length - 1].metricas;
     host.appendChild(el('p', { class: 'caption',
       text: jugada.minuto_oficial + "' · " + jugada.anotador.nombre + ' · ' + jugada.tipo_jugada + ' · Reloj ' + jugada.reloj_partido }));
     host.appendChild(el('div', { class: 'figure' }, el('img', { src: '../data/partido/radar_gol_muller.svg',
-      alt: 'Radar cenital de la pantalla de Klose y Höwedes y el remate de Müller' })));
+      alt: 'Radar cenital de la jugada del gol de ' + jugada.anotador.nombre })));
     host.appendChild(el('div', { class: 'stat-row' },
       stat('Distancia', num(met.distancia_remate_m, 1) + ' m'),
       stat('xG (estimado)', num(met.xg, 2)),

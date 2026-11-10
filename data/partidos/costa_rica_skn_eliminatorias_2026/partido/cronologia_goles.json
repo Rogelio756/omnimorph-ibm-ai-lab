@@ -1,0 +1,91 @@
+[
+  {
+    "orden": 1,
+    "minuto": 40,
+    "segundo_oficial": null,
+    "marcador_momento": "1-0",
+    "equipo_anotador": "Costa Rica",
+    "anotador": {
+      "nombre": "Orlando Galo",
+      "dorsal": 14
+    },
+    "asistente": {
+      "nombre": "Jefferson Brenes",
+      "dorsal": 13
+    },
+    "tipo_jugada": null,
+    "xg": null,
+    "coordenadas_campo_cm": null,
+    "distancia_porteria_m": null,
+    "pie_remate": null,
+    "zona_remate": null,
+    "nota_tactica": null,
+    "narracion": "Remate de cabeza dentro del área tras centro de Jefferson Brenes desde la derecha."
+  },
+  {
+    "orden": 2,
+    "minuto": 49,
+    "segundo_oficial": null,
+    "marcador_momento": "2-0",
+    "equipo_anotador": "Costa Rica",
+    "anotador": {
+      "nombre": "Orlando Galo",
+      "dorsal": 14
+    },
+    "asistente": {
+      "nombre": "Manfred Ugalde",
+      "dorsal": 9
+    },
+    "tipo_jugada": null,
+    "xg": null,
+    "coordenadas_campo_cm": null,
+    "distancia_porteria_m": null,
+    "pie_remate": null,
+    "zona_remate": null,
+    "nota_tactica": null,
+    "narracion": "Zurdazo rastrero desde el borde del área tras pase de Manfred Ugalde. DISCREPANCIA: F5 y F11 indican minuto 50'."
+  },
+  {
+    "orden": 3,
+    "minuto": 82,
+    "segundo_oficial": null,
+    "marcador_momento": "3-0",
+    "equipo_anotador": "Costa Rica",
+    "anotador": {
+      "nombre": "Josimar Alcócer",
+      "dorsal": 20
+    },
+    "asistente": null,
+    "tipo_jugada": null,
+    "xg": null,
+    "coordenadas_campo_cm": null,
+    "distancia_porteria_m": null,
+    "pie_remate": null,
+    "zona_remate": null,
+    "nota_tactica": null,
+    "narracion": "Gol sin asistencia tras presión alta y robo en la salida del arquero Julani Archibald. DISCREPANCIA: F3 indica 83'."
+  },
+  {
+    "orden": 4,
+    "minuto": 84,
+    "segundo_oficial": null,
+    "marcador_momento": "4-0",
+    "equipo_anotador": "Costa Rica",
+    "anotador": {
+      "nombre": "Andy Rojas",
+      "dorsal": 19
+    },
+    "asistente": {
+      "nombre": "Joel Campbell",
+      "dorsal": 12
+    },
+    "tipo_jugada": null,
+    "xg": null,
+    "coordenadas_campo_cm": null,
+    "distancia_porteria_m": null,
+    "pie_remate": null,
+    "zona_remate": null,
+    "nota_tactica": null,
+    "narracion": "Definición dentro del área a pase de Joel Campbell para cerrar el 4-0 en su debut con la selección mayor."
+  }
+]
