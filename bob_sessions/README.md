@@ -37,6 +37,8 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_20_requerimientos_y_mejoras.md` | 2026-11-10 | Auditoría de requerimientos y plan de mejora: 28 reqs, 6 Sugeridos, matriz de cumplimiento 9/9 PASS, plan antes/después de la demo con 6 mejoras priorizadas (IBM Bob, modo Plan). Revisión de Claude Code: el riesgo del SYSTEM_PROMPT de Brasil ya estaba cubierto por la protección `chat_datos_completos` (commit 9cd476f) |
 | `sesion_21_fusion_rastros_mateo.md` | 2026-11-09 | Unión en MATEO de los rastros partidos que la identificación manual asignó al mismo jugador (Madrigal 12/59, Ugalde 2/74, Lassiter 18/70): 49 → 46 jugadores, sin tocar el motor |
 | `sesion_22_operaciones_y_ficha_tecnica.md` | 2026-11-09 | Página Operaciones (9 monitores con observado vs. límite, terminal en vivo del consumo del chat y conexión con IBM Cloud IAM y watsonx.ai sin gasto) y ficha técnica con diagrama de flujo del MVP en Método |
+| `sesion_23_estado_actual_plano.md` | 2026-11-10 | Plano de estado actual para el equipo (IBM Bob, modo Plan): diagrama de arquitectura, stack, mapa de carpetas, páginas del tablero, monitores M1–M4 con resultados reales, uso de IBM y tabla de estado antes/después de la demo. Guardado en `blueprints/estado_actual_2026-11-10.md` |
+| `sesion_24_revision_plano_y_pagina.md` | 2026-11-10 | Revisión del plano de la sesión 23 contra el código (Claude Code): 4 correcciones (cómo arrancar la demo sin regenerar, pendientes del M2.4 y de caída de red, Orchestrate a después de la demo, detalles del mapa) y publicación del plano como página para el equipo |
 
 ---
 
