@@ -201,7 +201,7 @@ Cada fase es **un commit**, que se enseña antes de hacerlo (regla del proyecto)
 | **D4** | Operaciones | (a) Pie de página · (b) Solo dentro de Método · (c) Quitarla en el modo demo | **(a)** |
 | **D5** | Alcance antes de la demo | Fases 1+2 · Fases 1+2+3 | **1+2+3** si hay más de 2 días; si no, **1+2** |
 | **D6** | ¿Quién implementa cada fase? | Claude Code, Bob o Gemini | **Decidido (2026-11-14):** Claude Code solo diseña y revisa; Bob la fase 1 y Gemini la 2 (ver 5.1) |
-| **D7** | Dónde levantar el servicio para el equipo | (a) Túnel desde tu PC (Cloudflare Tunnel): listo en minutos, solo mientras tu PC esté encendida · (b) IBM Cloud Code Engine: siempre en línea y suma al relato de IBM, pero lleva más trabajo | **(b)** si hay tiempo; si no, **(a)**. En los dos casos: credenciales solo en el servidor y un tope de preguntas al chat por persona y por día |
+| **D7** | Dónde levantar el servicio para el equipo | (a) Túnel · (b) IBM Cloud Code Engine | **Decidido (2026-11-14):** túnel desde la PC del usuario (Cloudflare quick tunnel), prueba de **48 h** y **15 preguntas por persona** al chat. Encargo: `blueprints/fase3_5_modo_prueba.md` |
 
 ---
 

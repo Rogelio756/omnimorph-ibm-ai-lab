@@ -33,3 +33,21 @@
   color: var(--color-text);
   border-color: var(--color-text);
 }
+
+/* ── Franja de aviso de prueba ──────────────────────────────────────────── */
+.prueba-franja {
+  padding: var(--space-2) var(--space-6);
+  background-color: var(--color-surface);
+  border-bottom: var(--border);
+  font-size: var(--text-label);
+  color: var(--color-text-soft);
+  text-align: center;
+}
+
+.prueba-franja__link {
+  color: var(--color-text);
+}
+
+.prueba-franja__link:hover {
+  text-decoration: underline;
+}

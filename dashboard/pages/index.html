@@ -535,5 +535,56 @@
   })();
   </script>
 
+  <!-- ── FRANJA DE PRUEBA (modo prueba: añade aviso y enlace a Tu opinión) ──── -->
+  <script>
+  (function () {
+    'use strict';
+    fetch('/api/prueba/estado', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (info) {
+        if (!info || !info.activa) return;
+
+        var fin = new Date(info.fin);
+        var dia  = fin.toLocaleDateString('es', { day: 'numeric', month: 'long' });
+        var hora = fin.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+
+        // Añadir «Tu opinión» al menú (om-nav__links)
+        var navLinks = document.getElementById('nav-links');
+        if (navLinks) {
+          var li = document.createElement('li');
+          var a  = document.createElement('a');
+          a.className   = 'om-nav__link om-nav__link--opinion';
+          a.href        = 'opinion.html';
+          a.textContent = 'Tu opinión';
+          li.appendChild(a);
+          navLinks.appendChild(li);
+        }
+
+        // Insertar franja de aviso justo después del nav
+        var nav = document.getElementById('main-nav');
+        var franja = document.createElement('div');
+        franja.className     = 'prueba-franja';
+        franja.style.cssText = [
+          'padding:8px 24px',
+          'background:#1A1A1A',
+          'border-bottom:1px solid #2A2A2A',
+          'font-size:12px',
+          'color:#A1A1AE',
+          'text-align:center',
+          'position:relative',
+          'z-index:10',
+        ].join(';');
+        franja.innerHTML = 'Versión de prueba · disponible hasta el ' + dia + ' a las ' + hora +
+          ' · <a href="opinion.html" style="color:#FFFFFF"><strong>Danos tu opinión</strong></a>';
+        if (nav && nav.parentNode) {
+          nav.parentNode.insertBefore(franja, nav.nextSibling);
+        } else {
+          document.body.insertBefore(franja, document.body.firstChild);
+        }
+      })
+      .catch(function () { /* sin servidor o sin prueba: silencio */ });
+  })();
+  </script>
+
 </body>
 </html>

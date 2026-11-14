@@ -83,3 +83,4 @@ Decisión de Bob que se acepta: «América», «Inter» a secas, «Barcelona» a
 | R11 | ¿Se **debe** confiar en estos datos? | Responde como recomendación | Limitar `debe\w*` a «debe/debería + corregir/mejorar/cambiar/hacer» |
 
 Agregar estos 4 casos al script.
+| R12 | ¿Cómo presionó **Costa Rica** después de perder el balón? | Añade también la viñeta «Postura sin balón de San Cristóbal y Nieves» (menciona «7 de Costa Rica» y por eso pasa el filtro) | Filtrar por el **sujeto** de la viñeta (el texto antes de los dos puntos), no por cualquier mención del equipo |

@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OMNIMORPH — Tu opinión sobre la prueba">
+  <title>OMNIMORPH — Tu opinión</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/components/pill-button.css">
+  <link rel="stylesheet" href="../styles/components/status-chips.css">
+  <link rel="stylesheet" href="../styles/components/site-header.css">
+  <link rel="stylesheet" href="../styles/components/site-credit.css">
+  <link rel="stylesheet" href="../styles/components/site-nav.css">
+  <link rel="stylesheet" href="../styles/components/transicion.css">
+  <script src="../components/transicion.js"></script>
+  <style>
+    /* ── Página opinión ───────────────────────────────────────────────── */
+    .opinion-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: var(--space-9) var(--cell-padding-x) var(--space-12);
+    }
+
+    /* Guía plegable */
+    .guia {
+      background: var(--color-surface);
+      border: var(--border);
+      border-radius: var(--radius-card);
+      margin-bottom: var(--space-9);
+      overflow: hidden;
+    }
+    .guia__summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) var(--cell-padding-x);
+      cursor: pointer;
+      list-style: none;
+      font-size: var(--text-body);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      border-bottom: var(--border);
+      user-select: none;
+    }
+    .guia__summary::-webkit-details-marker { display: none; }
+    .guia__summary::after {
+      content: '▸';
+      font-size: 12px;
+      color: var(--color-text-soft);
+      transition: transform var(--transition);
+    }
+    details[open] .guia__summary::after { transform: rotate(90deg); }
+    .guia__body {
+      padding: var(--space-4) var(--cell-padding-x) var(--space-6);
+    }
+    .guia__body h3 {
+      font-size: var(--text-body);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      margin: 0 0 var(--space-3);
+    }
+    .guia__body p {
+      color: var(--color-text-soft);
+      font-size: var(--text-body);
+      margin: 0 0 var(--space-3);
+      line-height: var(--lh-body);
+    }
+    .guia__body ol {
+      padding-left: var(--space-6);
+      color: var(--color-text-soft);
+      font-size: var(--text-body);
+      line-height: var(--lh-body);
+      margin: 0;
+    }
+    .guia__body li { margin-bottom: var(--space-2); }
+    .guia__preguntas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+    }
+    .guia__q {
+      background: var(--color-bg);
+      border: var(--border-soft);
+      border-radius: var(--radius-pill);
+      padding: var(--space-1) var(--space-4);
+      font-size: var(--text-label);
+      color: var(--color-text);
+      cursor: default;
+    }
+
+    /* Formulario */
+    .form-titulo {
+      font-size: var(--text-title);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      margin: 0 0 var(--space-6);
+    }
+
+    .form-grupo {
+      margin-bottom: var(--space-6);
+    }
+    .form-label {
+      display: block;
+      font-size: var(--text-label);
+      font-weight: var(--font-weight-medium);
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: var(--color-text-soft);
+      margin-bottom: var(--space-3);
+    }
+    .form-label .form-opt {
+      font-weight: var(--font-weight-normal);
+      color: var(--color-text-soft);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    /* Escala 1-5 */
+    .escala {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      align-items: center;
+    }
+    .escala__extremo {
+      font-size: var(--text-label);
+      color: var(--color-text-soft);
+      flex-shrink: 0;
+    }
+    .escala__botones {
+      display: flex;
+      gap: var(--space-2);
+    }
+    .escala-btn {
+      width: 48px;
+      height: 48px;
+      border: var(--border-soft);
+      border-radius: var(--radius-card);
+      background: var(--color-surface);
+      color: var(--color-text-soft);
+      font-size: var(--text-body);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+      touch-action: manipulation;
+    }
+    .escala-btn:hover {
+      background: var(--color-border);
+      color: var(--color-text);
+    }
+    .escala-btn:focus-visible {
+      outline: 2px solid var(--color-ok);
+      outline-offset: 2px;
+    }
+    .escala-btn[aria-pressed="true"] {
+      background: var(--color-ok);
+      border-color: var(--color-ok);
+      color: var(--color-bg);
+    }
+    @media (max-width: 480px) {
+      .escala-btn { width: 44px; height: 44px; }
+    }
+
+    /* Opciones de texto (chips) */
+    .opciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .opcion-btn {
+      border: var(--border-soft);
+      border-radius: var(--radius-pill);
+      padding: var(--space-2) var(--space-4);
+      background: var(--color-surface);
+      color: var(--color-text-soft);
+      font-size: var(--text-label);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+      touch-action: manipulation;
+    }
+    .opcion-btn:hover {
+      color: var(--color-text);
+      border-color: var(--color-text);
+    }
+    .opcion-btn:focus-visible {
+      outline: 2px solid var(--color-ok);
+      outline-offset: 2px;
+    }
+    .opcion-btn[aria-pressed="true"] {
+      background: var(--color-ok);
+      border-color: var(--color-ok);
+      color: var(--color-bg);
+    }
+
+    /* Textarea */
+    .form-textarea {
+      width: 100%;
+      min-height: 90px;
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-surface);
+      border: var(--border-soft);
+      border-radius: var(--radius-card);
+      color: var(--color-text);
+      font-family: var(--font-ui);
+      font-size: var(--text-body);
+      line-height: var(--lh-body);
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .form-textarea::placeholder { color: var(--color-text-soft); }
+    .form-textarea:focus-visible {
+      outline: 2px solid var(--color-ok);
+      outline-offset: 2px;
+    }
+    .form-charcount {
+      font-size: var(--text-label);
+      color: var(--color-text-soft);
+      text-align: right;
+      display: block;
+      margin-top: var(--space-1);
+    }
+
+    /* Input texto */
+    .form-input {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-surface);
+      border: var(--border-soft);
+      border-radius: var(--radius-card);
+      color: var(--color-text);
+      font-family: var(--font-ui);
+      font-size: var(--text-body);
+      box-sizing: border-box;
+    }
+    .form-input::placeholder { color: var(--color-text-soft); }
+    .form-input:focus-visible {
+      outline: 2px solid var(--color-ok);
+      outline-offset: 2px;
+    }
+
+    /* Divisor */
+    .form-hr { border: none; border-top: var(--border); margin: var(--space-6) 0; }
+
+    /* Botón enviar */
+    .form-submit {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-top: var(--space-6);
+    }
+    .form-aviso {
+      font-size: var(--text-label);
+      color: var(--color-text-soft);
+    }
+    .form-aviso--ok  { color: var(--color-ok); }
+    .form-aviso--err { color: var(--color-alert); }
+
+    /* Requerido */
+    .form-required { color: var(--color-alert); margin-left: 2px; }
+    .form-nota-req {
+      font-size: var(--text-label);
+      color: var(--color-text-soft);
+      margin-bottom: var(--space-6);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header" role="banner">
+    <div class="site-header__brand">
+      <img class="brand-cubo" src="../assets/logos/web/omnimorph-cubo.png" alt="">
+      <div class="site-header__titles">
+        <span class="site-header__name">OMNIMORPH</span>
+        <span class="site-header__subtitle">Tu opinión</span>
+      </div>
+    </div>
+    <div class="site-header__sep" aria-hidden="true"></div>
+    <nav id="site-nav" class="site-nav" aria-label="Navegación principal"></nav>
+  </header>
+
+  <main class="opinion-wrap">
+
+    <!-- Guía de 20 minutos -->
+    <details class="guia" open id="guia-detalle">
+      <summary class="guia__summary">Cómo probar Omnimorph (20 minutos)</summary>
+      <div class="guia__body">
+        <h3>Imagina que eres analista de un club y vas a enseñar esto a tu cuerpo técnico.</h3>
+        <ol>
+          <li><strong>Inicio (1 min):</strong> ¿entiendes qué es y para quién?</li>
+          <li><strong>Mateo (5 min):</strong> reproduce el video, cambia entre «Con marcas» y «Original», mira el radar y la crónica.</li>
+          <li><strong>Partido (6 min):</strong> recorre las 5 pestañas.</li>
+          <li><strong>Método (3 min):</strong> ¿te fías de cómo se hizo?</li>
+          <li>
+            <strong>Chat (4 min):</strong> prueba estas tres preguntas y luego pregunta lo que quieras (tienes 15):
+            <div class="guia__preguntas" id="guia-preguntas">
+              <span class="guia__q">¿Qué jugador de San Cristóbal ganó más duelos?</span>
+              <span class="guia__q">¿Cómo presionó Costa Rica después de perder el balón?</span>
+              <span class="guia__q">¿Qué tarjetas hubo?</span>
+            </div>
+          </li>
+          <li><strong>Si puedes, ábrelo también en tu celular.</strong></li>
+          <li><strong>Cuéntanos qué te pareció</strong> en el formulario de abajo.</li>
+        </ol>
+      </div>
+    </details>
+
+    <!-- Formulario -->
+    <h2 class="form-titulo">Cuéntanos qué te pareció</h2>
+    <p class="form-nota-req">Los campos marcados con <span class="form-required">*</span> son obligatorios.</p>
+
+    <form id="form-opinion" novalidate>
+
+      <!-- P1: Rol -->
+      <div class="form-grupo" id="grupo-rol">
+        <span class="form-label">¿Cuál es tu rol? <span class="form-opt">(opcional)</span></span>
+        <div class="opciones" role="group" aria-label="Rol">
+          <button type="button" class="opcion-btn" data-grupo="rol" data-valor="Analista" aria-pressed="false">Analista</button>
+          <button type="button" class="opcion-btn" data-grupo="rol" data-valor="Cuerpo técnico" aria-pressed="false">Cuerpo técnico</button>
+          <button type="button" class="opcion-btn" data-grupo="rol" data-valor="Jugador" aria-pressed="false">Jugador</button>
+          <button type="button" class="opcion-btn" data-grupo="rol" data-valor="Desarrollo o datos" aria-pressed="false">Desarrollo o datos</button>
+          <button type="button" class="opcion-btn" data-grupo="rol" data-valor="Otro" aria-pressed="false">Otro</button>
+        </div>
+      </div>
+
+      <hr class="form-hr">
+
+      <!-- P2: Claridad -->
+      <div class="form-grupo" id="grupo-claridad">
+        <label class="form-label">¿Entendiste en 10 segundos qué es y para quién? <span class="form-required">*</span></label>
+        <div class="escala" role="group" aria-label="Claridad (1 nada, 5 totalmente)">
+          <span class="escala__extremo">1 = nada</span>
+          <div class="escala__botones">
+            <button type="button" class="escala-btn" data-grupo="claridad" data-valor="1" aria-pressed="false">1</button>
+            <button type="button" class="escala-btn" data-grupo="claridad" data-valor="2" aria-pressed="false">2</button>
+            <button type="button" class="escala-btn" data-grupo="claridad" data-valor="3" aria-pressed="false">3</button>
+            <button type="button" class="escala-btn" data-grupo="claridad" data-valor="4" aria-pressed="false">4</button>
+            <button type="button" class="escala-btn" data-grupo="claridad" data-valor="5" aria-pressed="false">5</button>
+          </div>
+          <span class="escala__extremo">5 = totalmente</span>
+        </div>
+      </div>
+
+      <!-- P3: Sin programación -->
+      <div class="form-grupo" id="grupo-sin_programacion">
+        <label class="form-label">¿Se entiende sin saber de programación? <span class="form-required">*</span></label>
+        <div class="escala" role="group" aria-label="Sin programacion (1 nada, 5 totalmente)">
+          <span class="escala__extremo">1 = nada</span>
+          <div class="escala__botones">
+            <button type="button" class="escala-btn" data-grupo="sin_programacion" data-valor="1" aria-pressed="false">1</button>
+            <button type="button" class="escala-btn" data-grupo="sin_programacion" data-valor="2" aria-pressed="false">2</button>
+            <button type="button" class="escala-btn" data-grupo="sin_programacion" data-valor="3" aria-pressed="false">3</button>
+            <button type="button" class="escala-btn" data-grupo="sin_programacion" data-valor="4" aria-pressed="false">4</button>
+            <button type="button" class="escala-btn" data-grupo="sin_programacion" data-valor="5" aria-pressed="false">5</button>
+          </div>
+          <span class="escala__extremo">5 = totalmente</span>
+        </div>
+      </div>
+
+      <!-- P4: Útil para partido -->
+      <div class="form-grupo" id="grupo-util_partido">
+        <label class="form-label">¿Te sirve para analizar un partido? <span class="form-required">*</span></label>
+        <div class="escala" role="group" aria-label="Utilidad partido (1 nada, 5 totalmente)">
+          <span class="escala__extremo">1 = nada</span>
+          <div class="escala__botones">
+            <button type="button" class="escala-btn" data-grupo="util_partido" data-valor="1" aria-pressed="false">1</button>
+            <button type="button" class="escala-btn" data-grupo="util_partido" data-valor="2" aria-pressed="false">2</button>
+            <button type="button" class="escala-btn" data-grupo="util_partido" data-valor="3" aria-pressed="false">3</button>
+            <button type="button" class="escala-btn" data-grupo="util_partido" data-valor="4" aria-pressed="false">4</button>
+            <button type="button" class="escala-btn" data-grupo="util_partido" data-valor="5" aria-pressed="false">5</button>
+          </div>
+          <span class="escala__extremo">5 = totalmente</span>
+        </div>
+      </div>
+
+      <!-- P5: Confianza datos -->
+      <div class="form-grupo" id="grupo-confianza_datos">
+        <label class="form-label">¿Te fías de los datos? <span class="form-required">*</span></label>
+        <div class="escala" role="group" aria-label="Confianza datos (1 nada, 5 totalmente)">
+          <span class="escala__extremo">1 = nada</span>
+          <div class="escala__botones">
+            <button type="button" class="escala-btn" data-grupo="confianza_datos" data-valor="1" aria-pressed="false">1</button>
+            <button type="button" class="escala-btn" data-grupo="confianza_datos" data-valor="2" aria-pressed="false">2</button>
+            <button type="button" class="escala-btn" data-grupo="confianza_datos" data-valor="3" aria-pressed="false">3</button>
+            <button type="button" class="escala-btn" data-grupo="confianza_datos" data-valor="4" aria-pressed="false">4</button>
+            <button type="button" class="escala-btn" data-grupo="confianza_datos" data-valor="5" aria-pressed="false">5</button>
+          </div>
+          <span class="escala__extremo">5 = totalmente</span>
+        </div>
+      </div>
+
+      <!-- P6: Chat -->
+      <div class="form-grupo" id="grupo-chat">
+        <span class="form-label">¿Qué tal el chat? <span class="form-opt">(opcional)</span></span>
+        <div class="escala" role="group" aria-label="Chat (1 nada, 5 muy bien, o No lo usé)">
+          <span class="escala__extremo">1 = nada</span>
+          <div class="escala__botones">
+            <button type="button" class="escala-btn" data-grupo="chat" data-valor="1" aria-pressed="false">1</button>
+            <button type="button" class="escala-btn" data-grupo="chat" data-valor="2" aria-pressed="false">2</button>
+            <button type="button" class="escala-btn" data-grupo="chat" data-valor="3" aria-pressed="false">3</button>
+            <button type="button" class="escala-btn" data-grupo="chat" data-valor="4" aria-pressed="false">4</button>
+            <button type="button" class="escala-btn" data-grupo="chat" data-valor="5" aria-pressed="false">5</button>
+          </div>
+          <span class="escala__extremo">5 = totalmente</span>
+        </div>
+        <div class="opciones" style="margin-top:var(--space-2)" role="group" aria-label="No lo use">
+          <button type="button" class="opcion-btn" data-grupo="chat" data-valor="No lo usé" aria-pressed="false">No lo usé</button>
+        </div>
+      </div>
+
+      <!-- P7: Funcionamiento -->
+      <div class="form-grupo" id="grupo-funcionamiento">
+        <label class="form-label">¿Funcionó bien? (velocidad, errores) <span class="form-required">*</span></label>
+        <div class="escala" role="group" aria-label="Funcionamiento (1 nada, 5 totalmente)">
+          <span class="escala__extremo">1 = nada</span>
+          <div class="escala__botones">
+            <button type="button" class="escala-btn" data-grupo="funcionamiento" data-valor="1" aria-pressed="false">1</button>
+            <button type="button" class="escala-btn" data-grupo="funcionamiento" data-valor="2" aria-pressed="false">2</button>
+            <button type="button" class="escala-btn" data-grupo="funcionamiento" data-valor="3" aria-pressed="false">3</button>
+            <button type="button" class="escala-btn" data-grupo="funcionamiento" data-valor="4" aria-pressed="false">4</button>
+            <button type="button" class="escala-btn" data-grupo="funcionamiento" data-valor="5" aria-pressed="false">5</button>
+          </div>
+          <span class="escala__extremo">5 = totalmente</span>
+        </div>
+      </div>
+
+      <hr class="form-hr">
+
+      <!-- P8: Dispositivo -->
+      <div class="form-grupo" id="grupo-dispositivo">
+        <span class="form-label">¿Dónde lo probaste? <span class="form-opt">(opcional)</span></span>
+        <div class="opciones" role="group" aria-label="Dispositivo">
+          <button type="button" class="opcion-btn" data-grupo="dispositivo" data-valor="Computadora" aria-pressed="false">Computadora</button>
+          <button type="button" class="opcion-btn" data-grupo="dispositivo" data-valor="Celular" aria-pressed="false">Celular</button>
+          <button type="button" class="opcion-btn" data-grupo="dispositivo" data-valor="Los dos" aria-pressed="false">Los dos</button>
+        </div>
+      </div>
+
+      <!-- P9: Enseñarías -->
+      <div class="form-grupo" id="grupo-ensenarias">
+        <span class="form-label">¿Se lo enseñarías a un entrenador? <span class="form-opt">(opcional)</span></span>
+        <div class="opciones" role="group" aria-label="Ensenarias a un entrenador">
+          <button type="button" class="opcion-btn" data-grupo="ensenarias" data-valor="Sí, tal cual" aria-pressed="false">Sí, tal cual</button>
+          <button type="button" class="opcion-btn" data-grupo="ensenarias" data-valor="Sí, con avisos" aria-pressed="false">Sí, con avisos</button>
+          <button type="button" class="opcion-btn" data-grupo="ensenarias" data-valor="Todavía no" aria-pressed="false">Todavía no</button>
+        </div>
+      </div>
+
+      <hr class="form-hr">
+
+      <!-- P10: Gustó -->
+      <div class="form-grupo">
+        <label class="form-label" for="campo-gusto">Lo que más te gustó <span class="form-opt">(opcional)</span></label>
+        <textarea id="campo-gusto" name="gusto" class="form-textarea" maxlength="1000"
+          placeholder="Escribe aquí..."></textarea>
+        <span class="form-charcount" id="count-gusto">0 / 1000</span>
+      </div>
+
+      <!-- P11: Confundió -->
+      <div class="form-grupo">
+        <label class="form-label" for="campo-confundio">Lo que te confundió o falló, y dónde <span class="form-opt">(opcional)</span></label>
+        <textarea id="campo-confundio" name="confundio" class="form-textarea" maxlength="1000"
+          placeholder="Escribe aquí..."></textarea>
+        <span class="form-charcount" id="count-confundio">0 / 1000</span>
+      </div>
+
+      <!-- P12: Mejora -->
+      <div class="form-grupo">
+        <label class="form-label" for="campo-mejora">Una mejora que harías <span class="form-opt">(opcional)</span></label>
+        <textarea id="campo-mejora" name="mejora" class="form-textarea" maxlength="1000"
+          placeholder="Escribe aquí..."></textarea>
+        <span class="form-charcount" id="count-mejora">0 / 1000</span>
+      </div>
+
+      <hr class="form-hr">
+
+      <!-- P13: Nombre -->
+      <div class="form-grupo">
+        <label class="form-label" for="campo-nombre">Tu nombre <span class="form-opt">(opcional, para poder preguntarte)</span></label>
+        <input id="campo-nombre" name="nombre" type="text" class="form-input" maxlength="60"
+          placeholder="Solo si quieres">
+      </div>
+
+      <!-- Enviar -->
+      <div class="form-submit">
+        <button type="submit" class="btn btn--primary" id="btn-enviar">Enviar opinión</button>
+        <span class="form-aviso" id="form-aviso" aria-live="polite"></span>
+      </div>
+
+    </form>
+
+  </main>
+
+  <footer class="site-credit" role="contentinfo">
+    <p class="site-credit__text">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab · <a class="site-credit__link" href="operaciones.html">Operaciones técnicas</a></p>
+  </footer>
+
+  <script src="../components/site-nav.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var selecciones = {};
+    var DRAFT_KEY = 'om_opinion_draft';
+
+    // ── Borrador en localStorage ─────────────────────────────────────────────
+    function guardarBorrador() {
+      try {
+        var draft = {
+          selecciones: selecciones,
+          textos: {
+            gusto:     document.getElementById('campo-gusto').value,
+            confundio: document.getElementById('campo-confundio').value,
+            mejora:    document.getElementById('campo-mejora').value,
+            nombre:    document.getElementById('campo-nombre').value,
+          },
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      } catch (e) { /* incognito o localStorage lleno: ignorar */ }
+    }
+
+    function borrarBorrador() {
+      try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    }
+
+    function restaurarBorrador() {
+      try {
+        var raw = localStorage.getItem(DRAFT_KEY);
+        if (!raw) return;
+        var draft = JSON.parse(raw);
+        // Restaurar selecciones de botones
+        var sels = draft.selecciones || {};
+        Object.keys(sels).forEach(function (grupo) {
+          var val = sels[grupo];
+          var valStr = String(val);
+          var btn = document.querySelector('[data-grupo="' + grupo + '"][data-valor="' + valStr + '"]');
+          if (btn) {
+            document.querySelectorAll('[data-grupo="' + grupo + '"]').forEach(function (b) {
+              b.setAttribute('aria-pressed', 'false');
+            });
+            btn.setAttribute('aria-pressed', 'true');
+            selecciones[grupo] = isNaN(val) ? val : parseInt(val, 10);
+          }
+        });
+        // Restaurar textos
+        var textos = draft.textos || {};
+        [['campo-gusto', 'count-gusto', 'gusto'],
+         ['campo-confundio', 'count-confundio', 'confundio'],
+         ['campo-mejora', 'count-mejora', 'mejora'],
+         ['campo-nombre', null, 'nombre']].forEach(function (t) {
+          var ta = document.getElementById(t[0]);
+          if (ta && textos[t[2]]) {
+            ta.value = textos[t[2]];
+            if (t[1]) {
+              var cnt = document.getElementById(t[1]);
+              if (cnt) cnt.textContent = ta.value.length + ' / ' + ta.maxLength;
+            }
+          }
+        });
+      } catch (e) { /* borrador corrupto: ignorar */ }
+    }
+
+    // ── Botones de escala y opción única ─────────────────────────────────────
+    document.querySelectorAll('.escala-btn, .opcion-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var grupo = btn.dataset.grupo;
+        var valor = btn.dataset.valor;
+
+        // Para chat: escala y "No lo usé" son mutuamente excluyentes
+        // Para el resto: selección única dentro del grupo
+        document.querySelectorAll('[data-grupo="' + grupo + '"]').forEach(function (b) {
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btn.setAttribute('aria-pressed', 'true');
+        selecciones[grupo] = isNaN(valor) ? valor : parseInt(valor, 10);
+        guardarBorrador();
+      });
+    });
+
+    // ── Contadores de caracteres ─────────────────────────────────────────────
+    [
+      ['campo-gusto',    'count-gusto'],
+      ['campo-confundio','count-confundio'],
+      ['campo-mejora',   'count-mejora'],
+    ].forEach(function (par) {
+      var ta = document.getElementById(par[0]);
+      var cnt = document.getElementById(par[1]);
+      if (!ta || !cnt) return;
+      ta.addEventListener('input', function () {
+        cnt.textContent = ta.value.length + ' / ' + ta.maxLength;
+        guardarBorrador();
+      });
+    });
+    // Guardar también cuando cambia el nombre
+    var campoNombre = document.getElementById('campo-nombre');
+    if (campoNombre) campoNombre.addEventListener('input', guardarBorrador);
+
+    // Restaurar borrador al cargar la página
+    restaurarBorrador();
+
+    // ── Cargar preguntas sugeridas del servidor ──────────────────────────────
+    fetch('/api/chat/estado', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (info) {
+        if (!info || !info.sugeridas || !info.sugeridas.length) return;
+        var wrap = document.getElementById('guia-preguntas');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        info.sugeridas.slice(0, 3).forEach(function (s) {
+          var sp = document.createElement('span');
+          sp.className = 'guia__q';
+          sp.textContent = s;
+          wrap.appendChild(sp);
+        });
+      })
+      .catch(function () { /* sin servidor: se quedan las por defecto */ });
+
+    // ── Envío ────────────────────────────────────────────────────────────────
+    var aviso = document.getElementById('form-aviso');
+    var btnEnviar = document.getElementById('btn-enviar');
+
+    document.getElementById('form-opinion').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Campos obligatorios
+      var camposOblig = ['claridad', 'sin_programacion', 'util_partido', 'confianza_datos', 'funcionamiento'];
+      for (var i = 0; i < camposOblig.length; i++) {
+        if (selecciones[camposOblig[i]] === undefined) {
+          aviso.textContent = 'Faltan respuestas obligatorias (marcadas con *).';
+          aviso.className = 'form-aviso form-aviso--err';
+          // Desplazarse al primer grupo sin selección
+          var grupoEl = document.getElementById('grupo-' + camposOblig[i]);
+          if (grupoEl) grupoEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+      }
+
+      var cuerpo = Object.assign({}, selecciones);
+      var gusto    = document.getElementById('campo-gusto').value.trim();
+      var confundio = document.getElementById('campo-confundio').value.trim();
+      var mejora   = document.getElementById('campo-mejora').value.trim();
+      var nombre   = document.getElementById('campo-nombre').value.trim();
+      if (gusto)    cuerpo.gusto     = gusto;
+      if (confundio) cuerpo.confundio = confundio;
+      if (mejora)   cuerpo.mejora    = mejora;
+      if (nombre)   cuerpo.nombre    = nombre;
+
+      btnEnviar.disabled = true;
+      aviso.textContent = 'Enviando…';
+      aviso.className = 'form-aviso';
+
+      fetch('/api/opinion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cuerpo),
+      })
+        .then(function (r) {
+          return r.json().then(function (data) {
+            if (r.status === 201) {
+              borrarBorrador();
+              aviso.textContent = data.mensaje || 'Gracias. Tu opinión llegó al equipo.';
+              aviso.className = 'form-aviso form-aviso--ok';
+              btnEnviar.textContent = 'Enviado';
+            } else if (r.status === 429) {
+              borrarBorrador();
+              aviso.textContent = 'Ya enviaste el máximo de respuestas. ¡Gracias!';
+              aviso.className = 'form-aviso form-aviso--ok';
+              btnEnviar.disabled = true;
+            } else if (r.status === 410) {
+              aviso.textContent = 'La prueba ya terminó. El formulario está cerrado.';
+              aviso.className = 'form-aviso form-aviso--err';
+              btnEnviar.disabled = true;
+            } else {
+              aviso.textContent = data.detalle || 'Error al enviar. Inténtalo de nuevo.';
+              aviso.className = 'form-aviso form-aviso--err';
+              btnEnviar.disabled = false;
+            }
+          });
+        })
+        .catch(function () {
+          aviso.textContent = 'No se pudo enviar. Tu respuesta sigue aquí; vuelve a intentarlo en unos minutos.';
+          aviso.className = 'form-aviso form-aviso--err';
+          btnEnviar.disabled = false;
+        });
+    });
+
+  })();
+  </script>
+
+</body>
+</html>

@@ -34,6 +34,7 @@
         '<span class="notice__tag">Límite</span>' +
         '<span>Esta conversación llegó al límite de 30 preguntas. Empieza una nueva para continuar.</span>' +
       '</p>' +
+      '<p class="composer__prueba" id="prueba-restantes" hidden></p>' +
       '<form class="composer" id="form" autocomplete="off">' +
         '<div class="composer__field">' +
           '<label class="composer__label" for="pregunta">Pregunta sobre el partido</label>' +

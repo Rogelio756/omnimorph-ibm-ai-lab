@@ -16,6 +16,7 @@
     429: 'Demasiadas preguntas seguidas. Espera un minuto e inténtalo de nuevo.',
     502: 'Granite no pudo responder. Inténtalo de nuevo en unos segundos.',
     403: 'El chat solo responde a conexiones locales.',
+    410: 'La prueba terminó. Gracias por participar.',
   };
 
   var historial = [];
@@ -156,6 +157,18 @@
   }
 
   // ── Envío ────────────────────────────────────────────────────────────────
+  // Contador de preguntas restantes en modo prueba (null = sin modo prueba)
+  var pruebaRestantes = null;
+
+  function actualizarContadorPrueba(restantes) {
+    if (restantes === null || restantes === undefined) return;
+    pruebaRestantes = restantes;
+    var el = $('prueba-restantes');
+    if (!el) return;
+    el.textContent = 'Te quedan ' + restantes + ' pregunta' + (restantes === 1 ? '' : 's');
+    el.hidden = false;
+  }
+
   function actualizarControles() {
     var limite = preguntas >= MAX_PREGUNTAS;
     var activo = listo && !ocupado && !limite;
@@ -197,7 +210,26 @@
       })
       .then(function (data) {
         pendiente.remove();
+        // Tope individual de la prueba
+        if (data.error === 'tope_alcanzado') {
+          preguntas -= 1;
+          var tope = data.tope || 15;
+          var cuerpo = el('div', { class: 'msg__body', role: 'alert',
+            text: 'Llegaste a las ' + tope + ' preguntas de la prueba. Gracias. ' +
+                  'Cuéntanos qué te pareció en la página Tu opinión.' });
+          agregarMensaje('error', cuerpo).classList.add('msg--assistant');
+          return;
+        }
+        // Prueba terminada
+        if (data.error === 'prueba_terminada') {
+          preguntas -= 1;
+          var cuerpo = el('div', { class: 'msg__body', role: 'alert',
+            text: 'La prueba de Omnimorph terminó. Gracias por participar.' });
+          agregarMensaje('error', cuerpo).classList.add('msg--assistant');
+          return;
+        }
         mensajeAsistente(data);
+        if (data.prueba_restantes !== undefined) actualizarContadorPrueba(data.prueba_restantes);
         // Una respuesta descartada no entra al historial: el modelo no debe apoyarse en ella
         if (!data.bloqueada) {
           historial.push({ role: 'user', content: texto }, { role: 'assistant', content: data.respuesta });
@@ -206,8 +238,11 @@
       .catch(function (err) {
         pendiente.remove();
         preguntas -= 1; // una pregunta que falló no cuenta
-        var cuerpo = el('div', { class: 'msg__body', role: 'alert',
-          text: ERRORES[err.estado] || 'No se pudo contactar con el servidor. Inténtalo de nuevo.' });
+        // 429 tope_alcanzado llega como respuesta JSON 429 (no como excepción de red)
+        var textoError = (err.estado === 429)
+          ? 'Llegaste al límite de preguntas de esta prueba. Cuéntanos qué te pareció en Tu opinión.'
+          : (ERRORES[err.estado] || 'No se pudo contactar con el servidor. Inténtalo de nuevo.');
+        var cuerpo = el('div', { class: 'msg__body', role: 'alert', text: textoError });
         agregarMensaje('error', cuerpo).classList.add('msg--assistant');
         // Límites y validaciones se explican en el chat; esto es para fallas del servicio
         if (!err.estado || err.estado >= 500) {

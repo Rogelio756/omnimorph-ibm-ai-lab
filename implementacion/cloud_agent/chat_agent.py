@@ -183,7 +183,7 @@ _AJENOS = frozenset({
     # Concacaf/otros — sin homonimias
     "canada", "estados unidos", "eeuu",
     "el salvador", "jamaica", "haiti", "cuba", "republica dominicana",
-    "australia", "japon", "corea del sur", "iran", "arabia saudita", "marruecos",
+    "australia", "japon", "corea del sur", "seleccion de iran", "arabia saudita", "marruecos",
     "nigeria", "senegal", "ghana", "camerun", "sudafrica",
 })
 
@@ -771,6 +771,7 @@ PALABRAS_FUTBOL = (
     "arquero", "medio", "carril", "lateral", "central", "volante", "titular", "suplente",
     "juego", "jugada", "contra", "minuto", "tiempo", "clip", "video", "mateo", "omnimorph",
     "dato", "fuente", "valid", "metric", "radar", "ventana", "dominio", "presion",
+    "ronda", "clasific", "pase", "fase", "llave", "ascenso", "descenso",
 )
 
 
@@ -875,6 +876,12 @@ RE_RANKING = re.compile(
     r"\b(?:mas|mayor|mejor|peor|menos|menor|top|lider)\b"
 )
 
+# R8: si la pregunta menciona un tiempo (1T/2T) no hay datos por jugador separados por tiempo
+RE_TIEMPO_RANKING = re.compile(
+    r"\b(?:1t|2t|1er tiempo|2do tiempo|primer tiempo|segundo tiempo|"
+    r"primera parte|segunda parte|en el 1|en el 2)\b"
+)
+
 # Palabras de equipo que hacen que RE_RANKING no aplique aunque pase el regex
 RE_PREGUNTA_EQUIPO = re.compile(
     r"\b(?:que equipo|cual equipo|que seleccion|que club|que conjunto|"
@@ -899,6 +906,10 @@ def respuesta_ranking(
     # R2: si la pregunta es sobre equipos, no interceptar
     if RE_PREGUNTA_EQUIPO.search(normalizada):
         return None
+    # R8: si la pregunta pide datos por tiempo (1T/2T), los datos individuales no están
+    # desglosados por tiempo → devolver None o mensaje claro
+    if RE_TIEMPO_RANKING.search(normalizada):
+        return "No hay datos por jugador separados por tiempo en este partido: las estadísticas individuales son del partido completo."
 
     # Detectar métrica pedida (busca la clave más larga que coincide)
     campo = None
@@ -916,11 +927,27 @@ def respuesta_ranking(
         hechos["equipos"][c]["nombre"] for c in claves_equipo
     } if claves_equipo else set()
 
-    candidatos = [
-        j for j in individuales
-        if j.get(campo) is not None
-        and (not nombres_equipo_mencionado or j.get("equipo") in nombres_equipo_mencionado)
-    ]
+    # R9: para precisión de pases exigir mínimo de pases intentados para evitar outliers
+    # (jugadores con 2/2 pases = 100 %, que no son representativos)
+    MINIMO_PASES_PRECISION = 15
+    if campo == "precision_pases_pct":
+        candidatos = [
+            j for j in individuales
+            if j.get(campo) is not None
+            and (j.get("pases_intentados") or j.get("pases_completados") or 0) >= MINIMO_PASES_PRECISION
+            and (not nombres_equipo_mencionado or j.get("equipo") in nombres_equipo_mencionado)
+        ]
+        if not candidatos:
+            return (
+                f"No hay jugadores con {MINIMO_PASES_PRECISION} o más pases intentados para "
+                "calcular un ranking de precisión representativo."
+            )
+    else:
+        candidatos = [
+            j for j in individuales
+            if j.get(campo) is not None
+            and (not nombres_equipo_mencionado or j.get("equipo") in nombres_equipo_mencionado)
+        ]
     if not candidatos:
         return None
 
@@ -966,9 +993,14 @@ def respuesta_ranking(
         f"{j['jugador']} {j[campo]:g}" for j in resto
     )
     cola = f" (seguido por {partes_resto})" if partes_resto else ""
+    # R9/P5: indicar el mínimo de pases usado para el ranking de precisión
+    nota_minimo = (
+        f" (solo jugadores con al menos {MINIMO_PASES_PRECISION} pases)"
+        if campo == "precision_pases_pct" else ""
+    )
     return (
         f"{linea_top}{cola} "
-        f"Entre los {n_total} jugadores con datos individuales (FotMob)."
+        f"Entre los {n_total} jugadores con datos individuales (FotMob){nota_minimo}."
     )
 
 
@@ -1088,10 +1120,13 @@ def respuesta_tactica(
         equipo_actual: Optional[str] = None
         for linea in contenido.splitlines():
             if linea.startswith("- **"):
-                # Línea de viñeta con encabezado «- **Equipo:**»
+                # R12: comparar SOLO el sujeto del encabezado (texto antes de los «:»
+                # dentro de los «**»), no cualquier mención del equipo en el cuerpo.
+                m_sujeto = re.match(r"^-\s+\*\*([^*:]+)", linea)
+                sujeto = sin_acentos(m_sujeto.group(1)) if m_sujeto else sin_acentos(linea)
                 equipos_linea = {
                     n for n in nombres_filtro
-                    if sin_acentos(n) in sin_acentos(linea)
+                    if sin_acentos(n) in sujeto
                 }
                 if equipos_linea:
                     if bloque_actual:
@@ -1123,10 +1158,13 @@ def respuesta_tactica(
 
 
 # ── A3: recomendaciones — rechazar y citar conclusión de Fer ──────────────────
+# R11: "debe\w*" solo activa la regla si va seguido de corregir/mejorar/cambiar/hacer.
+# «¿Se debe confiar en estos datos?» no es una recomendación, es una pregunta de confianza.
 RE_RECOMENDACION = re.compile(
-    r"\b(?:deberia\w*|debe\w*|tiene que|tendria que|que har[ia]\w*|"
+    r"\b(?:deberia\w*|tiene que|tendria que|que har[ia]\w*|"
     r"recomiend\w*|consejo\w*|que corregi\w*|que mejor\w*|que cambi\w*|"
     r"que haria\w*|que propondria\w*)\b"
+    r"|\bdebe(?:ria)?\w*\s+(?:correg|mejor|cambi|hac|hacer)\w*\b"
 )
 
 

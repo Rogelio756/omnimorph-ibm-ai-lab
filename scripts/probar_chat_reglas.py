@@ -354,6 +354,61 @@ def definir_casos(datos_crc):
         return True, ""
     caso(27, "¿Quién es el portero del Inter?", _c27)
 
+    # ── R8–R12 (fase 1b) ──────────────────────────────────────────────────────
+
+    # 28. R8: pregunta con "segundo tiempo" → no ranking de jugadores por tiempo
+    def _c28(r):
+        if r is None:
+            return True, ""   # Granite también es OK
+        rsa = _sa(r)
+        # No debe devolver un ranking normal (como si fueran datos del 2T completo)
+        if "entre los" in rsa and "jugadores con datos" in rsa:
+            return False, "devolvio ranking normal para pregunta por tiempo (R8 regression)"
+        return True, ""
+    caso(28, "¿Qué jugador tuvo más entradas en el segundo tiempo?", _c28)
+
+    # 29. R9: precisión de pases de SKN → no Terrell/Browne con pocos pases
+    def _c29(r):
+        if r is None:
+            return True, ""   # Granite también es OK
+        rsa = _sa(r)
+        # Si responde un ranking, no debe incluir a Terrell o Browne con 100 %
+        # (muy pocos pases) O debe indicar el mínimo de pases
+        if "terrell" in rsa or "browne" in rsa:
+            if "100" in r and "pases" not in rsa.replace("precision de pases", ""):
+                return False, "devolvio Terrell/Browne con precision irrepresentativa (R9)"
+        return True, ""
+    caso(29, "¿Qué jugador de SKN tuvo mejor precisión de pases?", _c29)
+
+    # 30. R10: «irán a la siguiente ronda» — NO fuera de tema
+    def _c30(r):
+        if r is not None:
+            rsa = _sa(r)
+            if "solo puedo responder" in rsa:
+                return False, "rechazó 'irán' (verbo) como equipo ajeno (R10 regression)"
+        return True, ""
+    caso(30, "¿Irán a la siguiente ronda?", _c30)
+
+    # 31. R11: «¿Se debe confiar en estos datos?» → NO recomendación
+    def _c31(r):
+        if r is not None:
+            rsa = _sa(r)
+            if "no doy recomendaciones" in rsa:
+                return False, "respondio como recomendacion a pregunta de confianza (R11)"
+        return True, ""
+    caso(31, "¿Se debe confiar en estos datos?", _c31)
+
+    # 32. R12: «¿Cómo presionó Costa Rica?» → NO incluye bloque de SKN
+    def _c32(r):
+        if r is None:
+            return True, ""   # Granite también es OK
+        rsa = _sa(r)
+        # No debe contener «postura sin balon» (que es el sujeto de la viñeta de SKN)
+        if "postura sin balon" in rsa or "renuncio a la presion alta" in rsa:
+            return False, "incluyo bloque de SKN en respuesta de CRC (R12 regression)"
+        return True, ""
+    caso(32, "¿Cómo presionó Costa Rica después de perder el balón?", _c32)
+
     return casos
 
 

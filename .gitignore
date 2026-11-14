@@ -38,3 +38,6 @@ __pycache__/
 
 # Marca local de qué partido trae data/raw (la escribe dataset_manager)
 data/raw/origen.json
+
+data/clean/opiniones_prueba.jsonl
+data/clean/prueba_estado.json
