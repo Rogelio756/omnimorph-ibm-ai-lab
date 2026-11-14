@@ -1,0 +1,197 @@
+{
+  "_descripcion": "Identificación manual rastro (track_id_stitched) -> dorsal del partido Costa Rica vs. San Cristóbal y Nieves. Sale de rastros_dorsales_borrador.json (sesión 16). Cada asignación lleva su propio campo 'validado'.",
+  "validacion": {
+    "fecha": "2026-11-14",
+    "fuente_alineaciones": "Fer (equipo de análisis), repo FerTC8/omnimorph-costa-rica-skn-2024, commit 8010944: los 10 dorsales asignados existen entre los titulares de su equipo con el mismo jugador.",
+    "criterio": "validado=true solo para certeza 'alta' (dorsal leído claro en 3 o más cuadros y confirmado en la alineación de Fer). Las de certeza 'media' se muestran 'por validar': la alineación es correcta, pero la lectura del número en el video es dudosa.",
+    "pendiente": "Confirmar a mano Cascante (T33), Brenes (T28), Rogers (T1), Lewis (T36), Sterling-James (T98) y el tramo T18 de Lassiter."
+  },
+  "clip": "HP3zxNuoWXE-720-15.mp4, cuadros 0-1079 (minuto ~1:03-1:39 del partido: solo titulares en cancha)",
+  "criterio": "Solo se asigna un dorsal si se lee en el recorte y existe entre los titulares del equipo de ese color. 'alta' = se lee claro en 3 o más cuadros; 'media' = se lee en 1-2 cuadros o con dudas en una cifra.",
+  "asignados": [
+    {
+      "rastros": [
+        6
+      ],
+      "equipo": "Costa Rica",
+      "dorsal": 14,
+      "jugador": "GALO",
+      "certeza": "alta",
+      "cuadros_evidencia": [
+        235,
+        315,
+        395,
+        472
+      ],
+      "validado": true
+    },
+    {
+      "rastros": [
+        12,
+        59
+      ],
+      "equipo": "Costa Rica",
+      "dorsal": 17,
+      "jugador": "MADRIGAL",
+      "certeza": "alta",
+      "cuadros_evidencia": [
+        486,
+        894,
+        953,
+        1010
+      ],
+      "nota": "Mismo jugador partido en dos rastros: T12 termina y T59 empieza en el cuadro 545.",
+      "validado": true
+    },
+    {
+      "rastros": [
+        2,
+        74
+      ],
+      "equipo": "Costa Rica",
+      "dorsal": 9,
+      "jugador": "UGALDE",
+      "certeza": "alta",
+      "cuadros_evidencia": [
+        355,
+        411,
+        467,
+        848,
+        936,
+        1027
+      ],
+      "nota": "Mismo jugador partido en dos rastros: T2 termina en 527 y T74 empieza en 659.",
+      "validado": true
+    },
+    {
+      "rastros": [
+        69
+      ],
+      "equipo": "Costa Rica",
+      "dorsal": 21,
+      "jugador": "ZAMORA",
+      "certeza": "alta",
+      "cuadros_evidencia": [
+        689,
+        833,
+        925,
+        1016
+      ],
+      "validado": true
+    },
+    {
+      "rastros": [
+        18,
+        70
+      ],
+      "equipo": "Costa Rica",
+      "dorsal": 11,
+      "jugador": "LASSITER",
+      "certeza": "alta",
+      "cuadros_evidencia": [
+        703,
+        748,
+        884,
+        1027
+      ],
+      "nota": "T70 se lee claro. T18 (cuadros 44-435) se asignó por la hoja de contactos de Bob, donde también se ve un 11; no se solapa con T70 (649-1073). Confirmar T18.",
+      "validado": true
+    },
+    {
+      "rastros": [
+        33
+      ],
+      "equipo": "Costa Rica",
+      "dorsal": 6,
+      "jugador": "CASCANTE",
+      "certeza": "media",
+      "cuadros_evidencia": [
+        429,
+        609
+      ],
+      "nota": "Claro en el cuadro 429; en 609 parece 6.",
+      "validado": false
+    },
+    {
+      "rastros": [
+        28
+      ],
+      "equipo": "Costa Rica",
+      "dorsal": 13,
+      "jugador": "BRENES",
+      "certeza": "media",
+      "cuadros_evidencia": [
+        388
+      ],
+      "nota": "Solo un cuadro de espaldas; el 1 se distingue mejor que el 3.",
+      "validado": false
+    },
+    {
+      "rastros": [
+        1
+      ],
+      "equipo": "San Cristóbal y Nieves",
+      "dorsal": 11,
+      "jugador": "ROGERS",
+      "certeza": "media",
+      "cuadros_evidencia": [
+        387,
+        474
+      ],
+      "validado": false
+    },
+    {
+      "rastros": [
+        36
+      ],
+      "equipo": "San Cristóbal y Nieves",
+      "dorsal": 15,
+      "jugador": "LEWIS",
+      "certeza": "media",
+      "cuadros_evidencia": [
+        395,
+        876
+      ],
+      "validado": false
+    },
+    {
+      "rastros": [
+        98
+      ],
+      "equipo": "San Cristóbal y Nieves",
+      "dorsal": 22,
+      "jugador": "STERLING-JAMES",
+      "certeza": "media",
+      "cuadros_evidencia": [],
+      "nota": "Se lee 22 en la hoja de contactos de Bob (rastro 98, cuadros 863-1073). Fuera del top 20 revisado aquí.",
+      "validado": false
+    }
+  ],
+  "sin_asignar": [
+    {
+      "rastros": [
+        29
+      ],
+      "motivo": "Cambio de identidad: es un jugador de San Cristóbal (verde) hasta ~cuadro 700 y después sigue a un jugador de Costa Rica. Gemini ya lo había detectado en la sesión 11."
+    },
+    {
+      "rastros": [
+        25,
+        8,
+        66,
+        73,
+        3
+      ],
+      "motivo": "San Cristóbal: casi siempre de frente o borroso; no se ve el dorsal."
+    },
+    {
+      "rastros": [
+        30,
+        60,
+        20
+      ],
+      "motivo": "Costa Rica: no se ve el dorsal en los cuadros revisados."
+    }
+  ],
+  "resumen": "10 jugadores en 13 rastros: 5 validados (Galo, Madrigal, Ugalde, Zamora, Lassiter) y 5 por validar."
+}

@@ -6,8 +6,8 @@
   "fps": 29.97,
   "n_frames": 1080,
   "duracion_s": 36.0,
-  "datos_validados": false,
-  "n_fuentes": 16
+  "datos_validados": true,
+  "n_fuentes": 17
  },
  "coincide_partido": true,
  "corrida": {
@@ -60,6 +60,7 @@
  "dorsales": {
   "jugadores": 10,
   "rastros": 13,
+  "validados": 5,
   "validado": false
  },
  "monitores_detalle": [

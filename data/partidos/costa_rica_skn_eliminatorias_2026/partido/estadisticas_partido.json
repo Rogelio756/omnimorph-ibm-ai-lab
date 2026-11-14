@@ -7,68 +7,68 @@
         "san_cristobal_y_nieves": 0
       },
       "posesion_pct": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 68,
+        "san_cristobal_y_nieves": 32
       },
       "tiros_totales": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 10,
+        "san_cristobal_y_nieves": 3
       },
       "tiros_a_puerta": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 2,
+        "san_cristobal_y_nieves": 0
       },
       "tiros_fuera": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 2
       },
       "tiros_bloqueados": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 1
       },
       "tiros_dentro_area": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 3,
+        "san_cristobal_y_nieves": 1
       },
       "tiros_fuera_area": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 7,
+        "san_cristobal_y_nieves": 2
       },
       "pases_completados": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 229,
+        "san_cristobal_y_nieves": 87
       },
       "pases_intentados": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 282,
+        "san_cristobal_y_nieves": 134
       },
       "precision_pases_pct": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 81,
+        "san_cristobal_y_nieves": 65
       },
       "corners": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 3,
+        "san_cristobal_y_nieves": 2
       },
       "faltas_cometidas": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 7
       },
       "fueras_de_juego": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 2
       },
       "tarjetas_amarillas": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 2
       },
       "tarjetas_rojas": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 0
       },
       "atajadas_portero": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 1
       },
       "recuperaciones": {
         "costa_rica": null,
@@ -79,8 +79,8 @@
         "san_cristobal_y_nieves": null
       },
       "pases_completados_intentados": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": "229/282",
+        "san_cristobal_y_nieves": "87/134"
       }
     },
     "segundo_tiempo": {
@@ -90,68 +90,68 @@
         "san_cristobal_y_nieves": 0
       },
       "posesion_pct": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 63,
+        "san_cristobal_y_nieves": 37
       },
       "tiros_totales": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 13,
+        "san_cristobal_y_nieves": 2
       },
       "tiros_a_puerta": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 5,
+        "san_cristobal_y_nieves": 1
       },
       "tiros_fuera": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 1
       },
       "tiros_bloqueados": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 0
       },
       "tiros_dentro_area": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 7,
+        "san_cristobal_y_nieves": 0
       },
       "tiros_fuera_area": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 6,
+        "san_cristobal_y_nieves": 2
       },
       "pases_completados": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 254,
+        "san_cristobal_y_nieves": 134
       },
       "pases_intentados": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 289,
+        "san_cristobal_y_nieves": 166
       },
       "precision_pases_pct": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 88,
+        "san_cristobal_y_nieves": 81
       },
       "corners": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 2,
+        "san_cristobal_y_nieves": 1
       },
       "faltas_cometidas": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 7,
+        "san_cristobal_y_nieves": 6
       },
       "fueras_de_juego": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 2,
+        "san_cristobal_y_nieves": 1
       },
       "tarjetas_amarillas": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 1
       },
       "tarjetas_rojas": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 0
       },
       "atajadas_portero": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 2
       },
       "recuperaciones": {
         "costa_rica": null,
@@ -162,8 +162,8 @@
         "san_cristobal_y_nieves": null
       },
       "pases_completados_intentados": {
-        "costa_rica": null,
-        "san_cristobal_y_nieves": null
+        "costa_rica": "254/289",
+        "san_cristobal_y_nieves": "134/166"
       }
     },
     "tiempo_completo": {
@@ -177,8 +177,8 @@
         "san_cristobal_y_nieves": 35
       },
       "tiros_totales": {
-        "costa_rica": 15,
-        "san_cristobal_y_nieves": 4
+        "costa_rica": 23,
+        "san_cristobal_y_nieves": 5
       },
       "tiros_a_puerta": {
         "costa_rica": 7,
@@ -189,7 +189,7 @@
         "san_cristobal_y_nieves": 3
       },
       "tiros_bloqueados": {
-        "costa_rica": 1,
+        "costa_rica": 8,
         "san_cristobal_y_nieves": 1
       },
       "tiros_dentro_area": {
@@ -197,12 +197,12 @@
         "san_cristobal_y_nieves": 1
       },
       "tiros_fuera_area": {
-        "costa_rica": 5,
-        "san_cristobal_y_nieves": 3
+        "costa_rica": 13,
+        "san_cristobal_y_nieves": 4
       },
       "pases_completados": {
-        "costa_rica": 485,
-        "san_cristobal_y_nieves": 222
+        "costa_rica": 483,
+        "san_cristobal_y_nieves": 221
       },
       "pases_intentados": {
         "costa_rica": 571,
@@ -237,16 +237,16 @@
         "san_cristobal_y_nieves": 3
       },
       "recuperaciones": {
+        "costa_rica": 62,
+        "san_cristobal_y_nieves": 59
+      },
+      "xg_esperado": {
         "costa_rica": null,
         "san_cristobal_y_nieves": null
       },
-      "xg_esperado": {
-        "costa_rica": 2.51,
-        "san_cristobal_y_nieves": 0.2
-      },
       "pases_completados_intentados": {
-        "costa_rica": "485/571",
-        "san_cristobal_y_nieves": "222/300"
+        "costa_rica": "483/571",
+        "san_cristobal_y_nieves": "221/300"
       }
     }
   }

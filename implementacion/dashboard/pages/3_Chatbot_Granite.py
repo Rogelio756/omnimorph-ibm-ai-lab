@@ -101,7 +101,7 @@ for mensaje in st.session_state.mensajes:
         if mensaje["role"] == "assistant":
             mostrar_aviso_atribucion(mensaje["atribucion_incorrecta"])
             mostrar_aviso_cifras(mensaje["numeros_sin_respaldo"])
-            for aviso in chat_agent.avisos_calidad(mensaje["content"]):
+            for aviso in chat_agent.avisos_calidad(mensaje["content"], cargar_datos()):
                 st.caption(aviso)
             st.caption(texto_metricas(mensaje))
 

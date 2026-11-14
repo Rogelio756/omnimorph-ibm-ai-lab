@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 import os
 import pathlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Optional
 
@@ -56,6 +56,7 @@ class Partido:
     percepcion_dir: pathlib.Path
     equipos: tuple  # (Equipo team_id 0, Equipo team_id 1)
     datos_dir: pathlib.Path
+    chat: dict = field(default_factory=dict)  # reglas y preguntas del chat propias del partido
 
     def equipo(self, team_id: int) -> Equipo:
         return self.equipos[team_id]
@@ -126,6 +127,7 @@ def cargar(partido_id: Optional[str] = None) -> Partido:
         percepcion_dir=ROOT / cfg["percepcion_dir"],
         equipos=tuple(equipos),
         datos_dir=datos_dir,
+        chat=dict(cfg.get("chat", {})),
     )
 
 

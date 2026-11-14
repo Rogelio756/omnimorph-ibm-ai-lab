@@ -257,8 +257,10 @@
     if (!validado && P.datos_validados != null) {
       porValidar.push('Ficha, alineaciones, estadísticas y goles del partido (' + num(P.n_fuentes) + ' fuentes públicas)');
     }
-    if (hayDorsales && !dor.validado) {
-      porValidar.push(num(dor.jugadores) + ' jugadores identificados a mano en ' + num(dor.rastros) + ' rastros del clip');
+    var dorValidados = dor && dor.validados != null ? dor.validados : (dor && dor.validado ? dor.jugadores : 0);
+    var dorPendientes = hayDorsales ? dor.jugadores - dorValidados : 0;
+    if (dorPendientes > 0) {
+      porValidar.push(num(dorPendientes) + ' de ' + num(dor.jugadores) + ' jugadores identificados a mano en el clip');
     }
     host.appendChild(seccion('Niveles de confianza'));
     host.appendChild(tabla(['Nivel', 'Qué significa', 'En este partido'], [
@@ -284,7 +286,9 @@
       host.appendChild(limite('Dorsales identificados a mano',
         'El modelo automático de dorsales no lee los números en una transmisión de TV. ' + num(dor.jugadores) +
         ' jugadores se identificaron a mano en ' + num(dor.rastros) + ' rastros, comparando el video con la alineación' +
-        (dor.validado ? ', y ya están validados.' : '. Siguen por validar.')));
+        (dorPendientes === 0 ? ', y ya están validados.'
+          : dorValidados > 0 ? '. ' + num(dorValidados) + ' están validados y ' + num(dorPendientes) + ' siguen por validar.'
+          : '. Siguen por validar.')));
     }
     host.appendChild(limite('Rastros partidos',
       'El seguimiento pierde a un jugador cuando sale de cuadro o se cruza con otro. Después de unir tramos quedan ' +

@@ -166,10 +166,11 @@ def cargar_dorsales() -> dict:
                     "dorsal": a["dorsal"],
                     "jugador": a["jugador"],
                     "certeza": a.get("certeza", "media"),
-                    "validado": validado,
+                    "validado": bool(a.get("validado", validado)),
                     "rastros": rastros,
                 }
-        print(f"[OK] dorsales: {len(mapa)} rastros desde {ruta.name} ({'validado' if validado else 'por validar'})")
+        n_val = sum(1 for info in mapa.values() if info["validado"])
+        print(f"[OK] dorsales: {len(mapa)} rastros desde {ruta.name} ({n_val} validados)")
         return mapa
     return {}
 
@@ -484,10 +485,12 @@ def export_metodo() -> None:
         ruta = PARTIDO_SRC / nombre
         if ruta.exists():
             asignados = _load_json(ruta).get("asignados", [])
+            validados = sum(1 for a in asignados if a.get("validado", val))
             dorsales = {
                 "jugadores": len(asignados),
                 "rastros": sum(len(a.get("rastros", [])) for a in asignados),
-                "validado": val,
+                "validados": validados,
+                "validado": bool(asignados) and validados == len(asignados),
             }
             break
 

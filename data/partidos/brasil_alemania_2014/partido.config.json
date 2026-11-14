@@ -4,6 +4,19 @@
   "competicion": "Copa Mundial de la FIFA Brasil 2014 — Semifinal",
   "etiqueta_corta": "BRA vs GER · 2014",
   "chat_datos_completos": true,
+  "chat": {
+    "descripcion": "Brasil 1-7 Alemania (semifinal del Mundial 2014)",
+    "orden_marcador": "Brasil-Alemania",
+    "nota_datos": "Al citar xG, di que es estimado. Al citar posesión o cualquier desglose por tiempo, aclara que no está confirmado oficialmente.",
+    "aviso_xg": true,
+    "aviso_por_tiempo": true,
+    "preguntas_sugeridas": [
+      "¿Quién marcó cada gol y en qué minuto?",
+      "Compara el xG de ambos equipos en cada tiempo.",
+      "¿Cómo se generó el gol de Müller?",
+      "¿Qué bajas tuvo Brasil?"
+    ]
+  },
   "video": {
     "archivo": "data/videos/mundial_2014_720p_hd/L6sbfskaTDQ-720-13.mp4",
     "dataset_id": "L6sbfskaTDQ-720-13.mp4",

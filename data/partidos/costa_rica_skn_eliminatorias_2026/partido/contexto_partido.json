@@ -18,7 +18,7 @@
     "condiciones_climaticas": {
       "temperatura_c": 20,
       "humedad_pct": 88,
-      "cielo": "Nublado (lluvia previa)",
+      "cielo": "Lluvia intensa durante todo el partido (cancha rápida y resbaladiza)",
       "viento_kmh": 11
     },
     "resultado": {
@@ -27,7 +27,19 @@
       "segundo_tiempo": "3-0",
       "clasificado": null
     },
-    "contexto_previo": "Jornada 1 del Grupo B (junto a Trinidad y Tobago, Granada y Bahamas). Debut eliminatorio de Gustavo Alfaro y primer partido oficial de Costa Rica tras el retiro de Keylor Navas de la selección."
+    "contexto_previo": "Jornada 1 del Grupo B (junto a Trinidad y Tobago, Granada y Bahamas). Debut eliminatorio de Gustavo Alfaro y primer partido oficial de Costa Rica tras el retiro de Keylor Navas de la selección.",
+    "identificadores_externos": {
+      "fifa_id_match": "400017724",
+      "fifa_id_competition": "520",
+      "fifa_id_season": "288301",
+      "fifa_id_stage": "288302",
+      "fifa_id_group": "288303",
+      "ifes_statsperform_id": "141526",
+      "concacaf_match_uuid": "94968cbf476d4bfeb2a75732b5a38ef5",
+      "fotmob_match_id": 4416441,
+      "espn_event_id": "698147",
+      "transfermarkt_match_id": "4343320"
+    }
   },
   "equipos": {
     "costa_rica": {
@@ -100,11 +112,11 @@
           "nombre": "Jefferson Brenes",
           "posicion": "Mediocampista",
           "titular": true,
-          "minutos": 65,
+          "minutos": 64,
           "eventos": [
             "Asistencia 40'",
             "Tarjeta amarilla 58'",
-            "Sustituido al 65'"
+            "Sustituido al 64'"
           ]
         },
         "17": {
@@ -139,9 +151,9 @@
           "nombre": "Brandon Aguilera",
           "posicion": "Mediocampista ofensivo",
           "titular": false,
-          "minutos": 25,
+          "minutos": 26,
           "eventos": [
-            "Ingresó al 65' por Jefferson Brenes"
+            "Ingresó al 64' por Jefferson Brenes"
           ]
         },
         "20": {
@@ -366,7 +378,7 @@
           ]
         },
         "7": {
-          "nombre": "Gvaune Amory",
+          "nombre": "G'Vaune Amory",
           "posicion": "Extremo izquierdo",
           "titular": false,
           "minutos": 13,
@@ -391,7 +403,7 @@
           "eventos": []
         },
         "23": {
-          "nombre": "Vibert Stephens",
+          "nombre": "Vibert Stephen",
           "posicion": "Portero",
           "titular": false,
           "minutos": 0,
@@ -405,7 +417,7 @@
           "eventos": []
         },
         "13": {
-          "nombre": "Jalden Myers",
+          "nombre": "Jal'Den Myers",
           "posicion": "Defensa central",
           "titular": false,
           "minutos": 0,
@@ -419,7 +431,7 @@
           "eventos": []
         },
         "12": {
-          "nombre": "Tyerique Davis",
+          "nombre": "Tyrique Davis",
           "posicion": "Mediocampista",
           "titular": false,
           "minutos": 0,
@@ -438,19 +450,19 @@
   "procedencia": {
     "origen": "PLANTILLA_datos_partido.xlsx",
     "recopilado_por": "Gemini (IA)",
-    "validado": false,
+    "validado": true,
     "fuentes": [
       {
         "id": "F1",
         "nombre": "Concacaf — Crónica y estadísticas oficiales Eliminatorias Mundial 2026",
         "url": "https://www.concacaf.com/en/world-cup-qualifiers-men/news/grenada-bermuda-look-to-add-points-in-day-four-of-concacaf-qualifiers/",
-        "datos": "Competición, fase, formato de ronda única del Grupo B, resultado 4-0, posesión (65%-35%), tiros a puerta (7-1), pases (85%-74%) y xG (2.51-0.20).",
+        "datos": "Competición, fase, formato de ronda única del Grupo B, resultado 4-0 y goleadores.",
         "fecha_consulta": "2026-11-09"
       },
       {
         "id": "F2",
-        "nombre": "FIFA — Match Centre: Costa Rica vs. Saint Kitts and Nevis (Partido 400017351)",
-        "url": "https://www.fifa.com/en/match-centre/match/520/285028/285038/400017351",
+        "nombre": "FIFA — Match Centre: Costa Rica vs. Saint Kitts and Nevis (Partido 400017724)",
+        "url": "https://api.fifa.com/api/v3/live/football/520/288301/288302/400017724?language=es",
         "datos": "Fecha oficial (2024-06-06), hora local (20:30), sede (Estadio Nacional, San José), marcador al descanso (1-0) y final (4-0), goles y árbitros.",
         "fecha_consulta": "2026-11-09"
       },
@@ -484,15 +496,15 @@
       },
       {
         "id": "F7",
-        "nombre": "ESPN — Match Report: Costa Rica vs. St. Kitts and Nevis (Game ID 699898)",
-        "url": "https://www.espn.com/soccer/match/_/gameId/699898",
+        "nombre": "ESPN — Match Report: Costa Rica vs. St. Kitts and Nevis (Game ID 698147)",
+        "url": "https://www.espn.com/soccer/match/_/gameId/698147",
         "datos": "Esquemas tácticos (3-4-2-1 Costa Rica y 5-4-1 San Cristóbal y Nieves) y minutos de las 4 tarjetas amarillas (26', 45+4', 58', 63').",
         "fecha_consulta": "2026-11-09"
       },
       {
         "id": "F8",
-        "nombre": "Transfermarkt — Informe de partido Costa Rica vs. San Cristóbal y Nieves (Spielbericht 4356616)",
-        "url": "https://www.transfermarkt.com/costa-rica_saint-kitts-and-nevis/index/spielbericht/4356616",
+        "nombre": "Transfermarkt — Informe de partido Costa Rica vs. San Cristóbal y Nieves (Spielbericht 4343320)",
+        "url": "https://www.transfermarkt.com/spielbericht/index/spielbericht/4343320",
         "datos": "Nombres completos de los jugadores, clubes de adscripción en junio de 2024, capitanes y asistencia (15 700 espectadores).",
         "fecha_consulta": "2026-11-09"
       },
@@ -500,7 +512,7 @@
         "id": "F9",
         "nombre": "FotMob — Match Centre & Opta Statistics: Costa Rica vs. Saint Kitts and Nevis (ID 4416441)",
         "url": "https://www.fotmob.com/matches/costa-rica-vs-saint-kitts-and-nevis/2z3x5w#4416441",
-        "datos": "Estadísticas completas del partido (tiros totales 15-4, a puerta 7-1, fuera 8-3, bloqueados 1-1, en el área 10-1, pases 485/571 vs 222/300, córners 5-3, faltas 11-13, fueras de juego 2-3, atajadas 1-3).",
+        "datos": "Estadísticas por equipo en total, 1T y 2T (tiros 23-5, a puerta 7-1, pases 483/571 vs 221/300). Sin xG publicado.",
         "fecha_consulta": "2026-11-09"
       },
       {
@@ -551,7 +563,18 @@
         "url": "https://es.weatherspark.com/h/d/15463/2024/6/6/Tiempo-hist%C3%B3rico-el-jueves-6-de-junio-de-2024-en-San-Jos%C3%A9-Costa-Rica",
         "datos": "Clima nocturno en San José el 2024-06-06 (20 °C, nublado tras lluvia vespertina, humedad 88%, viento 11 km/h)",
         "fecha_consulta": "2026-04-19"
+      },
+      {
+        "id": "F17",
+        "nombre": "Fer (equipo de análisis) — Paquete de datos verificados del partido",
+        "url": "https://github.com/FerTC8/omnimorph-costa-rica-skn-2024/tree/8010944",
+        "datos": "Alineaciones, minutos, cambios, eventos con hora UTC, estadísticas por tiempo (FotMob/Opta) e identificadores oficiales.",
+        "fecha_consulta": "2026-11-14"
       }
-    ]
+    ],
+    "validado_por": "Fer (equipo de análisis)",
+    "fecha_validacion": "2026-11-14",
+    "fuente_validacion": "https://github.com/FerTC8/omnimorph-costa-rica-skn-2024 (commit 8010944)",
+    "copia_local": "data/partidos/costa_rica_skn_eliminatorias_2026/fer_validacion/"
   }
 }

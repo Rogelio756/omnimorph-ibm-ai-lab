@@ -115,8 +115,15 @@ def construir_hechos(
     equipos: dict,
     metricas: dict,
     nombres_equipo: dict,
+    menciones_equipo: Optional[dict] = None,
 ) -> dict:
-    """Prepara los valores contra los que se comparan las respuestas."""
+    """
+    Prepara los valores contra los que se comparan las respuestas.
+
+    Una métrica o un tiempo sin dato (None) no se incluye: no hay contra qué comparar.
+    menciones_equipo: nombre del equipo -> expresiones regulares con otras formas de
+    nombrarlo ("skn", "ticos"), como las de partido.config.json.
+    """
     resumen = estadisticas["resumen_comparativo"]
     periodos = zip(("primer_tiempo", "segundo_tiempo", "tiempo_completo"), PERIODOS)
     periodos = list(periodos)
@@ -126,10 +133,13 @@ def construir_hechos(
         valores: dict = {}
         for clave in metricas:
             destino = "atajadas" if clave == "atajadas_portero" else clave
-            valores[destino] = {
+            por_periodo = {
                 etiqueta: float(resumen[periodo][clave][clave_equipo])
                 for periodo, etiqueta in periodos
+                if resumen[periodo].get(clave, {}).get(clave_equipo) is not None
             }
+            if por_periodo:
+                valores[destino] = por_periodo
         # 182/228 -> se aceptan completados e intentados
         valores["pases"] = {
             etiqueta: [
@@ -137,6 +147,7 @@ def construir_hechos(
                 for x in resumen[periodo]["pases_completados_intentados"][clave_equipo].split("/")
             ]
             for periodo, etiqueta in periodos
+            if resumen[periodo].get("pases_completados_intentados", {}).get(clave_equipo)
         }
         propios = [g for g in goles if g["equipo_anotador"] == nombre]
         en_1t = sum(1 for g in propios if g["minuto"] <= 45)
@@ -153,11 +164,14 @@ def construir_hechos(
             por_jugador[jugador["nombre"]] = {}
     for gol in goles:
         nombre = gol["anotador"]["nombre"]
+        por_jugador.setdefault(nombre, {})
         por_jugador[nombre]["goles"] = por_jugador[nombre].get("goles", 0.0) + 1.0
-        asistente = gol["asistente"]["nombre"]
-        por_jugador[asistente]["asistencias"] = por_jugador[asistente].get("asistencias", 0.0) + 1.0
-    for fila in estadisticas["rendimiento_individual_destacado"]:
-        valores = por_jugador[fila["jugador"]]
+        if gol.get("asistente"):
+            asistente = gol["asistente"]["nombre"]
+            por_jugador.setdefault(asistente, {})
+            por_jugador[asistente]["asistencias"] = por_jugador[asistente].get("asistencias", 0.0) + 1.0
+    for fila in estadisticas.get("rendimiento_individual_destacado", []):
+        valores = por_jugador.setdefault(fila["jugador"], {})
         for origen, destino in (
             ("distancia_recorrida_km", "distancia"),
             ("tiros_a_puerta", "tiros_a_puerta"),
@@ -185,12 +199,39 @@ def construir_hechos(
     marcadores = {g["marcador_momento"] for g in goles} | {
         resumen[periodo]["marcador"] for periodo, _ in periodos
     }
+    # Otras formas de nombrar a cada equipo: expresión regular -> clave del equipo
+    alias_equipos = {
+        patron: sin_acentos(nombre)
+        for nombre, patrones in (menciones_equipo or {}).items()
+        if sin_acentos(nombre) in por_equipo
+        for patron in patrones
+    }
     return {
         "equipos": por_equipo,
         "jugadores": por_jugador,
         "alias_jugadores": alias,
+        "alias_equipos": alias_equipos,
         "marcadores": marcadores,
     }
+
+
+def equipo_mencionado(texto: str, hechos: dict) -> Optional[str]:
+    """Clave del equipo si el texto (sin acentos) es su nombre o una de sus menciones."""
+    if texto in hechos["equipos"]:
+        return texto
+    for patron, clave in hechos.get("alias_equipos", {}).items():
+        if re.fullmatch(patron, texto):
+            return clave
+    return None
+
+
+def equipos_en_texto(texto: str, hechos: dict) -> list[str]:
+    """Claves de los equipos nombrados en el texto (sin acentos), sin repetir."""
+    encontrados = [c for c in hechos["equipos"] if c in texto]
+    for patron, clave in hechos.get("alias_equipos", {}).items():
+        if clave not in encontrados and re.search(rf"\b(?:{patron})\b", texto):
+            encontrados.append(clave)
+    return encontrados
 
 
 def _cercano(numero: re.Match, encontrados: list[tuple[int, int, str]]) -> Optional[str]:
@@ -219,18 +260,20 @@ def _plano(valor) -> list[float]:
 
 def _revisar_equipo(cifra, equipo, metrica, periodo) -> Optional[str]:
     por_periodo = equipo["valores"].get(metrica)
-    if por_periodo is None:
+    if not por_periodo or (periodo and periodo not in por_periodo):
         return None
     if periodo:
         esperados = _plano(por_periodo[periodo])
         descripcion = f"{periodo} {'/'.join(f'{v:g}' for v in esperados)}"
     else:
-        esperados = [v for p in PERIODOS for v in _plano(por_periodo[p])]
+        presentes = [p for p in PERIODOS if p in por_periodo]
+        esperados = [v for p in presentes for v in _plano(por_periodo[p])]
         # Se admite la diferencia entre tiempos ("6 tiros menos")
-        primero, segundo = _plano(por_periodo["1T"])[0], _plano(por_periodo["2T"])[0]
-        esperados.append(abs(primero - segundo))
+        if "1T" in por_periodo and "2T" in por_periodo:
+            primero, segundo = _plano(por_periodo["1T"])[0], _plano(por_periodo["2T"])[0]
+            esperados.append(abs(primero - segundo))
         descripcion = ", ".join(
-            f"{p} {'/'.join(f'{v:g}' for v in _plano(por_periodo[p]))}" for p in PERIODOS
+            f"{p} {'/'.join(f'{v:g}' for v in _plano(por_periodo[p]))}" for p in presentes
         )
     if _coincide(cifra, esperados):
         return None
@@ -288,9 +331,11 @@ def verificar_atribucion(respuesta: str, hechos: dict) -> list[str]:
     se heredan del segmento anterior, como en "53% en el 1T y 44% en el 2T", y la
     siguiente oración hereda el sujeto, es decir, la entidad con la que abre la oración.
     """
-    patron_entidad = re.compile(
-        rf"\b(?:{_alternativas([*hechos['equipos'], *hechos['alias_jugadores']])})\b"
-    )
+    alternativas = _alternativas([*hechos["equipos"], *hechos["alias_jugadores"]])
+    alias_equipos = list(hechos.get("alias_equipos", {}))
+    if alias_equipos:
+        alternativas += "|" + "|".join(f"(?:{p})" for p in alias_equipos)
+    patron_entidad = re.compile(rf"\b(?:{alternativas})\b")
     hallazgos: list[str] = []
     sujeto = None
 
@@ -300,7 +345,12 @@ def verificar_atribucion(respuesta: str, hechos: dict) -> list[str]:
         trozos = RE_SEGMENTO.split(_preparar_frase(oracion, hechos))
         separadores = ["", *trozos[1::2]]
         for indice, segmento in enumerate(trozos[0::2]):
-            entidades = [(m.start(), m.end(), m.group()) for m in patron_entidad.finditer(segmento)]
+            entidades = [
+                (m.start(), m.end(),
+                 m.group() if m.group() in hechos["alias_jugadores"]
+                 else equipo_mencionado(m.group(), hechos) or m.group())
+                for m in patron_entidad.finditer(segmento)
+            ]
             metricas = [
                 (m.start(), m.end(), TERMINOS_METRICA[m.group()])
                 for m in RE_METRICA.finditer(segmento)
@@ -323,6 +373,8 @@ def verificar_atribucion(respuesta: str, hechos: dict) -> list[str]:
                 cifra = float(numero.group().replace(",", "."))
                 if metrica == "pases" and segmento[numero.end():].startswith("%"):
                     metrica = "precision_pases_pct"
+                if entidad not in hechos["equipos"] and entidad not in hechos["alias_jugadores"]:
+                    continue
                 if entidad in hechos["equipos"]:
                     periodo = None if sin_periodo else _periodo_de(numero, periodos, segmento)
                     hallazgo = _revisar_equipo(cifra, hechos["equipos"][entidad], metrica, periodo)

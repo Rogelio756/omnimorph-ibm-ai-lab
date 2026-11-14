@@ -150,7 +150,7 @@ class ChatBackend:
             "tokens_out": auditoria["tokens_out"],
             "atribucion_incorrecta": [] if bloqueada else auditoria["atribucion_incorrecta"],
             "numeros_sin_respaldo": [] if bloqueada else auditoria["numeros_sin_respaldo"],
-            "avisos": a.avisos_calidad(respuesta),
+            "avisos": a.avisos_calidad(respuesta, self.datos),
         }
 
 
