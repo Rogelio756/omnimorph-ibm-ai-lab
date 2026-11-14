@@ -37,3 +37,10 @@ La regla 8 del prompt ya pedía no salir del partido, pero Granite no siempre la
 
 - El puerto 8600 estaba ocupado por otro servidor (probablemente el de la sesión 26 de Bob), así que la vista previa corrió en 8601.
 - Sin commit.
+
+## 6. Ajuste tras la prueba del usuario
+
+- El usuario vio a MATEO responder un `if-else` de Python. **Causa:** usaba el servidor del puerto 8600, que se había iniciado el 2026-11-13 a las 23:57 con el código anterior al filtro. El servidor nuevo (8601) rechaza esa pregunta. Claude Code no pudo detener el proceso viejo (permiso denegado): hay que cerrarlo a mano y volver a lanzar `dashboard/serve.py`.
+- **Hueco cerrado:** con conversación en marcha, cualquier pregunta corta pasaba como seguimiento («¿cómo se hace un if else?», «cual es la situacion de USA»). Ahora el seguimiento debe parecerlo (`RE_SEGUIMIENTO`: empieza con «y…», o dice «por qué», «el segundo», «eso», «antes», «después»…). Se añadieron «bucle», «while», «if else» y «variable» a los temas ajenos.
+- El mensaje de rechazo ya no lleva cifras («4-0», «2026»), que el auditor marcaba como REVISAR. Ahora dice «el partido Costa Rica contra San Cristóbal y Nieves».
+- Pruebas: 11 casos con historial bien clasificados, todas las preguntas sugeridas aceptadas, Brasil igual, y en `/api/chat` (8601) las tres preguntas ajenas salen por regla.

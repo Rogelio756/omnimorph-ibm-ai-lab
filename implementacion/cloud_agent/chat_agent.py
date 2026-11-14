@@ -693,7 +693,14 @@ RE_FUERA_DE_TEMA = re.compile(
     r"cancion|cuento|traduce|traduccion|ensayo|matematica\w*|ecuacion|"
     r"bitcoin|cripto\w*|bolsa|inversion|politica|presidente|elecciones|religion|"
     r"horoscopo|pelicula|serie de tv|videojuego|ignora (?:tus|las) (?:reglas|instrucciones)|"
-    r"system prompt|instrucciones del sistema|eres un modelo|que modelo eres)\b"
+    r"system prompt|instrucciones del sistema|eres un modelo|que modelo eres|"
+    r"bucle|while|if else|for loop|variable\w*)\b"
+)
+# Marcas de una pregunta que sigue a la anterior
+RE_SEGUIMIENTO = re.compile(
+    r"^\W*[ye]\s|\b(?:por que|porque|ese|esa|eso|esos|esas|el otro|la otra|los otros|"
+    r"primer\w*|segund\w*|tercer\w*|cuart\w*|ultim\w*|antes|despues|tambien|"
+    r"mas detalle|explica\w*|detalla\w*|amplia\w*)\b"
 )
 # Vocabulario de fútbol y del tablero que no está en PALABRAS_SECCION
 PALABRAS_FUTBOL = (
@@ -731,9 +738,10 @@ def fuera_de_tema(pregunta: str, datos: dict, historial: Optional[list] = None) 
         nombres = [sin_acentos(n) for n in datos["partido"].get("equipos", {}).values()]
         if any(n in normalizada for n in nombres):
             return False
-    # Seguimiento corto de una conversación ya en marcha («¿y el segundo?», «¿por qué?»)
+    # Seguimiento corto de una conversación ya en marcha («¿y el segundo?», «¿por qué?»).
+    # Tiene que parecer un seguimiento: si no, «¿cómo se hace un if else?» pasaría.
     previas = [m for m in (historial or []) if m.get("role") == "user"]
-    if previas and len(normalizada.split()) <= 8:
+    if previas and len(normalizada.split()) <= 8 and RE_SEGUIMIENTO.search(normalizada):
         return False
     return True
 
@@ -742,7 +750,9 @@ def respuesta_fuera_de_tema(datos: dict) -> str:
     if solo_clip(datos):
         alcance = f"el clip de {datos['partido']['titulo']}"
     else:
-        alcance = f"el partido {datos.get('prompt', {}).get('descripcion', '')}".strip()
+        # Sin cifras: el auditor marcaría «4-0» o «2026» como números sin respaldo
+        orden = datos.get("prompt", {}).get("orden_marcador", "")
+        alcance = f"el partido {orden.replace('-', ' contra ')}".strip()
     sugeridas = preguntas_sugeridas(datos)
     ejemplo = f" Por ejemplo: «{sugeridas[0]}»" if sugeridas else ""
     return (
