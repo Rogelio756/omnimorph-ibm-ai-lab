@@ -151,6 +151,42 @@ MENSAJE_BLOQUEADA = (
     "Prueba con una pregunta más concreta o consulta la página Partido."
 )
 
+# ── A4: equipos y clubes ajenos al partido ─────────────────────────────────────
+# Nombres normalizados (sin acentos, minúsculas) de clubes/selecciones que nunca
+# pertenecen a un partido de Omnimorph. Los equipos del partido activo se excluyen
+# en tiempo de ejecución leyendo datos["equipos_en_datos"].
+#
+# Regla de inclusión: solo se ponen nombres que NO son palabras comunes del
+# español ni apellidos frecuentes. Se prefieren formas inequívocas de varios
+# tokens ("real madrid", "manchester city") sobre palabras sueltas que coinciden
+# con verbos o sustantivos ("usa", "inter", "leon", "roma", "gales", "atlas",
+# "america" en contexto de continente, "puebla" como ciudad…).
+_AJENOS = frozenset({
+    # Selecciones europeas — formas no ambiguas
+    "espana", "france", "francia", "italia", "portugal",
+    "belgica", "holanda", "paises bajos", "inglaterra", "suecia", "noruega", "dinamarca",
+    "suiza", "austria", "croacia", "serbia", "ucrania", "rumania", "escocia",
+    # América del Sur
+    "brasil", "argentina", "colombia", "chile", "uruguay", "peru", "ecuador", "paraguay",
+    "venezuela", "bolivia",
+    # Liga MX — solo formas inequívocas de varios tokens o muy específicas
+    "chivas", "guadalajara", "pumas", "unam", "cruz azul", "tigres uanl",
+    "santos laguna", "atletico san luis",
+    # Clubes europeos — formas de varios tokens (sin homonimias)
+    "real madrid", "barcelona fc", "atletico de madrid", "manchester city", "manchester united",
+    "liverpool fc", "chelsea fc", "arsenal fc", "tottenham hotspur", "psg",
+    "paris saint germain", "paris saint-germain",
+    "juventus fc", "ac milan", "inter milan", "napoles", "ss lazio", "as roma",
+    "fc porto", "sl benfica", "sporting cp",
+    "fc barcelona", "fc sevilla", "real betis", "real sociedad",
+    "fc bayern", "fc dortmund", "ajax amsterdam",
+    # Concacaf/otros — sin homonimias
+    "canada", "estados unidos", "eeuu",
+    "el salvador", "jamaica", "haiti", "cuba", "republica dominicana",
+    "australia", "japon", "corea del sur", "iran", "arabia saudita", "marruecos",
+    "nigeria", "senegal", "ghana", "camerun", "sudafrica",
+})
+
 
 def seleccionar_secciones(texto: str) -> list[str]:
     """Secciones relevantes para el texto; todas si no se reconoce el tema."""
@@ -480,6 +516,23 @@ def cargar_datos() -> dict:
         estadisticas, contexto_partido["equipos"]
     )
 
+    # A1: lista cruda de rendimiento individual para rankings por regla
+    datos["rendimiento_individual"] = individuales
+
+    # A4 / R6: equipos que están en los datos de este partido (no se rechazan como ajenos).
+    # Se recorren TODAS las listas de nombres en contexto_competitivo, sea cual sea su clave,
+    # para no depender de que el campo se llame "grupo_b_integrantes".
+    _nombres_en_datos = set()
+    for n in nombres_equipo.values():
+        _nombres_en_datos.add(sin_acentos(n))
+    _cc = contexto_partido["partido_info"].get("contexto_competitivo", {})
+    for valor in _cc.values():
+        if isinstance(valor, list):
+            for item in valor:
+                if isinstance(item, str):
+                    _nombres_en_datos.add(sin_acentos(item))
+    datos["equipos_en_datos"] = _nombres_en_datos
+
     ventanas = _ventanas_clip()
     if ventanas:
         datos["ventanas_clip"] = ventanas
@@ -674,6 +727,14 @@ def respuesta_eventos(
                 texto = f"entra {e.get('jugador')} por {e.get('jugador_secundario')}"
             else:
                 texto = re.sub(r"\s*\(FIFA Timeline pos:[^)]*\)", "", e["descripcion"])
+                # A6: eliminar marcas de fuente que no aportan al lector del chat
+                texto = re.sub(r"\s*\(ESPN[^)]*\)", "", texto)
+                texto = re.sub(r"\s*\(TM[^)]*\)", "", texto)
+                texto = re.sub(r"\s*\(Transfermarkt[^)]*\)", "", texto)
+                texto = re.sub(r"\s*\(FIFA[^)]*\)", "", texto)
+                texto = re.sub(r"\s*\(Opta[^)]*\)", "", texto)
+                texto = re.sub(r"\s*\(SKNFA[^)]*\)", "", texto)
+                texto = texto.strip().rstrip(".")
                 if e.get("jugador") and e["jugador"] not in texto:
                     texto = f"{e['jugador']}. {texto}"
             lineas.append(f"- {e['minuto']} · {e.get('equipo', '')}: {texto}")
@@ -718,6 +779,17 @@ def fuera_de_tema(pregunta: str, datos: dict, historial: Optional[list] = None) 
     normalizada = sin_acentos(pregunta)
     if RE_FUERA_DE_TEMA.search(normalizada):
         return True
+
+    # A4: detectar equipos/clubes ajenos al partido antes del filtro de vocabulario
+    _en_datos = datos.get("equipos_en_datos") or set()
+    for nombre_ajeno in _AJENOS:
+        if nombre_ajeno in _en_datos:
+            continue  # es un equipo de este partido (o su grupo)
+        # Buscar como palabra completa en la pregunta normalizada
+        patron = re.compile(rf"\b{re.escape(nombre_ajeno)}\b")
+        if patron.search(normalizada):
+            return True
+
     vocabulario = [p for palabras in PALABRAS_SECCION.values() for p in palabras]
     vocabulario += [*PALABRAS_SOLO_PARTIDO, *PALABRAS_FUTBOL]
     if any(p in normalizada for p in vocabulario):
@@ -761,6 +833,347 @@ def respuesta_fuera_de_tema(datos: dict) -> str:
     )
 
 
+# ── A1: rankings de jugadores por métrica ──────────────────────────────────────
+# Tabla: palabras clave (sin acentos) → campo en rendimiento_individual_destacado
+_METRICAS_RANKING = {
+    "duelo": "duelos_ganados",
+    "duelos": "duelos_ganados",
+    "entrada": "entradas",
+    "entradas": "entradas",
+    "intercepcion": "intercepciones",
+    "intercepciones": "intercepciones",
+    "despeje": "despejes",
+    "despejes": "despejes",
+    "toque": "toques",
+    "toques": "toques",
+    "pase": "pases_completados",
+    "pases": "pases_completados",
+    "precision": "precision_pases_pct",
+    "tiro": "tiros_totales",
+    "tiros": "tiros_totales",
+    "remate": "tiros_totales",
+    "remates": "tiros_totales",
+    "a puerta": "tiros_a_puerta",
+    "ocasion": "ocasiones_creadas",
+    "ocasiones": "ocasiones_creadas",
+    "recuperacion": "recuperaciones",
+    "recuperaciones": "recuperaciones",
+    "calificacion": "calificacion_fotmob",
+    "nota": "calificacion_fotmob",
+    "mejor jugador": "calificacion_fotmob",
+    "gol": "goles",
+    "goles": "goles",
+    "asistencia": "asistencias",
+    "asistencias": "asistencias",
+}
+
+# R2/R3: RE_RANKING exige «quien» o «qué jugador» — así «¿qué equipo tuvo más tiros?»
+# y «¿cuál fue el mejor gol?» no entran. Solo responde cuando la pregunta pregunta
+# explícitamente por un jugador.
+RE_RANKING = re.compile(
+    r"\b(?:quien|que jugador|cual jugador|jugador(?:a|es)?)\b.{0,60}"
+    r"\b(?:mas|mayor|mejor|peor|menos|menor|top|lider)\b"
+)
+
+# Palabras de equipo que hacen que RE_RANKING no aplique aunque pase el regex
+RE_PREGUNTA_EQUIPO = re.compile(
+    r"\b(?:que equipo|cual equipo|que seleccion|que club|que conjunto|"
+    r"equipo con mas|equipo que mas|que equipo tuvo)\b"
+)
+
+
+def respuesta_ranking(
+    pregunta: str, datos: dict
+) -> Optional[str]:
+    """
+    A1 — Responde sin Granite preguntas de superlativo sobre jugadores:
+    «¿Qué jugador de San Cristóbal ganó más duelos?»
+    No responde si la pregunta pregunta por un equipo (R2).
+    """
+    individuales = datos.get("rendimiento_individual")
+    if not individuales:
+        return None
+    normalizada = sin_acentos(pregunta)
+    if not RE_RANKING.search(normalizada):
+        return None
+    # R2: si la pregunta es sobre equipos, no interceptar
+    if RE_PREGUNTA_EQUIPO.search(normalizada):
+        return None
+
+    # Detectar métrica pedida (busca la clave más larga que coincide)
+    campo = None
+    for clave in sorted(_METRICAS_RANKING, key=len, reverse=True):
+        if clave in normalizada:
+            campo = _METRICAS_RANKING[clave]
+            break
+    if campo is None:
+        return None  # métrica no reconocida → Granite
+
+    # Filtrar por equipo si se menciona alguno
+    hechos = datos.get("hechos") or {}
+    claves_equipo = equipos_en_texto(normalizada, hechos)
+    nombres_equipo_mencionado = {
+        hechos["equipos"][c]["nombre"] for c in claves_equipo
+    } if claves_equipo else set()
+
+    candidatos = [
+        j for j in individuales
+        if j.get(campo) is not None
+        and (not nombres_equipo_mencionado or j.get("equipo") in nombres_equipo_mencionado)
+    ]
+    if not candidatos:
+        return None
+
+    candidatos.sort(key=lambda j: j[campo], reverse=True)
+    n_total = len(individuales)
+    nombre_equipo_filtro = ""
+    if nombres_equipo_mencionado:
+        nombre_equipo_filtro = " de " + " y ".join(sorted(nombres_equipo_mencionado))
+
+    # Nombre legible de la métrica para la respuesta
+    etiquetas = {
+        "duelos_ganados": "duelos ganados",
+        "entradas": "entradas (tackles)",
+        "intercepciones": "intercepciones",
+        "despejes": "despejes",
+        "toques": "toques",
+        "pases_completados": "pases completados",
+        "precision_pases_pct": "precisión de pases (%)",
+        "tiros_totales": "tiros totales",
+        "tiros_a_puerta": "tiros a puerta",
+        "ocasiones_creadas": "ocasiones creadas",
+        "recuperaciones": "recuperaciones",
+        "calificacion_fotmob": "calificación FotMob",
+        "goles": "goles",
+        "asistencias": "asistencias",
+    }
+    etiqueta = etiquetas.get(campo, campo)
+
+    top = candidatos[0]
+    valor_top = top[campo]
+
+    # Detectar empates en el primer puesto
+    empatados = [j for j in candidatos if j[campo] == valor_top]
+    if len(empatados) > 1:
+        nombres_emp = ", ".join(j["jugador"] for j in empatados)
+        resto = candidatos[len(empatados):len(empatados) + 2]
+        linea_top = f"Empate{nombre_equipo_filtro}: {nombres_emp} con {valor_top:g} {etiqueta} cada uno."
+    else:
+        resto = candidatos[1:3]
+        linea_top = f"{top['jugador']}{nombre_equipo_filtro}: {valor_top:g} {etiqueta}."
+
+    partes_resto = ", ".join(
+        f"{j['jugador']} {j[campo]:g}" for j in resto
+    )
+    cola = f" (seguido por {partes_resto})" if partes_resto else ""
+    return (
+        f"{linea_top}{cola} "
+        f"Entre los {n_total} jugadores con datos individuales (FotMob)."
+    )
+
+
+# ── A2: preguntas tácticas — sección de analisis_tactico.md ───────────────────
+# R4: se quitaron "jugo"/"jugar" de RE_TACTICA — esas preguntas van a Granite.
+# Táctica solo aplica a conceptos colectivos, no a un jugador concreto.
+RE_TACTICA = re.compile(
+    r"\b(?:como|de que manera|por que|explica|describe)\b.{0,60}"
+    r"\b(?:presion\w*|presiono|defend\w*|atac\w*|salio|salic\w*|recuper\w*|"
+    r"transicion\w*|bloque\w*|cambio\w*|esquema\w*|formacion\w*|"
+    r"planteo\w*|propuso\w*)\b"
+    r"|\b(?:presion\w*|defend\w*|bloque\w*|transicion\w*|esquema\w*|formacion\w*|"
+    r"presiono|atac\w*|salida\w*|recuper\w*|planteo\w*)\b.{0,40}"
+    r"\b(?:como|manera|forma|estrategia|tactica)\b"
+)
+
+
+def _seccion_tactica(analisis: str, palabras_clave: list[str]) -> Optional[str]:
+    """
+    Devuelve el contenido de la primera sección cuyo título contiene
+    al menos una de las palabras clave.
+    """
+    secciones: list[tuple[str, list[str]]] = []
+    titulo_actual = ""
+    lineas_actuales: list[str] = []
+    for linea in analisis.splitlines():
+        if linea.startswith("###"):
+            if titulo_actual:
+                secciones.append((titulo_actual, lineas_actuales))
+            titulo_actual = sin_acentos(linea.lstrip("# ").strip())
+            lineas_actuales = []
+        else:
+            lineas_actuales.append(linea)
+    if titulo_actual:
+        secciones.append((titulo_actual, lineas_actuales))
+
+    for titulo, lineas in secciones:
+        if any(clave in titulo for clave in palabras_clave):
+            # Filtrar solo líneas de viñeta o párrafo con contenido
+            contenido = [l for l in lineas if l.strip() and not l.startswith("#")]
+            if contenido:
+                return "\n".join(contenido)
+    return None
+
+
+def _limpiar_markdown(texto: str) -> str:
+    """Quita formato Markdown que no se ve bien en el chat."""
+    texto = re.sub(r"\*\*(.+?)\*\*", r"\1", texto)   # negrita
+    texto = re.sub(r"`([^`]+)`", r"\1", texto)         # código inline
+    return texto
+
+
+def respuesta_tactica(
+    pregunta: str, datos: dict
+) -> Optional[str]:
+    """
+    A2 — Responde sin Granite preguntas tácticas usando analisis_tactico.md de Fer.
+    Elige la sección cuyo título contenga las palabras relevantes y filtra por equipo.
+    R4: si la pregunta nombra a un jugador concreto sin un concepto táctico colectivo,
+    devuelve None para que Granite responda.
+    """
+    analisis = datos.get("analisis_tactico")
+    if not analisis:
+        return None
+    normalizada = sin_acentos(pregunta)
+    if not RE_TACTICA.search(normalizada):
+        return None
+
+    # R4: si menciona un jugador (no un equipo) sin concepto táctico colectivo → Granite
+    hechos_r4 = datos.get("hechos") or {}
+    alias_jug = hechos_r4.get("alias_jugadores", {})
+    nombra_jugador = any(
+        re.search(rf"\b{re.escape(a)}\b", normalizada) for a in alias_jug
+    )
+    if nombra_jugador:
+        # Solo se activa si también hay un concepto táctico colectivo en la pregunta
+        CONCEPTOS_COLECTIVOS = (
+            "presion", "presiono", "recuper", "defend", "bloque", "transicion",
+            "esquema", "formacion", "ataque", "ataco", "salida", "planteo",
+        )
+        if not any(c in normalizada for c in CONCEPTOS_COLECTIVOS):
+            return None
+
+    # Mapa de palabras clave de la pregunta → palabras a buscar en el título de la sección
+    # Se busca la primera coincidencia en orden de especificidad.
+    MAPA_SECCION = [
+        (("presion", "recuper", "presiono"), ["presion", "recuperacion"]),
+        (("salida", "construccion", "balon"), ["salida", "balon"]),
+        (("bloque", "defensiv", "territori", "defend"), ["bloque", "defensivo", "control"]),
+        (("transicion",), ["transicion"]),
+        (("esquema", "formacion", "tactico", "planteo", "propuso"), ["esquema", "tactico", "evolucion"]),
+        (("cambio", "impacto"), ["impacto", "cambio", "gol"]),
+        (("conclusion",), ["conclusion"]),
+    ]
+
+    palabras_seccion: list[str] = []
+    for disparadores, palabras_titulo in MAPA_SECCION:
+        if any(d in normalizada for d in disparadores):
+            palabras_seccion = palabras_titulo
+            break
+
+    if not palabras_seccion:
+        # Ninguna palabra táctica reconocida → no activar la regla
+        return None
+
+    contenido = _seccion_tactica(analisis, palabras_seccion)
+    if not contenido:
+        return None
+
+    # Filtrar por equipo mencionado
+    hechos = datos.get("hechos") or {}
+    claves_equipo = equipos_en_texto(normalizada, hechos)
+    if claves_equipo:
+        nombres_filtro = {hechos["equipos"][c]["nombre"] for c in claves_equipo}
+        lineas_filtradas = []
+        bloque_actual: list[str] = []
+        equipo_actual: Optional[str] = None
+        for linea in contenido.splitlines():
+            if linea.startswith("- **"):
+                # Línea de viñeta con encabezado «- **Equipo:**»
+                equipos_linea = {
+                    n for n in nombres_filtro
+                    if sin_acentos(n) in sin_acentos(linea)
+                }
+                if equipos_linea:
+                    if bloque_actual:
+                        lineas_filtradas.extend(bloque_actual)
+                    bloque_actual = [linea]
+                    equipo_actual = equipos_linea.pop()
+                elif equipo_actual and not linea.startswith("- **"):
+                    bloque_actual.append(linea)
+                else:
+                    if bloque_actual:
+                        lineas_filtradas.extend(bloque_actual)
+                    bloque_actual = []
+                    equipo_actual = None
+            elif equipo_actual:
+                bloque_actual.append(linea)
+        if bloque_actual:
+            lineas_filtradas.extend(bloque_actual)
+        contenido_filtrado = "\n".join(lineas_filtradas) if lineas_filtradas else contenido
+    else:
+        contenido_filtrado = contenido
+
+    texto_limpio = _limpiar_markdown(contenido_filtrado).strip()
+    if not texto_limpio:
+        return None
+    return (
+        "Lectura táctica del analista (estimación apoyada en datos, no medición directa):\n"
+        + texto_limpio
+    )
+
+
+# ── A3: recomendaciones — rechazar y citar conclusión de Fer ──────────────────
+RE_RECOMENDACION = re.compile(
+    r"\b(?:deberia\w*|debe\w*|tiene que|tendria que|que har[ia]\w*|"
+    r"recomiend\w*|consejo\w*|que corregi\w*|que mejor\w*|que cambi\w*|"
+    r"que haria\w*|que propondria\w*)\b"
+)
+
+
+def respuesta_recomendacion(
+    pregunta: str, datos: dict
+) -> Optional[str]:
+    """
+    A3 — Responde sin Granite cuando se piden recomendaciones.
+    Rechaza e indica que solo informa lo que muestran los datos.
+    Si hay analisis_tactico, cita la viñeta de Conclusión del equipo.
+    """
+    normalizada = sin_acentos(pregunta)
+    if not RE_RECOMENDACION.search(normalizada):
+        return None
+
+    lineas = [
+        "No doy recomendaciones propias: solo informo de lo que muestran los datos de este partido."
+    ]
+
+    analisis = datos.get("analisis_tactico")
+    if analisis:
+        # Buscar la sección de Conclusión
+        contenido_concl = _seccion_tactica(analisis, ["conclusion"])
+        if contenido_concl:
+            # Filtrar por equipo si se menciona alguno
+            hechos = datos.get("hechos") or {}
+            claves_equipo = equipos_en_texto(normalizada, hechos)
+            if claves_equipo:
+                nombres_filtro = {hechos["equipos"][c]["nombre"] for c in claves_equipo}
+                lineas_filtradas = [
+                    l for l in contenido_concl.splitlines()
+                    if any(sin_acentos(n) in sin_acentos(l) for n in nombres_filtro)
+                    or not l.startswith("- ")
+                ]
+                contenido_concl = "\n".join(lineas_filtradas) if lineas_filtradas else contenido_concl
+            texto_concl = _limpiar_markdown(contenido_concl).strip()
+            if texto_concl:
+                lineas.append(
+                    "\nLectura del analista sobre el partido:\n" + texto_concl
+                )
+
+    sugeridas = preguntas_sugeridas(datos)
+    ejemplo = sugeridas[0] if sugeridas else "¿Quién marcó cada gol?"
+    lineas.append(f"\n¿Te interesa algún dato concreto del partido? Por ejemplo: «{ejemplo}»")
+    return "\n".join(lineas)
+
+
 def respuesta_por_regla(
     pregunta: str, datos: dict, historial: Optional[list] = None
 ) -> Optional[str]:
@@ -772,6 +1185,9 @@ def respuesta_por_regla(
     return (
         respuesta_sin_datos(pregunta, datos)
         or respuesta_eventos(pregunta, datos, historial)
+        or respuesta_recomendacion(pregunta, datos)      # A3 antes que A2
+        or respuesta_tactica(pregunta, datos)            # A2
+        or respuesta_ranking(pregunta, datos)            # A1
         or respuesta_comparativa(pregunta, datos)
     )
 
@@ -896,9 +1312,14 @@ def auditar_respuesta(
     hechos: valores de referencia para comprobar a quién se atribuye cada cifra.
     bloquear: marca para descartar la respuesta de Granite si alguna cifra no coincide.
     """
-    # Las cifras que trae la propia pregunta no son invención del modelo
+    # Las cifras que trae la propia pregunta no son invención del modelo.
+    # R7: para respuestas por regla, el texto de la respuesta es en sí mismo respaldo
+    # (viene de datos verificados), por lo que no puede tener cifras "sin respaldo".
+    _contexto_auditoria = f"{contexto} {pregunta}"
+    if respuesta and origen == "regla":
+        _contexto_auditoria = f"{_contexto_auditoria} {respuesta}"
     sin_respaldo = (
-        numeros_sin_respaldo(respuesta, f"{contexto} {pregunta}") if respuesta else []
+        numeros_sin_respaldo(respuesta, _contexto_auditoria) if respuesta else []
     )
     modelo_ok = origen == "regla" or model_id in AUTHORIZED_MODELS
     mal_atribuidas = (
