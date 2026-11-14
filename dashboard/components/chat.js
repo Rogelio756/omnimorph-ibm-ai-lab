@@ -227,7 +227,7 @@
   function pintarSugeridas(lista) {
     sugeridasPintadas = true;
     lista.forEach(function (s) {
-      var b = el('button', { class: 'btn btn--outline btn-xs', type: 'button', text: s });
+      var b = el('button', { class: 'btn btn--outline btn-xs btn--sugerida', type: 'button', text: s });
       b.addEventListener('click', function () { enviar(s); });
       $('sugeridas').appendChild(b);
     });
