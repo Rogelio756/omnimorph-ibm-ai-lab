@@ -621,6 +621,52 @@ def test_inicio_enlaza_opinion(estado_tmp: str, ops_tmp: str):
     caso(16, "P1: index.html en modo prueba contiene enlace a opinion.html", ok, nota)
 
 
+TUNEL = "prueba-ejemplo.trycloudflare.com"
+
+
+def test_chat_por_tunel_prueba(estado_tmp: str, ops_tmp: str):
+    """Caso 17: en modo prueba, el chat acepta el Host del túnel; Operaciones no."""
+    if os.path.exists(estado_tmp):
+        os.remove(estado_tmp)
+    args = ["--prueba-horas", "48", "--tope-chat", "15",
+            "--estado", estado_tmp, "--opiniones", ops_tmp,
+            "--chat-falso"]
+    nota = ""
+    ok = False
+    with Servidor(args) as srv:
+        try:
+            h = {"Host": TUNEL, "Origin": f"https://{TUNEL}"}
+            c_estado, _, _ = _get(srv.url("/api/chat/estado"), headers=h)
+            c_chat, _, _ = _post(srv.url("/api/chat"),
+                                 {"pregunta": "¿Qué tarjetas hubo?", "historial": []}, headers=h)
+            c_ops, _, _ = _get(srv.url("/api/operaciones/chat"), headers=h)
+            h_malo = {"Host": TUNEL, "Origin": "https://otro-sitio.example"}
+            c_otro, _, _ = _post(srv.url("/api/chat"),
+                                 {"pregunta": "¿Qué tarjetas hubo?", "historial": []}, headers=h_malo)
+            ok = c_estado == 200 and c_chat == 200 and c_ops == 403 and c_otro == 403
+            nota = "" if ok else f"estado={c_estado} chat={c_chat} operaciones={c_ops} origen_ajeno={c_otro}"
+        except Exception as e:
+            nota = str(e)
+    caso(17, "Túnel en modo prueba: chat 200, Operaciones y Origin ajeno 403", ok, nota)
+
+
+def test_chat_por_tunel_sin_prueba():
+    """Caso 18: sin modo prueba, el Host del túnel sigue bloqueado en el chat."""
+    nota = ""
+    ok = False
+    with Servidor([]) as srv:
+        try:
+            h = {"Host": TUNEL, "Origin": f"https://{TUNEL}"}
+            c_estado, _, _ = _get(srv.url("/api/chat/estado"), headers=h)
+            c_chat, _, _ = _post(srv.url("/api/chat"),
+                                 {"pregunta": "¿Qué tarjetas hubo?", "historial": []}, headers=h)
+            ok = c_estado == 403 and c_chat == 403
+            nota = "" if ok else f"estado={c_estado} chat={c_chat}"
+        except Exception as e:
+            nota = str(e)
+    caso(18, "Túnel sin modo prueba: chat 403", ok, nota)
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -649,6 +695,8 @@ def main() -> None:
         test_opinion_fuera_prueba(estado_tmp, ops_tmp)
         test_resumen_opiniones(ops_tmp2)
         test_inicio_enlaza_opinion(estado_tmp, ops_tmp)
+        test_chat_por_tunel_prueba(estado_tmp, ops_tmp)
+        test_chat_por_tunel_sin_prueba()
 
     print(_SEP)
     fallos = sum(1 for _, _, ok, _ in resultados if not ok)

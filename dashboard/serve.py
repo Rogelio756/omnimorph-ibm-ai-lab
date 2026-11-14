@@ -68,6 +68,7 @@ _RANGE_RE = re.compile(r"bytes=(\d*)-(\d*)")
 # ---------------------------------------------------------------------------
 LOCAL_ADDRS = {"127.0.0.1", "::1", "::ffff:127.0.0.1"}
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "[::1]"}
+DOMINIO_TUNEL = ".trycloudflare.com"  # solo se acepta en modo prueba (chat)
 MAX_BODY_BYTES = 16 * 1024
 MAX_PETICIONES_POR_MINUTO = 12
 MAX_CARACTERES_MENSAJE = 2000
@@ -684,6 +685,23 @@ class RangeHandler(SimpleHTTPRequestHandler):
         origen = self.headers.get("Origin")
         return origen is None or (urlparse(origen).netloc.lower() == host)
 
+    def _origen_chat(self) -> bool:
+        """
+        Quién puede usar el chat. Fuera del modo prueba, solo la propia PC.
+        En modo prueba también el túnel de Cloudflare: cloudflared se conecta
+        desde la PC (cliente local) con el Host público *.trycloudflare.com,
+        y el navegador envía un Origin igual a ese Host (o ninguno).
+        """
+        if self._origen_local():
+            return True
+        if PRUEBA is None or self.client_address[0] not in LOCAL_ADDRS:
+            return False
+        host = (self.headers.get("Host") or "").strip().lower()
+        if not host.endswith(DOMINIO_TUNEL):
+            return False
+        origen = self.headers.get("Origin")
+        return origen is None or (urlparse(origen).netloc.lower() == host)
+
     def _om_id(self) -> tuple[str, bool]:
         """Devuelve (om_id, es_nuevo). Crea uno nuevo si no existe en la cookie."""
         om_id = _om_id_de_cookie(self.headers.get("Cookie"))
@@ -727,7 +745,7 @@ class RangeHandler(SimpleHTTPRequestHandler):
         return self._handle_chat()
 
     def _handle_chat(self):
-        if not self._origen_local():
+        if not self._origen_chat():
             return self._json(403, {"error": "solo_local"})
 
         # Modo prueba: tiempo agotado → 410
@@ -897,7 +915,7 @@ class RangeHandler(SimpleHTTPRequestHandler):
             return self._json(200, PRUEBA.estado_api(om_id), extra_headers=cookie_headers)
 
         if ruta == "/api/chat/estado":
-            if not self._origen_local():
+            if not self._origen_chat():
                 return self._json(403, {"error": "solo_local"})
             return self._json(200, CHAT.info())
 
