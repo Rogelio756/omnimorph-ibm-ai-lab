@@ -169,7 +169,15 @@ def cargar_dorsales() -> dict:
                     "validado": bool(a.get("validado", validado)),
                     "rastros": rastros,
                 }
-        n_val = sum(1 for info in mapa.values() if info["validado"])
+        for s in datos.get("sin_asignar", []):
+            motivo = s.get("motivo", "")
+            if "cambio de identidad" in motivo.lower():
+                for tid in s.get("rastros", []):
+                    mapa[int(tid)] = {
+                        "dudoso": True,
+                        "motivo_dudoso": motivo,
+                    }
+        n_val = sum(1 for info in mapa.values() if info.get("validado"))
         print(f"[OK] dorsales: {len(mapa)} rastros desde {ruta.name} ({n_val} validados)")
         return mapa
     return {}

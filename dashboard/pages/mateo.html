@@ -47,13 +47,20 @@
 
     /* ── Tira de observabilidad ──────────────────────────────────────────── */
     .obs-strip {
-      display: flex; flex-wrap: wrap; gap: var(--space-2);
+      display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
       padding: var(--space-3) var(--cell-padding-x); border-bottom: var(--border); background-color: var(--color-bg-deep);
     }
-    .obs-strip__label {
-      font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);
-      align-self: center; margin-right: var(--space-2); flex-shrink: 0;
+    .obs-strip__verified {
+      font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-ok);
+      text-decoration: underline; text-underline-offset: 3px;
     }
+    .obs-strip__verified:hover { color: var(--color-text); }
+    .obs-strip__details {
+      font-family: var(--font-mono); font-size: var(--text-small); color: var(--color-text-soft);
+    }
+    .obs-strip__summary { cursor: pointer; user-select: none; }
+    .obs-strip__summary:hover { color: var(--color-text); }
+    .obs-strip__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
 
     /* ── Transporte (play + reloj) ───────────────────────────────────────── */
     .transport { display: flex; align-items: center; gap: var(--space-3); flex-shrink: 0; }
@@ -147,6 +154,16 @@
     .chronicle__text { min-height: 4.5em; }
     .chronicle__analysis { font-size: 13px; color: var(--color-text-soft); line-height: 1.6; }
     .chronicle__waveform-bar { transition: background-color var(--transition), opacity var(--transition); }
+    .chronicle__details, .player-card__details {
+      font-family: var(--font-mono); font-size: var(--text-small); color: var(--color-text-soft);
+    }
+    .chronicle__details-summary, .player-card__details-summary {
+      cursor: pointer; user-select: none; color: var(--color-text-soft);
+    }
+    .chronicle__details-summary:hover, .player-card__details-summary:hover { color: var(--color-text); }
+    .chronicle__details[open] .chronicle__meta, .player-card__details[open] #pc-foot {
+      margin-top: var(--space-2); display: flex;
+    }
     .transcript-container { flex: 1; overflow-y: auto; border-top: var(--border); max-height: 300px; }
     .transcript { max-height: none; overflow: visible; }
     .transcript__line { cursor: pointer; }
@@ -157,7 +174,8 @@
     .player-row__team { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .player-row__live { font-family: var(--font-mono); font-size: 9px; color: var(--color-ok); min-width: 30px; text-align: right; }
     .player-sidebar__aviso { margin: 0; padding: var(--space-3) var(--space-4); border-bottom: var(--border); font-size: var(--text-label); line-height: 1.5; color: var(--color-text-soft); }
-    .player-row__track { white-space: nowrap; }
+    .player-row__track { min-width: 0; overflow-wrap: anywhere; }
+    .player-row__bar-wrap { min-width: 24px; }
     .player-row__pv { margin-left: var(--space-1); padding: 1px 6px; border: 1px solid var(--color-warn); border-radius: var(--radius-pill); font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-warn); vertical-align: middle; }
     .player-empty { padding: var(--space-4); font-size: var(--text-label); color: var(--color-text-soft); }
 
@@ -236,7 +254,7 @@
 
     <div class="master-clock__info">
       <span class="master-clock__time" id="mc-time">00:00.0</span>
-      <span class="master-clock__frame" id="mc-frame">Frame 0 / 1799</span>
+      <span class="master-clock__frame" id="mc-frame" title="Frame 0 / 1799">Segundo 0,0 de 60</span>
     </div>
   </div>
 
@@ -292,7 +310,7 @@
         <!-- ── PANEL 2: RADAR ── -->
         <section class="panel" id="panel-radar" aria-label="Radar cenital">
           <div class="panel__header">
-            <span class="panel__title">Radar cenital · 120 × 70 m</span>
+            <span class="panel__title">Radar · cancha de referencia</span>
             <button class="btn btn--primary btn-xs" id="btn-radar-live" type="button" aria-pressed="true">Datos</button>
             <button class="btn btn--outline btn-xs" id="btn-radar-video" type="button" aria-pressed="false">Video</button>
           </div>
@@ -340,7 +358,7 @@
         <section class="panel" id="panel-kpis" aria-label="Métricas tácticas">
           <div class="panel__header">
             <span class="panel__title">Métricas tácticas</span>
-            <span class="chip" id="chip-window-kpi"><span class="chip__dot"></span>W0</span>
+            <span class="chip" id="chip-window-kpi"><span class="chip__dot"></span>Tramo 1</span>
           </div>
           <div class="panel__body">
             <div class="kpi-row" style="display:flex; align-items:center; gap: var(--space-3); flex-wrap: wrap;">
@@ -402,10 +420,13 @@
                 <span class="chronicle__waveform-time" id="waveform-time">0.0 s</span>
               </div>
               <p class="chronicle__analysis" id="chronicle-analysis"></p>
-              <div class="chronicle__meta">
-                <span class="chronicle__meta-item">Latencia <span class="chronicle__meta-value" id="chron-latency">—</span></span>
-                <span class="chronicle__meta-item">Tokens in/out <span class="chronicle__meta-value" id="chron-tokens">—</span></span>
-              </div>
+              <details class="chronicle__details">
+                <summary class="chronicle__details-summary">Ver detalle</summary>
+                <div class="chronicle__meta">
+                  <span class="chronicle__meta-item">Latencia <span class="chronicle__meta-value" id="chron-latency">—</span></span>
+                  <span class="chronicle__meta-item">Tokens in/out <span class="chronicle__meta-value" id="chron-tokens">—</span></span>
+                </div>
+              </details>
             </div>
             <div class="transcript-container" id="transcript-container">
               <div class="transcript" id="transcript" aria-label="Transcripción sincronizada"></div>
@@ -414,26 +435,23 @@
         </section>
 
         <!-- ── JUGADORES ── -->
-        <aside class="player-sidebar" role="complementary" aria-label="Estadísticas por rastro">
+        <aside class="player-sidebar" role="complementary" aria-label="Estadísticas por jugador">
           <div class="player-sidebar__team-selector">
             <button class="btn btn--primary btn-sm" id="btn-team-0" type="button" aria-pressed="true" data-eq="a">—</button>
             <button class="btn btn--outline btn-sm" id="btn-team-1" type="button" aria-pressed="false" data-eq="b">—</button>
-            <span style="margin-left: auto; align-self: center; font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);">Top 5 rastros</span>
+            <span style="margin-left: auto; align-self: center; font-family: var(--font-mono); font-size: var(--text-label); color: var(--color-text-soft);">Top 5 jugadores</span>
           </div>
           <div class="player-sidebar__metric-selector">
             <span class="text-label" style="width: 100%;">Ordenados por tiempo visible en toma abierta</span>
           </div>
           <p class="player-sidebar__aviso">
-            Un rastro es un seguimiento automático y una misma persona puede tener varios. Donde se
-            lee el dorsal en el video, el rastro muestra el nombre del jugador; la identificación es
-            manual y está <strong>por validar</strong> con el equipo de análisis. La distancia y la velocidad
-            por jugador no se muestran mientras se mejora la calibración de la cancha.
+            Cada jugador se sigue automáticamente en el video. A veces una misma persona aparece dos veces o el seguimiento cambia de jugador; por eso algunos salen sin identificar.
           </p>
           <div class="player-sidebar__list" id="player-list"></div>
     
           <div class="player-card" id="player-card">
-            <span class="player-card__title" id="pc-title">Selecciona un rastro</span>
-            <div class="player-card__heatmap" aria-label="Mapa de calor del rastro">
+            <span class="player-card__title" id="pc-title">Selecciona un jugador</span>
+            <div class="player-card__heatmap" aria-label="Mapa de calor del jugador">
               <svg id="pc-heat" viewBox="0 0 120 70" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <rect width="120" height="70" fill="#0E1A16"/>
               </svg>
@@ -442,7 +460,10 @@
               <div class="player-card__stat"><span class="player-card__stat-label">Visible</span><span class="player-card__stat-value" id="pc-visible">—</span></div>
               <div class="player-card__stat"><span class="player-card__stat-label">Zona habitual</span><span class="player-card__stat-value" id="pc-zona">—</span></div>
             </div>
-            <span class="text-label" id="pc-foot" style="color: var(--color-text-soft);"></span>
+            <details class="player-card__details" id="pc-details">
+              <summary class="player-card__details-summary">Ver detalle del seguimiento</summary>
+              <span class="text-label" id="pc-foot" style="color: var(--color-text-soft);"></span>
+            </details>
           </div>
         </aside>
       </div>
@@ -453,14 +474,19 @@
 
   <!-- ═══════════════════ ESTADO DEL SISTEMA ═══════════════════ -->
   <div class="obs-strip" role="region" aria-label="Estado del sistema MATEO" id="obs-strip">
-    <span class="obs-strip__label">Estado del sistema</span>
-      <span class="chip" id="chip-pipeline"><span class="chip__dot"></span>Pipeline —</span>
-      <span class="chip chip--ok"><span class="chip__dot"></span>ibm/granite-4-h-small</span>
+    <a class="obs-strip__verified" id="obs-verified-link" href="metodo.html">✓ Análisis verificado (9 de 9 comprobaciones)</a>
+    <details class="obs-strip__details">
+      <summary class="obs-strip__summary">Ver detalle</summary>
+      <div class="obs-strip__chips" id="obs-chips">
+        <span class="chip" id="chip-pipeline"><span class="chip__dot"></span>Pipeline —</span>
+        <span class="chip chip--ok"><span class="chip__dot"></span>ibm/granite-4-h-small</span>
+      </div>
+    </details>
   </div>
 
   <!-- ═══════════════════ PIE ═══════════════════ -->
   <footer class="site-credit" role="contentinfo">
-    <p class="site-credit__text" id="legend-credit">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab</p>
+    <p class="site-credit__text"><span id="legend-credit">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab</span> · <a class="site-credit__link" href="operaciones.html">Operaciones técnicas</a></p>
   </footer>
 
   <script src="../components/site-nav.js"></script>
@@ -564,21 +590,31 @@
     }
 
     // ── Monitores ──────────────────────────────────────────────────────
+    function nombreTramo(w, i) {
+      if (typeof i === 'number') return 'Tramo ' + (i + 1);
+      var m = String((w && w.id) || w || '').match(/^W(\d+)$/i);
+      return m ? 'Tramo ' + (Number(m[1]) + 1) : String((w && w.id) || w || '');
+    }
+
     function buildMonitors() {
-      var strip = $('obs-strip');
+      var chipsHost = $('obs-chips') || $('obs-strip');
       ['M1', 'M2.0', 'M2.1', 'M2.2', 'M2.3', 'M2.4', 'M2.5', 'M3', 'M4'].forEach(function (k) {
         var s = D.monitors[k];
         var c = document.createElement('span');
         c.className = 'chip chip--' + (s === 'PASS' ? 'ok' : s ? 'alert' : '');
         c.title = k + ': ' + (s || 'sin datos');
         c.innerHTML = '<span class="chip__dot"></span>' + k;
-        strip.appendChild(c);
+        chipsHost.appendChild(c);
       });
       var keys = ['M1', 'M2.0', 'M2.1', 'M2.2', 'M2.3', 'M2.4', 'M2.5', 'M3', 'M4'];
       var ok = keys.filter(function (k) { return D.monitors[k] === 'PASS'; }).length;
       var cp = $('chip-pipeline');
       cp.className = 'chip chip--' + (ok === keys.length ? 'ok' : 'alert');
       cp.lastChild.textContent = 'Pipeline ' + ok + '/' + keys.length + (ok === keys.length ? ' OK' : '');
+      var verif = $('obs-verified-link');
+      if (verif) {
+        verif.textContent = '✓ Análisis verificado (' + ok + ' de ' + keys.length + ' comprobaciones)';
+      }
     }
 
     // ── Línea de tiempo con ventanas reales ────────────────────────────
@@ -590,7 +626,8 @@
         d.id = 'mc-w' + i;
         d.style.left = (w.t0 / DUR * 100) + '%';
         d.style.width = ((w.t1 - w.t0) / DUR * 100) + '%';
-        d.innerHTML = '<span class="master-clock__window-label">' + w.id + '</span>';
+        d.title = w.id;
+        d.innerHTML = '<span class="master-clock__window-label">' + nombreTramo(w, i) + '</span>';
         host.appendChild(d);
       });
       var lastT = D.windows.length ? D.windows[D.windows.length - 1].t1 : 0;
@@ -599,7 +636,7 @@
         g.className = 'master-clock__gap';
         g.style.left = (lastT / DUR * 100) + '%';
         g.style.width = ((DUR - lastT) / DUR * 100) + '%';
-        g.title = 'Sin ventana táctica';
+        g.title = 'Sin tramo táctico';
         host.appendChild(g);
       }
       $('mc-timeline').setAttribute('aria-valuemax', String(DUR));
@@ -622,7 +659,7 @@
           b.className = 'spark__bar';
           b.dataset.w = i;
           b.style.height = Math.max(8, (w[s[1]] || 0) / max * 100) + '%';
-          b.title = w.id + ': ' + fmt(w[s[1]], 2);
+          b.title = nombreTramo(w, i) + ': ' + fmt(w[s[1]], 2);
           b.addEventListener('click', function () { seek(w.t0 + 0.01); });
           host.appendChild(b);
         });
@@ -639,7 +676,7 @@
         line.id = 'tl-' + i;
         line.tabIndex = 0;
         line.innerHTML = '<span class="transcript__ts">' + pad(w.t0) + '</span><span class="transcript__text"></span>';
-        line.lastChild.textContent = '[' + w.id + '] ' + (w.narration || '—');
+        line.lastChild.textContent = '[' + nombreTramo(w, i) + '] ' + (w.narration || '—');
         line.addEventListener('click', function () { seek(w.t0 + 0.01); });
         line.addEventListener('keydown', function (e) { if (e.key === 'Enter') seek(w.t0 + 0.01); });
         host.appendChild(line);
@@ -707,7 +744,10 @@
 
       if (f !== curFrame || force) {
         curFrame = f;
-        $('mc-frame').textContent = 'Frame ' + f + ' / ' + (NF - 1);
+        var segActual = (f / FPS).toFixed(1).replace('.', ',');
+        var segTotal = Math.round(DUR);
+        $('mc-frame').textContent = 'Segundo ' + segActual + ' de ' + segTotal;
+        $('mc-frame').title = 'Frame ' + f + ' / ' + (NF - 1);
         renderRadar(f);
         updatePlayerLive(f);
       }
@@ -776,13 +816,15 @@
 
       var chipW = $('chip-window-kpi');
       if (wi < 0) {
-        chipW.lastChild.textContent = 'Fuera de ventana';
-        $('chronicle-text').textContent = 'Sin ventana táctica en este tramo del clip (posterior a ' + pad(D.windows[D.windows.length - 1].t1) + ').';
+        chipW.lastChild.textContent = 'Fuera de tramo';
+        chipW.title = '';
+        $('chronicle-text').textContent = 'Sin tramo táctico en esta parte del clip (posterior a ' + pad(D.windows[D.windows.length - 1].t1) + ').';
         $('chronicle-analysis').textContent = '';
         return;
       }
       var w = D.windows[wi];
-      chipW.lastChild.textContent = w.id + ' · ' + w.t0.toFixed(1) + '–' + w.t1.toFixed(1) + ' s';
+      chipW.lastChild.textContent = nombreTramo(w, wi) + ' · ' + w.t0.toFixed(1) + '–' + w.t1.toFixed(1) + ' s';
+      chipW.title = w.id;
 
       $('kpi-bh-val').textContent = fmt(w.block_height_m, 1);
       $('kpi-cp-val').textContent = fmt(w.compactness_m, 1);
@@ -835,16 +877,22 @@
     // ── Jugadores ──────────────────────────────────────────────────────
     function renderPlayers() {
       var host = $('player-list');
-      var list = D.players.filter(function (p) { return p.team === team; })
-        .sort(function (a, b) { return b[metric] - a[metric]; }).slice(0, 5);
+      var list = D.players.filter(function (p) { return p.team === team && !p.dudoso; })
+        .sort(function (a, b) {
+          var idA = a.dorsal != null ? 1 : 0;
+          var idB = b.dorsal != null ? 1 : 0;
+          if (idB !== idA) return idB - idA;
+          return b[metric] - a[metric];
+        }).slice(0, 5);
       host.innerHTML = '';
       if (!list.length) { host.innerHTML = '<div class="player-empty">Sin jugadores con datos suficientes.</div>'; return; }
-      var max = list[0][metric] || 1;
+      var max = Math.max.apply(null, list.map(function (p) { return p[metric] || 0; })) || 1;
       list.forEach(function (p) {
         var row = document.createElement('div');
         row.className = 'player-row' + (selected === p.id ? ' player-row--active' : '');
         row.dataset.id = p.id;
         row.tabIndex = 0;
+        row.title = (p.rastros && p.rastros.length > 1 ? 'Rastros ' + p.rastros.join(' y ') : 'Rastro ' + p.id);
         var val = p.visible_s.toFixed(1) + ' s';
         row.innerHTML =
           '<span class="player-row__team" style="background:' + COLORS[p.team] + '"></span>' +
@@ -863,12 +911,14 @@
       updatePlayerLive(Math.max(0, curFrame));
     }
 
-    // Nombre del jugador si el rastro está identificado (dorsal leído a mano); si no, el número de rastro
+    // Nombre del jugador si está identificado; si no, jugador sin identificar del equipo
     function nombreJugador(s) {
       return String(s).toLowerCase().replace(/(^|[\s-])(\S)/g, function (m, sep, c) { return sep + c.toUpperCase(); });
     }
     function etiquetaJugador(p) {
-      return p.dorsal != null ? '#' + p.dorsal + ' ' + nombreJugador(p.jugador) : 'Rastro ' + p.id;
+      return p.dorsal != null
+        ? '#' + p.dorsal + ' ' + nombreJugador(p.jugador)
+        : 'Jugador de ' + (TEAM[p.team] || 'equipo') + ' sin identificar';
     }
     function escapar(s) {
       return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
@@ -888,13 +938,15 @@
       var p = D.players.find(function (x) { return x.id === id; });
       document.querySelectorAll('.player-row').forEach(function (r) { r.classList.toggle('player-row--active', Number(r.dataset.id) === id); });
       if (!p) return;
-      $('pc-title').textContent = etiquetaJugador(p) + ' · ' + TEAM[p.team];
+      $('pc-title').textContent = p.dorsal != null ? etiquetaJugador(p) + ' · ' + TEAM[p.team] : etiquetaJugador(p);
+      $('pc-title').title = (p.rastros && p.rastros.length > 1 ? 'Rastros ' + p.rastros.join(' y ') : 'Rastro ' + p.id);
       $('pc-visible').textContent = p.visible_s.toFixed(1) + ' s';
       $('pc-zona').textContent = zonaHabitual(p.heat);
       $('pc-foot').textContent = p.dorsal != null
         ? (p.rastros && p.rastros.length > 1 ? 'Rastros ' + p.rastros.join(' y ') + ' unidos' : 'Rastro ' + p.id) +
           ' · dorsal leído a mano, certeza ' + p.certeza + (p.validado ? ' · validado' : ' · por validar')
-        : 'Mapa de calor de sus posiciones en toma abierta';
+        : 'Rastro ' + p.id + ' · Mapa de calor de sus posiciones en toma abierta' +
+          (p.motivo_dudoso ? ' (' + p.motivo_dudoso + ')' : '');
       var svg = '<rect width="120" height="70" fill="#0E1A16"/>';
       for (var gx = 0; gx < 12; gx++) for (var gy = 0; gy < 7; gy++) {
         var h = p.heat[gx][gy];

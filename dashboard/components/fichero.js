@@ -190,6 +190,8 @@
       pintarDetalle(lista.filter(function (j) { return j.dorsal === estado.dorsal; })[0]);
     }
 
+    var notaEsquema = el('p', { class: 'fichero__esquema-nota' });
+
     function marcar() {
       Object.keys(botonesEquipo).forEach(function (k) {
         botonesEquipo[k].setAttribute('aria-pressed', String(k === estado.equipo));
@@ -197,13 +199,18 @@
       Object.keys(botonesLinea).forEach(function (k) {
         botonesLinea[k].setAttribute('aria-pressed', String(k === estado.linea));
       });
+      var eqAct = datos.equipos[estado.equipo];
+      notaEsquema.textContent = (eqAct && eqAct.esquema_nota) ? eqAct.esquema_nota : '';
+      notaEsquema.hidden = !notaEsquema.textContent;
     }
 
     var filtros = el('div', { class: 'fichero__filtros' },
       el('div', { class: 'fichero__grupo', role: 'group', 'aria-label': 'Equipo' }, equipos.map(function (e) {
         var eq = datos.equipos[e[0]];
-        var etiqueta = eq.pais + (eq.esquema_nota ? ' · ' + eq.esquema_nota.split(' ')[0] : '');
-        var b = el('button', { class: 'fichero__filtro', type: 'button', text: etiqueta });
+        var etiqueta = eq.pais + (eq.esquema_inicial ? ' · ' + eq.esquema_inicial : '');
+        var attrs = { class: 'fichero__filtro', type: 'button', text: etiqueta };
+        if (eq.esquema_nota) attrs.title = eq.esquema_nota;
+        var b = el('button', attrs);
         b.addEventListener('click', function () {
           estado.equipo = e[0]; estado.dorsal = null; marcar(); pintarRejilla();
         });
@@ -215,7 +222,8 @@
         b.addEventListener('click', function () { estado.linea = l[0]; marcar(); pintarRejilla(); });
         botonesLinea[l[0]] = b;
         return b;
-      })));
+      })),
+      notaEsquema);
 
     host.appendChild(filtros);
     host.appendChild(el('div', { class: 'fichero__cuerpo' }, detalle, rejilla));

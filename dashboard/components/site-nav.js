@@ -11,7 +11,6 @@
     ['MATEO', 'mateo.html'],
     ['Partido', 'partido.html'],
     ['Método', 'metodo.html'],
-    ['Operaciones', 'operaciones.html'],
   ];
 
   var host = document.getElementById('site-nav');

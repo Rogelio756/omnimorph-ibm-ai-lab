@@ -18,6 +18,13 @@
   gap: var(--space-1);
 }
 
+.fichero__esquema-nota {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: var(--text-small);
+  color: var(--color-text-soft);
+}
+
 .fichero__filtro {
   height: 32px;
   padding: 0 var(--space-3);

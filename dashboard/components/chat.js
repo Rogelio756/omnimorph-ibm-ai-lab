@@ -136,10 +136,22 @@
         el('span', { text: r.numeros_sin_respaldo.join(', ') + '. Pueden ser cálculos válidos o errores del modelo.' })));
     }
     (r.avisos || []).forEach(function (a) { cuerpo.appendChild(el('span', { class: 'msg__note', text: a })); });
-    cuerpo.appendChild(el('span', { class: 'msg__meta', text: r.origen === 'regla'
+    var textoResp = String(r.respuesta || '').trim();
+    var esAnalista = textoResp.indexOf('Lectura táctica del analista') === 0;
+    var esRegla = r.origen === 'regla';
+    var claseSello = esAnalista ? 'msg__badge msg__badge--neutral'
+      : (esRegla ? 'msg__badge msg__badge--ok' : 'msg__badge msg__badge--warn');
+    var textoSello = esAnalista ? 'Lectura del analista'
+      : (esRegla ? '✓ Dato verificado' : 'Lectura de IA · contrástala');
+    var textoTraza = esRegla
       ? 'Respuesta directa desde los datos, sin LLM'
       : r.modelo + ' · ' + Math.round(r.latency_ms) + ' ms · tokens ' + r.tokens_in + '/' + r.tokens_out + ' · ' +
-        (r.bloqueada ? 'descartada por el verificador' : r.estado) }));
+        (r.bloqueada ? 'descartada por el verificador' : r.estado);
+    cuerpo.appendChild(el('div', { class: 'msg__footer' },
+      el('span', { class: claseSello, text: textoSello }),
+      el('details', { class: 'msg__trace' },
+        el('summary', { class: 'msg__trace-summary', text: 'Ver trazabilidad' }),
+        el('span', { class: 'msg__meta', text: textoTraza }))));
     return agregarMensaje('assistant', cuerpo);
   }
 

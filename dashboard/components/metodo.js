@@ -236,7 +236,7 @@
       diagrama(etapas, datosPartido, false), diagrama(etapas, datosPartido, true)));
     host.appendChild(el('p', { class: 'caption' }, 'Las cifras salen de la última corrida. ',
       el('a', { href: 'operaciones.html', style: 'text-decoration: underline;',
-        text: 'Ver cada monitor y el consumo del chat en Operaciones →' })));
+        text: 'Ver las operaciones del sistema →' })));
 
     // 1 · Principios ---------------------------------------------------------
     host.appendChild(seccion('Principios de investigación'));

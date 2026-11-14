@@ -35,6 +35,14 @@
       min-height: 100dvh;
     }
 
+    .hero__demo-note {
+      margin: var(--space-3) 0 0;
+      font-family: var(--font-ui);
+      font-size: var(--text-label);
+      line-height: var(--lh-label);
+      color: var(--color-text-soft);
+    }
+
     /* Sección de bloques numerados */
     .section-features {
       border-top: var(--border);
@@ -114,8 +122,6 @@
       <li><a class="om-nav__link" href="mateo.html">MATEO</a></li>
       <li><a class="om-nav__link" href="partido.html">Partido</a></li>
       <li><a class="om-nav__link" href="metodo.html">Método</a></li>
-      <li><a class="om-nav__link" href="operaciones.html">Operaciones</a></li>
-      <li><a class="om-nav__link" href="#">Equipo</a></li>
     </ul>
 
     <a class="om-nav__link om-nav__cta" href="mateo.html">Abrir tablero</a>
@@ -151,14 +157,13 @@
       </h1>
 
       <p class="hero__subtitle">
-        Ve lo que el ojo no ve: posiciones, métricas tácticas y una crónica
-        narrada por IA, todo en un solo tablero.
+        Análisis táctico de video para cuerpos técnicos: posiciones, bloque y una crónica con IA, en un solo tablero.
       </p>
 
       <!-- Acciones -->
       <div class="hero__actions">
         <a class="btn btn--primary" href="mateo.html" role="button">
-          Analizar mi partido
+          Ver partido de muestra
         </a>
 
         <!-- Indicador "Preparando…" — se oculta cuando el video carga -->
@@ -180,6 +185,10 @@
           Activar sonido
         </button>
       </div>
+
+      <p class="hero__demo-note">
+        Demo con un partido real: Costa Rica 4-0 San Cristóbal y Nieves. ¿Quieres ver el tuyo? Escríbenos.
+      </p>
     </div>
 
   </section>
@@ -191,8 +200,7 @@
       <span class="tile__number">01</span>
       <h2 class="tile__title">Visión</h2>
       <p class="tile__description">
-        Detección de jugadores y balón frame a frame. Tracking con costura
-        de identidad y mapeo a coordenadas reales de cancha (120 × 70 m).
+        Reconoce a cada jugador y al balón en la transmisión de TV, los sigue durante la jugada y los coloca en un mapa de la cancha.
       </p>
     </article>
 
@@ -200,8 +208,7 @@
       <span class="tile__number">02</span>
       <h2 class="tile__title">Métricas</h2>
       <p class="tile__description">
-        Block height, velocidad de transición, compacidad y centroides.
-        Suavizado Savitzky-Golay. Ventanas tácticas de 4 segundos.
+        Altura del bloque, compacidad, velocidad de transición y posición media de cada equipo, en tramos de 4,5 segundos.
       </p>
     </article>
 
@@ -209,8 +216,7 @@
       <span class="tile__number">03</span>
       <h2 class="tile__title">Narrador</h2>
       <p class="tile__description">
-        Crónica táctica generada por <span class="text-mono">ibm/granite-4-h-small</span>
-        vía watsonx.ai. Texto sintetizado a voz y sincronizado con el video.
+        Una crónica táctica escrita por IA (IBM Granite en watsonx.ai) y narrada en voz, sincronizada con el video.
       </p>
     </article>
 
@@ -267,7 +273,7 @@
 
   <!-- ── CRÉDITO AL PIE ─────────────────────────────────────────────────── -->
   <footer class="site-credit" role="contentinfo">
-    <p class="site-credit__text" id="legend-credit">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab</p>
+    <p class="site-credit__text"><span id="legend-credit">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab</span> · <a class="site-credit__link" href="operaciones.html">Operaciones técnicas</a></p>
   </footer>
 
   <!-- ── SCRIPTS ────────────────────────────────────────────────────────── -->

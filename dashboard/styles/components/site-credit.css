@@ -18,3 +18,13 @@
   letter-spacing: 0.02em;
   color: var(--color-text-soft);
 }
+
+.site-credit__link {
+  color: var(--color-text-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.site-credit__link:hover {
+  color: var(--color-text);
+}

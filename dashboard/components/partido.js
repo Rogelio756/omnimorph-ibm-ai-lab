@@ -369,10 +369,15 @@
     EQUIPOS.forEach(function (e) {
       var eq = D.equipos[e[0]];
       var col = el('div');
+      var metaAttrs = {
+        class: 'team-head__meta',
+        text: 'Entrenador: ' + eq.entrenador + ' · Esquema: ' + eq.esquema_inicial + ' · Capitán: ' + eq.capitan
+      };
+      if (eq.esquema_nota) metaAttrs.title = eq.esquema_nota;
       col.appendChild(el('div', { class: 'team-head' },
         el('div', { class: 'team-head__name' }, el('span', { class: 'swatch swatch--' + e[2] }), eq.pais),
-        el('span', { class: 'team-head__meta',
-          text: 'Entrenador: ' + eq.entrenador + ' · Esquema: ' + eq.esquema_inicial + ' · Capitán: ' + eq.capitan })));
+        el('span', metaAttrs),
+        eq.esquema_nota ? el('span', { class: 'team-head__note', text: eq.esquema_nota }) : null));
       (eq.bajas_previas || []).forEach(function (b) {
         col.appendChild(el('div', { class: 'absence' },
           el('span', { class: 'absence__name', text: 'Baja: ' + b.nombre }),
