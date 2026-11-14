@@ -38,7 +38,8 @@
         "sugar boyz"
       ],
       "ataca_hacia": "+x",
-      "color_ui": "#FF1493"
+      "color_ui": "#FF1493",
+      "color_uniforme": { "principal": "#009739", "accento": "#166534" }
     },
     "1": {
       "codigo": "CRC",
@@ -51,7 +52,8 @@
         "la sele"
       ],
       "ataca_hacia": "-x",
-      "color_ui": "#00BFFF"
+      "color_ui": "#00BFFF",
+      "color_uniforme": { "principal": "#c8102e", "accento": "#102a56" }
     }
   }
 }

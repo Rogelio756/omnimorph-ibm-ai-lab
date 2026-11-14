@@ -70,6 +70,8 @@
 
 .camiseta--bra path { fill: var(--color-team-a); }
 .camiseta--ger path { fill: var(--color-team-b); }
+.camiseta--partido-a path { fill: var(--color-partido-a); }
+.camiseta--partido-b path { fill: var(--color-partido-b); }
 
 .camiseta text {
   fill: var(--color-text-light);
@@ -95,6 +97,12 @@
 
 .fichero__detalle--ger {
   border-top-color: var(--color-team-b);
+}
+.fichero__detalle--partido-a {
+  border-top-color: var(--color-partido-a);
+}
+.fichero__detalle--partido-b {
+  border-top-color: var(--color-partido-b);
 }
 
 .fichero__retrato {
@@ -159,6 +167,23 @@
   color: var(--color-text);
 }
 
+.fichero__rend-titulo {
+  font-size: var(--text-small);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  margin-top: var(--space-2);
+}
+
+.fichero__cifras--rend {
+  grid-template-columns: repeat(3, 1fr);
+  font-size: 13px;
+}
+
+.fichero__cifras--rend dd {
+  font-size: var(--text-title);
+}
+
 .fichero__eventos {
   margin: 0;
   padding-left: var(--space-4);
@@ -208,6 +233,16 @@
 .carta--ger[aria-pressed="true"] {
   border-color: var(--color-team-b);
   box-shadow: inset 0 0 0 1px var(--color-team-b);
+}
+
+.carta--partido-a[aria-pressed="true"] {
+  border-color: var(--color-partido-a);
+  box-shadow: inset 0 0 0 1px var(--color-partido-a);
+}
+
+.carta--partido-b[aria-pressed="true"] {
+  border-color: var(--color-partido-b);
+  box-shadow: inset 0 0 0 1px var(--color-partido-b);
 }
 
 .carta--suplente {

@@ -258,6 +258,9 @@ def export_partido() -> None:
         PARTIDO_SRC / "assets" / "mapa_8_goles.svg",
         PARTIDO_SRC / "assets" / "radar_gol_muller.svg",
         PARTIDO_SRC / "PROCEDENCIA.md",
+        PARTIDO_SRC / "fer_validacion" / "assets" / "esquemas_tacticos.svg",
+        PARTIDO_SRC / "fer_validacion" / "assets" / "uniformes_y_zonas.svg",
+        PARTIDO_SRC / "fer_validacion" / "assets" / "timeline_partido.svg",
     )
     if not (PARTIDO_SRC / "partido" / "contexto_partido.json").exists():
         # Aún no llegan los datos verificados del partido: la página lo dice en vez de mostrar otro partido.
@@ -288,6 +291,28 @@ def export_partido() -> None:
         "estadisticas": _load_json(PARTIDO_SRC / "partido" / "estadisticas_partido.json"),
         "goles": _load_json(PARTIDO_SRC / "partido" / "cronologia_goles.json"),
     }
+
+    # Eventos del partido (opcional: no existe en Brasil ni en partidos sin el paquete Fer)
+    eventos_path = PARTIDO_SRC / "partido" / "eventos_partido.json"
+    if eventos_path.exists():
+        data["eventos"] = _load_json(eventos_path)
+
+    # Colores del uniforme real (opcional: distinto de color_ui del pipeline)
+    # Se leen desde partido.config.json porque contexto_partido.json no los contiene.
+    colores_uniforme: dict = {}
+    cfg_path = PARTIDO_SRC / "partido.config.json"
+    if cfg_path.exists():
+        cfg_raw = _load_json(cfg_path)
+        for tid_str, eq_raw in cfg_raw.get("equipos", {}).items():
+            cu = eq_raw.get("color_uniforme")
+            if cu and isinstance(cu, dict) and cu.get("principal"):
+                # Mapear team_id → clave de equipos_orden
+                for k in equipos_orden:
+                    if str(equipos[k].get("team_id")) == str(tid_str):
+                        colores_uniforme[k] = cu["principal"]
+                        break
+    if colores_uniforme:
+        data["colores_uniforme"] = colores_uniforme
     muller_path = PARTIDO_SRC / "gol_muller" / "gol_muller_min11.json"
     if muller_path.exists():
         data["gol_muller"] = _load_json(muller_path)

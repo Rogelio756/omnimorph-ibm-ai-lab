@@ -7,7 +7,8 @@
 (function () {
   'use strict';
 
-  var CLASES_EQ = ['bra', 'ger'];
+  var CLASES_EQ_DEFAULT = ['bra', 'ger'];
+  var CLASES_EQ_UNIFORME = ['partido-a', 'partido-b'];
   var LINEAS = [['', 'Todos'], ['POR', 'Porteros'], ['DEF', 'Defensas'], ['MED', 'Medios'], ['DEL', 'Delanteros']];
   var ORDEN = { POR: 0, DEF: 1, MED: 2, DEL: 3 };
   var CAMISETA = 'M32 12 18 18 6 38l14 8 6-8v52h48V38l6 8 14-8-12-20-14-6q-18 12-36 0z';
@@ -36,18 +37,32 @@
     return s;
   }
 
+  /** Índice de rendimiento individual: {equipo+dorsal → stats}. */
+  function indiceRendimiento(datos) {
+    var lista = datos.estadisticas && datos.estadisticas.rendimiento_individual_destacado;
+    if (!lista) return {};
+    var idx = {};
+    lista.forEach(function (r) {
+      var clave = (r.equipo || '') + '|' + r.dorsal;
+      idx[clave] = r;
+    });
+    return idx;
+  }
+
   /** Plantilla del equipo con los goles y asistencias que salen de la cronología. */
-  function jugadoresDe(datos, clave) {
+  function jugadoresDe(datos, clave, rendIdx) {
     var eq = datos.equipos[clave];
     var propios = (datos.goles || []).filter(function (g) { return g.equipo_anotador === eq.pais; });
     var vistos = (datos.vistos_en_clip && datos.vistos_en_clip[clave]) || [];
     return Object.keys(eq.plantilla).map(function (d) {
       var j = eq.plantilla[d];
       var dorsal = Number(d);
+      var rendKey = eq.pais + '|' + dorsal;
       return {
         dorsal: dorsal,
         nombre: j.nombre,
         posicion: j.posicion,
+        rol_tactico: j.rol_tactico || null,
         titular: j.titular,
         minutos: j.minutos,
         eventos: j.eventos || [],
@@ -55,6 +70,7 @@
         linea: linea(j.posicion),
         goles: propios.filter(function (g) { return g.anotador && g.anotador.dorsal === dorsal; }).length,
         asistencias: propios.filter(function (g) { return g.asistente && g.asistente.dorsal === dorsal; }).length,
+        rendimiento: rendIdx[rendKey] || null,
       };
     }).sort(function (a, b) {
       return (b.titular - a.titular) || (ORDEN[a.linea] - ORDEN[b.linea]) || (a.dorsal - b.dorsal);
@@ -77,17 +93,26 @@
     var orden = (datos.equipos_orden && datos.equipos_orden.length)
       ? datos.equipos_orden
       : Object.keys(datos.equipos);
+    var tieneUniforme = datos.colores_uniforme && orden.length >= 2 &&
+      (datos.colores_uniforme[orden[0]] || datos.colores_uniforme[orden[1]]);
+    var clasesEq = tieneUniforme ? CLASES_EQ_UNIFORME : CLASES_EQ_DEFAULT;
     var equipos = orden.map(function (k, i) {
-      return [k, datos.equipos[k].codigo, CLASES_EQ[i] || 'bra'];
+      return [k, datos.equipos[k].codigo, clasesEq[i] || 'bra'];
     });
     var estado = { equipo: equipos[0][0], linea: '', dorsal: null };
+    var rendIdx = indiceRendimiento(datos);
     var plantillas = {};
-    equipos.forEach(function (e) { plantillas[e[0]] = jugadoresDe(datos, e[0]); });
+    equipos.forEach(function (e) { plantillas[e[0]] = jugadoresDe(datos, e[0], rendIdx); });
 
     var detalle = el('article', { class: 'fichero__detalle', 'aria-live': 'polite' });
     var rejilla = el('div', { class: 'fichero__rejilla', role: 'group', 'aria-label': 'Jugadores' });
     var botonesEquipo = {};
     var botonesLinea = {};
+
+    function numR(v, dec) {
+      if (v == null || isNaN(Number(v))) return '—';
+      return Number(v).toLocaleString('es-MX', { minimumFractionDigits: dec || 0, maximumFractionDigits: dec || 0 });
+    }
 
     function pintarDetalle(j) {
       while (detalle.firstChild) detalle.removeChild(detalle.firstChild);
@@ -95,8 +120,9 @@
       detalle.className = 'fichero__detalle fichero__detalle--' + codigo[2];
       detalle.appendChild(el('div', { class: 'fichero__retrato' }, camiseta(j.dorsal, codigo[2])));
       detalle.appendChild(el('h2', { text: j.nombre }));
-      detalle.appendChild(el('p', { class: 'fichero__puesto',
-        text: j.posicion + ' · ' + (j.titular ? 'Titular' : 'Suplente') + ' · ' + codigo[1] }));
+      var puestoTexto = j.posicion + ' · ' + (j.titular ? 'Titular' : 'Suplente') + ' · ' + codigo[1];
+      if (j.rol_tactico) puestoTexto += ' · ' + j.rol_tactico;
+      detalle.appendChild(el('p', { class: 'fichero__puesto', text: puestoTexto }));
       var marcas = insignias(j);
       if (marcas.length) {
         detalle.appendChild(el('div', { class: 'fichero__insignias' }, marcas.map(function (m) {
@@ -107,6 +133,29 @@
         [['Minutos', j.minutos], ['Goles', j.goles], ['Asistencias', j.asistencias]].map(function (c) {
           return el('div', null, el('dt', { text: c[0] }), el('dd', { text: String(c[1]) }));
         })));
+      // Rendimiento individual FotMob/Opta (si existe)
+      var r = j.rendimiento;
+      if (r) {
+        var esPortero = r.atajadas != null || r.goles_recibidos != null;
+        var cifras = esPortero
+          ? [['Calificación', numR(r.calificacion_fotmob, 2)],
+             ['Atajadas', numR(r.atajadas, 0)],
+             ['Goles rec.', numR(r.goles_recibidos, 0)],
+             ['Toques', numR(r.toques, 0)],
+             ['Pases', (r.pases_completados != null ? r.pases_completados + '/' + r.pases_totales : '—')],
+             ['Recup.', numR(r.recuperaciones, 0)]]
+          : [['Calificación', numR(r.calificacion_fotmob, 2)],
+             ['Toques', numR(r.toques, 0)],
+             ['Pases', (r.pases_completados != null ? r.pases_completados + '/' + r.pases_totales : '—')],
+             ['Tiros', numR(r.tiros_totales, 0)],
+             ['Duelos G.', numR(r.duelos_ganados, 0)],
+             ['Recup.', numR(r.recuperaciones, 0)]];
+        detalle.appendChild(el('p', { class: 'fichero__rend-titulo', text: 'FotMob / Opta' }));
+        detalle.appendChild(el('dl', { class: 'fichero__cifras fichero__cifras--rend' },
+          cifras.map(function (c) {
+            return el('div', null, el('dt', { text: c[0] }), el('dd', { text: c[1] }));
+          })));
+      }
       if (j.eventos.length) {
         detalle.appendChild(el('ul', { class: 'fichero__eventos' },
           j.eventos.map(function (t) { return el('li', { text: t }); })));
@@ -152,7 +201,9 @@
 
     var filtros = el('div', { class: 'fichero__filtros' },
       el('div', { class: 'fichero__grupo', role: 'group', 'aria-label': 'Equipo' }, equipos.map(function (e) {
-        var b = el('button', { class: 'fichero__filtro', type: 'button', text: datos.equipos[e[0]].pais });
+        var eq = datos.equipos[e[0]];
+        var etiqueta = eq.pais + (eq.esquema_nota ? ' · ' + eq.esquema_nota.split(' ')[0] : '');
+        var b = el('button', { class: 'fichero__filtro', type: 'button', text: etiqueta });
         b.addEventListener('click', function () {
           estado.equipo = e[0]; estado.dorsal = null; marcar(); pintarRejilla();
         });

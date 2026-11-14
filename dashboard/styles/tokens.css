@@ -22,6 +22,11 @@
   --color-team-b:       #F5F3EE; /* GER — crema   */
   --color-ball:         #A3E635; /* balón — lima   */
 
+  /* ── Colores: Uniforme real (página Partido). Fallback = color pipeline.   */
+  /* partido.js los sobreescribe con colores_uniforme de partido.json.        */
+  --color-partido-a:    var(--color-team-a);
+  --color-partido-b:    var(--color-team-b);
+
   /* ── Colores: Cancha ────────────────────────────────────────────────────── */
   --color-pitch:        #0E1A16;
   --color-pitch-lines:  #2A4A3E;
