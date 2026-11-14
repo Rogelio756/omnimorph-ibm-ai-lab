@@ -249,5 +249,938 @@
         "san_cristobal_y_nieves": "221/300"
       }
     }
+  },
+  "rendimiento_individual_destacado": [
+    {
+      "jugador": "Jeyland Mitchell",
+      "dorsal": 3,
+      "equipo": "Costa Rica",
+      "minutos": 90,
+      "calificacion_fotmob": 7.4,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 7,
+      "entradas": 5,
+      "intercepciones": 0,
+      "despejes": 1,
+      "toques": 56,
+      "pases_completados": 38,
+      "pases_totales": 43,
+      "precision_pases_pct": 88.4,
+      "recuperaciones": 1
+    },
+    {
+      "jugador": "Julio Cascante",
+      "dorsal": 6,
+      "equipo": "Costa Rica",
+      "minutos": 90,
+      "calificacion_fotmob": 7.2,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 9,
+      "entradas": 0,
+      "intercepciones": 1,
+      "despejes": 4,
+      "toques": 77,
+      "pases_completados": 63,
+      "pases_totales": 68,
+      "precision_pases_pct": 92.6,
+      "recuperaciones": 3
+    },
+    {
+      "jugador": "Manfred Ugalde",
+      "dorsal": 9,
+      "equipo": "Costa Rica",
+      "minutos": 81,
+      "calificacion_fotmob": 8.24,
+      "goles": 0,
+      "asistencias": 1,
+      "tiros_totales": 3,
+      "tiros_a_puerta": 1,
+      "ocasiones_creadas": 3,
+      "duelos_ganados": 1,
+      "entradas": 0,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 53,
+      "pases_completados": 35,
+      "pases_totales": 39,
+      "precision_pases_pct": 89.7,
+      "recuperaciones": 6
+    },
+    {
+      "jugador": "Ariel Lassiter",
+      "dorsal": 11,
+      "equipo": "Costa Rica",
+      "minutos": 90,
+      "calificacion_fotmob": 7.4,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 1,
+      "duelos_ganados": 4,
+      "entradas": 0,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 44,
+      "pases_completados": 24,
+      "pases_totales": 28,
+      "precision_pases_pct": 85.7,
+      "recuperaciones": 3
+    },
+    {
+      "jugador": "Jefferson Brenes",
+      "dorsal": 13,
+      "equipo": "Costa Rica",
+      "minutos": 64,
+      "calificacion_fotmob": 7.77,
+      "goles": 0,
+      "asistencias": 1,
+      "tiros_totales": 2,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 1,
+      "duelos_ganados": 3,
+      "entradas": 0,
+      "intercepciones": 1,
+      "despejes": 0,
+      "toques": 55,
+      "pases_completados": 31,
+      "pases_totales": 46,
+      "precision_pases_pct": 67.4,
+      "recuperaciones": 5
+    },
+    {
+      "jugador": "Orlando Galo",
+      "dorsal": 14,
+      "equipo": "Costa Rica",
+      "minutos": 90,
+      "calificacion_fotmob": 9.17,
+      "goles": 2,
+      "asistencias": 0,
+      "tiros_totales": 5,
+      "tiros_a_puerta": 3,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 8,
+      "entradas": 3,
+      "intercepciones": 1,
+      "despejes": 0,
+      "toques": 78,
+      "pases_completados": 51,
+      "pases_totales": 60,
+      "precision_pases_pct": 85.0,
+      "recuperaciones": 8
+    },
+    {
+      "jugador": "Francisco Calvo",
+      "dorsal": 15,
+      "equipo": "Costa Rica",
+      "minutos": 90,
+      "calificacion_fotmob": 8.04,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 2,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 9,
+      "entradas": 2,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 101,
+      "pases_completados": 74,
+      "pases_totales": 87,
+      "precision_pases_pct": 85.1,
+      "recuperaciones": 9
+    },
+    {
+      "jugador": "Warren Madrigal",
+      "dorsal": 17,
+      "equipo": "Costa Rica",
+      "minutos": 65,
+      "calificacion_fotmob": 6.64,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 2,
+      "duelos_ganados": 2,
+      "entradas": 0,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 23,
+      "pases_completados": 13,
+      "pases_totales": 17,
+      "precision_pases_pct": 76.5,
+      "recuperaciones": 3
+    },
+    {
+      "jugador": "Álvaro Zamora",
+      "dorsal": 21,
+      "equipo": "Costa Rica",
+      "minutos": 78,
+      "calificacion_fotmob": 8.12,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 4,
+      "tiros_a_puerta": 1,
+      "ocasiones_creadas": 4,
+      "duelos_ganados": 5,
+      "entradas": 2,
+      "intercepciones": 1,
+      "despejes": 0,
+      "toques": 63,
+      "pases_completados": 38,
+      "pases_totales": 49,
+      "precision_pases_pct": 77.6,
+      "recuperaciones": 7
+    },
+    {
+      "jugador": "Haxzel Quirós",
+      "dorsal": 22,
+      "equipo": "Costa Rica",
+      "minutos": 78,
+      "calificacion_fotmob": 7.2,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 2,
+      "duelos_ganados": 2,
+      "entradas": 1,
+      "intercepciones": 2,
+      "despejes": 2,
+      "toques": 50,
+      "pases_completados": 18,
+      "pases_totales": 24,
+      "precision_pases_pct": 75.0,
+      "recuperaciones": 2
+    },
+    {
+      "jugador": "Patrick Sequeira",
+      "dorsal": 23,
+      "equipo": "Costa Rica",
+      "minutos": 90,
+      "calificacion_fotmob": 7.03,
+      "atajadas": 1,
+      "goles_recibidos": 0,
+      "error_derivado_en_gol": 0,
+      "toques": 21,
+      "pases_completados": 15,
+      "pases_totales": 17,
+      "precision_pases_pct": 88.2,
+      "recuperaciones": 5
+    },
+    {
+      "jugador": "Gerald Taylor",
+      "dorsal": 2,
+      "equipo": "Costa Rica",
+      "minutos": 12,
+      "calificacion_fotmob": 6.37,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 2,
+      "entradas": 2,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 15,
+      "pases_completados": 8,
+      "pases_totales": 10,
+      "precision_pases_pct": 80.0,
+      "recuperaciones": 1
+    },
+    {
+      "jugador": "Brandon Aguilera",
+      "dorsal": 10,
+      "equipo": "Costa Rica",
+      "minutos": 26,
+      "calificacion_fotmob": 6.89,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 2,
+      "duelos_ganados": 2,
+      "entradas": 2,
+      "intercepciones": 1,
+      "despejes": 0,
+      "toques": 38,
+      "pases_completados": 25,
+      "pases_totales": 29,
+      "precision_pases_pct": 86.2,
+      "recuperaciones": 5
+    },
+    {
+      "jugador": "Joel Campbell",
+      "dorsal": 12,
+      "equipo": "Costa Rica",
+      "minutos": 9,
+      "goles": 0,
+      "asistencias": 1,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 2,
+      "duelos_ganados": 1,
+      "entradas": 1,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 23,
+      "pases_completados": 20,
+      "pases_totales": 22,
+      "precision_pases_pct": 90.9,
+      "recuperaciones": 1
+    },
+    {
+      "jugador": "Andy Rojas",
+      "dorsal": 19,
+      "equipo": "Costa Rica",
+      "minutos": 12,
+      "calificacion_fotmob": 7.28,
+      "goles": 1,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 1,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 0,
+      "entradas": 0,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 14,
+      "pases_completados": 10,
+      "pases_totales": 11,
+      "precision_pases_pct": 90.9,
+      "recuperaciones": 1
+    },
+    {
+      "jugador": "Josimar Alcócer",
+      "dorsal": 20,
+      "equipo": "Costa Rica",
+      "minutos": 25,
+      "calificacion_fotmob": 7.6,
+      "goles": 1,
+      "asistencias": 0,
+      "tiros_totales": 2,
+      "tiros_a_puerta": 1,
+      "ocasiones_creadas": 1,
+      "duelos_ganados": 2,
+      "entradas": 2,
+      "intercepciones": 0,
+      "despejes": 1,
+      "toques": 32,
+      "pases_completados": 20,
+      "pases_totales": 21,
+      "precision_pases_pct": 95.2,
+      "recuperaciones": 2
+    },
+    {
+      "jugador": "Ethan Bristow",
+      "dorsal": 3,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 90,
+      "calificacion_fotmob": 5.68,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 1,
+      "duelos_ganados": 3,
+      "entradas": 2,
+      "intercepciones": 3,
+      "despejes": 4,
+      "toques": 44,
+      "pases_completados": 13,
+      "pases_totales": 22,
+      "precision_pases_pct": 59.1,
+      "recuperaciones": 5
+    },
+    {
+      "jugador": "Andre Burley",
+      "dorsal": 4,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 90,
+      "calificacion_fotmob": 5.73,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 5,
+      "entradas": 1,
+      "intercepciones": 0,
+      "despejes": 5,
+      "toques": 53,
+      "pases_completados": 24,
+      "pases_totales": 35,
+      "precision_pases_pct": 68.6,
+      "recuperaciones": 6
+    },
+    {
+      "jugador": "Jameel Ible",
+      "dorsal": 5,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 90,
+      "calificacion_fotmob": 5.23,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 3,
+      "entradas": 1,
+      "intercepciones": 1,
+      "despejes": 1,
+      "toques": 36,
+      "pases_completados": 18,
+      "pases_totales": 21,
+      "precision_pases_pct": 85.7,
+      "recuperaciones": 2
+    },
+    {
+      "jugador": "Lois Maynard",
+      "dorsal": 6,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 90,
+      "calificacion_fotmob": 5.7,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 2,
+      "entradas": 0,
+      "intercepciones": 5,
+      "despejes": 3,
+      "toques": 47,
+      "pases_completados": 25,
+      "pases_totales": 34,
+      "precision_pases_pct": 73.5,
+      "recuperaciones": 10
+    },
+    {
+      "jugador": "Tyrese Shade",
+      "dorsal": 10,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 77,
+      "calificacion_fotmob": 6.26,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 2,
+      "entradas": 0,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 33,
+      "pases_completados": 18,
+      "pases_totales": 22,
+      "precision_pases_pct": 81.8,
+      "recuperaciones": 7
+    },
+    {
+      "jugador": "Kimaree Rogers",
+      "dorsal": 11,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 53,
+      "calificacion_fotmob": 5.83,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 1,
+      "entradas": 0,
+      "intercepciones": 0,
+      "despejes": 1,
+      "toques": 14,
+      "pases_completados": 4,
+      "pases_totales": 5,
+      "precision_pases_pct": 80.0,
+      "recuperaciones": 4
+    },
+    {
+      "jugador": "Tyquan Terrell",
+      "dorsal": 14,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 77,
+      "calificacion_fotmob": 6.48,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 2,
+      "entradas": 0,
+      "intercepciones": 2,
+      "despejes": 0,
+      "toques": 20,
+      "pases_completados": 11,
+      "pases_totales": 11,
+      "precision_pases_pct": 100.0,
+      "recuperaciones": 6
+    },
+    {
+      "jugador": "Mervin Lewis",
+      "dorsal": 15,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 90,
+      "calificacion_fotmob": 6.65,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 6,
+      "entradas": 3,
+      "intercepciones": 2,
+      "despejes": 1,
+      "toques": 39,
+      "pases_completados": 19,
+      "pases_totales": 21,
+      "precision_pases_pct": 90.5,
+      "recuperaciones": 2
+    },
+    {
+      "jugador": "Julani Archibald",
+      "dorsal": 18,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 90,
+      "calificacion_fotmob": 4.25,
+      "atajadas": 3,
+      "goles_recibidos": 4,
+      "error_derivado_en_gol": 1,
+      "toques": 41,
+      "pases_completados": 14,
+      "pases_totales": 33,
+      "precision_pases_pct": 42.4,
+      "recuperaciones": 7
+    },
+    {
+      "jugador": "Romaine Sawyers",
+      "dorsal": 19,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 77,
+      "calificacion_fotmob": 6.02,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 1,
+      "tiros_a_puerta": 1,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 7,
+      "entradas": 0,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 33,
+      "pases_completados": 14,
+      "pases_totales": 22,
+      "precision_pases_pct": 63.6,
+      "recuperaciones": 1
+    },
+    {
+      "jugador": "Omari Sterling-James",
+      "dorsal": 22,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 85,
+      "calificacion_fotmob": 5.24,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 1,
+      "duelos_ganados": 1,
+      "entradas": 1,
+      "intercepciones": 0,
+      "despejes": 2,
+      "toques": 45,
+      "pases_completados": 22,
+      "pases_totales": 29,
+      "precision_pases_pct": 75.9,
+      "recuperaciones": 5
+    },
+    {
+      "jugador": "G'Vaune Amory",
+      "dorsal": 7,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 13,
+      "calificacion_fotmob": 5.91,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 2,
+      "entradas": 0,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 16,
+      "pases_completados": 5,
+      "pases_totales": 6,
+      "precision_pases_pct": 83.3,
+      "recuperaciones": 0
+    },
+    {
+      "jugador": "Yohannes Mitchum",
+      "dorsal": 8,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 13,
+      "calificacion_fotmob": 6.29,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 0,
+      "entradas": 0,
+      "intercepciones": 1,
+      "despejes": 0,
+      "toques": 21,
+      "pases_completados": 16,
+      "pases_totales": 19,
+      "precision_pases_pct": 84.2,
+      "recuperaciones": 1
+    },
+    {
+      "jugador": "Harrison Panayiotou",
+      "dorsal": 9,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 37,
+      "calificacion_fotmob": 5.99,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 3,
+      "entradas": 1,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 19,
+      "pases_completados": 10,
+      "pases_totales": 11,
+      "precision_pases_pct": 90.9,
+      "recuperaciones": 1
+    },
+    {
+      "jugador": "Diego Edwards",
+      "dorsal": 20,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 13,
+      "calificacion_fotmob": 5.89,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 0,
+      "entradas": 0,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 4,
+      "pases_completados": 2,
+      "pases_totales": 3,
+      "precision_pases_pct": 66.7,
+      "recuperaciones": 1
+    },
+    {
+      "jugador": "Nequan Browne",
+      "dorsal": 21,
+      "equipo": "San Cristóbal y Nieves",
+      "minutos": 5,
+      "goles": 0,
+      "asistencias": 0,
+      "tiros_totales": 0,
+      "tiros_a_puerta": 0,
+      "ocasiones_creadas": 0,
+      "duelos_ganados": 1,
+      "entradas": 1,
+      "intercepciones": 0,
+      "despejes": 0,
+      "toques": 7,
+      "pases_completados": 6,
+      "pases_totales": 6,
+      "precision_pases_pct": 100.0,
+      "recuperaciones": 1
+    }
+  ],
+  "fuente_rendimiento_individual": "FotMob / Opta (46 convocados, 32 con minutos en cancha)",
+  "metricas_adicionales": {
+    "tiempo_completo": {
+      "tiros_al_poste": {
+        "costa_rica": 2,
+        "san_cristobal_y_nieves": 0
+      },
+      "grandes_ocasiones": {
+        "costa_rica": 5,
+        "san_cristobal_y_nieves": 0
+      },
+      "grandes_ocasiones_falladas": {
+        "costa_rica": 2,
+        "san_cristobal_y_nieves": 0
+      },
+      "toques_area_rival": {
+        "costa_rica": 29,
+        "san_cristobal_y_nieves": 7
+      },
+      "pases_precisos_campo_propio": {
+        "costa_rica": 244,
+        "san_cristobal_y_nieves": 116
+      },
+      "pases_precisos_campo_rival": {
+        "costa_rica": 239,
+        "san_cristobal_y_nieves": 105
+      },
+      "balones_largos_precisos": {
+        "costa_rica": 14,
+        "san_cristobal_y_nieves": 24
+      },
+      "balones_largos_pct": {
+        "costa_rica": 33,
+        "san_cristobal_y_nieves": 39
+      },
+      "centros_precisos": {
+        "costa_rica": 6,
+        "san_cristobal_y_nieves": 2
+      },
+      "centros_pct": {
+        "costa_rica": 32,
+        "san_cristobal_y_nieves": 17
+      },
+      "saques_de_banda": {
+        "costa_rica": 19,
+        "san_cristobal_y_nieves": 15
+      },
+      "entradas_tackles": {
+        "costa_rica": 20,
+        "san_cristobal_y_nieves": 10
+      },
+      "intercepciones": {
+        "costa_rica": 7,
+        "san_cristobal_y_nieves": 14
+      },
+      "bloqueos_defensivos": {
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 6
+      },
+      "despejes": {
+        "costa_rica": 9,
+        "san_cristobal_y_nieves": 19
+      },
+      "duelos_ganados": {
+        "costa_rica": 57,
+        "san_cristobal_y_nieves": 38
+      },
+      "duelos_suelo_ganados": {
+        "costa_rica": 37,
+        "san_cristobal_y_nieves": 28
+      },
+      "duelos_suelo_pct": {
+        "costa_rica": 57,
+        "san_cristobal_y_nieves": 43
+      },
+      "duelos_aereos_ganados": {
+        "costa_rica": 20,
+        "san_cristobal_y_nieves": 10
+      },
+      "duelos_aereos_pct": {
+        "costa_rica": 67,
+        "san_cristobal_y_nieves": 33
+      },
+      "regates_exitosos": {
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 9
+      },
+      "regates_pct": {
+        "costa_rica": 44,
+        "san_cristobal_y_nieves": 41
+      }
+    },
+    "primer_tiempo": {
+      "tiros_al_poste": {
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 0
+      },
+      "grandes_ocasiones": {
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 0
+      },
+      "grandes_ocasiones_falladas": {
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 0
+      },
+      "toques_area_rival": {
+        "costa_rica": 11,
+        "san_cristobal_y_nieves": 4
+      },
+      "pases_precisos_campo_propio": {
+        "costa_rica": 129,
+        "san_cristobal_y_nieves": 56
+      },
+      "pases_precisos_campo_rival": {
+        "costa_rica": 100,
+        "san_cristobal_y_nieves": 31
+      },
+      "balones_largos_precisos": {
+        "costa_rica": 7,
+        "san_cristobal_y_nieves": 9
+      },
+      "balones_largos_pct": {
+        "costa_rica": 26,
+        "san_cristobal_y_nieves": 25
+      },
+      "centros_precisos": {
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 1
+      },
+      "centros_pct": {
+        "costa_rica": 29,
+        "san_cristobal_y_nieves": 20
+      },
+      "saques_de_banda": {
+        "costa_rica": 11,
+        "san_cristobal_y_nieves": 8
+      },
+      "entradas_tackles": {
+        "costa_rica": 5,
+        "san_cristobal_y_nieves": 3
+      },
+      "intercepciones": {
+        "costa_rica": 2,
+        "san_cristobal_y_nieves": 6
+      },
+      "bloqueos_defensivos": {
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 3
+      },
+      "despejes": {
+        "costa_rica": 5,
+        "san_cristobal_y_nieves": 12
+      },
+      "duelos_ganados": {
+        "costa_rica": 30,
+        "san_cristobal_y_nieves": 18
+      },
+      "duelos_suelo_ganados": {
+        "costa_rica": 16,
+        "san_cristobal_y_nieves": 10
+      },
+      "duelos_suelo_pct": {
+        "costa_rica": 62,
+        "san_cristobal_y_nieves": 38
+      },
+      "duelos_aereos_ganados": {
+        "costa_rica": 14,
+        "san_cristobal_y_nieves": 8
+      },
+      "duelos_aereos_pct": {
+        "costa_rica": 64,
+        "san_cristobal_y_nieves": 36
+      },
+      "regates_exitosos": {
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 4
+      },
+      "regates_pct": {
+        "costa_rica": 80,
+        "san_cristobal_y_nieves": 50
+      }
+    },
+    "segundo_tiempo": {
+      "tiros_al_poste": {
+        "costa_rica": 1,
+        "san_cristobal_y_nieves": 0
+      },
+      "grandes_ocasiones": {
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 0
+      },
+      "grandes_ocasiones_falladas": {
+        "costa_rica": 2,
+        "san_cristobal_y_nieves": 0
+      },
+      "toques_area_rival": {
+        "costa_rica": 18,
+        "san_cristobal_y_nieves": 3
+      },
+      "pases_precisos_campo_propio": {
+        "costa_rica": 115,
+        "san_cristobal_y_nieves": 60
+      },
+      "pases_precisos_campo_rival": {
+        "costa_rica": 139,
+        "san_cristobal_y_nieves": 74
+      },
+      "balones_largos_precisos": {
+        "costa_rica": 7,
+        "san_cristobal_y_nieves": 15
+      },
+      "balones_largos_pct": {
+        "costa_rica": 47,
+        "san_cristobal_y_nieves": 58
+      },
+      "centros_precisos": {
+        "costa_rica": 2,
+        "san_cristobal_y_nieves": 1
+      },
+      "centros_pct": {
+        "costa_rica": 40,
+        "san_cristobal_y_nieves": 14
+      },
+      "saques_de_banda": {
+        "costa_rica": 8,
+        "san_cristobal_y_nieves": 7
+      },
+      "entradas_tackles": {
+        "costa_rica": 15,
+        "san_cristobal_y_nieves": 7
+      },
+      "intercepciones": {
+        "costa_rica": 5,
+        "san_cristobal_y_nieves": 8
+      },
+      "bloqueos_defensivos": {
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 3
+      },
+      "despejes": {
+        "costa_rica": 4,
+        "san_cristobal_y_nieves": 7
+      },
+      "duelos_ganados": {
+        "costa_rica": 27,
+        "san_cristobal_y_nieves": 20
+      },
+      "duelos_suelo_ganados": {
+        "costa_rica": 21,
+        "san_cristobal_y_nieves": 18
+      },
+      "duelos_suelo_pct": {
+        "costa_rica": 54,
+        "san_cristobal_y_nieves": 46
+      },
+      "duelos_aereos_ganados": {
+        "costa_rica": 6,
+        "san_cristobal_y_nieves": 2
+      },
+      "duelos_aereos_pct": {
+        "costa_rica": 75,
+        "san_cristobal_y_nieves": 25
+      },
+      "regates_exitosos": {
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 5
+      },
+      "regates_pct": {
+        "costa_rica": 0,
+        "san_cristobal_y_nieves": 36
+      }
+    }
   }
 }

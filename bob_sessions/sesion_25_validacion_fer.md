@@ -56,9 +56,36 @@ El modo completo del chat estaba escrito para Brasil 1-7: su prompt fijaba ese m
 - Costa Rica con Granite (5 preguntas, ~1,05 RU): goles, cambios, clima, marcador al descanso y «no hay xG». Las cinco dieron PASS en la auditoría y coinciden con los datos de Fer.
 - Tablero: `/api/chat/estado` devuelve las preguntas sugeridas de Costa Rica y `/api/chat` responde la comparación de tiros por regla.
 
-## 6. Lo que NO se hizo
+## 6. Segunda pasada: el resto del paquete de Fer
+
+La primera integración usó solo una parte del paquete y dejó dos errores ya subidos en `4f66fc9`: el chat negaba que hubiera estadísticas por jugador, y el clima mostraba 20 °C, 88 % y 11 km/h, que Fer marca como no disponibles.
+
+`scripts/importar_datos_fer.py` ahora aplica también:
+- **Estadísticas individuales** de FotMob/Opta para los 32 jugadores con minutos (`rendimiento_individual_destacado`): calificación, toques, pases, tiros, duelos, recuperaciones, y atajadas en el caso de los porteros.
+- **Clima:** solo «Lluvia intensa». Temperatura, humedad y viento sin dato. La página Partido muestra «Lluvia intensa · temperatura sin dato oficial».
+- **22 métricas de equipo** más, por tiempo (`metricas_adicionales`): postes, grandes ocasiones, duelos, regates, intercepciones, despejes, centros, etc.
+- **Los 30 eventos** (`partido/eventos_partido.json`): tarjetas, atajadas, postes, cambios, ocasión clara, atención médica, con hora UTC.
+- **Ficha:** rol táctico por jugador, nota de esquema (3-4-3 FIFA / 3-4-2-1 FotMob), uniformes detallados, nacionalidad de los DT, contexto del grupo, discrepancias resueltas y lista de datos no disponibles.
+- **Goles:** la jugada descrita por Fer, la zona y las coordenadas FIFA.
+- **Análisis táctico** (sección 6 de `ANALISIS_PARTIDO.md`) en `partido/analisis_tactico.md`.
+
+Cambios en el chat (`chat_agent.py`):
+- Nuevas secciones `eventos` y `analisis_tactico`. Del análisis solo se envían los 4 párrafos que más palabras comparten con la pregunta: con el análisis completo, Granite mezclaba cifras y el verificador bloqueaba las respuestas.
+- Tarjetas, postes, atajadas y cambios se responden por regla desde los eventos. Granite había dado mal un minuto de tarjeta y contó el descanso como poste.
+- Reglas sin LLM para «distancia recorrida» (no existe en este partido) y para los jugadores que no jugaron.
+- Más palabras clave de estadísticas (calificación, FotMob, duelos, toques) y de análisis (defender, romper, cerrojo).
+
+**Pruebas:**
+- Brasil: los prompts, las respuestas por regla y la verificación siguen idénticos.
+- Granite sobre Costa Rica:
+  - pases de Galo, mejor jugador, jugada de cada gol, clima y el ajuste que pidió Alfaro: PASS;
+  - dos preguntas tácticas abiertas, con el análisis completo, terminaron BLOQUEADAS por cifras mal atribuidas. Con los fragmentos, el ajuste de Alfaro sale correcto.
+
+**Límite conocido:** el verificador no revisa las `metricas_adicionales`. En una prueba Granite citó «14 recuperaciones», que en realidad eran intercepciones, y la respuesta pasó.
+
+## 7. Lo que NO se hizo
 
 - No se corrió el validador de Fer (`validate_data.py`): era código descargado.
-- `ANALISIS_PARTIDO.md` de Fer está copiado pero el chat todavía no lo usa (la narración táctica de los goles tampoco se envía al modelo).
+- Los diagramas SVG de Fer y una línea de tiempo de eventos en la página Partido.
 - El tramo T18 de Lassiter sigue sin confirmar a mano, aunque el jugador quedó validado por el tramo T70.
 - Sin commit.

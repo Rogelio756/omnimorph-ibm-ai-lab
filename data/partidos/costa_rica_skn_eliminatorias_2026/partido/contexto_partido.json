@@ -16,10 +16,12 @@
       "cuarto_arbitro": "Cristhofer Corado (Guatemala)"
     },
     "condiciones_climaticas": {
-      "temperatura_c": 20,
-      "humedad_pct": 88,
+      "resumen": "Lluvia intensa",
       "cielo": "Lluvia intensa durante todo el partido (cancha rápida y resbaladiza)",
-      "viento_kmh": 11
+      "temperatura_c": null,
+      "humedad_pct": null,
+      "viento_kmh": null,
+      "nota": "Temperatura, humedad y viento: sin dato oficial (FIFA no los publica)."
     },
     "resultado": {
       "marcador_final": "4-0",
@@ -39,6 +41,75 @@
       "fotmob_match_id": 4416441,
       "espn_event_id": "698147",
       "transfermarkt_match_id": "4343320"
+    },
+    "contexto_competitivo": {
+      "estado": "confirmado",
+      "formato_segunda_ronda": "6 grupos de 5 selecciones; cada selección disputa 4 partidos (2 de local, 2 de visita). Clasifican los 2 primeros de cada grupo a la Tercera Ronda.",
+      "grupo_b_integrantes": [
+        "Costa Rica",
+        "Trinidad y Tobago",
+        "San Cristóbal y Nieves",
+        "Granada",
+        "Bahamas"
+      ],
+      "ranking_fifa_sorteo_diciembre_2023": {
+        "costa_rica": {
+          "puesto": 52,
+          "bombo": 1
+        },
+        "san_cristobal_y_nieves": {
+          "puesto": 147,
+          "bombo": 3
+        }
+      },
+      "otro_resultado_jornada_1_grupo_b": "Trinidad y Tobago 2-2 Granada (5 de junio de 2024, Port of Spain). Con el 4-0, Costa Rica asumió el primer lugar del Grupo B con 3 puntos y diferencia de +4."
+    },
+    "discrepancias_resueltas": [
+      {
+        "tema": "Asistencia oficial",
+        "valor_adoptado": 15700,
+        "motivo": "FIFA, FotMob, ESPN y Wikipedia coinciden en 15.700; Transfermarkt replicó un error de origen en FIFA Stadium.CityName ('5150')."
+      },
+      {
+        "tema": "Director técnico de San Cristóbal y Nieves",
+        "valor_adoptado": "Francisco Molina",
+        "motivo": "FIFA API (IdCoach 483207), Transfermarkt, EFE, Everardo Herrera y declaraciones en Radio Columbia confirman a Francisco Molina."
+      },
+      {
+        "tema": "Fecha calendario (CST vs UTC)",
+        "valor_adoptado": "2024-06-06 (20:30 local) / 2024-06-07 (02:30 UTC)",
+        "motivo": "Las 20:30 en San José (UTC-6) corresponden a las 02:30 UTC del 7 de junio."
+      },
+      {
+        "tema": "Esquema táctico inicial de San Cristóbal y Nieves",
+        "valor_adoptado": "5-4-1",
+        "motivo": "FIFA API, FotMob y ESPN registran línea de cinco atrás (5-4-1), coincidente con las crónicas de cancha."
+      },
+      {
+        "tema": "Redondeo de precisión de pases",
+        "valor_adoptado": "CRC 483/571 (84.59%, FotMob muestra 85%); SKN 221/300 (73.67%, FotMob muestra 74%)",
+        "motivo": "Diferencia de truncamiento frente a redondeo estándar sobre exactamente los mismos cocientes."
+      },
+      {
+        "tema": "Minutos de goles y cambios",
+        "valor_adoptado": "Goles: 40', 49', 82', 84' (FIFA Timeline / ESPN / FotMob / Transfermarkt)",
+        "motivo": "El arreglo resumen Goals/Substitutions de FIFA redondea el minuto hacia abajo (p. ej. 2344 s -> 39' en lugar de 40'), mientras FIFA Timeline, ESPN (reloj en segundos) y Opta/FotMob reportan el minuto en curso."
+      }
+    ],
+    "datos_no_disponibles": {
+      "campos": [
+        "xg_goles_esperados",
+        "xa_asistencias_esperadas",
+        "distancia_recorrida_km",
+        "velocidad_maxima_kmh_y_sprints",
+        "mapas_de_calor_y_tracking_25fps",
+        "redes_de_pases_matriz_jugador_a_jugador",
+        "ppda_intensidad_presion",
+        "coordenadas_shotmap_de_todos_los_remates",
+        "corte_1t_2t_de_recuperaciones_por_equipo",
+        "temperatura_humedad_viento"
+      ],
+      "motivo": "El feed de FotMob para este encuentro tiene shotmap vacío y no publica xG ni mapas de calor; la FIFA API no publica tracking EPTS ni estadísticas agregadas de equipo fuera de posesión total."
     }
   },
   "equipos": {
@@ -57,7 +128,8 @@
           "posicion": "Portero",
           "titular": true,
           "minutos": 90,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Portero titular"
         },
         "22": {
           "nombre": "Haxzel Quirós",
@@ -66,21 +138,24 @@
           "minutos": 78,
           "eventos": [
             "Sustituido al 78'"
-          ]
+          ],
+          "rol_tactico": "Carrilero derecho"
         },
         "3": {
           "nombre": "Jeyland Mitchell",
           "posicion": "Defensa central",
           "titular": true,
           "minutos": 90,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Defensa central derecho"
         },
         "6": {
           "nombre": "Julio Cascante",
           "posicion": "Defensa central",
           "titular": true,
           "minutos": 90,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Defensa central (líbero)"
         },
         "15": {
           "nombre": "Francisco Calvo",
@@ -89,14 +164,16 @@
           "minutos": 90,
           "eventos": [
             "Capitán"
-          ]
+          ],
+          "rol_tactico": "Defensa central izquierdo (Capitán)"
         },
         "11": {
           "nombre": "Ariel Lassiter",
           "posicion": "Lateral izquierdo",
           "titular": true,
           "minutos": 90,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Carrilero izquierdo"
         },
         "14": {
           "nombre": "Orlando Galo",
@@ -106,7 +183,8 @@
           "eventos": [
             "Gol 40'",
             "Gol 49'"
-          ]
+          ],
+          "rol_tactico": "Mediocentro (contención izquierdo, box-to-box)"
         },
         "13": {
           "nombre": "Jefferson Brenes",
@@ -117,7 +195,8 @@
             "Asistencia 40'",
             "Tarjeta amarilla 58'",
             "Sustituido al 64'"
-          ]
+          ],
+          "rol_tactico": "Mediocentro (contención derecho)"
         },
         "17": {
           "nombre": "Warren Madrigal",
@@ -126,7 +205,8 @@
           "minutos": 65,
           "eventos": [
             "Sustituido al 65'"
-          ]
+          ],
+          "rol_tactico": "Mediapunta / extremo derecho"
         },
         "21": {
           "nombre": "Álvaro Zamora",
@@ -135,7 +215,8 @@
           "minutos": 78,
           "eventos": [
             "Sustituido al 78'"
-          ]
+          ],
+          "rol_tactico": "Mediapunta / extremo izquierdo"
         },
         "9": {
           "nombre": "Manfred Ugalde",
@@ -145,7 +226,8 @@
           "eventos": [
             "Asistencia 49'",
             "Sustituido al 81'"
-          ]
+          ],
+          "rol_tactico": "Delantero centro con movilidad"
         },
         "10": {
           "nombre": "Brandon Aguilera",
@@ -154,7 +236,8 @@
           "minutos": 26,
           "eventos": [
             "Ingresó al 64' por Jefferson Brenes"
-          ]
+          ],
+          "rol_tactico": "Mediocentro / volante creativo"
         },
         "20": {
           "nombre": "Josimar Alcócer",
@@ -164,7 +247,8 @@
           "eventos": [
             "Ingresó al 65' por Warren Madrigal",
             "Gol 82'"
-          ]
+          ],
+          "rol_tactico": "Extremo / mediapunta derecho"
         },
         "2": {
           "nombre": "Gerald Taylor",
@@ -173,7 +257,8 @@
           "minutos": 12,
           "eventos": [
             "Ingresó al 78' por Haxzel Quirós"
-          ]
+          ],
+          "rol_tactico": "Carrilero derecho"
         },
         "19": {
           "nombre": "Andy Rojas",
@@ -183,7 +268,8 @@
           "eventos": [
             "Ingresó al 78' por Álvaro Zamora",
             "Gol 84'"
-          ]
+          ],
+          "rol_tactico": "Mediapunta / extremo izquierdo"
         },
         "12": {
           "nombre": "Joel Campbell",
@@ -193,58 +279,84 @@
           "eventos": [
             "Ingresó al 81' por Manfred Ugalde",
             "Asistencia 84'"
-          ]
+          ],
+          "rol_tactico": "Delantero / mediapunta"
         },
         "1": {
           "nombre": "Kevin Chamorro",
           "posicion": "Portero",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Portero suplente"
         },
         "18": {
           "nombre": "Aarón Cruz",
           "posicion": "Portero",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Portero suplente"
         },
         "4": {
           "nombre": "Juan Pablo Vargas",
           "posicion": "Defensa central",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Defensa central suplente"
         },
         "5": {
           "nombre": "Fernán Faerron",
           "posicion": "Defensa central",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Defensa central suplente"
         },
         "8": {
           "nombre": "Joseph Mora",
           "posicion": "Lateral izquierdo",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Lateral / carrilero izquierdo suplente"
         },
         "16": {
           "nombre": "Alejandro Bran",
           "posicion": "Mediocampista",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Mediocentro suplente"
         },
         "7": {
           "nombre": "Anthony Contreras",
           "posicion": "Delantero",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Delantero suplente"
         }
-      }
+      },
+      "esquema_nota": "3-4-3 según FIFA y ESPN; 3-4-2-1 según FotMob (5-2-3 / 5-4-1 sin balón).",
+      "uniforme_detalle": {
+        "campo": {
+          "estado": "confirmado",
+          "marca": "Adidas (modelo 2024)",
+          "camiseta": "Roja con patrón frontal en azul oscuro/vino inspirado en las carretas típicas costarricenses, cuello redondo azul marino, tres franjas Adidas azul marino en los hombros, paneles laterales azul marino y dorsales/nombres en blanco.",
+          "pantaloneta": "Azul marino con franja lateral diagonal roja, escudo FCRF en pierna derecha y número blanco en pierna izquierda.",
+          "medias": "Azul marino con logotipo Adidas blanco al frente y banda superior horizontal roja.",
+          "parches": "Parches oficiales de Eliminatorias Concacaf / FIFA Qualifiers en las mangas.",
+          "discrepancia_nota_previa": "Una nota previa de La Nación mencionó de forma genérica camiseta roja, pantaloneta azul y 'medias azules'; el registro fotográfico directo del encuentro confirma medias azul marino con banda superior roja."
+        },
+        "portero": {
+          "estado": "no_disponible",
+          "titular": "Patrick Sequeira (#23)",
+          "nota": "No existe fotografía verificada de ese partido específico (6 de junio de 2024) ni parte oficial de utilería que confirme el color exacto utilizado por Sequeira esa noche; por regla de integridad del proyecto no se infiere por descarte."
+        }
+      },
+      "entrenador_nacionalidad": "Argentina"
     },
     "san_cristobal_y_nieves": {
       "team_id": 0,
@@ -263,21 +375,24 @@
           "minutos": 90,
           "eventos": [
             "Capitán"
-          ]
+          ],
+          "rol_tactico": "Portero titular (Capitán)"
         },
         "3": {
           "nombre": "Ethan Bristow",
           "posicion": "Lateral izquierdo",
           "titular": true,
           "minutos": 90,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Carrilero / lateral izquierdo"
         },
         "4": {
           "nombre": "Andre Burley",
           "posicion": "Defensa central",
           "titular": true,
           "minutos": 90,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Defensa central derecho"
         },
         "5": {
           "nombre": "Jameel Ible",
@@ -286,7 +401,8 @@
           "minutos": 90,
           "eventos": [
             "Tarjeta amarilla 45+4'"
-          ]
+          ],
+          "rol_tactico": "Defensa central izquierdo"
         },
         "6": {
           "nombre": "Lois Maynard",
@@ -295,7 +411,8 @@
           "minutos": 90,
           "eventos": [
             "Tarjeta amarilla 63'"
-          ]
+          ],
+          "rol_tactico": "Defensa central (líbero)"
         },
         "22": {
           "nombre": "Omari Sterling-James",
@@ -305,7 +422,8 @@
           "eventos": [
             "Tarjeta amarilla 26'",
             "Sustituido al 85'"
-          ]
+          ],
+          "rol_tactico": "Carrilero / lateral derecho"
         },
         "11": {
           "nombre": "Kimaree Rogers",
@@ -314,7 +432,8 @@
           "minutos": 53,
           "eventos": [
             "Sustituido al 53'"
-          ]
+          ],
+          "rol_tactico": "Volante / extremo derecho"
         },
         "14": {
           "nombre": "Tyquan Terrell",
@@ -323,14 +442,16 @@
           "minutos": 77,
           "eventos": [
             "Sustituido al 77'"
-          ]
+          ],
+          "rol_tactico": "Mediocentro izquierdo"
         },
         "15": {
           "nombre": "Mervin Lewis",
           "posicion": "Mediocampista defensivo",
           "titular": true,
           "minutos": 90,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Mediocentro derecho"
         },
         "10": {
           "nombre": "Tyrese Shade",
@@ -339,7 +460,8 @@
           "minutos": 77,
           "eventos": [
             "Sustituido al 77'"
-          ]
+          ],
+          "rol_tactico": "Volante / extremo izquierdo"
         },
         "19": {
           "nombre": "Romaine Sawyers",
@@ -348,7 +470,8 @@
           "minutos": 77,
           "eventos": [
             "Sustituido al 77'"
-          ]
+          ],
+          "rol_tactico": "Delantero centro / enlace adelantado"
         },
         "9": {
           "nombre": "Harrison Panayiotou",
@@ -357,7 +480,8 @@
           "minutos": 37,
           "eventos": [
             "Ingresó al 53' por Kimaree Rogers"
-          ]
+          ],
+          "rol_tactico": "Extremo / delantero derecho (alias: Harry Panayiotou)"
         },
         "8": {
           "nombre": "Yohannes Mitchum",
@@ -366,7 +490,8 @@
           "minutos": 13,
           "eventos": [
             "Ingresó al 77' por Tyquan Terrell"
-          ]
+          ],
+          "rol_tactico": "Mediocentro"
         },
         "20": {
           "nombre": "Diego Edwards",
@@ -375,7 +500,8 @@
           "minutos": 13,
           "eventos": [
             "Ingresó al 77' por Romaine Sawyers"
-          ]
+          ],
+          "rol_tactico": "Delantero centro"
         },
         "7": {
           "nombre": "G'Vaune Amory",
@@ -384,7 +510,8 @@
           "minutos": 13,
           "eventos": [
             "Ingresó al 77' por Tyrese Shade"
-          ]
+          ],
+          "rol_tactico": "Volante ofensivo / extremo izquierdo (FIFA: Gvaune Amory)"
         },
         "21": {
           "nombre": "Nequan Browne",
@@ -393,58 +520,84 @@
           "minutos": 5,
           "eventos": [
             "Ingresó al 85' por Omari Sterling-James"
-          ]
+          ],
+          "rol_tactico": "Carrilero / volante derecho"
         },
         "1": {
           "nombre": "Kai Trotman",
           "posicion": "Portero",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Portero suplente (FIFA: Kai Jalen Francois Trotman)"
         },
         "23": {
           "nombre": "Vibert Stephen",
           "posicion": "Portero",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Portero suplente"
         },
         "2": {
           "nombre": "Malique Roberts",
           "posicion": "Lateral derecho",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Defensa suplente"
         },
         "13": {
           "nombre": "Jal'Den Myers",
           "posicion": "Defensa central",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Defensa suplente (FIFA: Jalden Myers)"
         },
         "16": {
           "nombre": "Yusuf Saunders",
           "posicion": "Defensa central",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Defensa suplente (FIFA: Yusuf Chadajo Saunders)"
         },
         "12": {
           "nombre": "Tyrique Davis",
           "posicion": "Mediocampista",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Defensa suplente"
         },
         "17": {
           "nombre": "Gabriel Vanterpool",
           "posicion": "Mediocampista",
           "titular": false,
           "minutos": 0,
-          "eventos": []
+          "eventos": [],
+          "rol_tactico": "Delantero suplente"
         }
-      }
+      },
+      "esquema_nota": "5-4-1 según FIFA, FotMob y ESPN.",
+      "uniforme_detalle": {
+        "campo": {
+          "estado": "confirmado",
+          "camiseta": "Verde brillante con banda diagonal negra atravesando el frente (con tres pequeñas estrellas/puntos decorativos visibles), cuello redondo amarillo con ribete blanco, ribete blanco sobre los hombros y dorsales en negro en la espalda.",
+          "pantaloneta": "Verde a juego con detalle amarillo en el borde inferior izquierdo.",
+          "medias": "Verdes."
+        },
+        "portero": {
+          "estado": "confirmado",
+          "titular": "Julani Archibald (#18, capitán)",
+          "camiseta": "Manga larga naranja fluorescente con dorsal #18 en negro contorneado y brazalete de capitán blanco/amarillo en la manga derecha.",
+          "pantaloneta": "Negra (usada sobre licra térmica negra).",
+          "medias": "Naranjas.",
+          "guantes": "Negros."
+        }
+      },
+      "entrenador_nacionalidad": "México"
     }
   },
   "procedencia": {

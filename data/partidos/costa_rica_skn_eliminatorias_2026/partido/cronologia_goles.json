@@ -18,9 +18,14 @@
     "coordenadas_campo_cm": null,
     "distancia_porteria_m": null,
     "pie_remate": "Cabeza",
-    "zona_remate": null,
+    "zona_remate": "Área pequeña, sector centro-izquierdo (~5 m de la línea de gol).",
     "nota_tactica": null,
-    "narracion": "Remate de cabeza dentro del área tras centro de Jefferson Brenes desde la derecha."
+    "narracion": "Remate de cabeza dentro del área tras centro de Jefferson Brenes desde la derecha.",
+    "jugada": "1-0 Tras un saque de banda en campo rival (reportado por SKNFA), Jefferson Brenes envió un centro largo desde la banda derecha; la salida de Julani Archibald resultó deficiente y Orlando Galo llegó sorpresivamente desde segunda línea para conectar de cabeza.",
+    "coordenadas_fifa": {
+      "x": 95.1,
+      "y": 56.3
+    }
   },
   {
     "orden": 2,
@@ -41,9 +46,14 @@
     "coordenadas_campo_cm": null,
     "distancia_porteria_m": null,
     "pie_remate": "Pie izquierdo",
-    "zona_remate": null,
+    "zona_remate": "Frontal / media luna del área, cargado ligeramente hacia perfil centro-izquierdo.",
     "nota_tactica": null,
-    "narracion": "Zurdazo rastrero desde el borde del área tras pase de Manfred Ugalde."
+    "narracion": "Zurdazo rastrero desde el borde del área tras pase de Manfred Ugalde.",
+    "jugada": "2-0 Acción iniciada por sector derecho; Manfred Ugalde cedió un pase atrasado al borde del área para la llegada de frente de Orlando Galo, quien conectó un zurdazo rastrero junto al palo izquierdo.",
+    "coordenadas_fifa": {
+      "x": 79.6,
+      "y": 60.5
+    }
   },
   {
     "orden": 3,
@@ -61,9 +71,14 @@
     "coordenadas_campo_cm": null,
     "distancia_porteria_m": null,
     "pie_remate": "Pie derecho",
-    "zona_remate": null,
+    "zona_remate": "Zona central del área pequeña frente al arco rival.",
     "nota_tactica": null,
-    "narracion": "Gol sin asistencia tras presión alta y robo en la salida del arquero Julani Archibald."
+    "narracion": "Gol sin asistencia tras presión alta y robo en la salida del arquero Julani Archibald.",
+    "jugada": "3-0 Presión alta inmediata de Josimar Alcócer sobre el portero Julani Archibald cuando intentaba despejar; el arquero estrelló el balón en el cuerpo del extremo costarricense (error registrado en Opta/FotMob) y Alcócer empujó el rebote al fondo con arco abierto. Primer gol internacional de Alcócer con la selección mayor.",
+    "coordenadas_fifa": {
+      "x": 94.2,
+      "y": 48.5
+    }
   },
   {
     "orden": 4,
@@ -84,8 +99,13 @@
     "coordenadas_campo_cm": null,
     "distancia_porteria_m": null,
     "pie_remate": "Pie derecho",
-    "zona_remate": null,
+    "zona_remate": "Interior centro-derecho del área grande.",
     "nota_tactica": null,
-    "narracion": "Definición dentro del área a pase de Joel Campbell para cerrar el 4-0 en su debut con la selección mayor."
+    "narracion": "Definición dentro del área a pase de Joel Campbell para cerrar el 4-0 en su debut con la selección mayor.",
+    "jugada": "4-0 Pase filtrado en profundidad de Joel Campbell entre la defensa fatigada de San Cristóbal y Nieves; Andy Rojas (18 años, debutante) atacó el espacio en velocidad y definió cruzado y raso de derecha.",
+    "coordenadas_fifa": {
+      "x": 86.5,
+      "y": 41.5
+    }
   }
 ]

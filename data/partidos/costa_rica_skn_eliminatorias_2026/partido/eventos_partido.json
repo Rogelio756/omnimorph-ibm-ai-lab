@@ -1,0 +1,270 @@
+[
+  {
+    "minuto": "0'",
+    "tipo": "inicio",
+    "equipo": "CRC vs SKN",
+    "hora_utc": "2024-06-07T02:39:53.53Z",
+    "descripcion": "Inicio real a las 20:39:53 hora local (02:39:53Z) bajo fuerte lluvia en el Estadio Nacional."
+  },
+  {
+    "minuto": "21'",
+    "tipo": "remate_bloqueado",
+    "equipo": "Costa Rica",
+    "jugador": "Warren Madrigal",
+    "dorsal": 17,
+    "descripcion": "Primer remate de Costa Rica: disparo de Warren Madrigal bloqueado desde fuera del área tras descarga de Zamora (ESPN)."
+  },
+  {
+    "minuto": "24'",
+    "tipo": "poste",
+    "equipo": "Costa Rica",
+    "jugador": "Francisco Calvo",
+    "dorsal": 15,
+    "descripcion": "Cabezazo de Francisco Calvo al travesaño tras tiro de esquina y centro de Ariel Lassiter (FIFA Timeline pos: 93.9, 45.0)."
+  },
+  {
+    "minuto": "26'",
+    "tipo": "tarjeta_amarilla",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "Omari Sterling-James",
+    "dorsal": 22,
+    "hora_utc": "2024-06-07T03:05:05.389Z",
+    "descripcion": "Falta sobre Álvaro Zamora en banda izquierda de Costa Rica (ESPN/TM)."
+  },
+  {
+    "minuto": "39'",
+    "tipo": "atajada",
+    "equipo": "Costa Rica",
+    "jugador": "Manfred Ugalde",
+    "dorsal": 9,
+    "descripcion": "Remate lejano de derecha de Manfred Ugalde atajado por Julani Archibald abajo a la derecha (FIFA Timeline pos: 1.8, 50.7)."
+  },
+  {
+    "minuto": "40'",
+    "tipo": "gol",
+    "equipo": "Costa Rica",
+    "jugador": "Orlando Galo",
+    "dorsal": 14,
+    "jugador_secundario": "Jefferson Brenes",
+    "hora_utc": "2024-06-07T03:18:58.151Z",
+    "descripcion": "1-0 Tras un saque de banda en campo rival (reportado por SKNFA), Jefferson Brenes envió un centro largo desde la banda derecha; la salida de Julani Archibald resultó deficiente y Orlando Galo llegó sorpresivamente desde segunda línea para conectar de cabeza."
+  },
+  {
+    "minuto": "44'",
+    "tipo": "atencion_medica",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "Julani Archibald",
+    "dorsal": 18,
+    "descripcion": "Pausa breve por atención al arquero visitante Julani Archibald."
+  },
+  {
+    "minuto": "45'+4'",
+    "tipo": "tarjeta_amarilla",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "Jameel Ible",
+    "dorsal": 5,
+    "hora_utc": "2024-06-07T03:27:56.502Z",
+    "descripcion": "Amonestado en reposición del primer tiempo (Transfermarkt registra protesta / reclamo)."
+  },
+  {
+    "minuto": "45'+5'",
+    "tipo": "descanso",
+    "equipo": "CRC vs SKN",
+    "hora_utc": "2024-06-07T03:29:01.167Z",
+    "descripcion": "Fin del primer tiempo (1-0) a las 03:29:01Z."
+  },
+  {
+    "minuto": "49'",
+    "tipo": "gol",
+    "equipo": "Costa Rica",
+    "jugador": "Orlando Galo",
+    "dorsal": 14,
+    "jugador_secundario": "Manfred Ugalde",
+    "hora_utc": "2024-06-07T03:50:14.677Z",
+    "descripcion": "2-0 Acción iniciada por sector derecho; Manfred Ugalde cedió un pase atrasado al borde del área para la llegada de frente de Orlando Galo, quien conectó un zurdazo rastrero junto al palo izquierdo."
+  },
+  {
+    "minuto": "52'",
+    "tipo": "atajada",
+    "equipo": "Costa Rica",
+    "jugador": "Orlando Galo",
+    "dorsal": 14,
+    "descripcion": "Cabezazo de Orlando Galo en el centro del área atajado por Julani Archibald tras pase de Ugalde."
+  },
+  {
+    "minuto": "53'",
+    "tipo": "sustitucion",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "Harrison Panayiotou",
+    "dorsal": 9,
+    "jugador_secundario": "Kimaree Rogers",
+    "hora_utc": "2024-06-07T03:54:02.647Z",
+    "descripcion": "Cambio #1 (SKN): entra #9 Harrison Panayiotou por #11 Kimaree Rogers."
+  },
+  {
+    "minuto": "58'",
+    "tipo": "tarjeta_amarilla",
+    "equipo": "Costa Rica",
+    "jugador": "Jefferson Brenes",
+    "dorsal": 13,
+    "hora_utc": "2024-06-07T03:59:15.716Z",
+    "descripcion": "Amonestado al 58' (Transfermarkt registra protesta / reclamo)."
+  },
+  {
+    "minuto": "63'",
+    "tipo": "tarjeta_amarilla",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "Lois Maynard",
+    "dorsal": 6,
+    "hora_utc": "2024-06-07T04:03:58.892Z",
+    "descripcion": "Falta sobre Warren Madrigal (ESPN/TM)."
+  },
+  {
+    "minuto": "64'",
+    "tipo": "sustitucion",
+    "equipo": "Costa Rica",
+    "jugador": "Brandon Aguilera",
+    "dorsal": 10,
+    "jugador_secundario": "Jefferson Brenes",
+    "hora_utc": "2024-06-07T04:05:28.502Z",
+    "descripcion": "Cambio #2 (CRC): entra #10 Brandon Aguilera por #13 Jefferson Brenes."
+  },
+  {
+    "minuto": "65'",
+    "tipo": "sustitucion",
+    "equipo": "Costa Rica",
+    "jugador": "Josimar Alcócer",
+    "dorsal": 20,
+    "jugador_secundario": "Warren Madrigal",
+    "hora_utc": "2024-06-07T04:05:48.234Z",
+    "descripcion": "Cambio #3 (CRC): entra #20 Josimar Alcócer por #17 Warren Madrigal."
+  },
+  {
+    "minuto": "71'",
+    "tipo": "atajada",
+    "equipo": "Costa Rica",
+    "jugador": "Álvaro Zamora",
+    "dorsal": 21,
+    "descripcion": "Tiro lejano de Álvaro Zamora al ángulo superior derecho desviado al córner por Archibald."
+  },
+  {
+    "minuto": "73'",
+    "tipo": "atajada",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "Romaine Sawyers",
+    "dorsal": 19,
+    "descripcion": "Único remate a puerta de San Cristóbal y Nieves: disparo de Romaine Sawyers desde fuera del área atajado abajo por Patrick Sequeira (FIFA Timeline pos: 2.9, 49.0)."
+  },
+  {
+    "minuto": "74'",
+    "tipo": "poste",
+    "equipo": "Costa Rica",
+    "jugador": "Manfred Ugalde",
+    "dorsal": 9,
+    "descripcion": "Remate de derecha de Manfred Ugalde desde el centro del área que se estrella en el travesaño tras pase de Haxzel Quirós (FIFA Timeline pos: 86.4, 42.5)."
+  },
+  {
+    "minuto": "76'",
+    "tipo": "ocasion_clara",
+    "equipo": "Costa Rica",
+    "jugador": "Álvaro Zamora",
+    "dorsal": 21,
+    "descripcion": "Mano a mano de Álvaro Zamora desde el sector izquierdo del área que pasa desviado al segundo palo tras pase filtrado de Brandon Aguilera."
+  },
+  {
+    "minuto": "77'",
+    "tipo": "sustitucion",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "Yohannes Mitchum",
+    "dorsal": 8,
+    "jugador_secundario": "Tyquan Terrell",
+    "hora_utc": "2024-06-07T04:17:50.878Z",
+    "descripcion": "Cambio #4 (SKN): entra #8 Yohannes Mitchum por #14 Tyquan Terrell."
+  },
+  {
+    "minuto": "77'",
+    "tipo": "sustitucion",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "Diego Edwards",
+    "dorsal": 20,
+    "jugador_secundario": "Romaine Sawyers",
+    "hora_utc": "2024-06-07T04:18:04.083Z",
+    "descripcion": "Cambio #5 (SKN): entra #20 Diego Edwards por #19 Romaine Sawyers."
+  },
+  {
+    "minuto": "77'",
+    "tipo": "sustitucion",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "G'Vaune Amory",
+    "dorsal": 7,
+    "jugador_secundario": "Tyrese Shade",
+    "hora_utc": "2024-06-07T04:18:21.856Z",
+    "descripcion": "Cambio #6 (SKN): entra #7 G'Vaune Amory por #10 Tyrese Shade."
+  },
+  {
+    "minuto": "78'",
+    "tipo": "sustitucion",
+    "equipo": "Costa Rica",
+    "jugador": "Gerald Taylor",
+    "dorsal": 2,
+    "jugador_secundario": "Haxzel Quirós",
+    "hora_utc": "2024-06-07T04:18:29.774Z",
+    "descripcion": "Cambio #7 (CRC): entra #2 Gerald Taylor por #22 Haxzel Quirós."
+  },
+  {
+    "minuto": "78'",
+    "tipo": "sustitucion",
+    "equipo": "Costa Rica",
+    "jugador": "Andy Rojas",
+    "dorsal": 19,
+    "jugador_secundario": "Álvaro Zamora",
+    "hora_utc": "2024-06-07T04:18:32.634Z",
+    "descripcion": "Cambio #8 (CRC): entra #19 Andy Rojas por #21 Álvaro Zamora."
+  },
+  {
+    "minuto": "81'",
+    "tipo": "sustitucion",
+    "equipo": "Costa Rica",
+    "jugador": "Joel Campbell",
+    "dorsal": 12,
+    "jugador_secundario": "Manfred Ugalde",
+    "hora_utc": "2024-06-07T04:21:49.38Z",
+    "descripcion": "Cambio #9 (CRC): entra #12 Joel Campbell por #9 Manfred Ugalde."
+  },
+  {
+    "minuto": "82'",
+    "tipo": "gol",
+    "equipo": "Costa Rica",
+    "jugador": "Josimar Alcócer",
+    "dorsal": 20,
+    "hora_utc": "2024-06-07T04:23:12.273Z",
+    "descripcion": "3-0 Presión alta inmediata de Josimar Alcócer sobre el portero Julani Archibald cuando intentaba despejar; el arquero estrelló el balón en el cuerpo del extremo costarricense (error registrado en Opta/FotMob) y Alcócer empujó el rebote al fondo con arco abierto. Primer gol internacional de Alcócer con la selección mayor."
+  },
+  {
+    "minuto": "84'",
+    "tipo": "gol",
+    "equipo": "Costa Rica",
+    "jugador": "Andy Rojas",
+    "dorsal": 19,
+    "jugador_secundario": "Joel Campbell",
+    "hora_utc": "2024-06-07T04:24:53.911Z",
+    "descripcion": "4-0 Pase filtrado en profundidad de Joel Campbell entre la defensa fatigada de San Cristóbal y Nieves; Andy Rojas (18 años, debutante) atacó el espacio en velocidad y definió cruzado y raso de derecha."
+  },
+  {
+    "minuto": "85'",
+    "tipo": "sustitucion",
+    "equipo": "San Cristóbal y Nieves",
+    "jugador": "Nequan Browne",
+    "dorsal": 21,
+    "jugador_secundario": "Omari Sterling-James",
+    "hora_utc": "2024-06-07T04:26:28.341Z",
+    "descripcion": "Cambio #10 (SKN): entra #21 Nequan Browne por #22 Omari Sterling-James."
+  },
+  {
+    "minuto": "90'+5'",
+    "tipo": "final",
+    "equipo": "CRC vs SKN",
+    "hora_utc": "2024-06-07T04:35:52.893Z",
+    "descripcion": "Cierre oficial del encuentro (4-0) a las 04:35:52Z."
+  }
+]

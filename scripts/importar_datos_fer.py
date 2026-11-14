@@ -75,9 +75,12 @@ def leer_csv(ruta: Path) -> list[dict]:
 
 
 def numero(valor: str):
-    if valor in ("", None):
+    if valor in ("", None, "no_disponible"):
         return None
-    v = float(valor)
+    try:
+        v = float(valor)
+    except ValueError:
+        return valor
     return int(v) if v.is_integer() else v
 
 
@@ -215,6 +218,161 @@ def corregir_textos(contexto: dict, goles: list[dict], cambios: list[str]) -> No
             g["narracion"] = limpio
 
 
+NOMBRE_EQUIPO = {"costa_rica": "Costa Rica", "san_cristobal_y_nieves": "San Cristóbal y Nieves"}
+
+
+def _pct(acertados, intentados):
+    return round(100 * acertados / intentados, 1) if intentados else None
+
+
+def rendimiento_individual(estadisticas_fer: dict) -> list[dict]:
+    """Una fila compacta por jugador con minutos (FotMob/Opta vía Fer)."""
+    filas = []
+    for clave, nombre_equipo in NOMBRE_EQUIPO.items():
+        for j in estadisticas_fer["estadisticas_jugadores"][clave]:
+            if not j.get("participo"):
+                continue
+            fila = {
+                "jugador": j["nombre"], "dorsal": j["dorsal"], "equipo": nombre_equipo,
+                "minutos": j["minutos_jugados"], "calificacion_fotmob": j.get("rating_fotmob"),
+            }
+            if j.get("es_portero"):
+                fila.update({
+                    "atajadas": j.get("atajadas"),
+                    "goles_recibidos": j.get("goles_concedidos"),
+                    "error_derivado_en_gol": j.get("error_derivado_en_gol"),
+                })
+            else:
+                fila.update({
+                    "goles": j.get("goles"), "asistencias": j.get("asistencias"),
+                    "tiros_totales": j.get("tiros_totales"), "tiros_a_puerta": j.get("tiros_a_puerta"),
+                    "ocasiones_creadas": j.get("ocasiones_creadas"),
+                    "duelos_ganados": j.get("duelos_ganados"),
+                    "entradas": j.get("entradas_tackles"), "intercepciones": j.get("intercepciones"),
+                    "despejes": j.get("despejes"),
+                })
+            fila.update({
+                "toques": j.get("toques"),
+                "pases_completados": j.get("pases_precisos"),
+                "pases_totales": j.get("pases_intentados"),
+                "precision_pases_pct": _pct(j.get("pases_precisos") or 0, j.get("pases_intentados") or 0),
+                "recuperaciones": j.get("recuperaciones"),
+            })
+            filas.append({k: v for k, v in fila.items() if v is not None})
+    return filas
+
+
+def metricas_adicionales(filas_csv: list[dict]) -> dict:
+    """Métricas de equipo de Fer que no tienen lugar en resumen_comparativo."""
+    ya = set(METRICAS.values()) | {"posesion_fifa_oficial_pct", "recuperaciones_jugadores_campo",
+                                   "recuperaciones_porteros"}
+    salida: dict = {}
+    for r in filas_csv:
+        if r["metrica"] in ya or r["periodo"] not in PERIODOS.values():
+            continue
+        periodo = {v: k for k, v in PERIODOS.items()}.get(r["periodo"], r["periodo"])
+        salida.setdefault(periodo, {})[r["metrica"]] = {
+            "costa_rica": numero(r["costa_rica"]),
+            "san_cristobal_y_nieves": numero(r["san_cristobal_y_nieves"]),
+        }
+    return salida
+
+
+def eventos_compactos(eventos: list[dict]) -> list[dict]:
+    salida = []
+    for e in eventos:
+        fila = {
+            "minuto": e["minuto"], "tipo": e["tipo_evento"], "equipo": e["equipo"],
+            "jugador": e["jugador_principal"] or None,
+            "dorsal": numero(e["dorsal_principal"]),
+            "jugador_secundario": e["jugador_secundario"] or None,
+            "hora_utc": e["timestamp_utc"] or None,
+            "descripcion": e["descripcion"],
+        }
+        salida.append({k: v for k, v in fila.items() if v is not None})
+    return salida
+
+
+def seccion_markdown(texto: str, numero_seccion: int) -> str:
+    """Sección '## N.' de ANALISIS_PARTIDO.md, hasta la siguiente '## '."""
+    lineas, dentro = [], False
+    for linea in texto.splitlines():
+        if linea.startswith("## "):
+            dentro = linea.startswith(f"## {numero_seccion}.")
+        if dentro:
+            lineas.append(linea)
+    return "\n".join(lineas).strip() + "\n"
+
+
+def enriquecer(contexto: dict, estad: dict, goles: list[dict], datos: Path, cambios: list[str]) -> dict:
+    """Todo lo demás del paquete de Fer. Devuelve archivos nuevos {nombre: contenido}."""
+    ficha = leer_json(datos / "ficha_partido.json")
+    estad_fer = leer_json(datos / "estadisticas.json")
+    alineaciones = leer_csv(datos / "alineaciones.csv")
+    eventos = leer_csv(datos / "goles_y_eventos.csv")
+    info = contexto["partido_info"]
+
+    # Clima: Fer solo confirma la lluvia; temperatura, humedad y viento no tienen fuente oficial.
+    clima = info.get("condiciones_climaticas", {})
+    nuevo_clima = {
+        "resumen": "Lluvia intensa",
+        "cielo": "Lluvia intensa durante todo el partido (cancha rápida y resbaladiza)",
+        "temperatura_c": None, "humedad_pct": None, "viento_kmh": None,
+        "nota": "Temperatura, humedad y viento: sin dato oficial (FIFA no los publica).",
+    }
+    if clima != nuevo_clima:
+        cambios.append("clima: temperatura, humedad y viento -> sin dato (Fer)")
+        info["condiciones_climaticas"] = nuevo_clima
+
+    info["contexto_competitivo"] = ficha["contexto_competitivo"]
+    info["discrepancias_resueltas"] = [
+        {"tema": d["tema"], "valor_adoptado": d.get("valor_adoptado"), "motivo": d.get("motivo")}
+        for d in ficha["resumen_discrepancias_interfuentes"]
+    ]
+    no_disp = estad_fer["metricas_no_disponibles"]
+    info["datos_no_disponibles"] = {
+        "campos": no_disp["campos"] + ["temperatura_humedad_viento"],
+        "motivo": no_disp["motivo"],
+    }
+
+    roles = {(r["codigo"], r["dorsal"]): r for r in alineaciones}
+    for clave, codigo in CODIGO.items():
+        equipo = contexto["equipos"][clave]
+        for dorsal, j in equipo["plantilla"].items():
+            r = roles.get((codigo, dorsal))
+            if r and r["rol_tactico"]:
+                j["rol_tactico"] = r["rol_tactico"]
+        esquema = {r["esquema_inicial"] for r in alineaciones if r["codigo"] == codigo}
+        if codigo == "CRC":
+            equipo["esquema_nota"] = "3-4-3 según FIFA y ESPN; 3-4-2-1 según FotMob (5-2-3 / 5-4-1 sin balón)."
+        elif esquema:
+            equipo["esquema_nota"] = f"{esquema.pop()} según FIFA, FotMob y ESPN."
+        equipo["uniforme_detalle"] = {
+            k.removeprefix(clave + "_"): v for k, v in ficha["uniformes"].items() if k.startswith(clave)
+        }
+        dt = ficha["directores_tecnicos"].get(clave, {})
+        if dt.get("nacionalidad"):
+            equipo["entrenador_nacionalidad"] = dt["nacionalidad"]
+    cambios.append("plantillas: rol táctico, nota de esquema, uniforme detallado y nacionalidad del DT")
+
+    estad["rendimiento_individual_destacado"] = rendimiento_individual(estad_fer)
+    estad["fuente_rendimiento_individual"] = estad_fer["estadisticas_jugadores"]["fuente"]
+    estad["metricas_adicionales"] = metricas_adicionales(leer_csv(datos / "estadisticas.csv"))
+    cambios.append(f"estadísticas: {len(estad['rendimiento_individual_destacado'])} jugadores con datos individuales "
+                   f"y {len(estad['metricas_adicionales'].get('tiempo_completo', {}))} métricas adicionales")
+
+    for g, e in zip(goles, (e for e in eventos if e["tipo_evento"] == "gol")):
+        g["jugada"] = e["descripcion"]
+        g["zona_remate"] = e["zona_aproximada_tactica"].replace("[estimacion_tactica] ", "") or None
+        g["coordenadas_fifa"] = {"x": numero(e["coord_fifa_x"]), "y": numero(e["coord_fifa_y"])}
+
+    analisis = (datos.parent / "ANALISIS_PARTIDO.md").read_text(encoding="utf-8")
+    return {
+        "eventos_partido.json": eventos_compactos(eventos),
+        "analisis_tactico.md": seccion_markdown(analisis, 6),
+    }
+
+
 def copiar_paquete(repo: Path) -> None:
     destino = PARTIDO / "fer_validacion"
     destino.mkdir(exist_ok=True)
@@ -246,6 +404,7 @@ def main() -> None:
     corregir_goles(goles, eventos, cambios)
     corregir_procedencia(contexto, leer_json(datos / "ficha_partido.json"), cambios)
     corregir_textos(contexto, goles, cambios)
+    nuevos = enriquecer(contexto, estad, goles, datos, cambios)
 
     for c in cambios:
         print(" -", c)
@@ -254,6 +413,12 @@ def main() -> None:
         escribir_json(contexto_p, contexto)
         escribir_json(estad_p, estad)
         escribir_json(goles_p, goles)
+        for nombre, contenido in nuevos.items():
+            ruta = PARTIDO / "partido" / nombre
+            if nombre.endswith(".json"):
+                escribir_json(ruta, contenido)
+            else:
+                ruta.write_text(contenido, encoding="utf-8")
         copiar_paquete(repo)
         print("[OK] aplicados y paquete de Fer copiado en fer_validacion/")
     else:

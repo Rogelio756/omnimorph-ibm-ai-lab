@@ -7,14 +7,14 @@
   "chat": {
     "descripcion": "Costa Rica 4-0 San Cristóbal y Nieves (Eliminatorias Concacaf rumbo al Mundial 2026, segunda ronda, jornada 1)",
     "orden_marcador": "Costa Rica-San Cristóbal y Nieves",
-    "nota_datos": "Las estadísticas vienen de FotMob/Opta y la cronología de FIFA, y las validó el equipo de análisis. Este partido no tiene xG publicado ni estadísticas individuales por jugador: si te las piden, dilo.",
+    "nota_datos": "Las estadísticas vienen de FotMob/Opta y la cronología de FIFA, y las validó el equipo de análisis. Hay estadísticas individuales para los jugadores que jugaron, pero no hay xG, distancia recorrida, velocidad ni mapas de calor: si te los piden, dilo. Las interpretaciones de analisis_tactico son lectura táctica de las fuentes, no datos medidos: preséntalas así. De analisis_tactico usa solo frases y cifras que estén escritas ahí, sin mezclarlas con las estadísticas por tiempo.",
     "aviso_xg": false,
     "aviso_por_tiempo": false,
     "preguntas_sugeridas": [
-      "¿Quién marcó cada gol y en qué minuto?",
+      "¿Quién marcó cada gol y cómo fue la jugada?",
       "Compara los tiros de ambos equipos en cada tiempo.",
-      "¿Qué cambios hizo Costa Rica?",
-      "¿Cómo estaba el clima durante el partido?"
+      "¿Quién fue el mejor jugador según FotMob?",
+      "¿Qué ajuste pidió Alfaro para romper el bloque bajo de San Cristóbal?"
     ]
   },
   "video": {

@@ -89,12 +89,22 @@ PALABRAS_SECCION = {
         "ataj", "tiempo", "1t", "2t", "rendimiento", "fuera de juego", "kroos",
         "muller", "neuer", "oscar", "david luiz", "dominio", "domino", "compar",
         "kilomet", "recorr", "distancia", " km",
+        "calific", "rating", "fotmob", "mejor jugador", "destac", "duelo", "toque", "regate",
     ),
     "goles": (
         "gol", "anot", "marc", "minuto", "asist", "remate", "klose", "kroos",
         "khedira", "schurrle", "oscar", "muller", "cronolog", "1t", "2t",
     ),
     "gol_muller": ("muller", "primer gol", "corner", "pantalla", "minuto 11"),
+    "eventos": (
+        "tarjeta", "amarilla", "roja", "poste", "travesa", "atajad", "cambio", "sustitu",
+        "ocasion", "lesion", "atencion", "descanso", "pitazo", "cronolog", "minuto", "evento",
+    ),
+    "analisis_tactico": (
+        "tactic", "esquema", "formacion", "plan", "ajuste", "presion", "bloque", "estrategia",
+        "por que", "como jugo", "analisis", "planteamiento", "entrenador", "lluvia",
+        "defend", "ataca", "atacó", "contragolpe", "cerrojo", "romper", "desgaste",
+    ),
     "ventanas_clip": (
         "clip", "ventana", "video", "bloque", "presion", "transicion", "compacid", "radar",
     ),
@@ -155,7 +165,43 @@ def seleccionar_secciones(texto: str) -> list[str]:
     return list(PALABRAS_SECCION)
 
 
-def serializar_contexto(datos: dict, secciones: Optional[list[str]] = None) -> str:
+PALABRAS_VACIAS = {
+    "como", "cual", "cuál", "que", "para", "con", "del", "los", "las", "una", "uno", "por",
+    "fue", "hizo", "tuvo", "partido", "este", "esta", "sobre", "entre", "mas", "muy",
+}
+FRAGMENTOS_ANALISIS = 4
+
+
+def fragmentos_analisis(texto: str, pregunta: str, k: int = FRAGMENTOS_ANALISIS) -> str:
+    """
+    Los k párrafos del análisis táctico que más palabras comparten con la pregunta.
+    Con el análisis completo, Granite mezcla cifras de distintos tramos y equipos.
+    """
+    palabras = {
+        w[:6] for w in re.findall(r"\w+", sin_acentos(pregunta))
+        if len(w) > 3 and w not in PALABRAS_VACIAS
+    }
+    fragmentos, titulo = [], ""
+    for linea in texto.splitlines():
+        if linea.startswith("###"):
+            titulo = linea.lstrip("# ").strip()
+        elif linea.startswith("- ") or (linea.strip() and not linea.startswith("#")):
+            fragmentos.append((titulo, linea.strip()))
+    if not palabras or not fragmentos:
+        return texto
+
+    def puntaje(fragmento):
+        raices = {w[:6] for w in re.findall(r"\w+", sin_acentos(" ".join(fragmento)))}
+        return len(palabras & raices)
+
+    elegidos = sorted(range(len(fragmentos)), key=lambda i: -puntaje(fragmentos[i]))[:k]
+    elegidos = [i for i in sorted(elegidos) if puntaje(fragmentos[i]) > 0] or sorted(elegidos)
+    return "\n".join(f"[{fragmentos[i][0]}] {fragmentos[i][1]}" for i in elegidos)
+
+
+def serializar_contexto(
+    datos: dict, secciones: Optional[list[str]] = None, pregunta: Optional[str] = None
+) -> str:
     """Texto con el partido y las secciones pedidas (por defecto, todas)."""
     if solo_clip(datos):
         claves = ["partido", "resumen_clip", "ventanas_clip"]
@@ -165,6 +211,8 @@ def serializar_contexto(datos: dict, secciones: Optional[list[str]] = None) -> s
     for clave in claves:
         if clave in datos:
             valor = datos[clave]
+            if clave == "analisis_tactico" and pregunta:
+                valor = fragmentos_analisis(valor, pregunta)
             if not isinstance(valor, str):
                 valor = json.dumps(valor, ensure_ascii=False, separators=(",", ":"))
             bloques.append(f"[{clave}]\n{valor}")
@@ -238,6 +286,19 @@ def _estadisticas_como_texto(
             "",
             "rendimiento_individual: este partido no tiene estadísticas individuales por jugador.",
         ]
+    adicionales = estadisticas.get("metricas_adicionales", {})
+    if adicionales:
+        bloques += ["", "otras_metricas_por_equipo (1T, 2T, total):"]
+        totales = adicionales.get("tiempo_completo", {})
+        for clave in totales:
+            for equipo, nombre_equipo in nombres_equipo.items():
+                t1 = adicionales.get("primer_tiempo", {}).get(clave, {}).get(equipo)
+                t2 = adicionales.get("segundo_tiempo", {}).get(clave, {}).get(equipo)
+                total = totales[clave].get(equipo)
+                bloques.append(
+                    f"{nombre_equipo} · {clave}: 1T {_cifra_tiempo(t1)}, 2T {_cifra_tiempo(t2)}, "
+                    f"total {_cifra_tiempo(total)}"
+                )
     zonas = resumen["tiempo_completo"].get("distribucion_zonas_balon_pct")
     if zonas:
         bloques += [
@@ -369,6 +430,10 @@ def cargar_datos() -> dict:
             "lista": goles,
         },
     }
+    if (carpeta / "eventos_partido.json").exists():
+        datos["eventos"] = leer("eventos_partido.json")
+    if (carpeta / "analisis_tactico.md").exists():
+        datos["analisis_tactico"] = (carpeta / "analisis_tactico.md").read_text(encoding="utf-8")
     gol_muller_path = partido.datos_dir / "gol_muller" / "gol_muller_min11.json"
     if gol_muller_path.exists():
         with open(gol_muller_path, encoding="utf-8") as f:
@@ -393,7 +458,15 @@ def cargar_datos() -> dict:
         "xg": bool(chat.get("aviso_xg", False)),
         "por_tiempo": bool(chat.get("aviso_por_tiempo", False)),
     }
-    datos["hay_datos_individuales"] = bool(estadisticas.get("rendimiento_individual_destacado"))
+    individuales = estadisticas.get("rendimiento_individual_destacado", [])
+    datos["hay_datos_individuales"] = bool(individuales)
+    datos["sin_distancia"] = bool(individuales) and not any(
+        "distancia_recorrida_km" in fila for fila in individuales
+    )
+    datos["jugadores_sin_minutos"] = [
+        j["nombre"] for e in equipos.values() for j in e["plantilla"].values()
+        if not j.get("minutos")
+    ]
 
     datos["hechos"] = construir_hechos(
         estadisticas,
@@ -471,13 +544,26 @@ def respuesta_sin_datos(pregunta: str, datos: dict) -> Optional[str]:
             f"No hay estadísticas individuales de {', '.join(mencionados)} en este partido: "
             "las fuentes solo registran sus minutos, goles, asistencias y tarjetas."
         )
-    mencionados = [
-        nombre
-        for nombre in datos.get("jugadores_sin_datos", [])
-        if re.search(rf"\b{re.escape(sin_acentos(nombre))}\b", normalizada)
-    ]
+    if datos.get("sin_distancia") and any(
+        p in normalizada for p in ("kilomet", "recorr", "distancia", " km")
+    ):
+        return ("No hay distancia recorrida en este partido: ninguna fuente pública "
+                "publicó datos de tracking físico por jugador ni por equipo.")
+    alias = datos.get("hechos", {}).get("alias_jugadores", {})
+    mencionados = list(dict.fromkeys(
+        alias.get(clave, clave)
+        for clave in [*alias, *map(sin_acentos, datos.get("jugadores_sin_datos", []))]
+        if alias.get(clave, clave) in datos.get("jugadores_sin_datos", [])
+        and re.search(rf"\b{re.escape(clave)}\b", normalizada)
+    ))
     if not mencionados:
         return None
+    sin_minutos = datos.get("jugadores_sin_minutos", [])
+    if all(nombre in sin_minutos for nombre in mencionados):
+        return (
+            f"{', '.join(mencionados)} no jugó en este partido, así que no tiene "
+            "estadísticas individuales."
+        )
     return (
         f"No hay datos individuales de {', '.join(mencionados)} en este partido. "
         "Solo los tienen los jugadores destacados del informe."
@@ -541,11 +627,57 @@ def respuesta_comparativa(pregunta: str, datos: dict) -> Optional[str]:
     return "\n".join(lineas)
 
 
+# Preguntas por un tipo de evento -> tipos de eventos_partido.json. Granite cuenta y
+# fecha mal estas listas (confundió el descanso con un poste), así que las redacta el código.
+EVENTOS_POR_PREGUNTA = (
+    (("tarjeta", "amarilla", "amonest", "expuls"), ("tarjeta_amarilla", "tarjeta_roja"), "Tarjetas"),
+    (("poste", "travesa", "palo"), ("poste",), "Balones al poste o al travesaño"),
+    (("atajad", "parada"), ("atajada",), "Atajadas (quién remató y qué hizo el portero)"),
+    (("cambios", "sustitu", "relevo"), ("sustitucion",), "Cambios"),
+)
+
+
+def respuesta_eventos(pregunta: str, datos: dict) -> Optional[str]:
+    """Lista, desde eventos_partido.json, las tarjetas, postes, atajadas o cambios pedidos."""
+    eventos = datos.get("eventos")
+    if not eventos:
+        return None
+    normalizada = sin_acentos(pregunta)
+    hechos = datos.get("hechos") or {}
+    nombres = {sin_acentos(e["nombre"]): e["nombre"] for e in hechos.get("equipos", {}).values()}
+    equipos = [nombres[c] for c in equipos_en_texto(normalizada, hechos)] if hechos else []
+    for palabras, tipos, titulo in EVENTOS_POR_PREGUNTA:
+        if not any(p in normalizada for p in palabras):
+            continue
+        elegidos = [
+            e for e in eventos
+            if e["tipo"] in tipos and (not equipos or e.get("equipo") in equipos)
+        ]
+        alcance = f" de {' y '.join(equipos)}" if equipos else " del partido"
+        if not elegidos:
+            return f"{titulo}{alcance}: ninguna registrada en las fuentes."
+        lineas = [f"{titulo}{alcance} ({len(elegidos)}):"]
+        for e in elegidos:
+            if e["tipo"] == "sustitucion":
+                texto = f"entra {e.get('jugador')} por {e.get('jugador_secundario')}"
+            else:
+                texto = re.sub(r"\s*\(FIFA Timeline pos:[^)]*\)", "", e["descripcion"])
+                if e.get("jugador") and e["jugador"] not in texto:
+                    texto = f"{e['jugador']}. {texto}"
+            lineas.append(f"- {e['minuto']} · {e.get('equipo', '')}: {texto}")
+        return "\n".join(lineas)
+    return None
+
+
 def respuesta_por_regla(pregunta: str, datos: dict) -> Optional[str]:
     """Respuesta redactada por el código, o None si la pregunta va a Granite."""
     if solo_clip(datos):
         return None  # las reglas usan alineaciones y estadísticas que todavía no existen
-    return respuesta_sin_datos(pregunta, datos) or respuesta_comparativa(pregunta, datos)
+    return (
+        respuesta_sin_datos(pregunta, datos)
+        or respuesta_eventos(pregunta, datos)
+        or respuesta_comparativa(pregunta, datos)
+    )
 
 
 def construir_mensajes(pregunta: str, historial: list[dict], datos: dict) -> list[dict]:
@@ -557,7 +689,7 @@ def construir_mensajes(pregunta: str, historial: list[dict], datos: dict) -> lis
     # La pregunta anterior ayuda con seguimientos como "¿y el segundo?"
     preguntas_previas = [m["content"] for m in recientes if m["role"] == "user"]
     texto_busqueda = " ".join([*preguntas_previas[-1:], pregunta])
-    contexto = serializar_contexto(datos, seleccionar_secciones(texto_busqueda))
+    contexto = serializar_contexto(datos, seleccionar_secciones(texto_busqueda), texto_busqueda)
     if solo_clip(datos):
         p = datos["partido"]
         sistema = SYSTEM_PROMPT_CLIP.format(
