@@ -637,17 +637,29 @@ EVENTOS_POR_PREGUNTA = (
 )
 
 
-def respuesta_eventos(pregunta: str, datos: dict) -> Optional[str]:
-    """Lista, desde eventos_partido.json, las tarjetas, postes, atajadas o cambios pedidos."""
+def respuesta_eventos(
+    pregunta: str, datos: dict, historial: Optional[list] = None
+) -> Optional[str]:
+    """
+    Lista, desde eventos_partido.json, las tarjetas, postes, atajadas o cambios pedidos.
+    En un seguimiento corto («¿y San Cristóbal?») el tipo de evento sale de la pregunta
+    anterior: si no, la pregunta iría a Granite, que ya inventó minutos y nombres.
+    """
     eventos = datos.get("eventos")
     if not eventos:
         return None
     normalizada = sin_acentos(pregunta)
+    previas = [sin_acentos(m["content"]) for m in (historial or []) if m.get("role") == "user"]
+    tipo_en = normalizada
+    if previas and len(normalizada.split()) <= 8 and not any(
+        p in normalizada for palabras, _, _ in EVENTOS_POR_PREGUNTA for p in palabras
+    ):
+        tipo_en = previas[-1]
     hechos = datos.get("hechos") or {}
     nombres = {sin_acentos(e["nombre"]): e["nombre"] for e in hechos.get("equipos", {}).values()}
     equipos = [nombres[c] for c in equipos_en_texto(normalizada, hechos)] if hechos else []
     for palabras, tipos, titulo in EVENTOS_POR_PREGUNTA:
-        if not any(p in normalizada for p in palabras):
+        if not any(p in tipo_en for p in palabras):
             continue
         elegidos = [
             e for e in eventos
@@ -669,13 +681,87 @@ def respuesta_eventos(pregunta: str, datos: dict) -> Optional[str]:
     return None
 
 
-def respuesta_por_regla(pregunta: str, datos: dict) -> Optional[str]:
+# ── Filtro de tema ─────────────────────────────────────────────────────────────
+# El prompt ya pide no salir del partido, pero Granite a veces responde igual
+# (p. ej., código en Python). Este filtro decide antes de llamar al modelo.
+
+# Señales claras de otro tema: ganan aunque la pregunta mencione el partido
+# («escribe un código en Python para analizar el partido»).
+RE_FUERA_DE_TEMA = re.compile(
+    r"\b(?:python|javascript|java|html|css|sql|codigo|programa\w*|script|"
+    r"algoritmo|compila\w*|depura\w*|bug|api|excel|receta|cocina\w*|chiste|poema|"
+    r"cancion|cuento|traduce|traduccion|ensayo|matematica\w*|ecuacion|"
+    r"bitcoin|cripto\w*|bolsa|inversion|politica|presidente|elecciones|religion|"
+    r"horoscopo|pelicula|serie de tv|videojuego|ignora (?:tus|las) (?:reglas|instrucciones)|"
+    r"system prompt|instrucciones del sistema|eres un modelo|que modelo eres)\b"
+)
+# Vocabulario de fútbol y del tablero que no está en PALABRAS_SECCION
+PALABRAS_FUTBOL = (
+    "partido", "futbol", "gol", "equipo", "jugador", "jugo", "gano", "perdio", "empat",
+    "resultado", "marcador", "cancha", "balon", "arbitr", "estadio", "aficion", "seleccion",
+    "eliminatoria", "mundial", "concacaf", "grupo", "rival", "defens", "delanter", "portero",
+    "arquero", "medio", "carril", "lateral", "central", "volante", "titular", "suplente",
+    "juego", "jugada", "contra", "minuto", "tiempo", "clip", "video", "mateo", "omnimorph",
+    "dato", "fuente", "valid", "metric", "radar", "ventana", "dominio", "presion",
+)
+
+
+def fuera_de_tema(pregunta: str, datos: dict, historial: Optional[list] = None) -> bool:
+    """True si la pregunta no trata del partido, del clip ni de cómo se analizó."""
+    normalizada = sin_acentos(pregunta)
+    if RE_FUERA_DE_TEMA.search(normalizada):
+        return True
+    vocabulario = [p for palabras in PALABRAS_SECCION.values() for p in palabras]
+    vocabulario += [*PALABRAS_SOLO_PARTIDO, *PALABRAS_FUTBOL]
+    if any(p in normalizada for p in vocabulario):
+        return False
+    entrenadores = [
+        sin_acentos(e.get("entrenador", "")).split()[-1]
+        for e in (datos.get("equipos") or {}).values() if e.get("entrenador")
+    ]
+    if any(re.search(rf"\b{re.escape(n)}\b", normalizada) for n in entrenadores):
+        return False
+    hechos = datos.get("hechos") or {}
+    if hechos and (
+        equipos_en_texto(normalizada, hechos)
+        or any(re.search(rf"\b{re.escape(a)}\b", normalizada) for a in hechos.get("alias_jugadores", {}))
+    ):
+        return False
+    if solo_clip(datos):
+        nombres = [sin_acentos(n) for n in datos["partido"].get("equipos", {}).values()]
+        if any(n in normalizada for n in nombres):
+            return False
+    # Seguimiento corto de una conversación ya en marcha («¿y el segundo?», «¿por qué?»)
+    previas = [m for m in (historial or []) if m.get("role") == "user"]
+    if previas and len(normalizada.split()) <= 8:
+        return False
+    return True
+
+
+def respuesta_fuera_de_tema(datos: dict) -> str:
+    if solo_clip(datos):
+        alcance = f"el clip de {datos['partido']['titulo']}"
+    else:
+        alcance = f"el partido {datos.get('prompt', {}).get('descripcion', '')}".strip()
+    sugeridas = preguntas_sugeridas(datos)
+    ejemplo = f" Por ejemplo: «{sugeridas[0]}»" if sugeridas else ""
+    return (
+        f"Solo puedo responder sobre {alcance}: goles, jugadores, estadísticas, eventos, "
+        f"táctica y cómo se analizó el video.{ejemplo}"
+    )
+
+
+def respuesta_por_regla(
+    pregunta: str, datos: dict, historial: Optional[list] = None
+) -> Optional[str]:
     """Respuesta redactada por el código, o None si la pregunta va a Granite."""
+    if fuera_de_tema(pregunta, datos, historial):
+        return respuesta_fuera_de_tema(datos)
     if solo_clip(datos):
         return None  # las reglas usan alineaciones y estadísticas que todavía no existen
     return (
         respuesta_sin_datos(pregunta, datos)
-        or respuesta_eventos(pregunta, datos)
+        or respuesta_eventos(pregunta, datos, historial)
         or respuesta_comparativa(pregunta, datos)
     )
 

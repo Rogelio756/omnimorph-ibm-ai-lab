@@ -117,7 +117,7 @@ class ChatBackend:
         a = self.agente
         with self._lock:
             contexto = a.serializar_contexto(self.datos)
-            respuesta = a.respuesta_por_regla(pregunta, self.datos)
+            respuesta = a.respuesta_por_regla(pregunta, self.datos, historial)
             origen = "regla" if respuesta else "granite"
             metricas: dict = {}
             if respuesta is None:

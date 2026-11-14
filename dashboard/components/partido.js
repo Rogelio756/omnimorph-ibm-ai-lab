@@ -895,8 +895,17 @@
     D.eventos.forEach(function (ev) {
       var icono = ICONOS_EVENTO[ev.tipo] || '•';
       var claseEq = claseEquipoEvento(ev.equipo);
+      // El segundo jugador significa cosas distintas según el evento
       var jugadorTexto = ev.jugador || '';
-      if (ev.jugador_secundario) jugadorTexto += ' → ' + ev.jugador_secundario;
+      if (ev.jugador_secundario) {
+        if (ev.tipo === 'sustitucion' || ev.tipo === 'cambio') {
+          jugadorTexto = 'Entra ' + ev.jugador + ' · sale ' + ev.jugador_secundario;
+        } else if (ev.tipo === 'gol') {
+          jugadorTexto += ' · asistencia de ' + ev.jugador_secundario;
+        } else {
+          jugadorTexto += ' · ' + ev.jugador_secundario;
+        }
+      }
 
       var fila = el('div', { class: 'evento-fila' },
         el('span', { class: 'evento-fila__min', text: ev.minuto }),

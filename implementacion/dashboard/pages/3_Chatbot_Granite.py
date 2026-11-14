@@ -139,7 +139,7 @@ if pregunta and chat_habilitado:
         st.markdown(pregunta)
 
     metricas: dict = {}
-    respuesta = chat_agent.respuesta_por_regla(pregunta, datos)
+    respuesta = chat_agent.respuesta_por_regla(pregunta, datos, historial)
     origen = "regla" if respuesta else "granite"
     with st.chat_message("assistant"):
         if respuesta is None:

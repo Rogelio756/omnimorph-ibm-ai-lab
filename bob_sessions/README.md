@@ -41,6 +41,7 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_24_revision_plano_y_pagina.md` | 2026-11-10 | Revisión del plano de la sesión 23 contra el código (Claude Code): 4 correcciones (cómo arrancar la demo sin regenerar, pendientes del M2.4 y de caída de red, Orchestrate a después de la demo, detalles del mapa) y publicación del plano como página para el equipo |
 | `sesion_25_validacion_fer.md` | 2026-11-14 | Datos del partido validados por Fer (repo FerTC8, commit 8010944): minutos, nombres, IDs oficiales, estadísticas 1T/2T, xG retirado, `validado: true`; `rastros_dorsales.json` con 5 jugadores validados y 5 por validar. Chat completo generalizado por partido (bloque `chat` en `partido.config.json`) y activado para Costa Rica; Brasil sin cambios |
 | `sesion_26_pagina_partido_fer.md` | 2026-11-14 | Página Partido con datos de Fer: colores uniforme CRC/SKN, jugadas reales de los 4 goles con mini-cancha SVG, pestaña Eventos (30 cronológicos + timeline_partido.svg), Fichero con rol táctico + rendimiento FotMob, Comparativa con 22 métricas adicionales, Ficha con contexto competitivo + datos no disponibles + diagramas Fer. Sin commit |
+| `sesion_27_eventos_y_filtro_chat.md` | 2026-11-14 | Filas de Eventos sin desarmarse (columnas fijas), filtro de tema del chat antes de Granite (rechaza programación, recetas, política, prompt) y seguimientos cortos de eventos respondidos por regla |
 
 ---
 

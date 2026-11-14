@@ -531,6 +531,15 @@ details.window .detail {
   font-size: 13px;
 }
 
+/* Cada parte en su columna fija: si un evento no tiene jugador ni equipo (descanso,
+   inicio, final), la descripción no se corre a la columna angosta del jugador. */
+.evento-fila__min { grid-column: 1; }
+.evento-fila__icono { grid-column: 2; }
+.evento-fila__tipo { grid-column: 3; }
+.evento-fila > .swatch { grid-column: 4; }
+.evento-fila__jugador { grid-column: 5; }
+.evento-fila__desc { grid-column: 6; }
+
 .evento-fila__min {
   font-family: var(--font-mono);
   color: var(--color-text-soft);
@@ -545,7 +554,6 @@ details.window .detail {
 
 .evento-fila__tipo {
   font-weight: var(--font-weight-medium);
-  text-transform: capitalize;
   color: var(--color-text);
   white-space: nowrap;
 }
@@ -575,5 +583,9 @@ details.window .detail {
   .evento-fila__jugador,
   .evento-fila__desc {
     grid-column: 3;
+  }
+  .evento-fila > .swatch {
+    grid-column: 2;
+    justify-self: center;
   }
 }
