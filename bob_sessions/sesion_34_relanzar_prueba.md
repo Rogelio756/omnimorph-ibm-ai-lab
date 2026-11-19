@@ -37,3 +37,16 @@ Sí. Propuesta (solo análisis, sin cambios):
 - Después: blueprint de la migración a IBM Cloud. Sigue pendiente la fase 3 (crónica de Mateo sin «posesión»).
 
 Sin cambios de código.
+
+## 5. Cierre anticipado de la prueba (2026-11-16, ~13:50)
+- El usuario cerró la prueba antes de las 15:08 porque necesita la laptop para otro proyecto. Se detuvieron el servidor y el túnel; ya no responden.
+- **Resultado:** 0 opiniones en `data/clean/opiniones_prueba.jsonl`. El chat se usó una sola vez (15/11 por la mañana).
+- El log muestra visitas el 15/11 (14:09, 17:07 y 22:00) y el 16/11 (4:47 y 12:48), sin contar las verificaciones de Claude. A las 4:47 alguien recorrió inicio, Mateo, partido y método. El 15/11 a las 17:07 alguien abrió la página de opinión sin enviarla. Por el túnel todas las visitas llegan como 127.0.0.1, así que no se distinguen las personas.
+- **Aprendizaje:** el formulario no se usó. Conviene pedir la retro de forma directa (mensaje o llamada) o con un recordatorio, y hospedar la siguiente prueba en IBM Cloud para no depender de la laptop.
+
+## 6. Segunda ronda de prueba de 3 h (2026-11-18, 00:54 a 03:54, hora de México)
+- A pedido del usuario, se levantó una prueba nueva de 3 horas para volver a probar con el equipo.
+- El estado anterior se archivó como `data/clean/prueba_estado_2026-11-14.json`, para que el reloj empezara de cero (`serve.py` reutiliza `prueba_estado.json` si existe).
+- `serve.py --port 8600 --prueba-horas 3 --tope-chat 15` y `cloudflared tunnel --url http://localhost:8600`, con una URL nueva de trycloudflare.
+- Verificación pública: inicio 200, opinión 200, `/api/prueba/estado` activa (fin 03:54), `/data/` 403, `.env` 404. Esta vez el precheck de cloudflared salió sano en ambas regiones.
+- **Cierre de la ronda 2:** el usuario la cerró antes de las 3 h. Resultado: **0 opiniones**. Una persona recorrió la app de 19:17 a 20:37 (inicio, Mateo, partido, método; abrió también la página de Operaciones, cuyas API siguen bloqueadas por el túnel) e hizo **5 preguntas al chat** (2 contaron como Granite). Abrió el formulario de opinión a las 20:09 y no lo envió. Nota: el reloj de Windows saltó durante la sesión (el log pasa de 18/11 01:00 a 17/11 19:17), así que las horas de los registros son aproximadas.

@@ -1,0 +1,831 @@
+\documentclass[11pt,a4paper]{article}
+
+% ── Paquetes ─────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{mdframed}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+
+% ── Geometría de página ───────────────────────────────────────────────────────
+\geometry{
+  top=2.5cm, bottom=2.5cm,
+  left=2.5cm, right=2.5cm
+}
+
+% ── Colores del proyecto ──────────────────────────────────────────────────────
+\definecolor{azulproyecto}{RGB}{30, 80, 160}
+\definecolor{grisclaro}{RGB}{245, 245, 245}
+\definecolor{rojoacento}{RGB}{180, 30, 30}
+\definecolor{verdedato}{RGB}{0, 110, 60}
+\definecolor{codebg}{RGB}{248, 248, 248}
+\definecolor{codeborder}{RGB}{200, 200, 200}
+
+% ── Estilo de encabezados ─────────────────────────────────────────────────────
+\titleformat{\section}
+  {\Large\bfseries\color{azulproyecto}}
+  {\thesection.}{0.5em}{}[\titlerule]
+
+\titleformat{\subsection}
+  {\large\bfseries\color{azulproyecto!80}}
+  {\thesubsection.}{0.5em}{}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries}
+  {\thesubsubsection.}{0.5em}{}
+
+% ── Cabecera y pie de página ──────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{azulproyecto}Proyecto Omnimorph — Pipeline de Visión por Computadora}
+\fancyhead[R]{\small\color{gray}Confidencial}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Estilo de código ──────────────────────────────────────────────────────────
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{codeborder},
+  showstringspaces=false,
+  tabsize=2,
+  language=Python,
+  morekeywords={import, from, as, def, return, True, False, None},
+  keywordstyle=\color{azulproyecto}\bfseries,
+  stringstyle=\color{verdedato},
+  commentstyle=\color{gray}\itshape,
+}
+
+% ── Entorno para notas ────────────────────────────────────────────────────────
+\newmdenv[
+  backgroundcolor=grisclaro,
+  linecolor=azulproyecto,
+  linewidth=2pt,
+  leftline=true,
+  rightline=false,
+  topline=false,
+  bottomline=false,
+  innerleftmargin=10pt,
+  innerrightmargin=8pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+]{notabox}
+
+\newmdenv[
+  backgroundcolor=rojoacento!5,
+  linecolor=rojoacento,
+  linewidth=2pt,
+  leftline=true,
+  rightline=false,
+  topline=false,
+  bottomline=false,
+  innerleftmargin=10pt,
+  innerrightmargin=8pt,
+  innertopmargin=8pt,
+  innerbottommargin=8pt,
+]{alertbox}
+
+% ── Metadatos del documento ───────────────────────────────────────────────────
+\hypersetup{
+  pdftitle={Reporte Técnico — Agentes de Visión por Computadora},
+  pdfauthor={Proyecto Omnimorph},
+  colorlinks=true,
+  linkcolor=azulproyecto,
+  urlcolor=azulproyecto,
+}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── Portada ───────────────────────────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+
+  {\Huge\bfseries\color{azulproyecto}
+    Reporte Técnico\\[0.4em]
+    Agentes de Visión por Computadora}
+
+  \vspace{1cm}
+  {\large Pipeline de análisis deportivo en tiempo real}
+
+  \vspace{2cm}
+
+  % ── ESPACIO PARA IMAGEN DE PORTADA ────────────────────────────────────────
+  % Descomenta y reemplaza "ruta/a/tu/imagen.png" con la ruta real.
+  % Se recomienda una captura del video anotado (TODOS_JUNTOS.mp4, frame 300).
+  %
+  % \includegraphics[width=0.85\textwidth]{ruta/a/tu/imagen.png}
+  %
+  \begin{mdframed}[
+    linecolor=gray!40,
+    linewidth=1pt,
+    innertopmargin=60pt,
+    innerbottommargin=60pt,
+    backgroundcolor=gray!8
+  ]
+    \centering
+    \color{gray!60}
+    \large [Insertar imagen del video anotado — \\
+    recomendado: frame 300 de \texttt{TODOS\_JUNTOS.mp4}]
+  \end{mdframed}
+
+  \vspace{2cm}
+
+  \begin{tabular}{rl}
+    \textbf{Destinatarias:}  & Giselle (Actuaria) · Caroline (Ing.\ Física) \\[4pt]
+    \textbf{Proyecto:}       & Omnimorph Pruebas \\[4pt]
+    \textbf{Video analizado:} & \texttt{2e57b9\_0.mp4} · 1920×1080 · 25 fps · 30 s \\[4pt]
+    \textbf{Hardware:}       & GTX 1660 Ti Max-Q 6 GB · i7-9750H · 24 GB RAM \\[4pt]
+    \textbf{Estado:}         & Todos los datos en disco. Sin necesidad de reejecutar. \\
+  \end{tabular}
+
+  \vfill
+  {\small\color{gray} Generado por el pipeline \texttt{scripts/run\_together.py}
+  (variante C2) — validado contra los 6 modos originales con IoU medio = 1.0}
+\end{titlepage}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% =============================================================================
+\section{Contexto del sistema}
+% =============================================================================
+
+El pipeline analiza video de fútbol y produce, para cada cuadro,
+las coordenadas reales (en centímetros) de todos los jugadores y del balón
+sobre la cancha, junto con el equipo de cada jugador y su velocidad aproximada.
+
+Está compuesto por \textbf{6 agentes de visión por computadora} que corren
+en cadena. El sistema fue evaluado sobre 750 cuadros (30 s) del video de muestra.
+La arquitectura final (\texttt{run\_together.py}, variante C) procesa todos los
+agentes en un único proceso GPU, lo que redujo el tiempo total en \textbf{43\,\%}
+respecto a ejecutarlos en serie (1\,316 s vs.\ 2\,328 s).
+
+\begin{notabox}
+\textbf{Sistema de referencia de la cancha} (aplica a todos los archivos de datos):
+\begin{itemize}[noitemsep]
+  \item Cancha: 12\,000 cm de largo $\times$ 7\,000 cm de ancho (120 m $\times$ 70 m)
+  \item Eje $x$: $0$ = portería Argentina \quad $\longrightarrow$ \quad $12\,000$ = portería Francia
+  \item Eje $y$: $0$ = banda sur \quad $\longrightarrow$ \quad $7\,000$ = banda norte
+  \item Unidades: \textbf{centímetros}
+\end{itemize}
+\end{notabox}
+
+% ── ESPACIO PARA DIAGRAMA DEL PIPELINE ───────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  % Reemplaza con el diagrama del pipeline (p.ej. exportado desde draw.io o Mermaid).
+  % \includegraphics[width=\textwidth]{figuras/pipeline_agentes.png}
+  \begin{mdframed}[
+    linecolor=gray!40, linewidth=1pt,
+    innertopmargin=50pt, innerbottommargin=50pt,
+    backgroundcolor=gray!8
+  ]
+    \centering\color{gray!60}
+    \large [Insertar diagrama del pipeline: \\
+    Video $\to$ A1/A2/A3 $\to$ A4 $\to$ A5 $\to$ A6 $\to$ pitch\_x, pitch\_y]
+  \end{mdframed}
+  \caption{Cadena de los 6 agentes de visión por computadora.
+           Los agentes 1, 2 y 3 corren en paralelo sobre el mismo frame;
+           4, 5 y 6 dependen de sus salidas.}
+  \label{fig:pipeline}
+\end{figure}
+
+% =============================================================================
+\section{Los 6 agentes}
+% =============================================================================
+
+\subsection{Agente 1 — PITCH DETECTION}
+
+\textbf{Pregunta que responde:} ¿dónde están las líneas y marcas de la cancha
+en esta imagen?
+
+\textbf{Modelo:} YOLOv8x-pose, entrenado específicamente para detectar
+landmarks de una cancha de fútbol estándar.
+
+\textbf{Qué detecta:} 32 puntos clave predefinidos — esquinas, manchas de
+penalti, arcos del círculo central, bordes de las áreas. En promedio
+\textbf{25.9 de los 32} son visibles por cuadro. Los puntos fuera del
+encuadre tienen confianza $\approx 0$ y coordenadas inválidas.
+
+\textbf{Salida al dataset:}
+\begin{itemize}[noitemsep]
+  \item Serie temporal de matrices de homografía $\mathbf{H}$ (columna \texttt{H[9]}
+        en \texttt{frames.parquet})
+  \item Número de keypoints visibles por cuadro (\texttt{n\_kp\_visible})
+  \item Coordenadas de los 32 puntos en píxeles (\texttt{kp\_x}, \texttt{kp\_y},
+        \texttt{kp\_conf})
+\end{itemize}
+
+\textbf{Rendimiento medido:} 54 ms/frame · 9.6 FPS en modo standalone.
+
+\begin{alertbox}
+\textbf{Limitación clave:} cuando los keypoints que salen de cuadro cambian entre
+frames consecutivos, la homografía $\mathbf{H}$ resultante cambia bruscamente.
+Esto es la causa principal del ruido en las velocidades calculadas.
+\end{alertbox}
+
+% ── ESPACIO PARA IMAGEN — PITCH DETECTION ────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=0.8\textwidth]{figuras/PITCH_DETECTION_0300.jpg}
+  \begin{mdframed}[
+    linecolor=gray!40, linewidth=1pt,
+    innertopmargin=50pt, innerbottommargin=50pt,
+    backgroundcolor=gray!8
+  ]
+    \centering\color{gray!60}
+    [Insertar: \texttt{outputs/frames/PITCH\_DETECTION\_0300.jpg} \\
+    Frame 300 con los 32 keypoints de la cancha anotados]
+  \end{mdframed}
+  \caption{Agente 1 — PITCH DETECTION. Frame 300 (t = 12.0 s).
+           Puntos rosas = zona ARG · Puntos celestes = centro ·
+           Puntos naranjas = zona FRA.}
+  \label{fig:pitch}
+\end{figure}
+
+% -----------------------------------------------------------------------------
+\subsection{Agente 2 — PLAYER DETECTION}
+
+\textbf{Pregunta que responde:} ¿dónde está cada persona en la imagen
+y de qué tipo es?
+
+\textbf{Modelo:} YOLOv8x a resolución 1280$\times$1280 px (el doble del
+estándar, para detectar jugadores lejanos).
+
+\textbf{Clases que detecta:}
+
+\begin{center}
+\begin{tabular}{cll}
+\toprule
+\texttt{class\_id} & \texttt{class\_name} & Descripción \\
+\midrule
+0 & \texttt{ball}       & Balón (detección secundaria, usar Agente 3) \\
+1 & \texttt{goalkeeper} & Portero \\
+2 & \texttt{player}     & Jugador de campo \\
+3 & \texttt{referee}    & Árbitro o juez de línea \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Salida al dataset:} caja $[x_1, y_1, x_2, y_2]$ en píxeles,
+\texttt{class\_id}, confianza \texttt{conf} $\in [0,1]$.
+En frame 300: detectó \textbf{24 objetos}.
+
+\textbf{Rendimiento medido:} 185 ms/frame · 3.5 FPS standalone.
+
+% ── ESPACIO PARA IMAGEN — PLAYER DETECTION ───────────────────────────────────
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=0.8\textwidth]{figuras/PLAYER_DETECTION_0300.jpg}
+  \begin{mdframed}[
+    linecolor=gray!40, linewidth=1pt,
+    innertopmargin=50pt, innerbottommargin=50pt,
+    backgroundcolor=gray!8
+  ]
+    \centering\color{gray!60}
+    [Insertar: \texttt{outputs/frames/PLAYER\_DETECTION\_0300.jpg} \\
+    Frame 300 con cajas de detección por clase]
+  \end{mdframed}
+  \caption{Agente 2 — PLAYER DETECTION. Frame 300 (t = 12.0 s).
+           24 objetos detectados: jugadores, porteros, árbitro.}
+  \label{fig:player_det}
+\end{figure}
+
+% -----------------------------------------------------------------------------
+\subsection{Agente 3 — BALL DETECTION}
+
+\textbf{Pregunta que responde:} ¿dónde está exactamente el balón?
+
+\textbf{Por qué es especial:} el balón mide $\approx$14 px de diámetro a
+distancia, demasiado pequeño para un detector estándar.
+
+\textbf{Estrategia:}
+\begin{enumerate}[noitemsep]
+  \item Divide el frame en cortes solapados de 640$\times$640 px
+        (\texttt{InferenceSlicer})
+  \item Corre el modelo de balón en cada corte por separado
+  \item Junta todas las detecciones y aplica NMS (Non-Maximum Suppression)
+  \item \textbf{BallTracker} filtra candidatos eligiendo el más cercano al
+        centroide de las últimas 20 posiciones conocidas:
+\end{enumerate}
+
+\begin{lstlisting}[caption={Lógica del BallTracker — sports/common/ball.py}]
+centroid = np.mean(np.concatenate(self.buffer), axis=0)
+distances = np.linalg.norm(xy - centroid, axis=1)
+index = np.argmin(distances)   # gana el mas cercano al historial
+return detections[[index]]
+\end{lstlisting}
+
+\textbf{Resultado:} encontró el balón en \textbf{687 de 750 cuadros (91.6\,\%)}.
+
+\textbf{Rendimiento medido:} 750 ms/frame · 0.95 FPS standalone.
+\textbf{Es el cuello de botella principal: consume el 51\,\% del tiempo total.}
+
+% ── ESPACIO PARA IMAGEN — BALL DETECTION ─────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=0.8\textwidth]{figuras/BALL_DETECTION_0300.jpg}
+  \begin{mdframed}[
+    linecolor=gray!40, linewidth=1pt,
+    innertopmargin=50pt, innerbottommargin=50pt,
+    backgroundcolor=gray!8
+  ]
+    \centering\color{gray!60}
+    [Insertar: \texttt{outputs/frames/BALL\_DETECTION\_0300.jpg} \\
+    Frame 300 con el rastro del balón (últimos 10 cuadros)]
+  \end{mdframed}
+  \caption{Agente 3 — BALL DETECTION. Frame 300 (t = 12.0 s).
+           El rastro de color muestra la trayectoria reciente del balón.}
+  \label{fig:ball}
+\end{figure}
+
+% -----------------------------------------------------------------------------
+\subsection{Agente 4 — PLAYER TRACKING}
+
+\textbf{Pregunta que responde:} ¿el jugador del frame 301 es el mismo
+que en el frame 300?
+
+\textbf{Algoritmo:} ByteTrack — empareja detecciones entre frames consecutivos
+usando IoU (Intersection over Union) de las cajas. Divide detecciones en dos
+grupos por confianza (alta y baja) y procesa primero las de alta confianza.
+
+\textbf{Salida al dataset:} campo \texttt{track\_id} (entero) persistente
+por jugador. En frame 300: 22 de las 24 detecciones recibieron \texttt{track\_id}.
+
+\textbf{Rendimiento medido:} 6 ms/frame — prácticamente gratuito.
+
+\begin{alertbox}
+\textbf{Limitación medida — fragmentación de IDs:}
+En los 30 s del video completo aparecen \textbf{39 \texttt{track\_id} distintos
+para $\approx$25 jugadores físicos}. Cada vez que un jugador es ocluido o sale
+del encuadre, al volver puede recibir un ID nuevo. Esto rompe las series
+temporales de posición.
+
+\medskip
+\textbf{Importante:} \texttt{track\_id} es un número interno de ByteTrack,
+\textbf{no el dorsal de la camiseta}. No hay correspondencia automática
+entre ambos.
+\end{alertbox}
+
+% ── ESPACIO PARA IMAGEN — PLAYER TRACKING ────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=0.8\textwidth]{figuras/PLAYER_TRACKING_0300.jpg}
+  \begin{mdframed}[
+    linecolor=gray!40, linewidth=1pt,
+    innertopmargin=50pt, innerbottommargin=50pt,
+    backgroundcolor=gray!8
+  ]
+    \centering\color{gray!60}
+    [Insertar: \texttt{outputs/frames/PLAYER\_TRACKING\_0300.jpg} \\
+    Frame 300 con elipses y \texttt{track\_id} sobre cada jugador]
+  \end{mdframed}
+  \caption{Agente 4 — PLAYER TRACKING. Frame 300 (t = 12.0 s).
+           Cada jugador lleva su \texttt{track\_id} numérico.}
+  \label{fig:tracking}
+\end{figure}
+
+% -----------------------------------------------------------------------------
+\subsection{Agente 5 — TEAM CLASSIFICATION}
+
+\textbf{Pregunta que responde:} ¿este jugador es Argentina (0) o Francia (1)?
+
+\textbf{Funciona en dos fases:}
+
+\textbf{Fase de entrenamiento} (una sola vez, $\approx$4 min al inicio):
+\begin{enumerate}[noitemsep]
+  \item Toma 1 de cada 60 frames y recorta la imagen de cada jugador detectado
+  \item Pasa cada recorte por \textbf{SigLIP} (modelo de visión de Google,
+        $\approx$780 MB, produce vectores de 768 dimensiones que capturan
+        color/textura de la camiseta)
+  \item \textbf{UMAP} reduce de 768D a 3D preservando estructura de vecindad
+  \item \textbf{KMeans($k=2$)} agrupa los puntos 3D en 2 clusters
+        (un equipo por cluster)
+\end{enumerate}
+
+\textbf{Fase de inferencia} (cada frame, 461 ms):
+\begin{enumerate}[noitemsep]
+  \item Recorta los jugadores del frame actual
+  \item Pasa por SigLIP $\to$ vector 768D
+  \item Proyecta con UMAP a 3D
+  \item KMeans predice el cluster $\to$ \texttt{team\_id} = 0 ó 1
+\end{enumerate}
+
+\textbf{Porteros:} se asignan por heurística posicional (no por SigLIP):
+
+\begin{lstlisting}[caption={Heurística de porteros — sports/examples/soccer/main.py}]
+team_0_centroid = players_xy[players_team_id == 0].mean(axis=0)
+team_1_centroid = players_xy[players_team_id == 1].mean(axis=0)
+# gana el equipo cuyo centroide esta mas cerca en pixeles
+\end{lstlisting}
+
+\textbf{Resultado en frame 300:} 10 jugadores Argentina (\texttt{team\_id}=0),
+11 jugadores Francia (\texttt{team\_id}=1).
+
+\textbf{Rendimiento:} 461 ms/frame — \textbf{31\,\% del tiempo total}.
+
+\begin{alertbox}
+\textbf{Limitaciones:}
+\begin{itemize}[noitemsep]
+  \item KMeans y UMAP son no-deterministas. Sin semilla fija, dos corridas
+        del mismo video pueden intercambiar los labels 0 y 1
+        (corregido en nuestros experimentos con \texttt{random\_state=42}).
+  \item La heurística de porteros falla si el portero viste un color diferente
+        al resto de su equipo (caso observado en cuadro 100).
+\end{itemize}
+\end{alertbox}
+
+% ── ESPACIO PARA IMAGEN — TEAM CLASSIFICATION ────────────────────────────────
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=0.8\textwidth]{figuras/TEAM_CLASSIFICATION_0300.jpg}
+  \begin{mdframed}[
+    linecolor=gray!40, linewidth=1pt,
+    innertopmargin=50pt, innerbottommargin=50pt,
+    backgroundcolor=gray!8
+  ]
+    \centering\color{gray!60}
+    [Insertar: \texttt{outputs/frames/TEAM\_CLASSIFICATION\_0300.jpg} \\
+    Frame 300 con elipses coloreadas por equipo]
+  \end{mdframed}
+  \caption{Agente 5 — TEAM CLASSIFICATION. Frame 300 (t = 12.0 s).
+           Rosa = Argentina (\texttt{team\_id}=0) ·
+           Azul = Francia (\texttt{team\_id}=1).}
+  \label{fig:team}
+\end{figure}
+
+% -----------------------------------------------------------------------------
+\subsection{Agente 6 — HOMOGRAFÍA (ViewTransformer)}
+
+\textbf{Pregunta que responde:} ¿en qué punto real de la cancha está
+este jugador, en centímetros?
+
+\textbf{Matemática:} toma los puntos del Agente 1 como pares de
+correspondencia $(\text{píxel en imagen} \leftrightarrow \text{cm en cancha})$
+y resuelve la matriz de homografía $\mathbf{H}$ de $3\times3$ que mejor los mapea
+(OpenCV \texttt{findHomography} con RANSAC). Con esa $\mathbf{H}$ proyecta
+cualquier punto de imagen al sistema métrico de cancha mediante
+transformación perspectiva:
+
+\begin{equation}
+  \begin{pmatrix} x' \\ y' \\ w' \end{pmatrix}
+  = \mathbf{H}
+  \begin{pmatrix} x_\text{px} \\ y_\text{px} \\ 1 \end{pmatrix},
+  \qquad
+  \texttt{pitch\_x} = \frac{x'}{w'}, \quad
+  \texttt{pitch\_y} = \frac{y'}{w'}
+  \label{eq:homografia}
+\end{equation}
+
+\textbf{Salida al dataset:} campos \texttt{pitch\_x\_cm} y \texttt{pitch\_y\_cm}
+en todas las filas de \texttt{objects.parquet}.
+
+\textbf{Rendimiento:} 1 ms/frame — prácticamente gratuito.
+
+\begin{alertbox}
+\textbf{Limitación crítica para el modelado:}
+$\mathbf{H}$ se recalcula de cero en cada frame usando solo los keypoints
+visibles en ese frame. \textbf{No tiene memoria entre frames.}
+Si entre dos frames consecutivos un keypoint cambia de posición por detección
+ruidosa, $\mathbf{H}$ cambia bruscamente $\Rightarrow$ las coordenadas
+\texttt{pitch\_x, pitch\_y} ``saltan'' $\Rightarrow$ las velocidades calculadas
+por diferencia finita dan valores físicamente imposibles.
+
+Ejemplo medido: \texttt{track\_id}=19 muestra 1\,382 cm/s (13.8 m/s = 49 km/h)
+en frame 300.
+\end{alertbox}
+
+% ── ESPACIO PARA IMAGEN — RADAR ───────────────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=0.8\textwidth]{figuras/RADAR_0300.jpg}
+  \begin{mdframed}[
+    linecolor=gray!40, linewidth=1pt,
+    innertopmargin=50pt, innerbottommargin=50pt,
+    backgroundcolor=gray!8
+  ]
+    \centering\color{gray!60}
+    [Insertar: \texttt{outputs/frames/RADAR\_0300.jpg} \\
+    Frame 300 con overlay de la vista cenital (radar) en la esquina inferior]
+  \end{mdframed}
+  \caption{Agente 6 — RADAR. Frame 300 (t = 12.0 s). El minimapa inferior
+           muestra la proyección ortogonal de las posiciones de los jugadores
+           sobre la cancha usando la homografía $\mathbf{H}$.}
+  \label{fig:radar}
+\end{figure}
+
+% =============================================================================
+\section{Rendimiento por agente}
+% =============================================================================
+
+\begin{table}[H]
+\centering
+\caption{Tiempo de cómputo por agente (pipeline C, GPU, media sobre 750 frames)}
+\label{tab:rendimiento}
+\begin{tabular}{clrrrr}
+\toprule
+\textbf{Agente} & \textbf{Nombre} & \textbf{Media (ms)} & \textbf{p95 (ms)} & \textbf{\% total} & \textbf{FPS solo} \\
+\midrule
+A3 & BALL DETECTION     & 750 & 811 & \textbf{51\,\%} & 0.95 \\
+A5 & TEAM CLASSIFICATION & 461 & 492 & \textbf{31\,\%} & 1.12 \\
+A2 & PLAYER DETECTION   & 185 & 190 & 13\,\%          & 3.49 \\
+A1 & PITCH DETECTION    &  54 &  58 &  4\,\%          & 9.58 \\
+A4 & PLAYER TRACKING    &   6 &  10 & $<$1\,\%        & 3.29 \\
+A6 & HOMOGRAFÍA         &   1 &   2 & $<$1\,\%        & — \\
+\midrule
+   & \textbf{Total cadena} & \textbf{$\approx$1\,457} & & & \textbf{0.69 FPS} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notabox}
+A3 y A5 consumen el \textbf{82\,\%} del tiempo total y son los candidatos
+naturales a optimización algorítmica por el equipo de matemáticas.
+\end{notabox}
+
+% =============================================================================
+\section{Los datos disponibles}
+% =============================================================================
+
+Todos los archivos están en disco. \textbf{No es necesario volver a correr
+ningún modelo} para trabajar con ellos.
+
+% -----------------------------------------------------------------------------
+\subsection{\texttt{objects.parquet} — tabla principal}
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Ruta:} \texttt{outputs/experiment/C\_data/objects.parquet}
+  \item \textbf{Dimensiones:} 35\,870 filas $\times$ 14 columnas
+  \item \textbf{Unidad:} una fila = un objeto detectado en un cuadro
+  \item \textbf{Cobertura:} 750 cuadros, 30 segundos, a 25 fps
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Esquema de \texttt{objects.parquet}}
+\label{tab:objects}
+\begin{tabular}{lll}
+\toprule
+\textbf{Columna} & \textbf{Tipo} & \textbf{Descripción} \\
+\midrule
+\texttt{frame}      & int    & Cuadro (0–749) \\
+\texttt{t}          & float  & Tiempo en segundos (0.0–29.96 s) \\
+\texttt{source}     & string & \texttt{"det"} = detección bruta A2 ·
+                               \texttt{"track"} = con ID de A4 ·
+                               \texttt{"ball"} = balón de A3 \\
+\texttt{track\_id}  & int/null & ID persistente de ByteTrack (null para det y ball) \\
+\texttt{class\_id}  & int    & 0=balón · 1=portero · 2=jugador · 3=árbitro \\
+\texttt{class\_name}& string & \texttt{"ball"} · \texttt{"player"} · etc. \\
+\texttt{team}       & int/null & 0=Argentina · 1=Francia · null=árbitro/balón \\
+\texttt{x1, y1}     & float  & Esquina superior izquierda de la caja (px) \\
+\texttt{x2, y2}     & float  & Esquina inferior derecha de la caja (px) \\
+\texttt{conf}       & float  & Confianza de la detección $\in [0,1]$ \\
+\texttt{pitch\_x}   & float/null & Posición real en cancha, eje largo (cm) \\
+\texttt{pitch\_y}   & float/null & Posición real en cancha, eje ancho (cm) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Cómo leerlo:}
+\begin{lstlisting}[caption={Lectura básica de objects.parquet}]
+import pyarrow.parquet as pq
+
+df = pq.read_table(
+    'outputs/experiment/C_data/objects.parquet'
+).to_pandas()
+
+# Solo jugadores con posicion en cancha valida
+jugadores = df[
+    (df['source'] == 'track') &
+    (df['class_name'] == 'player') &
+    df['pitch_x'].notna()
+]
+
+# Solo el balon
+balon = df[df['source'] == 'ball']
+
+# Un solo frame
+frame_300 = df[df['frame'] == 300]
+\end{lstlisting}
+
+% -----------------------------------------------------------------------------
+\subsection{\texttt{frames.parquet} — metadatos por cuadro}
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Ruta:} \texttt{outputs/experiment/C\_data/frames.parquet}
+  \item \textbf{Dimensiones:} 750 filas $\times$ 13 columnas
+  \item \textbf{Unidad:} una fila = un cuadro completo
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Esquema de \texttt{frames.parquet}}
+\label{tab:frames}
+\begin{tabular}{lll}
+\toprule
+\textbf{Columna} & \textbf{Tipo} & \textbf{Descripción} \\
+\midrule
+\texttt{frame}             & int   & Cuadro (0–749) \\
+\texttt{t}                 & float & Tiempo en segundos \\
+\texttt{n\_det}            & int   & Objetos detectados por A2 \\
+\texttt{n\_track}          & int   & Objetos con \texttt{track\_id} de A4 \\
+\texttt{ball\_found}       & bool  & A3 encontró el balón \\
+\texttt{homography\_valid} & bool  & A6 calculó $\mathbf{H}$ con éxito \\
+\texttt{homography\_error} & str/null & Mensaje de error si $\mathbf{H}$ falló \\
+\texttt{n\_kp\_visible}    & int   & Keypoints de cancha visibles (calidad de $\mathbf{H}$) \\
+\texttt{kp\_x}             & list[float×32] & Coordenadas $x$ en px de los 32 keypoints \\
+\texttt{kp\_y}             & list[float×32] & Coordenadas $y$ en px de los 32 keypoints \\
+\texttt{kp\_conf}          & list[float×32] & Confianza de cada keypoint \\
+\texttt{H}                 & list[float×9]  & Matriz $\mathbf{H}$ 3×3 aplanada (fila por fila) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notabox}
+\textbf{Para P1 (suavizado de homografía):} la columna \texttt{H} es la
+secuencia temporal de 750 matrices $3\times3$. La columna \texttt{n\_kp\_visible}
+es el indicador de calidad de cada estimación. Juntas son el input para proponer
+un filtro temporal sobre $\mathbf{H}$.
+\end{notabox}
+
+% -----------------------------------------------------------------------------
+\subsection{\texttt{timings.parquet} — tiempos por agente}
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Ruta:} \texttt{outputs/experiment/C\_data/timings.parquet}
+  \item \textbf{Dimensiones:} 750 filas $\times$ 9 columnas
+  \item \textbf{Unidad:} una fila = un cuadro; cada columna = ms de un agente
+\end{itemize}
+
+Columnas: \texttt{frame}, \texttt{decode\_ms}, \texttt{pitch\_ms},
+\texttt{player\_ms}, \texttt{ball\_ms}, \texttt{tracking\_ms},
+\texttt{teams\_ms}, \texttt{homography\_ms}.
+
+% -----------------------------------------------------------------------------
+\subsection{\texttt{muestra\_telemetria.json} — snapshot del frame 300}
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Ruta:} \texttt{muestra\_telemetria.json} (raíz del proyecto)
+  \item \textbf{Contenido:} estado completo del partido en el segundo 12.0
+  \item \textbf{Propósito:} prototipado rápido sin necesidad de leer los parquet
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Situación táctica en frame 300 (t = 12.0 s) extraída del JSON}
+\label{tab:snapshot}
+\begin{tabular}{llrrl}
+\toprule
+\textbf{Quién} & \textbf{team} & \textbf{pitch\_x (cm)} & \textbf{pitch\_y (cm)} & \textbf{speed (cm/s)} \\
+\midrule
+Balón              & —   & 7\,335 & 5\,592 & — \\
+FRA track\_id 18   & 1   & 7\,337 & 5\,565 & 600 (junto al balón) \\
+ARG track\_id 2    & 0   & 6\,722 & 6\,510 & 187 (presionando) \\
+ARG track\_id 15   & 0   & 9\,637 & 5\,049 & 490 (dentro del área FRA) \\
+ARG track\_id 7    & 0   & 8\,341 & 6\,498 & 817 \\
+FRA track\_id 19   & 1   & 7\,877 & 6\,541 & 1\,383 \textcolor{rojoacento}{$\leftarrow$ ruido H} \\
+Árbitro (tid 21)   & null & 3\,858 & 1\,505 & 78 (casi quieto) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ── ESPACIO PARA IMAGEN — VIDEO COMBINADO ────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  % \includegraphics[width=\textwidth]{figuras/TODOS_JUNTOS_0300.jpg}
+  \begin{mdframed}[
+    linecolor=gray!40, linewidth=1pt,
+    innertopmargin=80pt, innerbottommargin=80pt,
+    backgroundcolor=gray!8
+  ]
+    \centering\color{gray!60}
+    \Large [Insertar: \texttt{outputs/experiment/TODOS\_JUNTOS\_0300.jpg} \\
+    \normalsize Frame 300 con todos los agentes superpuestos en una sola imagen:\\
+    keypoints de cancha + elipses de equipo + rastro del balón + radar cenital]
+  \end{mdframed}
+  \caption{Vista combinada (frame 300, t = 12.0 s). Todos los agentes en la misma
+           imagen: cancha (A1), detección por equipo (A2+A5), balón con rastro
+           (A3), IDs (A4), radar cenital en esquina inferior (A6).}
+  \label{fig:todos_juntos}
+\end{figure}
+
+% =============================================================================
+\section{Problemas abiertos para el equipo de matemáticas}
+% =============================================================================
+
+Los tres problemas siguientes están \textbf{listos para modelar}
+con los datos ya en disco, sin tocar los modelos de visión.
+
+% -----------------------------------------------------------------------------
+\subsection{P1 — Suavizado de la homografía}
+
+\textbf{Agente causante:} A6 recalcula $\mathbf{H}$ cada frame sin memoria.
+
+\textbf{Síntoma:} cuando un keypoint de cancha entra o sale del encuadre entre
+dos frames consecutivos, $\mathbf{H}$ cambia bruscamente y las posiciones
+$(\texttt{pitch\_x}, \texttt{pitch\_y})$ ``saltan'' decenas de metros.
+
+\textbf{Input disponible:}
+\begin{itemize}[noitemsep]
+  \item Serie temporal de 750 matrices $\mathbf{H}$ (columna \texttt{H[9]}
+        en \texttt{frames.parquet}) — frecuencia 25 Hz
+  \item Calidad de cada estimación: \texttt{n\_kp\_visible} (0–32)
+  \item Indicador booleano de validez: \texttt{homography\_valid}
+\end{itemize}
+
+\textbf{Pregunta para el equipo:} ¿qué filtro temporal sobre $\mathbf{H}$ (o
+directamente sobre las coordenadas proyectadas) reduce los saltos preservando
+los cambios reales de la cámara?
+
+% -----------------------------------------------------------------------------
+\subsection{P2 — Estimación de velocidad con modelo de movimiento}
+
+\textbf{Agente causante:} el script \texttt{build\_telemetry\_snapshot.py}
+calcula velocidades por diferencia finita simple entre frames $\pm 5$,
+sin modelo de movimiento ni manejo de observaciones faltantes.
+
+\textbf{Síntoma:} velocidades físicamente imposibles (49 km/h para un
+jugador parado) cuando $\mathbf{H}$ es ruidosa.
+
+\textbf{Input disponible:}
+\begin{itemize}[noitemsep]
+  \item Serie temporal $\{(t_k, x_k, y_k)\}$ por \texttt{track\_id}
+        en \texttt{objects.parquet} — frecuencia nominal 25 Hz
+  \item Los frames con \texttt{homography\_valid = False} son observaciones
+        faltantes (en este video: 0 de 750, pero sí ocurre en otros clips)
+  \item La confianza de cada posición está en la columna \texttt{conf}
+\end{itemize}
+
+\textbf{Pregunta para el equipo:} ¿cómo estimar velocidad instantánea
+robusta a los saltos de homografía y a los frames faltantes?
+
+% -----------------------------------------------------------------------------
+\subsection{P3 — Re-identificación de jugadores entre fragmentos de track}
+
+\textbf{Agente causante:} A4 (ByteTrack) asigna \texttt{track\_id} nuevo
+al jugador que reaparece después de una oclusión.
+
+\textbf{Síntoma:} 39 \texttt{track\_id} distintos para $\approx$25 jugadores
+físicos en 30 s de video.
+
+\textbf{Input disponible:}
+\begin{itemize}[noitemsep]
+  \item Series temporales incompletas de posición por \texttt{track\_id}
+        en \texttt{objects.parquet}
+  \item Los IDs con series cortas ($< 20$ frames) son probablemente fragmentos
+        de jugadores que ya tienen otro ID
+  \item \texttt{team\_id} está disponible para cada fragmento (restricción:
+        dos fragmentos del mismo jugador deben tener el mismo equipo)
+\end{itemize}
+
+\textbf{Pregunta para el equipo:} ¿cómo asignar fragmentos de trayectoria
+al mismo jugador usando su posición, equipo y velocidad?
+
+% =============================================================================
+\section{Resumen ejecutivo de los datos disponibles}
+% =============================================================================
+
+\begin{table}[H]
+\centering
+\caption{Inventario de datos listos para modelar}
+\label{tab:inventario}
+\begin{tabular}{p{4.5cm} p{2cm} p{2cm} p{5.5cm}}
+\toprule
+\textbf{Archivo} & \textbf{Filas} & \textbf{Cols} & \textbf{Para qué sirve} \\
+\midrule
+\texttt{objects.parquet} & 35\,870 & 14 & Posiciones, equipos, confianzas · P2, P3 \\
+\texttt{frames.parquet}  &    750  & 13 & Matrices H, calidad de keypoints · P1 \\
+\texttt{timings.parquet} &    750  &  9 & ms por agente · análisis de rendimiento \\
+\texttt{muestra\_telemetria.json} & 1 frame & — & Prototipado inmediato · P1, P2, P3 \\
+\texttt{contexto\_partido.json}   & 32 jug. & — & Diccionario dorsal → nombre \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notabox}
+\textbf{El dato es real, medido sobre un partido de la Copa del Mundo 2022,
+y está en disco. No hace falta correr ningún modelo para empezar a modelar.}
+\end{notabox}
+
+\end{document}

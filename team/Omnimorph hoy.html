@@ -1,0 +1,484 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Omnimorph hoy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una columna de lectura (≈ 70ch) con bandas de sección; tablas y diagrama con scroll propio. Paleta tomada del tablero Omnimorph (oscuro primero). */
+:root {
+  --bg: #111111;
+  --surface: #1A1A1A;
+  --border: #2A2A2A;
+  --fg: #FFFFFF;
+  --soft: #A1A1AE;
+  --ok: #1FC8B0;
+  --warn: #F5A623;
+  --alert: #F24E6B;
+  --pitch: #0E1A16;
+  --pitch-line: #2A4A3E;
+  --font-head: 'Jost', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #FAFAF8; --surface: #FFFFFF; --border: #E3E5E8; --fg: #111111; --soft: #4B5563;
+    --ok: #0E8F7E; --warn: #B4730C; --alert: #C8304D; --pitch: #EAF3EF; --pitch-line: #B9D3C8;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #FAFAF8; --surface: #FFFFFF; --border: #E3E5E8; --fg: #111111; --soft: #4B5563;
+  --ok: #0E8F7E; --warn: #B4730C; --alert: #C8304D; --pitch: #EAF3EF; --pitch-line: #B9D3C8;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font: 15px/1.6 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+}
+main { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--font-head); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(34px, 6vw, 52px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 26px; font-weight: 600; }
+h3 { font-size: 18px; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+code { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+.eyebrow { font: 500 12px/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ok); }
+section { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.lead { color: var(--soft); font-size: 17px; }
+header { display: flex; flex-direction: column; gap: 16px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--soft); font-size: 13px; }
+.meta b { color: var(--fg); font-weight: 500; }
+
+/* Ficha del partido como marcador */
+.score {
+  background: var(--pitch); border: 1px solid var(--pitch-line); border-radius: 10px;
+  padding: 22px; display: grid; gap: 18px;
+}
+.score-line { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.score-teams { font: 600 22px/1.2 var(--font-head); }
+.score-num { font: 700 40px/1 var(--font-head); font-variant-numeric: tabular-nums; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px 24px; margin: 0; }
+.facts div { min-width: 0; }
+.facts dt { font: 500 11px/1.4 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--soft); }
+.facts dd { margin: 2px 0 0; }
+
+/* Pipeline */
+.flow { display: grid; gap: 0; }
+.stage { display: grid; grid-template-columns: 44px 1fr; gap: 14px; }
+.rail { display: flex; flex-direction: column; align-items: center; }
+.dot { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--ok); display: grid; place-items: center; font: 600 13px var(--font-mono); color: var(--ok); flex: none; }
+.line { flex: 1; width: 2px; background: var(--pitch-line); min-height: 16px; }
+.stage:last-child .line { display: none; }
+.stage-body { padding-bottom: 22px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.stage-head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.tag { font: 500 11px/1 var(--font-mono); padding: 4px 7px; border-radius: 999px; border: 1px solid var(--border); color: var(--soft); white-space: nowrap; }
+.stage ul { margin: 0; padding-left: 18px; color: var(--soft); }
+.stage li { margin: 2px 0; }
+
+/* Tablas */
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+th { font: 500 11px/1.4 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--soft); background: var(--surface); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.pill { display: inline-block; font: 600 11px/1 var(--font-mono); padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.ok { color: var(--ok); border: 1px solid var(--ok); }
+.pill.warn { color: var(--warn); border: 1px solid var(--warn); }
+.pill.alert { color: var(--alert); border: 1px solid var(--alert); }
+
+/* Páginas */
+.pages { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.page { border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; background: var(--surface); }
+.page p { color: var(--soft); font-size: 14px; }
+.page .src { font: 12px/1.4 var(--font-mono); color: var(--ok); overflow-wrap: anywhere; margin-top: auto; }
+
+/* Estado */
+.status-group { display: flex; flex-direction: column; gap: 12px; }
+.status-title { display: flex; align-items: center; gap: 10px; }
+.callout { border-left: 3px solid var(--warn); padding: 12px 16px; background: var(--surface); border-radius: 0 6px 6px 0; }
+.callout p { max-width: none; }
+
+pre.tree { margin: 0; padding: 16px; font: 12.5px/1.6 var(--font-mono); color: var(--soft); white-space: pre; }
+pre.tree b { color: var(--fg); font-weight: 500; }
+.demo-steps { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.demo-steps li { display: grid; grid-template-columns: 140px 1fr; gap: 4px 16px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.demo-steps li:last-child { border-bottom: 0; }
+.demo-steps b { font-family: var(--font-head); font-weight: 600; }
+@media (max-width: 560px) { .demo-steps li { grid-template-columns: 1fr; } }
+figure.ops { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.ops-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 12px; }
+.ops-scroll svg { display: block; width: 100%; min-width: 720px; height: auto; color: var(--fg); }
+figure.ops figcaption { color: var(--soft); font-size: 14px; max-width: 68ch; }
+footer { color: var(--soft); font-size: 13px; border-top: 1px solid var(--border); padding-top: 20px; }
+a { color: var(--ok); }
+:focus-visible { outline: 2px solid var(--ok); outline-offset: 2px; }
+</style>
+
+<main>
+  <header>
+    <span class="eyebrow">Plano de estado · rama feat-costa-rica</span>
+    <h1>Omnimorph hoy</h1>
+    <p class="lead">Omnimorph toma un video de fútbol, detecta a los jugadores y al balón cuadro a cuadro, calcula métricas tácticas y genera con IBM Granite una crónica en español sincronizada con el video en un tablero web. Este documento describe lo que existe hoy; no propone cambios.</p>
+    <div class="meta">
+      <span><b>Fecha</b> 10 nov 2026</span>
+      <span><b>Elaborado por</b> IBM Bob (sesión 23), revisado por Claude Code</span>
+      <span><b>Programa</b> IBM SkillsBuild AI Experiential Learning Lab</span>
+    </div>
+    <div class="callout">
+      <p><b>Falta la parte de Fer.</b> Los datos del partido (marcador, goles, árbitros, alineaciones) y los dorsales de los jugadores todavía no están validados. Por eso Partido y MATEO muestran «Por validar» y el chat solo responde sobre el clip. Cuando Fer los confirme, se quitan los avisos y se activa el chat con la ficha completa. El detalle está en <a href="#fer">Espera a Fer</a>.</p>
+    </div>
+  </header>
+
+  <section>
+    <span class="eyebrow">Partido activo</span>
+    <div class="score">
+      <div class="score-line">
+        <span class="score-teams">Costa Rica vs. San Cristóbal y Nieves</span>
+        <span class="score-num">4 – 0</span>
+      </div>
+      <dl class="facts">
+        <div><dt>Competición</dt><dd>Eliminatorias Concacaf, 2.ª ronda, Grupo B, J1</dd></div>
+        <div><dt>Fecha</dt><dd>6 de junio de 2024</dd></div>
+        <div><dt>Estadio</dt><dd>Estadio Nacional, San José</dd></div>
+        <div><dt>Clip analizado</dt><dd>36 s · 1 080 cuadros · 29,97 fps · 720p</dd></div>
+        <div><dt>Datos validados</dt><dd><span class="pill warn">Pendiente · Fer</span></dd></div>
+      </dl>
+    </div>
+    <p>Brasil vs. Alemania 2014 se conserva como partido de referencia. Se cambia de partido con un solo archivo de configuración (<code>partido_activo.json</code>), sin tocar código.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">Operación</span>
+    <h2>Qué corre en el equipo y qué sale a IBM</h2>
+    <figure class="ops">
+      <div class="ops-scroll">
+        <svg viewBox="0 0 900 330" role="img" aria-label="Flujo de operación: la preparación corre una vez y llama 8 veces a Granite; el día de la demo el tablero corre en el equipo sin red y solo el chat y la comprobación de Operaciones salen a IBM Cloud.">
+          <defs>
+            <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+            <marker id="ai" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" style="fill:var(--ok)"/></marker>
+          </defs>
+          <g font-family="Inter, Segoe UI, sans-serif" fill="currentColor">
+            <!-- Frontera de red -->
+            <line x1="684" y1="14" x2="684" y2="300" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 5"/>
+            <text x="676" y="320" font-size="11" text-anchor="end" fill-opacity="0.7">← en el equipo · sin red</text>
+            <text x="692" y="320" font-size="11" fill-opacity="0.7">nube IBM · con red →</text>
+
+            <!-- Banda 1: preparación -->
+            <text x="20" y="28" font-size="11" font-weight="600" letter-spacing="0.08em" style="fill:var(--ok)">PREPARACIÓN · UNA VEZ, ANTES DE LA DEMO</text>
+            <g fill="none" stroke="currentColor" stroke-opacity="0.5">
+              <rect x="20" y="72" width="100" height="56" rx="6"/>
+              <rect x="144" y="72" width="100" height="56" rx="6"/>
+              <rect x="268" y="72" width="100" height="56" rx="6"/>
+              <rect x="392" y="72" width="100" height="56" rx="6"/>
+              <rect x="516" y="72" width="100" height="56" rx="6"/>
+            </g>
+            <g font-size="13" font-weight="600" text-anchor="middle">
+              <text x="70" y="96">Percepción</text>
+              <text x="194" y="96">Motor</text>
+              <text x="318" y="96">Narrador</text>
+              <text x="442" y="96">Voz</text>
+              <text x="566" y="96">Exportar</text>
+            </g>
+            <g font-size="11" text-anchor="middle" fill-opacity="0.65">
+              <text x="70" y="113">video · M1</text>
+              <text x="194" y="113">M2.0–M2.5</text>
+              <text x="318" y="113">M3</text>
+              <text x="442" y="113">8 audios · M4</text>
+              <text x="566" y="113">JSON + audio</text>
+            </g>
+            <g stroke="currentColor" stroke-opacity="0.7" marker-end="url(#a)">
+              <line x1="120" y1="100" x2="142" y2="100"/>
+              <line x1="244" y1="100" x2="266" y2="100"/>
+              <line x1="368" y1="100" x2="390" y2="100"/>
+              <line x1="492" y1="100" x2="514" y2="100"/>
+            </g>
+
+            <!-- Narrador a Granite -->
+            <path d="M318 72 V48 H846 V70" fill="none" style="stroke:var(--ok)" stroke-width="1.5" marker-end="url(#ai)"/>
+            <text x="560" y="42" font-size="11" text-anchor="middle" style="fill:var(--ok)">8 llamadas · 0,60 RU</text>
+
+            <!-- Exportar a datos -->
+            <line x1="566" y1="128" x2="566" y2="188" stroke="currentColor" stroke-opacity="0.7" marker-end="url(#a)"/>
+            <text x="574" y="162" font-size="11" fill-opacity="0.7">escribe</text>
+
+            <!-- Banda 2: demo en vivo -->
+            <text x="20" y="172" font-size="11" font-weight="600" letter-spacing="0.08em" style="fill:var(--ok)">DEMO EN VIVO · LOCALHOST:8600</text>
+            <g fill="none" stroke="currentColor" stroke-opacity="0.5">
+              <rect x="20" y="190" width="170" height="60" rx="6"/>
+              <rect x="268" y="190" width="150" height="60" rx="6"/>
+              <rect x="496" y="190" width="140" height="60" rx="6"/>
+            </g>
+            <g font-size="13" font-weight="600" text-anchor="middle">
+              <text x="105" y="215">Navegador</text>
+              <text x="343" y="215">serve.py</text>
+              <text x="566" y="215">dashboard/data</text>
+            </g>
+            <g font-size="11" text-anchor="middle" fill-opacity="0.65">
+              <text x="105" y="233">6 páginas del tablero</text>
+              <text x="343" y="233">servidor local</text>
+              <text x="566" y="233">datos listos</text>
+            </g>
+            <line x1="496" y1="220" x2="420" y2="220" stroke="currentColor" stroke-opacity="0.7" marker-end="url(#a)"/>
+            <text x="458" y="213" font-size="11" text-anchor="middle" fill-opacity="0.7">lee</text>
+            <line x1="268" y1="206" x2="192" y2="206" stroke="currentColor" stroke-opacity="0.7" marker-end="url(#a)"/>
+            <text x="229" y="200" font-size="11" text-anchor="middle" fill-opacity="0.7">páginas</text>
+            <line x1="190" y1="234" x2="266" y2="234" stroke="currentColor" stroke-opacity="0.7" marker-end="url(#a)"/>
+            <text x="229" y="248" font-size="11" text-anchor="middle" fill-opacity="0.7">chat</text>
+
+            <!-- Salidas a IBM durante la demo -->
+            <path d="M343 250 V272 H740 V130" fill="none" style="stroke:var(--ok)" stroke-width="1.5" marker-end="url(#ai)"/>
+            <text x="470" y="266" font-size="11" text-anchor="middle" style="fill:var(--ok)">preguntas del chat · RU por uso</text>
+            <path d="M390 250 V290 H815 V252" fill="none" stroke="currentColor" stroke-opacity="0.7" marker-end="url(#a)"/>
+            <text x="540" y="304" font-size="11" text-anchor="middle" fill-opacity="0.7">Operaciones comprueba la conexión · 0 RU</text>
+
+            <!-- Nube IBM -->
+            <rect x="700" y="56" width="186" height="208" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 4"/>
+            <text x="708" y="68" font-size="11" fill-opacity="0.7">IBM Cloud · us-south</text>
+            <rect x="716" y="72" width="154" height="58" rx="6" fill="none" style="stroke:var(--ok)" stroke-width="1.5"/>
+            <text x="793" y="97" font-size="13" font-weight="600" text-anchor="middle">watsonx.ai</text>
+            <text x="793" y="115" font-size="11" text-anchor="middle" style="fill:var(--ok)">Granite 4 H Small</text>
+            <rect x="760" y="190" width="110" height="60" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.5"/>
+            <text x="815" y="215" font-size="13" font-weight="600" text-anchor="middle">IBM IAM</text>
+            <text x="815" y="233" font-size="11" text-anchor="middle" fill-opacity="0.65">autenticación</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>La preparación corre una sola vez: el video pasa por percepción, motor, narrador y voz, y Granite se usa 8 veces (0,60 RU). El día de la demo, el tablero lee datos ya listos y corre en el equipo sin red. Solo dos cosas cruzan a IBM Cloud: las preguntas del chat, que gastan RU, y la comprobación de conexión de Operaciones, que no gasta.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <span class="eyebrow">Arquitectura</span>
+    <h2>Cómo fluye la información</h2>
+    <p>Todo corre en la computadora del equipo. La única conexión a internet que hace falta es la llamada a IBM Granite para escribir las narraciones. El orquestador <code>run_pipeline.py</code> corre las etapas de punta a punta y resume los 9 monitores.</p>
+    <div class="flow">
+      <div class="stage">
+        <div class="rail"><span class="dot">0</span><span class="line"></span></div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Video de entrada</h3></div>
+          <ul><li><code>HP3zxNuoWXE-720-15.mp4</code>: plano táctico continuo de 36 s</li></ul>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="rail"><span class="dot">1</span><span class="line"></span></div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Percepción</h3><span class="tag">M1</span><span class="tag">dataset_manager.py</span></div>
+          <ul>
+            <li>Detecta jugadores (112 rastros) y balón (860 detecciones)</li>
+            <li>Calcula la transformación de pantalla a cancha real (homografía)</li>
+            <li>Guarda <code>data/raw/frames.parquet</code> y <code>objects.parquet</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="rail"><span class="dot">2</span><span class="line"></span></div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Motor Omnimorph</h3><span class="tag">M2.0–M2.5</span><span class="tag">omnimorph_engine.py</span></div>
+          <ul>
+            <li>Separa jugadores de balón y asigna equipo</li>
+            <li>Suaviza los movimientos y une rastros partidos con el algoritmo húngaro (112 → 93)</li>
+            <li>Limita la velocidad a 9,5 m/s (tope físico)</li>
+            <li>Divide el clip en 8 ventanas tácticas de unos 4,5 s</li>
+          </ul>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="rail"><span class="dot">3</span><span class="line"></span></div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Narrador Granite</h3><span class="tag">M3</span><span class="tag">agent_narrator.py</span></div>
+          <ul>
+            <li>Envía cada ventana a <code>ibm/granite-4-h-small</code> y recibe hasta 45 palabras en español</li>
+            <li>Verifica que el modelo sea IBM Granite y registra cada llamada en <code>governance_audit.jsonl</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="rail"><span class="dot">4</span><span class="line"></span></div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Voz y tablero</h3><span class="tag">M4</span><span class="tag">tts_service.py</span><span class="tag">dashboard/serve.py</span></div>
+          <ul>
+            <li>Convierte el texto en 8 clips de audio con la voz de Windows (máx. 3,9 s cada uno)</li>
+            <li>Comprueba que audio y video estén sincronizados (menos de 40 ms)</li>
+            <li>Sirve el tablero en <code>http://localhost:8600</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Tablero web</span>
+    <h2>Las páginas y de dónde leen</h2>
+    <div class="pages">
+      <article class="page"><h3>Inicio</h3><p>Portada con video de fondo, los tres bloques Visión, Métricas y Narrador, un video comercial de 21 s y la franja de logos de IBM.</p><span class="src">logos.manifest.json</span></article>
+      <article class="page"><h3>MATEO</h3><p>Video con los rastros dibujados, radar 2D, crónica de Granite por ventana, transcripción, lista de jugadores y chatbot.</p><span class="src">mateo_data.json</span></article>
+      <article class="page"><h3>Partido</h3><p>Resultado, árbitros, alineaciones, estadísticas, goles y fichero de jugadores, con el aviso «Por validar».</p><span class="src">partido/partido.json</span></article>
+      <article class="page"><h3>Método</h3><p>Diagrama del sistema, ficha técnica del MVP, tabla de monitores, niveles de confianza, límites y gobernanza.</p><span class="src">metodo.json</span></article>
+      <article class="page"><h3>Operaciones</h3><p>Estado de los servicios de IBM, las 9 tarjetas de monitores y una terminal en vivo del chat con tokens, RU y latencia.</p><span class="src">metodo.json · /api/operaciones/*</span></article>
+      <article class="page"><h3>Equipo</h3><p>Aparece en el menú, pero aún no tiene página.</p><span class="src">sin página</span></article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Monitores</span>
+    <h2>Última corrida: 9 de 9 en verde</h2>
+    <p>9 de noviembre de 2026, 23:06 UTC. Duró 25,94 s. Cada monitor escribe su resultado en <code>data/clean/</code>.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Monitor</th><th>Qué verifica</th><th>Resultado</th></tr></thead>
+        <tbody>
+          <tr><td><b>M1</b> Percepción</td><td>Cuadros suficientes, homografía en ≥ 95 % de cuadros, filas de jugadores y balón</td><td class="num"><span class="pill ok">PASS</span> 1 080 cuadros · 100 %</td></tr>
+          <tr><td><b>M2.0</b> Jugadores y balón</td><td>Filas separadas y equipo asignado a cada rastro</td><td class="num"><span class="pill ok">PASS</span> 112 rastros</td></tr>
+          <tr><td><b>M2.1</b> Homografía EMA</td><td>Transformación suavizada en todos los cuadros</td><td class="num"><span class="pill ok">PASS</span> 100 %</td></tr>
+          <tr><td><b>M2.2</b> Unión de rastros</td><td>Algoritmo húngaro sin identificadores repetidos</td><td class="num"><span class="pill ok">PASS</span> 112 → 93 · 0 repetidos</td></tr>
+          <tr><td><b>M2.3</b> Cinemática</td><td>Ninguna velocidad por encima de 9,5 m/s</td><td class="num"><span class="pill ok">PASS</span> 17 612 muestras</td></tr>
+          <tr><td><b>M2.4</b> Ventanas tácticas</td><td>Exactamente 8 ventanas</td><td class="num"><span class="pill ok">PASS</span> 8 / 8</td></tr>
+          <tr><td><b>M2.5</b> Integridad</td><td>Datos limpios, coordenadas, velocidad y ventanas presentes</td><td class="num"><span class="pill ok">PASS</span> completo</td></tr>
+          <tr><td><b>M3</b> Auditoría Granite</td><td>Solo Granite, JSON válido, ≤ 45 palabras, equipo dominante coherente</td><td class="num"><span class="pill ok">PASS</span> 8 / 8 · 1 588 ms · 0,60 RU</td></tr>
+          <tr><td><b>M4</b> Voz y sincronía</td><td>8 audios, ninguno de más de 4 s, desfase menor a 40 ms</td><td class="num"><span class="pill ok">PASS</span> 19,02 ms máx.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">IBM</span>
+    <h2>Tecnología de IBM en el MVP</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tecnología</th><th>Uso en Omnimorph</th></tr></thead>
+        <tbody>
+          <tr><td><b>IBM Bob IDE</b></td><td>Entorno de desarrollo principal. La bitácora de sesiones está en <code>bob_sessions/</code>.</td></tr>
+          <tr><td><b>IBM watsonx.ai</b></td><td>Aloja el modelo Granite en la región us-south. Recibe cada ventana táctica y devuelve la narración.</td></tr>
+          <tr><td><b>IBM Granite</b></td><td><code>ibm/granite-4-h-small</code> escribe las narraciones y responde el chat. Es el único modelo permitido; el monitor M3 rechaza cualquier otro.</td></tr>
+          <tr><td><b>IBM watsonx Orchestrate</b></td><td>La herramienta táctica está descrita en <code>openapi_tool.yaml</code> y lista para importarse. La importación en el panel queda para después de la demo.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Las credenciales viven solo en el archivo <code>.env</code>, que no se sube a Git.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">Estado</span>
+    <h2>Qué funciona y qué falta</h2>
+
+    <div class="status-group">
+      <div class="status-title"><span class="pill ok">Funciona</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Qué</th><th>Evidencia</th></tr></thead>
+          <tbody>
+            <tr><td>Pipeline completo, 5 etapas y 9 monitores</td><td><code>pipeline_summary.json</code>: todo en verde en 25,94 s</td></tr>
+            <tr><td>Narraciones con IBM Granite</td><td>M3: 8 de 8 · 0,60 RU</td></tr>
+            <tr><td>Tablero con Inicio, MATEO, Partido, Método y Operaciones</td><td>Revisado en navegador hasta la sesión 22</td></tr>
+            <tr><td>El chat habla del partido activo</td><td>En modo clip usa el título de Costa Rica</td></tr>
+            <tr><td>Rastros del mismo jugador unidos en MATEO</td><td>Sesión 21: de 49 a 46 jugadores</td></tr>
+            <tr><td>Audio y video sincronizados</td><td>M4: 19,02 ms de desfase máximo</td></tr>
+            <tr><td>Conexión con IBM comprobada sin gastar RU</td><td>Página Operaciones, ruta <code>/api/operaciones/ibm</code></td></tr>
+            <tr><td>Cero credenciales en el código</td><td>Solo se leen de <code>.env</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="status-group" id="fer">
+      <div class="status-title"><span class="pill warn">Espera a Fer</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Qué</th><th>Qué hay que hacer</th><th>Si no se hace</th></tr></thead>
+          <tbody>
+            <tr><td><b>Datos del partido</b></td><td>Revisar la plantilla, poner <code>procedencia.validado: true</code> en <code>contexto_partido.json</code> y volver a exportar</td><td>Partido sigue con el aviso «Por validar»</td></tr>
+            <tr><td><b>Dorsales</b></td><td>Confirmar 10 jugadores en 13 rastros y crear <code>rastros_dorsales.json</code></td><td>MATEO muestra «Por validar» junto a cada nombre</td></tr>
+            <tr><td><b>Sentido de ataque</b></td><td>Confirmar qué equipo ataca hacia qué lado en el clip</td><td>El análisis táctico podría tener el sentido invertido</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Con esa revisión se puede activar el chat con la ficha completa del partido (<code>chat_datos_completos: true</code>).</p>
+    </div>
+
+    <div class="status-group">
+      <div class="status-title"><span class="pill alert">Antes de la demo</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tarea</th><th>Quién</th><th>Tiempo</th></tr></thead>
+          <tbody>
+            <tr><td>Plan B sin red: tablero ya exportado, 8 audios listos, qué decir si falla el chat, y ensayarlo con el Wi-Fi apagado</td><td>Equipo</td><td class="num">30 min</td></tr>
+            <tr><td>Probar la caída de red en Operaciones: el estado de IBM y el chat deben mostrar un aviso claro en vez de quedarse esperando</td><td>Claude Code</td><td class="num">30 min</td></tr>
+            <tr><td>Corregir el nombre del M2.4: el motor dice «4.0 s», pero las ventanas reales duran 4,5 s</td><td>Claude Code</td><td class="num">15 min</td></tr>
+            <tr><td>Página Equipo: decidir su contenido o quitar el enlace</td><td>Por definir</td><td class="num">—</td></tr>
+            <tr><td>Revisar si los equipos salen invertidos en Brasil-Alemania (solo si se mostrará en la demo)</td><td>Claude Code + equipo</td><td class="num">30 min</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="status-group">
+      <div class="status-title"><span class="pill" style="color:var(--soft);border:1px solid var(--border)">Después de la demo</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tarea</th><th>Por qué espera</th><th>Tiempo</th></tr></thead>
+          <tbody>
+            <tr><td>Velocidades creíbles por jugador</td><td>La cámara de TV mete ruido en la homografía. Corregirlo toca todo el motor; por ahora las velocidades están ocultas.</td><td class="num">4–8 h</td></tr>
+            <tr><td>Dorsales automáticos</td><td>El modelo actual no reconoce dorsales en transmisión de TV. Hay que investigar Granite Vision, OCR o reentrenar.</td><td class="num">8–16 h</td></tr>
+            <tr><td>Importar la herramienta en watsonx Orchestrate</td><td>No hace falta para la demo. Requiere acceso al panel y red.</td><td class="num">1–2 h</td></tr>
+            <tr><td>Entregables del programa</td><td>Fusionar a <code>main</code>, limpiar ramas, capturas del consumo de RU y video del MVP.</td><td class="num">2–3 h</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Día de la demo</span>
+    <h2>Cómo arrancar</h2>
+    <ol class="demo-steps">
+      <li><b>Abrir el tablero</b><span>Correr <code>python dashboard/serve.py</code> y abrir <code>http://localhost:8600</code>. Los datos ya están exportados.</span></li>
+      <li><b>Sin internet</b><span>Video, radar, narraciones y ficha del partido funcionan sin conexión. Solo el chat en vivo necesita red.</span></li>
+      <li><b>No regenerar</b><span>Volver a correr el pipeline (<code>run_pipeline.py --use-real</code> y luego <code>scripts/export_dashboard_data.py</code>) llama otra vez a Granite, gasta RU y reescribe las narraciones. Evitarlo justo antes de la demo.</span></li>
+    </ol>
+    <div class="callout"><p>Costo de referencia: la última corrida completa gastó 0,60 RU de watsonx.ai en 8 llamadas a Granite y tardó unos 26 s.</p></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Repositorio</span>
+    <h2>Dónde está cada cosa</h2>
+    <div class="table-wrap">
+<pre class="tree"><b>omnimorph-pruebas/</b>
+├── run_pipeline.py              orquestador: etapas y 9 monitores
+├── AGENTS.md                    reglas del proyecto para todos los agentes
+├── <b>data/</b>
+│   ├── partidos/
+│   │   ├── partido_activo.json  qué partido está activo
+│   │   ├── costa_rica_skn_eliminatorias_2026/
+│   │   └── brasil_alemania_2014/   partido de referencia
+│   ├── raw/                     parquets de percepción (fuera de Git)
+│   ├── clean/                   resultados, narraciones, monitores y auditorías
+│   └── audio/                   8 clips de narración
+├── <b>implementacion/</b>
+│   ├── partido_config.py        lee el partido activo
+│   ├── dataset/                 etapa 1 y monitor M1
+│   ├── cloud_tool/              motor, API y openapi_tool.yaml
+│   ├── dashboard/tts_service.py etapa 4: voz
+│   └── cloud_agent/             narrador, monitor M3, chat y verificador
+├── <b>dashboard/</b>                   tablero web (puerto 8600)
+│   ├── serve.py
+│   ├── pages/  components/  styles/
+│   └── data/                    JSON listos para el navegador
+├── scripts/export_dashboard_data.py   pasa data/clean/ al tablero
+├── bob_sessions/                bitácora de sesiones
+└── blueprints/                  planos y encargos</pre>
+    </div>
+  </section>
+
+  <footer>Basado en <code>blueprints/estado_actual_2026-11-10.md</code>. Generado por IBM Bob (sesión 23) y corregido por Claude Code contra el código el 10 de noviembre de 2026. No contiene credenciales, llaves ni tokens.</footer>
+</main>
+
+</body></html>
