@@ -50,3 +50,11 @@ Sin cambios de código.
 - `serve.py --port 8600 --prueba-horas 3 --tope-chat 15` y `cloudflared tunnel --url http://localhost:8600`, con una URL nueva de trycloudflare.
 - Verificación pública: inicio 200, opinión 200, `/api/prueba/estado` activa (fin 03:54), `/data/` 403, `.env` 404. Esta vez el precheck de cloudflared salió sano en ambas regiones.
 - **Cierre de la ronda 2:** el usuario la cerró antes de las 3 h. Resultado: **0 opiniones**. Una persona recorrió la app de 19:17 a 20:37 (inicio, Mateo, partido, método; abrió también la página de Operaciones, cuyas API siguen bloqueadas por el túnel) e hizo **5 preguntas al chat** (2 contaron como Granite). Abrió el formulario de opinión a las 20:09 y no lo envió. Nota: el reloj de Windows saltó durante la sesión (el log pasa de 18/11 01:00 a 17/11 19:17), así que las horas de los registros son aproximadas.
+
+## 7. Tercera ronda de prueba de 1 h (2026-11-20, 19:05 a 20:05, hora de México)
+- A pedido del usuario se levantó una prueba de 1 hora para el equipo.
+- Se archivó el estado de la ronda 2 como `data/clean/prueba_estado_2026-11-18.json`.
+- `serve.py --port 8600 --prueba-horas 1 --tope-chat 15` y un túnel de cloudflared con URL nueva.
+- Verificación pública: inicio 200, opinión 200, prueba activa (fin 20:05), `/data/` 403, `.env` 404.
+- **Cierre de la ronda 3:** la prueba cerró sola a las 20:05 (410 «Prueba terminada»). El servidor y el túnel se apagaron a las 22:24, a pedido del usuario. Resultado: **0 opiniones y 0 preguntas al chat**. El usuario recorrió la app de 19:07 a 19:29 y abrió el formulario de opinión dos veces sin enviarlo. De 19:29 a 19:48 el video de portada se pidió con ritmo alternado, lo que sugiere un posible segundo dispositivo, sin confirmar. A las 20:01 y 20:03 se pidió solo el HTML de MATEO y de inicio, un patrón compatible con la vista previa de un enlace en WhatsApp o Telegram. Una pestaña siguió pidiendo el video cada 88 s hasta el apagado.
+- **Aprendizaje:** con el túnel no se pueden contar visitantes. Propuesta para Bob: registrar un identificador anónimo por visitante (hash de `CF-Connecting-IP` y User-Agent) para saber cuántas personas distintas entran.
