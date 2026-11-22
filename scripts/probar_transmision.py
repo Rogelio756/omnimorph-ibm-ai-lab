@@ -394,22 +394,28 @@ def paso_3() -> None:
         ok, nota = False, str(e)
     caso("3.1 node --check transmision.js → exit 0", ok, nota)
 
-    # 3.2: transmision.css sin box-shadow ni gradient
+    # 3.2: transmision.css sin box-shadow ni gradient, con .tv-debajo oculto en escritorio
     ok = True
     nota = ""
     try:
         css = transmision_css.read_text(encoding="utf-8")
-        ok = "box-shadow" not in css and "gradient" not in css
+        sin_shadow   = "box-shadow" not in css
+        sin_gradient = "gradient" not in css
+        # .tv-debajo debe tener display:none fuera de media query (escritorio)
+        tiene_tv_debajo_oculto = ".tv-debajo" in css and "display: none" in css
+        ok = sin_shadow and sin_gradient and tiene_tv_debajo_oculto
         if not ok:
-            nota = f"box-shadow={'box-shadow' in css} gradient={'gradient' in css}"
+            nota = (f"box-shadow={not sin_shadow} gradient={not sin_gradient} "
+                    f"tv-debajo-oculto={tiene_tv_debajo_oculto}")
     except Exception as e:
         ok, nota = False, str(e)
-    caso("3.2 transmision.css sin box-shadow ni gradient", ok, nota)
+    caso("3.2 transmision.css sin sombras, .tv-debajo oculto en escritorio", ok, nota)
 
     ids_requeridos = [
         "tv", "tv-video", "tv-marcador", "tv-inicio",
         "tv-protagonista", "tv-trazos",
         "tv-radar", "tv-ficha", "tv-mateo", "tv-voz", "data-error", "tv-nota",
+        "tv-debajo", "tv-mateo-movil", "tv-ficha-movil",
     ]
     rutas = [
         "/data/transmision.json",

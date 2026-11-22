@@ -295,29 +295,51 @@
   margin: 0;
 }
 
-/* ── Responsive móvil (≤ 767 px) ────────────────────────────────────────── */
+/* ── Zona debajo del video (móvil) ──────────────────────────────────────── */
+.tv-debajo {
+  display: none; /* oculto en escritorio (≥ 768 px) */
+}
+
+/* ── Responsive móvil (< 768 px) ────────────────────────────────────────── */
 @media (max-width: 767px) {
   /* El radar se oculta en móvil */
-  .tv-radar {
+  .tv__capa .tv-radar {
     display: none !important;
   }
 
-  /* Franja MATEO y alineaciones salen del video y se muestran como texto */
-  .tv-mateo,
-  .tv-ficha {
-    position: static !important;
-    transform: none !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    opacity: 1 !important;
-    font-size: 13px !important;
-    border-radius: 0;
+  /* MATEO y ficha dentro del video se ocultan en móvil */
+  .tv__capa .tv-mateo,
+  .tv__capa .tv-ficha {
+    display: none !important;
+  }
+
+  /* Zona debajo del video: visible, con altura mínima fija para no brincar */
+  .tv-debajo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-height: 4.5em;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border-top: var(--border);
+  }
+
+  .tv-debajo__mateo,
+  .tv-debajo__ficha {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    color: var(--color-text);
     margin: 0;
   }
 
-  .tv-mateo[hidden],
-  .tv-ficha[hidden] {
+  .tv-debajo__mateo[hidden],
+  .tv-debajo__ficha[hidden] {
     display: none;
+  }
+
+  .tv-debajo__mateo .tv-mateo__prefijo {
+    font-family: var(--font-headline);
+    color: var(--color-ball);
+    margin-right: 0.4em;
   }
 }

@@ -31,6 +31,8 @@
   var radarEl     = document.getElementById('tv-radar');
   var fichaEl     = document.getElementById('tv-ficha');
   var mateoEl     = document.getElementById('tv-mateo');
+  var fichaMovilEl  = document.getElementById('tv-ficha-movil');
+  var mateoMovilEl  = document.getElementById('tv-mateo-movil');
   var inicioBtn   = document.getElementById('tv-inicio');
   var pausaBtn    = document.getElementById('tv-pausa');
   var vozToggleBtn = document.getElementById('tv-voz-toggle');
@@ -223,6 +225,7 @@
 
     // ⑤ Ficha (alineaciones)
     fichaEl.hidden = !vis.ficha;
+    if (fichaMovilEl) fichaMovilEl.hidden = !vis.ficha;
 
     // ⑦ MATEO
     var frase = L.fraseEn(t, d.jugadas);
@@ -231,6 +234,7 @@
       actualizarMateo(frase);
     }
     mateoEl.hidden = !(frase && estado.vozActiva);
+    if (mateoMovilEl) mateoMovilEl.hidden = !(frase && estado.vozActiva);
   }
 
   // ── ⑥ Estela y triángulo ─────────────────────────────────────────────────
@@ -350,14 +354,14 @@
   }
 
   // ── ⑤ Ficha ──────────────────────────────────────────────────────────────
-  function construirFicha(ficha, partido) {
-    if (!fichaEl || !ficha) return;
-    while (fichaEl.firstChild) fichaEl.removeChild(fichaEl.firstChild);
+  function _rellenarFicha(el, ficha, partido) {
+    if (!el || !ficha) return;
+    while (el.firstChild) el.removeChild(el.firstChild);
 
     var titulo = document.createElement('div');
     titulo.className = 'tv-ficha__titulo';
     titulo.textContent = 'Alineaciones';
-    fichaEl.appendChild(titulo);
+    el.appendChild(titulo);
 
     var filas = L.filasFicha(ficha, partido);
     filas.forEach(function (fila) {
@@ -375,26 +379,36 @@
 
       div.appendChild(cod);
       div.appendChild(esq);
-      fichaEl.appendChild(div);
+      el.appendChild(div);
     });
 
     var pie = document.createElement('div');
     pie.className = 'tv-ficha__pie';
     pie.textContent = ficha.estadio + ' · '
       + ficha.asistencia.toLocaleString('es') + ' aficionados';
-    fichaEl.appendChild(pie);
+    el.appendChild(pie);
+  }
+
+  function construirFicha(ficha, partido) {
+    _rellenarFicha(fichaEl, ficha, partido);
+    _rellenarFicha(fichaMovilEl, ficha, partido);
   }
 
   // ── ⑦ Franja MATEO ───────────────────────────────────────────────────────
-  function actualizarMateo(frase) {
-    while (mateoEl.firstChild) mateoEl.removeChild(mateoEl.firstChild);
+  function _rellenarMateo(el, frase) {
+    while (el.firstChild) el.removeChild(el.firstChild);
     if (!frase) return;
     var prefijo = document.createElement('span');
     prefijo.className = 'tv-mateo__prefijo';
     prefijo.textContent = 'MATEO';
     var texto = document.createTextNode(' ' + frase);
-    mateoEl.appendChild(prefijo);
-    mateoEl.appendChild(texto);
+    el.appendChild(prefijo);
+    el.appendChild(texto);
+  }
+
+  function actualizarMateo(frase) {
+    _rellenarMateo(mateoEl, frase);
+    if (mateoMovilEl) _rellenarMateo(mateoMovilEl, frase);
   }
 
 })();
