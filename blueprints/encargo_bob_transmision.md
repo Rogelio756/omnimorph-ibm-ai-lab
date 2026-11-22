@@ -28,8 +28,8 @@ con código 0 y los anteriores siguen en verde (`probar_transmision.py --hasta N
 | 1 | `scripts/export_transmision.py` → `dashboard/data/transmision.json` |
 | 2 | `dashboard/components/transmision-logica.js` + pruebas con Node |
 | 3 | `dashboard/pages/transmision.html`: video, botón «Ver transmisión», marcador y sello |
-| 4 | Protagonista, velocidad flotante y estela |
-| 5 | Mini radar y «Los más rápidos» |
+| 4 | Protagonista (el más cercano al balón), triángulo y estela |
+| 5 | Mini radar y «Alineaciones» |
 | 6 | Franja y voz de MATEO |
 | 7 | «Transmisión» en el menú + regresión |
 
@@ -37,7 +37,8 @@ con código 0 y los anteriores siguen en verde (`probar_transmision.py --hasta N
 
 `dashboard/serve.py`, `dashboard/data/mateo_data.json`, `data/clean/`, el pipeline y las demás
 páginas. Solo se modifica una línea de `dashboard/components/site-nav.js` (paso 7). Ninguna llamada
-nueva a Granite ni a ningún LLM.
+nueva a Granite ni a ningún LLM. **Sin km/h:** la velocidad no es confiable y la página dice que
+está en pruebas (blueprint versión 3).
 
 ## 3. Al terminar
 

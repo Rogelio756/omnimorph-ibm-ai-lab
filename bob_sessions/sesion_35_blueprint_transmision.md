@@ -34,5 +34,15 @@ propio de Omnimorph y la voz de MATEO como diferenciador.
 - **Sin prueba de humo de los pasos:** se verificó el bloque Bootstrap y los datos de entrada, pero
   no se construyó el paso 1 en una carpeta aparte, porque en este proyecto Claude no implementa.
 
+## 5. Revisión del paso 1 de Bob y versión 3 del blueprint
+- Bob terminó el paso 1 con 8/8 pruebas en verde, pero Claude encontró que casi todas las velocidades
+  salían topadas en 34.2 km/h: `v_clipped` es ruido de la calibración. Fue un error del diseño, no de
+  Bob.
+- Ni con filtros fuertes (mediana de 91 cuadros, desplazamiento de 3 s) las cifras son creíbles: un
+  jugador trotando sale a ~11 km/h (lo real es ~7).
+- **Decisión del usuario:** quitar los km/h y decir en la página que la velocidad está en pruebas.
+- Versión 3: protagonista = el más cercano al balón (cajas en pantalla, fiables); el panel «Los más
+  rápidos» pasa a «Alineaciones» con datos validados por Fer; nota «está en pruebas» bajo el video.
+
 ## Siguiente paso
 Bob construye los 7 pasos. Después, revisión visual y la siguiente ronda con el equipo.

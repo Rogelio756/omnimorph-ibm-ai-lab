@@ -4,7 +4,7 @@
 > Forma: cambio sobre una página web estática existente (dashboard de Omnimorph)
 > Pista de ejecución: la del repo — Python 3.12 (`.venv`) + HTML/CSS/JS sin compilación + Node solo para pruebas
 > Modo de emisión: archivo único (7 pasos)
-> Versión del blueprint: 1
+> Versión del blueprint: 3 (2026-11-21: sin km/h — la velocidad queda «en pruebas»; protagonista = el más cercano al balón; panel «Alineaciones»)
 > Versiones verificadas: 2026-11-21. Ver §11 para el origen de cada una
 > Diseñó: Claude (solo diseño). Construye: Bob
 
@@ -15,8 +15,8 @@
 ### Visión
 Una página nueva, **Transmisión**, que muestra el clip de Costa Rica vs. San Cristóbal y Nieves a pantalla
 completa, con gráficos sobrepuestos como en la tele: marcador y reloj, sello de Omnimorph, el
-protagonista de cada jugada, su velocidad flotante con estela, un mini radar, el panel «Los más
-rápidos» y la franja con la **voz de MATEO**. Es la pieza que se le mostraría a una televisora o a un
+protagonista de cada jugada (el jugador más cerca del balón) marcado con un triángulo y su estela,
+un mini radar, el panel «Alineaciones» y la franja con la **voz de MATEO**. Es la pieza que se le mostraría a una televisora o a un
 servicio de streaming: el análisis de Omnimorph convertido en experiencia para el aficionado, sin
 términos técnicos.
 
@@ -46,7 +46,8 @@ Subtítulo de la página: **«El partido como en la tele, con la voz de MATEO»*
 | Cambios en MATEO, Partido, Método, Operaciones, Opinión e Inicio | Solo se toca `site-nav.js` para el menú |
 | Cambios en el pipeline o en `data/clean/` | El cambio solo lee esos archivos |
 | Copiar la marca de otro canal (Magenta TV, Fussball.TV) | Se usa el formato como inspiración, con el diseño propio de `DESIGN.md` |
-| Marcador del balón en pantalla | La detección del balón falla en 220 de 1080 cuadros. No se muestra |
+| Marcador del balón en pantalla | La detección del balón falla en 220 de 1080 cuadros. No se dibuja; solo se usa para elegir al protagonista |
+| Velocidad en km/h | No es confiable: la calibración de la cámara salta en cada cuadro y la infla (un jugador trotando sale a ~11 km/h y hasta 34). La página dice que está **en pruebas**. Decisión del usuario, 2026-11-21 |
 | Interfaces congeladas (ver §5) | `mateo_data.json`, `serve.py`, rutas de páginas existentes |
 
 ### Métricas de éxito
@@ -136,15 +137,19 @@ completo:
             "fps": 29.97, "n_frames": 1080},
   "narracion": {"audio": "../media/NARRACION_COMPLETA_60S.wav", "vtt": "../media/narrations_es.vtt"},
   "jugadores": {"6": {"team": 1, "etiqueta": "14 · Galo"}, "3": {"team": 0, "etiqueta": "Jugador SKN"}},
-  "cuadros": [[[6, 412, 300, 440, 372, 31.4]]],
+  "cuadros": [[[6, 412, 300, 440, 372]]],
+  "balon":   [[590, 448]],
   "cancha":  [{"p": [[6, 1, 640, 310]], "b": [578, 397]}],
   "jugadas": [{"id": "W0", "t0": 0.0, "t1": 4.5, "f0": 0, "f1": 134,
                "texto": "San Cristóbal y Nieves presiona desde el primer minuto, …",
-               "protagonista": 6, "vel_kmh": 31.4, "top3": [[6, 31.4], [12, 30.8], [1, 29.9]]}]
+               "protagonista": 1, "frames_cerca": 45}],
+  "ficha": {"estadio": "Estadio Nacional de Costa Rica", "asistencia": 15700,
+            "local":  {"esquema": "3-4-2-1", "entrenador": "Gustavo Alfaro"},
+            "visita": {"esquema": "5-4-1",   "entrenador": "Francisco Molina"}}
 }
 ```
-Los valores de `jugadores`, `cuadros`, `cancha` y `jugadas` en el ejemplo son ilustrativos de la
-forma. Las reglas exactas:
+Los valores de `jugadores`, `cuadros`, `balon`, `cancha` y `jugadas` en el ejemplo son ilustrativos de
+la forma; los de `ficha` son los reales. Las reglas exactas:
 
 | Campo | Regla |
 |---|---|
@@ -156,23 +161,24 @@ forma. Las reglas exactas:
 | `video` | `src` = `media.original` de `mateo_data.json` (hoy `"../media/ORIGINAL_HP3zxNuoWXE-720-15.mp4"`). `ancho` 1280 y `alto` 720 fijos (resolución de las cajas). `fps` y `n_frames` de `meta` |
 | `narracion` | `media.audio` y `media.vtt` de `mateo_data.json` |
 | `jugadores` | Una entrada por cada id de `mateo_data.json` → `players`. Clave = id como texto. `team` = `players[i].team`. `etiqueta`: si `certeza` es `"alta"` o `"media"` y hay `jugador` → `f"{dorsal} · {jugador.title()}"`; si no, si hay `dorsal` → `f"#{dorsal} {codigo}"`; si no → `f"Jugador {codigo}"`, con `codigo` = código del equipo de ese jugador (`team` 0 → SKN, `team` 1 → CRC, `team` 2 → `"Árbitro"` como etiqueta completa) |
-| `cuadros` | Lista de exactamente `n_frames` elementos. El elemento `f` es la lista de cajas del cuadro `f`, ordenada por id ascendente. Cada caja: `[id, x1, y1, x2, y2, kmh]` con coordenadas enteras en píxeles del video, recortadas a `0..1279` y `0..719`. `kmh` con un decimal, o `null` si no se pudo calcular |
+| `cuadros` | Lista de exactamente `n_frames` elementos. El elemento `f` es la lista de cajas del cuadro `f`, ordenada por id ascendente. Cada caja: `[id, x1, y1, x2, y2]` con coordenadas enteras en píxeles del video, recortadas a `0..1279` y `0..719`. Sin velocidad |
+| `balon` | Lista de exactamente `n_frames` elementos: `[cx, cy]` enteros = centro de la caja del balón (`source == "ball"`, primera fila del cuadro) o `null` si no hay balón en ese cuadro |
 | `cancha` | Copia literal de `mateo_data.json` → `frames` (mismo largo y forma). Lo usa el radar |
-| `jugadas` | Una por cada elemento de `mateo_data.json` → `windows`, en el mismo orden. `id`, `t0`, `t1`, `f0`, `f1` copiados. `texto` = `narration`. `protagonista` = id con el mayor `kmh` en los cuadros `f0..f1` (incluidos); empate → id menor; sin cajas → `null`. `vel_kmh` = ese máximo (o `null`). `top3` = los 3 ids con mayor `kmh` máximo dentro de la jugada, de mayor a menor, empate por id menor, como `[[id, kmh], …]` (menos de 3 si no hay suficientes) |
+| `jugadas` | Una por cada elemento de `mateo_data.json` → `windows`, en el mismo orden. `id`, `t0`, `t1`, `f0`, `f1` copiados. `texto` = `narration`. Para cada cuadro de `f0..f1` (incluidos) con `balon` no nulo, el **más cercano** es el id cuya caja tiene el centro inferior (`(x1+x2)/2`, `y2`) a menor distancia euclidiana del balón, si esa distancia es `<= 120` px (empate → id menor). `protagonista` = el id que fue el más cercano en más cuadros de la jugada (empate → id menor), solo si lo fue en **al menos 15** cuadros; si no, `null`. `frames_cerca` = esos cuadros (o `0` si `protagonista` es `null`) |
+| `ficha` | De `dashboard/data/partido/partido.json`: `estadio` y `asistencia` de `partido`; `local` y `visita` con `esquema` = `esquema_inicial` y `entrenador` del equipo de `equipos` cuyo `codigo` coincide con `partido.local.codigo` / `partido.visita.codigo` |
 
-**Cómo se calculan las cajas y `kmh`** (en `export_transmision.py`):
+**Cómo se calculan las cajas** (en `export_transmision.py`):
 1. Leer `data/clean/objects_cleaned.parquet` y quedarse con `source == "track"`, `class_name == "player"`
    y `track_id_stitched` no nulo.
 2. Mapear cada `track_id_stitched` a su id canónico: para cada jugador de `players` con `rastros`, cada
    id de `rastros` apunta a `rastros[0]`. Los demás ids quedan igual.
 3. Descartar filas cuyo id canónico no esté en `players`. Si un id canónico tiene dos filas en el
    mismo cuadro, quedarse con la primera (como hace `fusionar_rastros` en `export_dashboard_data.py`).
-4. Por id canónico, ordenado por `frame`: `kmh = round(mediana_movil(v_clipped, ventana=31,
-   centrada, min_periods=1) * 3.6, 1)`. Como `v_clipped` ya está topada en 9.5 m/s, `kmh ≤ 34.2`.
-   `NaN` → `null`.
+4. No se calcula ninguna velocidad: `v_mps`, `v_clipped` y las posiciones en cancha son demasiado
+   ruidosas para dar km/h creíbles (ver §1, lo que queda fuera).
 
 ### Relaciones
-Todo id de `cuadros`, de `jugadas[].protagonista` y de `jugadas[].top3` existe en `jugadores`.
+Todo id de `cuadros` y de `jugadas[].protagonista` existe en `jugadores`.
 
 ### Índices
 NOT APPLICABLE — no hay base de datos.
@@ -238,13 +244,13 @@ body.page-transmision
 │   │   │   ├── div.tv-sello                     ② «Omnimorph · IBM Granite»
 │   │   │   ├── div.tv-protagonista#tv-protagonista  ③ etiqueta del jugador
 │   │   │   ├── svg.tv-trazos#tv-trazos          ⑥ estela + triángulo (viewBox 0 0 1280 720)
-│   │   │   ├── div.tv-velocidad#tv-velocidad    ⑥ «31.4 km/h»
 │   │   │   ├── div.tv-radar#tv-radar            ④ svg viewBox 0 0 1200 700
-│   │   │   ├── div.tv-rapidos#tv-rapidos        ⑤ «Los más rápidos» + 3 filas
+│   │   │   ├── div.tv-ficha#tv-ficha            ⑤ «Alineaciones» + 2 filas + estadio
 │   │   │   └── div.tv-mateo#tv-mateo            ⑦ franja de MATEO (aria-live="polite")
 │   │   └── button.tv-inicio#tv-inicio           «Ver transmisión»
 │   └── div.tv-controles         botones: Pausa/Reanudar (#tv-pausa), Voz de MATEO sí/no (#tv-voz-toggle), Repetir (#tv-repetir)
 ├── p.tv-subtitulo               «El partido como en la tele, con la voz de MATEO»
+├── p.tv-nota#tv-nota           «La velocidad de los jugadores está en pruebas: la calibración de la cámara todavía no da cifras confiables, por eso no la mostramos.»
 └── footer.site-credit           (igual que metodo.html)
 ```
 
@@ -275,7 +281,7 @@ Manda `dashboard/DESIGN.md`. Esta página solo usa variables que ya existen en `
 | Texto | `--color-text`; secundario `--color-text-soft` |
 | Color de cada equipo | `partido.local.color` / `partido.visita.color` del JSON, aplicado inline |
 | Árbitro en el radar | `--color-text-soft` |
-| Acento (triángulo, título «Los más rápidos», palabra «MATEO») | `--color-ball` |
+| Acento (triángulo, título «Alineaciones», palabra «MATEO») | `--color-ball` |
 | Estela | `--color-ok` |
 | Cancha del radar | fondo `--color-pitch`, líneas `--color-pitch-lines` |
 
@@ -283,7 +289,7 @@ Manda `dashboard/DESIGN.md`. Esta página solo usa variables que ya existen en `
 | Elemento | Variable |
 |---|---|
 | Códigos de equipo y «MATEO» | `--font-headline` |
-| Reloj, marcador, km/h, cifras | `--font-mono` |
+| Reloj, marcador, esquemas, cifras | `--font-mono` |
 | Etiquetas y texto de la franja | `--font-ui` |
 
 Tamaños en `em` sobre `font-size: calc(var(--tv-escala) * 16px)` en `.tv__capa`, para que todo escale
@@ -293,7 +299,8 @@ con el video. `--tv-escala` = ancho del escenario / 1280, lo fija `transmision.j
 ### Espaciado, radio, elevación
 - Escenario: `aspect-ratio: 16 / 9; width: 100%; max-width: calc((100vh - 140px) * 16 / 9); margin: 0 auto`.
 - Marcador, sello y etiqueta del protagonista: forma de píldora (`--radius-pill`).
-- Radar, «Los más rápidos» y franja de MATEO: radio `--radius-card` (0).
+- Radar, «Alineaciones» y franja de MATEO: radio `--radius-card` (0).
+- `p.tv-nota`: debajo del escenario, `--text-small`, color `--color-text-soft`, centrada.
 - Sin sombras ni degradados.
 
 ### Posiciones sobre el video (en % del escenario)
@@ -303,8 +310,8 @@ con el video. `--tv-escala` = ancho del escenario / 1280, lo fija `transmision.j
 | ② Sello | arriba 3 %, derecha 2 % |
 | ③ Protagonista | abajo 22 %, izquierda 2 % |
 | ④ Radar | abajo 20 %, centrado, ancho 26 % |
-| ⑤ Los más rápidos | abajo 20 %, derecha 2 %, ancho mínimo 22 % |
-| ⑥ Velocidad | 0.6 em arriba del borde superior de la caja del protagonista, centrada en x |
+| ⑤ Alineaciones | abajo 20 %, derecha 2 %, ancho mínimo 22 % |
+| ⑥ Triángulo | 10 px de video arriba del borde superior de la caja del protagonista, centrado en x |
 | ⑦ Franja MATEO | abajo 3 %, izquierda 2 %, derecha 2 % |
 
 ### Movimiento
@@ -343,10 +350,10 @@ Reglas para Bob:
 | # | Slug | Entrega |
 |---|---|---|
 | 1 | exportar-datos | `export_transmision.py`, `transmision.json`, pruebas paso 1 |
-| 2 | logica-base | `transmision-logica.js` (cuadro, reloj, km/h, escala) + pruebas con Node |
+| 2 | logica-base | `transmision-logica.js` (cuadro, reloj, escala) + pruebas con Node |
 | 3 | pagina-base | Página con video, botón de inicio, marcador ①, sello ② |
-| 4 | protagonista | ③ protagonista, ⑥ velocidad con estela, y la función de horario de gráficos |
-| 5 | radar-rapidos | ④ mini radar y ⑤ los más rápidos |
+| 4 | protagonista | ③ protagonista, ⑥ triángulo con estela, y la función de horario de gráficos |
+| 5 | radar-alineaciones | ④ mini radar y ⑤ alineaciones |
 | 6 | voz-mateo | ⑦ franja de MATEO con audio sincronizado y controles |
 | 7 | menu-regresion | «Transmisión» en el menú y regresión del resto del dashboard |
 
@@ -356,7 +363,7 @@ Reglas para Bob:
 
 **Do**
 1. Crear `scripts/export_transmision.py` que escribe `dashboard/data/transmision.json` con el contrato
-   exacto de §4 (todas las reglas de la tabla y el cálculo de cajas y `kmh`). Detalles:
+   exacto de §4 (todas las reglas de la tabla y el cálculo de cajas). Detalles:
    - `ROOT = pathlib.Path(__file__).resolve().parent.parent`; leer
      `ROOT/"data/clean/objects_cleaned.parquet"`, `ROOT/"dashboard/data/mateo_data.json"`,
      `ROOT/"dashboard/data/partido/partido.json"`.
@@ -374,8 +381,11 @@ Reglas para Bob:
    1. Correr `export_transmision.py` dos veces con `sys.executable`; ambas salen 0 y el SHA-256 del
       archivo es idéntico.
    2. `version == 1`; `len(cuadros) == len(cancha) == video.n_frames == mateo_data.meta.n_frames`.
-   3. Todo `kmh` no nulo cumple `0 <= kmh <= 34.2`.
-   4. Todo id de `cuadros`, de `protagonista` y de `top3` está en `jugadores`.
+   3. Toda caja de `cuadros` tiene exactamente 5 elementos; `len(balon) == n_frames` y cada elemento
+      de `balon` es `null` o 2 enteros dentro de `0..1279` × `0..719`.
+   4. Todo id de `cuadros` y de `protagonista` está en `jugadores`; toda jugada con `protagonista` no
+      nulo tiene `frames_cerca >= 15`, y `jugadas[0].protagonista == 1` (dato real: en la primera
+      jugada el id 1 es el más cercano al balón en 45 cuadros).
    5. `len(jugadas) == len(mateo_data.windows)` y cada `texto` es igual a su `narration`.
    6. `partido.reloj_inicio_s == 63` y `partido.marcador == [0, 0]`.
    7. Etiquetas: `jugadores["6"].etiqueta == "14 · Galo"` y `jugadores["1"].etiqueta == "11 · Rogers"`
@@ -383,10 +393,15 @@ Reglas para Bob:
       dorsal 11, certeza media). Además, todo jugador sin `jugador` en `mateo_data.json` tiene una
       etiqueta que empieza con `"Jugador "`, `"#"` o es `"Árbitro"`.
    8. Tamaño del archivo `< 3_000_000` bytes.
+   9. `ficha == {"estadio": "Estadio Nacional de Costa Rica", "asistencia": 15700, "local":
+      {"esquema": "3-4-2-1", "entrenador": "Gustavo Alfaro"}, "visita": {"esquema": "5-4-1",
+      "entrenador": "Francisco Molina"}}` (datos validados de `partido.json`), y la cadena `"kmh"` no
+      aparece en el archivo.
 
 **Done when**
 - [ ] WHEN se ejecuta `export_transmision.py` dos veces THE SYSTEM SHALL escribir `dashboard/data/transmision.json` con bytes idénticos y salir con 0.
-- [ ] WHEN se valida el JSON THE SYSTEM SHALL tener tantos `cuadros` como `meta.n_frames` de `mateo_data.json` y todo `kmh` entre 0 y 34.2.
+- [ ] WHEN se valida el JSON THE SYSTEM SHALL tener tantos `cuadros` y `balon` como `meta.n_frames` de `mateo_data.json`, cajas de 5 elementos y ninguna velocidad.
+- [ ] WHEN se elige al protagonista de la primera jugada THE SYSTEM SHALL dar el id 1 con al menos 15 cuadros cerca del balón.
 - [ ] WHEN se leen las etiquetas THE SYSTEM SHALL dar `"14 · Galo"` para el id 6 y `"11 · Rogers"` para el id 1.
 - [ ] WHEN falta `data/clean/objects_cleaned.parquet` THE SYSTEM SHALL imprimir `[FALLA] falta …` y salir con código 1.
 
@@ -429,7 +444,6 @@ git tag step-01-exportar-datos
    |---|---|
    | `indiceCuadro(t, fps, n)` | `Math.floor(t * fps)` acotado a `0..n-1`; `t` negativo o `NaN` → 0 |
    | `reloj(t, inicioS)` | `"MM:SS"` de `inicioS + Math.floor(max(t, 0))`, con ceros a la izquierda |
-   | `formatoKmh(v)` | `v.toFixed(1) + " km/h"`; `null`/`undefined`/`NaN` → `""` |
    | `escala(anchoEscenario, anchoVideo)` | `anchoEscenario / anchoVideo`; si alguno es 0 o no numérico → 1 |
 2. Crear `scripts/probar_transmision_logica.js`: carga el módulo con
    `require('../dashboard/components/transmision-logica.js')`, usa `node:assert/strict`, acepta
@@ -438,17 +452,16 @@ git tag step-01-exportar-datos
    - `indiceCuadro(0, 29.97, 1080) === 0`; `indiceCuadro(1, 29.97, 1080) === 29`;
      `indiceCuadro(100, 29.97, 1080) === 1079`; `indiceCuadro(-1, 29.97, 1080) === 0`.
    - `reloj(0, 63) === "01:03"`; `reloj(36.04, 63) === "01:39"`; `reloj(-2, 63) === "01:03"`.
-   - `formatoKmh(31.44) === "31.4 km/h"`; `formatoKmh(null) === ""`.
    - `escala(640, 1280) === 0.5`; `escala(0, 1280) === 1`.
 3. Agregar `paso_2()` a `scripts/probar_transmision.py`: corre
    `node --check dashboard/components/transmision-logica.js` y
    `node scripts/probar_transmision_logica.js --hasta 2`, ambos deben salir 0.
 
 **Done when**
-- [ ] WHEN Node carga `transmision-logica.js` THE SYSTEM SHALL exponer `indiceCuadro`, `reloj`, `formatoKmh` y `escala`.
+- [ ] WHEN Node carga `transmision-logica.js` THE SYSTEM SHALL exponer `indiceCuadro`, `reloj` y `escala`.
 - [ ] WHEN `t = 36.04` y el inicio es 63 s THE SYSTEM SHALL devolver `"01:39"`.
 - [ ] WHEN `t` es negativo THE SYSTEM SHALL devolver el cuadro 0 y el reloj `"01:03"`.
-- [ ] WHEN la velocidad es nula THE SYSTEM SHALL devolver una cadena vacía.
+- [ ] WHEN el ancho del escenario es 0 THE SYSTEM SHALL devolver una escala de 1.
 
 **Verify**
 ```bash
@@ -460,7 +473,7 @@ node scripts/probar_transmision_logica.js --hasta 2                  # expect: O
 **Checkpoint**
 ```bash
 git add dashboard/components/transmision-logica.js scripts/probar_transmision_logica.js scripts/probar_transmision.py
-git commit -m "feat(transmision): lógica base de cuadro, reloj y velocidad"
+git commit -m "feat(transmision): lógica base de cuadro, reloj y escala"
 git tag step-02-logica-base
 ```
 
@@ -489,11 +502,12 @@ git tag step-02-logica-base
    - Bucle con `requestAnimationFrame`: `t = video.currentTime`; `#tv-marcador` muestra
      `reloj(t, partido.reloj_inicio_s)`, `local.codigo`, `marcador[0] - marcador[1]`, `visita.codigo`,
      cada código con su color. `.tv-sello` muestra el texto fijo «Omnimorph · IBM Granite».
+   - `p.tv-nota#tv-nota` con el texto literal de §6 (velocidad en pruebas), siempre visible.
 4. Agregar `paso_3()` a `probar_transmision.py`: levanta `serve.py --port <libre>` (igual que
    `probar_modo_prueba.py`, sin modo prueba), espera a que responda y comprueba:
    - `GET /pages/transmision.html` → 200 y el HTML contiene los ids `tv`, `tv-video`, `tv-marcador`,
-     `tv-inicio`, `tv-protagonista`, `tv-velocidad`, `tv-trazos`, `tv-radar`, `tv-rapidos`,
-     `tv-mateo`, `tv-voz`, `data-error`.
+     `tv-inicio`, `tv-protagonista`, `tv-trazos`, `tv-radar`, `tv-ficha`, `tv-mateo`, `tv-voz`,
+     `tv-nota`, `data-error`, y la frase `está en pruebas`. No contiene `km/h`.
    - `GET` 200 a `/data/transmision.json`, `/components/transmision.js`,
      `/components/transmision-logica.js`, `/styles/components/transmision.css`.
    - `node --check dashboard/components/transmision.js` sale 0.
@@ -521,40 +535,39 @@ git tag step-03-pagina-base
 
 ---
 
-#### Paso 4 — Protagonista, velocidad flotante y estela
+#### Paso 4 — Protagonista, triángulo y estela
 
 **Do**
 1. Agregar a `transmision-logica.js`:
    | Función | Contrato |
    |---|---|
    | `jugadaEn(t, jugadas)` | Índice de la jugada con `t0 <= t < t1`; si `t >= t1` de la última → índice de la última; si no hay ninguna → `-1` |
-   | `graficosVisibles(t, jugadas)` | `{indice, protagonista, radar, rapidos}`. Con `i = jugadaEn(t, jugadas)`; si `i === -1` todo `false`. Con `dt = t - j.t0` y `dur = j.t1 - j.t0`: `protagonista = 0.5 <= dt && dt < 3.5`; `radar = (i % 2 === 0) && 0.5 <= dt && dt < dur - 0.3`; `rapidos = (i % 2 === 1) && 0.5 <= dt && dt < dur - 0.3` |
-   | `cajaDe(cuadro, id)` | La caja `[id, x1, y1, x2, y2, kmh]` con ese id en la lista `cuadro`, o `null` |
+   | `graficosVisibles(t, jugadas)` | `{indice, protagonista, radar, ficha}`. Con `i = jugadaEn(t, jugadas)`; si `i === -1` todo `false`. Con `dt = t - j.t0` y `dur = j.t1 - j.t0`: `protagonista = 0.5 <= dt && dt < 3.5`; `radar = (i % 2 === 0) && 0.5 <= dt && dt < dur - 0.3`; `ficha = (i % 2 === 1) && 0.5 <= dt && dt < dur - 0.3` |
+   | `cajaDe(cuadro, id)` | La caja `[id, x1, y1, x2, y2]` con ese id en la lista `cuadro`, o `null` |
    | `estela(cuadros, id, f, largo)` | Lista de puntos `[x, y]` = centro inferior de la caja (`(x1+x2)/2`, `y2`) del id en los cuadros `max(0, f-largo+1) .. f`, en orden, saltando cuadros donde no está |
 2. Casos nuevos en `probar_transmision_logica.js` (grupo del paso 4), con
    `J = [{t0: 0, t1: 4.5}, {t0: 4.5, t1: 9.01}]`:
    - `jugadaEn(1, J) === 0`; `jugadaEn(5, J) === 1`; `jugadaEn(20, J) === 1`; `jugadaEn(-1, J) === -1`.
-   - `graficosVisibles(0.2, J)` → `protagonista`, `radar`, `rapidos` todos `false`.
-   - `graficosVisibles(1.0, J)` → `{indice: 0, protagonista: true, radar: true, rapidos: false}`.
+   - `graficosVisibles(0.2, J)` → `protagonista`, `radar`, `ficha` todos `false`.
+   - `graficosVisibles(1.0, J)` → `{indice: 0, protagonista: true, radar: true, ficha: false}`.
    - `graficosVisibles(4.4, J)` → `protagonista: false`, `radar: false`.
-   - `graficosVisibles(5.0, J)` → `{indice: 1, protagonista: true, radar: false, rapidos: true}`.
-   - Con `C = [[[6,10,10,20,40,30.0]], [], [[6,12,10,22,42,31.0]]]`: `cajaDe(C[2], 6)[5] === 31`;
+   - `graficosVisibles(5.0, J)` → `{indice: 1, protagonista: true, radar: false, ficha: true}`.
+   - Con `C = [[[6,10,10,20,40]], [], [[6,12,10,22,42]]]`: `cajaDe(C[2], 6)[4] === 42`;
      `cajaDe(C[1], 6) === null`; `estela(C, 6, 2, 15)` es `[[15,40],[17,42]]`.
 3. En `transmision.js`, en cada cuadro: con `graficosVisibles` y la jugada actual `j`:
    - ③ `#tv-protagonista` visible si `protagonista` y `j.protagonista !== null`; texto =
      `jugadores[j.protagonista].etiqueta`; borde izquierdo con el color de su equipo.
-   - ⑥ Si además `cajaDe(cuadro actual, j.protagonista)` existe: `#tv-velocidad` con
-     `formatoKmh(caja[5])`, posicionado según §7 en coordenadas de video × `--tv-escala`; en
-     `#tv-trazos` (viewBox `0 0 1280 720`) una `polyline` con `estela(cuadros, id, f, 15)` en
-     `--color-ok` de 3 de grosor, y un triángulo relleno `--color-ball` 10 px arriba de `y1`, centrado.
-     Si no hay caja: ocultar velocidad, estela y triángulo.
+   - ⑥ Si además `cajaDe(cuadro actual, j.protagonista)` existe: en `#tv-trazos` (viewBox
+     `0 0 1280 720`) una `polyline` con `estela(cuadros, id, f, 15)` en `--color-ok` de 3 de grosor, y
+     un triángulo relleno `--color-ball` 10 px arriba de `y1`, centrado en x (§7). Si no hay caja:
+     ocultar estela y triángulo. No se muestra ninguna cifra de velocidad.
    - Agregar en `transmision.css` los estilos de ③ y ⑥ (§7).
 4. `paso_4()` en `probar_transmision.py`: corre `node scripts/probar_transmision_logica.js --hasta 4`
    y `node --check` de los dos JS; y verifica en `transmision.json` que cada jugada con
    `protagonista` no nulo tiene ese id en al menos una caja entre `f0` y `f1`.
 
 **Done when**
-- [ ] WHEN `t = 1.0` en la primera jugada THE SYSTEM SHALL marcar visibles al protagonista y al radar, y no a los más rápidos.
+- [ ] WHEN `t = 1.0` en la primera jugada THE SYSTEM SHALL marcar visibles al protagonista y al radar, y no a las alineaciones.
 - [ ] WHEN `t = 4.4` THE SYSTEM SHALL ocultar al protagonista y al radar.
 - [ ] WHEN el protagonista no aparece en el cuadro THE SYSTEM SHALL devolver `null` en `cajaDe` y la estela solo con los cuadros donde aparece.
 - [ ] WHEN se revisa `transmision.json` THE SYSTEM SHALL tener a cada protagonista presente en su jugada.
@@ -568,35 +581,38 @@ node scripts/probar_transmision_logica.js --hasta 4                  # expect: O
 **Checkpoint**
 ```bash
 git add dashboard/components/transmision-logica.js dashboard/components/transmision.js dashboard/styles/components/transmision.css scripts/probar_transmision_logica.js scripts/probar_transmision.py
-git commit -m "feat(transmision): protagonista, velocidad flotante y estela"
+git commit -m "feat(transmision): protagonista, triángulo y estela"
 git tag step-04-protagonista
 ```
 
 ---
 
-#### Paso 5 — Mini radar y «Los más rápidos»
+#### Paso 5 — Mini radar y «Alineaciones»
 
 **Do**
 1. Agregar a `transmision-logica.js`:
    | Función | Contrato |
    |---|---|
    | `puntosRadar(entradaCancha)` | Para `{"p": [[id, team, x, y], …], "b": [x, y] o null}` devuelve `{jugadores: [{id, team, x, y}], balon: {x, y} o null}`, mismo orden |
-   | `filasRapidos(top3, jugadores)` | `[{etiqueta, kmh}]` con `etiqueta = jugadores[String(id)].etiqueta` y `kmh = formatoKmh(v)` |
+   | `filasFicha(ficha, partido)` | `[{codigo, color, texto}]`: primero el local y luego la visita, con `codigo` y `color` de `partido.local` / `partido.visita` y `texto = esquema + " · " + entrenador` de `ficha.local` / `ficha.visita` |
 2. Casos nuevos (grupo del paso 5):
    - `puntosRadar({p: [[6, 1, 640, 310]], b: null})` deep-equal
      `{jugadores: [{id: 6, team: 1, x: 640, y: 310}], balon: null}`.
    - `puntosRadar({p: [], b: [578, 397]}).balon` deep-equal `{x: 578, y: 397}`.
-   - `filasRapidos([[6, 31.4]], {"6": {team: 1, etiqueta: "14 · Galo"}})` deep-equal
-     `[{etiqueta: "14 · Galo", kmh: "31.4 km/h"}]`.
+   - Con `F = {local: {esquema: "3-4-2-1", entrenador: "Gustavo Alfaro"}, visita: {esquema: "5-4-1",
+     entrenador: "Francisco Molina"}}` y `P = {local: {codigo: "CRC", color: "#00BFFF"}, visita:
+     {codigo: "SKN", color: "#FF1493"}}`: `filasFicha(F, P)` deep-equal
+     `[{codigo: "CRC", color: "#00BFFF", texto: "3-4-2-1 · Gustavo Alfaro"}, {codigo: "SKN", color: "#FF1493", texto: "5-4-1 · Francisco Molina"}]`.
 3. En `transmision.js`:
    - ④ `#tv-radar`: un `<svg viewBox="0 0 1200 700">` con fondo `--color-pitch`, líneas de cancha
      `--color-pitch-lines` (borde, línea media, círculo central de radio 91.5, áreas de 165 × 403
      centradas en cada portería), un círculo de radio 12 por jugador del cuadro actual
      (`cancha[f]`) con el color de su equipo (`team` 2 → `--color-text-soft`) y el balón de radio 8 en
      `--color-ball`. Visible solo cuando `radar` es `true`.
-   - ⑤ `#tv-rapidos`: título «Los más rápidos» y una fila por elemento de
-     `filasRapidos(j.top3, jugadores)`, con la cifra en `--font-mono`. Visible solo cuando `rapidos`
-     es `true` y `j.top3` no está vacío.
+   - ⑤ `#tv-ficha`: título «Alineaciones», una fila por elemento de `filasFicha(datos.ficha,
+     datos.partido)` (código en su color y en `--font-headline`, esquema en `--font-mono`) y al pie
+     `ficha.estadio + " · " + asistencia.toLocaleString("es") + " aficionados"` en
+     `--color-text-soft`. Visible solo cuando `ficha` (de `graficosVisibles`) es `true`.
    - Estilos de ④ y ⑤ en `transmision.css` (§7).
 4. `paso_5()` en `probar_transmision.py`: corre `node scripts/probar_transmision_logica.js --hasta 5`
    y `node --check` de los dos JS.
@@ -604,7 +620,7 @@ git tag step-04-protagonista
 **Done when**
 - [ ] WHEN `puntosRadar` recibe una entrada de `cancha` THE SYSTEM SHALL devolver los jugadores con `id`, `team`, `x`, `y` en el mismo orden.
 - [ ] WHEN no hay balón en el cuadro THE SYSTEM SHALL devolver `balon: null`.
-- [ ] WHEN `filasRapidos` recibe `[[6, 31.4]]` THE SYSTEM SHALL devolver `[{etiqueta: "14 · Galo", kmh: "31.4 km/h"}]`.
+- [ ] WHEN `filasFicha` recibe la ficha y el partido THE SYSTEM SHALL devolver CRC «3-4-2-1 · Gustavo Alfaro» y luego SKN «5-4-1 · Francisco Molina».
 
 **Verify**
 ```bash
@@ -615,8 +631,8 @@ node scripts/probar_transmision_logica.js --hasta 5                  # expect: O
 **Checkpoint**
 ```bash
 git add dashboard/components/transmision-logica.js dashboard/components/transmision.js dashboard/styles/components/transmision.css scripts/probar_transmision_logica.js scripts/probar_transmision.py
-git commit -m "feat(transmision): mini radar y los más rápidos"
-git tag step-05-radar-rapidos
+git commit -m "feat(transmision): mini radar y alineaciones"
+git tag step-05-radar-alineaciones
 ```
 
 ---
@@ -803,7 +819,7 @@ NOT APPLICABLE — el túnel de Cloudflare da la URL y el TLS.
 
 | Capa | Herramienta | Qué cubre |
 |---|---|---|
-| Datos | `scripts/probar_transmision.py` paso 1 | contrato de §4, determinismo, límites de velocidad, etiquetas |
+| Datos | `scripts/probar_transmision.py` paso 1 | contrato de §4, determinismo, protagonista, ficha, etiquetas y ausencia de velocidades |
 | Lógica | `scripts/probar_transmision_logica.js` | todas las funciones de `transmision-logica.js` con casos literales |
 | Servidor y archivos | `probar_transmision.py` pasos 3 y 7 | que la página y sus archivos se sirvan, y que las demás páginas sigan en 200 |
 | Regresión del modo prueba | `scripts/probar_modo_prueba.py` | los 15 casos existentes |
@@ -959,14 +975,14 @@ scripts directos, y no hay runner de pruebas, linter ni formateador en el repo.
 .venv/Scripts/python.exe scripts/probar_transmision.py --hasta 7     # expect: pasos 1–7 OK, exit 0
 node scripts/probar_transmision_logica.js --hasta 7                  # expect: OK <n> casos, exit 0
 .venv/Scripts/python.exe scripts/probar_modo_prueba.py              # expect: 15 casos OK, exit 0
-for t in step-01-exportar-datos step-02-logica-base step-03-pagina-base step-04-protagonista step-05-radar-rapidos step-06-voz-mateo step-07-menu-regresion; do git rev-parse --verify --quiet "refs/tags/$t" >/dev/null; done   # expect: los 7 tags existen, exit 0
+for t in step-01-exportar-datos step-02-logica-base step-03-pagina-base step-04-protagonista step-05-radar-alineaciones step-06-voz-mateo step-07-menu-regresion; do git rev-parse --verify --quiet "refs/tags/$t" >/dev/null; done   # expect: los 7 tags existen, exit 0
 ```
 
 **Lista de lanzamiento (a mano, después de la construcción):**
 - [ ] Abrir `http://localhost:8600/pages/transmision.html`, pulsar «Ver transmisión» y ver los 36 s
       completos sin errores en la consola del navegador.
 - [ ] El reloj va de 01:03 a 01:39 y el marcador dice CRC 0-0 SKN.
-- [ ] En cada jugada aparecen y se van el protagonista y la velocidad, y alternan el radar y «Los más rápidos».
+- [ ] En cada jugada aparecen y se van el protagonista con su triángulo y estela, y alternan el radar y «Alineaciones». Debajo del video se lee que la velocidad está en pruebas.
 - [ ] La voz de MATEO coincide con la franja y el botón la apaga.
 - [ ] Captura en escritorio y en celular (ancho 375 px) para el equipo.
 - [ ] Claude revisa las capturas contra el boceto y `DESIGN.md`.
@@ -974,9 +990,9 @@ for t in step-01-exportar-datos step-02-logica-base step-03-pagina-base step-04-
 ### 20.2 Registro de riesgos
 | Riesgo | Señal | Mitigación |
 |---|---|---|
-| La velocidad del tracker es ruidosa | km/h que saltan | Mediana móvil de 31 cuadros y tope de 34.2 km/h (§4) |
+| La velocidad del tracker no es confiable (la calibración salta en cada cuadro) | Cifras infladas o topadas | No se muestra; la página dice que está en pruebas. Volver a medir cuando mejore la homografía |
 | Solo 10 de 46 jugadores tienen nombre | Muchas etiquetas «Jugador CRC» | Es honesto; el protagonista suele ser un jugador identificado. Mejorar la identificación es otro trabajo |
-| El protagonista de una jugada es el más rápido, no quien tiene el balón | Puede no ser el jugador de la acción | Es la regla v1, explicable. Con la posesión fiable se puede cambiar |
+| El protagonista es el más cercano al balón, no necesariamente quien lo tiene | En 6 de 8 jugadas sale el mismo jugador (id 1, Rogers) | Es la regla v1, explicable. Con la posesión fiable se puede cambiar |
 | La voz se desfasa del video | Frase y jugada no coinciden | Reajuste si el desfase pasa de 0.3 s (paso 6) |
 | El navegador bloquea el audio | Silencio al cargar | Botón «Ver transmisión» obligatorio antes de reproducir |
 | Derechos del video de la transmisión | Uso público del material | Solo para demos privadas con el equipo, IBM o clientes; para material público, video propio |
@@ -986,8 +1002,9 @@ for t in step-01-exportar-datos step-02-logica-base step-03-pagina-base step-04-
 |---|---|---|
 | Script de export aparte en vez de ampliar `export_dashboard_data.py` | No arriesgar el export que alimenta MATEO | Se unifica el pipeline de exportación |
 | Lógica pura en `transmision-logica.js` probada con Node | Gates reales sin navegador | Se instala un runner de navegador (Playwright) |
-| Protagonista = el más rápido de la jugada | Dato disponible y verificable hoy | Hay detección fiable de posesión |
-| Radar y «Los más rápidos» alternan por jugada | Pantalla limpia, inmersiva | El equipo pide verlos juntos |
+| Protagonista = el más cercano al balón en más cuadros de la jugada | Usa solo cajas en pantalla y la detección del balón (860 de 1080 cuadros), que son fiables | Hay detección fiable de posesión |
+| Sin km/h en la v1, con la nota «está en pruebas» | Decisión del usuario (2026-11-21), tras ver que incluso filtradas las cifras salen infladas (~11 km/h trotando) | La homografía mejora y una prueba muestra ritmos de fútbol creíbles (~7 km/h trotando) |
+| Radar y «Alineaciones» alternan por jugada | Pantalla limpia, inmersiva | El equipo pide verlos juntos |
 | Reloj desde 1:03 y marcador calculado de `partido.json` | Dato del usuario y datos validados por Fer | Cambia el clip |
 | Nombre solo con certeza alta o media | No mostrar nombres dudosos | Se valida la identificación de todos |
 | Nombre de la página «Transmisión» con subtítulo inmersivo | Cabe en el menú y dice lo que es | El equipo prefiere otro nombre |
