@@ -236,6 +236,20 @@ def _marcador(goles: list, local_nombre: str) -> list[int]:
     return [local_g, visita_g]
 
 
+def _color_uniforme(partido_d: dict, codigo: str, fallback: str) -> str:
+    """Devuelve el color principal del uniforme del equipo con ese código.
+
+    Busca en partido.json → colores_uniforme (clave = clave del equipo en equipos_orden)
+    cuyo equipo tenga ese código. Si no existe, usa el fallback de mateo_data.
+    """
+    eqs = partido_d.get("equipos", {})
+    cu  = partido_d.get("colores_uniforme", {})
+    for clave, eq in eqs.items():
+        if eq.get("codigo") == codigo and clave in cu:
+            return cu[clave]
+    return fallback
+
+
 def main() -> None:
     _verificar_entradas()
 
@@ -252,15 +266,18 @@ def main() -> None:
     local_nombre = meta["team_b_name"]   # CRC
     goles_data   = partido_d.get("goles", [])
 
+    local_color  = _color_uniforme(partido_d, meta["team_b"], meta["team_b_color"])
+    visita_color = _color_uniforme(partido_d, meta["team_a"], meta["team_a_color"])
+
     datos: dict = {
         "version": 1,
         "partido": {
             "titulo":        meta["titulo"],
             "competicion":   "Eliminatorias Concacaf · Mundial 2026",
             "local":  {"team": 1, "codigo": meta["team_b"], "nombre": meta["team_b_name"],
-                       "color": meta["team_b_color"]},
+                       "color": local_color},
             "visita": {"team": 0, "codigo": meta["team_a"], "nombre": meta["team_a_name"],
-                       "color": meta["team_a_color"]},
+                       "color": visita_color},
             "marcador":        _marcador(goles_data, local_nombre),
             "reloj_inicio_s":  CLIP_INICIO_S,
         },

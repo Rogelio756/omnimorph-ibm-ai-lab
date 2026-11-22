@@ -327,6 +327,19 @@ def paso_1() -> None:
         ok, nota = False, str(e)
     caso("1.9 ficha correcta y sin 'kmh' en el archivo", ok, nota)
 
+    # 1.10: colores de uniforme reales (CRC #c8102e, SKN #009739)
+    ok = True
+    nota = ""
+    try:
+        local_color  = d["partido"]["local"]["color"]
+        visita_color = d["partido"]["visita"]["color"]
+        ok = local_color.lower() == "#c8102e" and visita_color.lower() == "#009739"
+        if not ok:
+            nota = f"local.color={local_color!r} visita.color={visita_color!r}"
+    except Exception as e:
+        ok, nota = False, str(e)
+    caso("1.10 Colores uniforme: CRC #c8102e, SKN #009739", ok, nota)
+
 
 # ── Paso 2 ────────────────────────────────────────────────────────────────────
 
@@ -396,7 +409,7 @@ def paso_3() -> None:
     ids_requeridos = [
         "tv", "tv-video", "tv-marcador", "tv-inicio",
         "tv-protagonista", "tv-trazos",
-        "tv-radar", "tv-ficha", "tv-mateo", "tv-voz", "data-error",
+        "tv-radar", "tv-ficha", "tv-mateo", "tv-voz", "data-error", "tv-nota",
     ]
     rutas = [
         "/data/transmision.json",
@@ -420,6 +433,26 @@ def paso_3() -> None:
             except Exception as e:
                 ok, nota = False, str(e)
             caso("3.3 GET /pages/transmision.html → 200 con todos los ids", ok, nota)
+
+            # 3.5: tv-nota contiene "está en pruebas", sin "km/h" en botones
+            ok = True
+            nota = ""
+            try:
+                code2, body2 = _get(srv.url("/pages/transmision.html"))
+                html2 = body2.decode("utf-8", errors="replace")
+                tiene_nota = "está en pruebas" in html2
+                sin_kmh    = "km/h" not in html2
+                # Ningún <button> debe tener la clase pill-button
+                import re as _re
+                botones_pill = _re.findall(r'<button[^>]*class="[^"]*pill-button', html2)
+                sin_pill = len(botones_pill) == 0
+                ok = tiene_nota and sin_kmh and sin_pill
+                if not ok:
+                    nota = (f"tiene_nota={tiene_nota} sin_kmh={sin_kmh} "
+                            f"sin_pill={sin_pill} (botones_pill={botones_pill})")
+            except Exception as e:
+                ok, nota = False, str(e)
+            caso("3.5 tv-nota con texto, sin km/h, botones sin pill-button", ok, nota)
 
             # 3.4: archivos estáticos → 200
             ok = True
@@ -586,7 +619,23 @@ def paso_6() -> None:
 
 def paso_7() -> None:
     print("\nPaso 7 — Menú y regresión")
-    nav_js = ROOT / "dashboard" / "components" / "site-nav.js"
+    nav_js   = ROOT / "dashboard" / "components" / "site-nav.js"
+    index_html = ROOT / "dashboard" / "pages" / "index.html"
+
+    # 7.0: index.html contiene href="transmision.html" dentro de nav-links
+    ok = True
+    nota = ""
+    try:
+        contenido_idx = index_html.read_text(encoding="utf-8")
+        # Verificar que href="transmision.html" aparece después de id="nav-links"
+        pos_nav  = contenido_idx.find('id="nav-links"')
+        pos_link = contenido_idx.find('href="transmision.html"')
+        ok = pos_nav >= 0 and pos_link > pos_nav
+        if not ok:
+            nota = (f"nav-links pos={pos_nav} transmision.html pos={pos_link}")
+    except Exception as e:
+        ok, nota = False, str(e)
+    caso("7.0 index.html contiene transmision.html en nav-links", ok, nota)
 
     # 7.1: site-nav.js contiene las 5 entradas en orden correcto
     ok = True

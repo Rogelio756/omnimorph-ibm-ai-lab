@@ -49,7 +49,7 @@
 .tv-marcador {
   position: absolute;
   top: 3%;
-  left: 2%;
+  right: 2%;
   display: flex;
   align-items: center;
   gap: 0.4em;
@@ -77,7 +77,7 @@
 /* ── ② Sello ────────────────────────────────────────────────────────────── */
 .tv-sello {
   position: absolute;
-  top: 3%;
+  top: 10%;
   right: 2%;
   padding: 0.3em 0.7em;
   background: color-mix(in srgb, var(--color-bg) 88%, transparent);
@@ -127,10 +127,9 @@
 /* ── ④ Mini radar ───────────────────────────────────────────────────────── */
 .tv-radar {
   position: absolute;
-  bottom: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 26%;
+  bottom: 14%;
+  right: 2%;
+  width: 22%;
   background: color-mix(in srgb, var(--color-bg) 88%, transparent);
   border: var(--border);
   border-radius: var(--radius-card);
@@ -156,9 +155,10 @@
 /* ── ⑤ Alineaciones ─────────────────────────────────────────────────────── */
 .tv-ficha {
   position: absolute;
-  bottom: 20%;
+  bottom: 14%;
   right: 2%;
   min-width: 22%;
+  max-width: 22%;
   background: color-mix(in srgb, var(--color-bg) 88%, transparent);
   border: var(--border);
   border-radius: var(--radius-card);
@@ -276,6 +276,16 @@
   justify-content: center;
 }
 
+/* ── Nota velocidad en pruebas ──────────────────────────────────────────── */
+.tv-nota {
+  font-family: var(--font-ui);
+  font-size: var(--text-small);
+  color: var(--color-text-soft);
+  text-align: center;
+  margin: 0;
+  max-width: 640px;
+}
+
 /* ── Subtítulo ──────────────────────────────────────────────────────────── */
 .tv-subtitulo {
   font-family: var(--font-ui);
@@ -283,4 +293,31 @@
   color: var(--color-text-soft);
   text-align: center;
   margin: 0;
+}
+
+/* ── Responsive móvil (≤ 767 px) ────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* El radar se oculta en móvil */
+  .tv-radar {
+    display: none !important;
+  }
+
+  /* Franja MATEO y alineaciones salen del video y se muestran como texto */
+  .tv-mateo,
+  .tv-ficha {
+    position: static !important;
+    transform: none !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    opacity: 1 !important;
+    font-size: 13px !important;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .tv-mateo[hidden],
+  .tv-ficha[hidden] {
+    display: none;
+  }
 }
