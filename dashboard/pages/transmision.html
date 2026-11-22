@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MATEO — Transmisión: el partido como en la tele, con la voz de MATEO">
+  <title>MATEO — Transmisión</title>
+
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/components/pill-button.css">
+  <link rel="stylesheet" href="../styles/components/status-chips.css">
+  <link rel="stylesheet" href="../styles/components/site-header.css">
+  <link rel="stylesheet" href="../styles/components/site-credit.css">
+  <link rel="stylesheet" href="../styles/components/site-nav.css">
+  <link rel="stylesheet" href="../styles/components/transicion.css">
+  <link rel="stylesheet" href="../styles/components/transmision.css">
+  <script src="../components/transicion.js"></script>
+</head>
+<body class="page-transmision">
+
+  <header class="site-header" role="banner">
+    <div class="site-header__brand">
+      <img class="brand-cubo" src="../assets/logos/web/omnimorph-cubo.png" alt="">
+      <div class="site-header__titles">
+        <span class="site-header__name">OMNIMORPH</span>
+        <span class="site-header__subtitle">MATEO · Transmisión</span>
+      </div>
+    </div>
+    <div class="site-header__sep" aria-hidden="true"></div>
+    <nav id="site-nav" class="site-nav" aria-label="Navegación principal"></nav>
+  </header>
+
+  <main class="transmision">
+
+    <div class="notice notice--alert" id="data-error" hidden>
+      <span class="notice__tag">Sin datos</span>
+      <span>No se pudo cargar <code>data/transmision.json</code>. Ejecuta
+        <code>.venv/Scripts/python.exe scripts/export_transmision.py</code></span>
+    </div>
+
+    <div class="tv" id="tv">
+      <video id="tv-video"
+             playsinline
+             preload="auto"
+             aria-label="Transmisión del partido Costa Rica vs. San Cristóbal y Nieves"></video>
+      <audio id="tv-voz" preload="auto"></audio>
+
+      <div class="tv__capa">
+        <!-- ① Marcador -->
+        <div class="tv-marcador" id="tv-marcador">
+          <span class="tv-marcador__reloj" id="tv-reloj">--:--</span>
+          <span class="tv-marcador__local"  id="tv-local-codigo"></span>
+          <span class="tv-marcador__score"  id="tv-score"></span>
+          <span class="tv-marcador__visita" id="tv-visita-codigo"></span>
+        </div>
+
+        <!-- ② Sello -->
+        <div class="tv-sello">Omnimorph · IBM Granite</div>
+
+        <!-- ③ Protagonista -->
+        <div class="tv-protagonista" id="tv-protagonista" hidden></div>
+
+        <!-- ⑥ Estela + triángulo (SVG sobre el video) -->
+        <svg class="tv-trazos" id="tv-trazos"
+             viewBox="0 0 1280 720"
+             aria-hidden="true"></svg>
+
+        <!-- ④ Mini radar -->
+        <div class="tv-radar" id="tv-radar" hidden
+             role="img" aria-label="Mini radar con la posición de los jugadores">
+          <svg viewBox="0 0 1200 700" class="tv-radar__svg"></svg>
+        </div>
+
+        <!-- ⑤ Alineaciones -->
+        <div class="tv-ficha" id="tv-ficha" hidden></div>
+
+        <!-- ⑦ Franja MATEO -->
+        <div class="tv-mateo" id="tv-mateo" aria-live="polite" hidden></div>
+      </div>
+
+      <button class="tv-inicio" id="tv-inicio" disabled>Preparando…</button>
+    </div>
+
+    <div class="tv-controles">
+      <button class="pill-button" id="tv-pausa" disabled>Pausa</button>
+      <button class="pill-button pill-button--secondary" id="tv-voz-toggle"
+              aria-pressed="true">Voz de MATEO: sí</button>
+      <button class="pill-button pill-button--secondary" id="tv-repetir" disabled>Repetir</button>
+    </div>
+
+    <p class="tv-subtitulo">El partido como en la tele, con la voz de MATEO</p>
+
+  </main>
+
+  <footer class="site-credit" role="contentinfo">
+    <p class="site-credit__text">© 2026 Equipo Omnimorph · Proyecto para el IBM SkillsBuild AI Experiential Learning Lab · <a class="site-credit__link" href="operaciones.html">Operaciones técnicas</a></p>
+  </footer>
+
+  <script src="../components/site-nav.js"></script>
+  <script src="../components/transmision-logica.js"></script>
+  <script src="../components/transmision.js"></script>
+</body>
+</html>
