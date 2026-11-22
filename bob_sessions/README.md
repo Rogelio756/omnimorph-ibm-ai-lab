@@ -49,6 +49,7 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_32_modo_prueba.md` | 2026-11-14 | Fase 3.5: modo prueba para el equipo (túnel Cloudflare 48 h, 15 preguntas/persona, cookie `om_prueba`, `/api/opinion`, página «Tu opinión», `probar_modo_prueba.py` 15/15 OK) + correcciones R8–R12 en `chat_agent.py` (`probar_chat_reglas.py` 34/34 OK). Sin commit |
 | `sesion_33_lanzamiento_prueba.md` | 2026-11-14 | Lanzamiento de la prueba de 48 h por túnel de Cloudflare (fin 16/11 15:08), arreglo del chat por el túnel (f82f052), verificación pública y mensajes para el equipo y para IBM (Claude Code) |
 | `sesion_34_relanzar_prueba.md` | 2026-11-15 | Caída de la prueba por apagado automático de Windows (1:29 a. m.), relanzamiento con URL nueva, blindaje de energía de la laptop, análisis de migración a IBM Cloud (Code Engine + COS) y cierre anticipado de la prueba el 16/11 con 0 opiniones en el formulario. Sin cambios de código (Claude Code) |
+| `sesion_35_blueprint_transmision.md` | 2026-11-21 | Cierre de la ronda 3, ideas de crecimiento (amateur y TV), revisión de páginas (Operaciones se ve apagada por el túnel) y blueprint de la página «Transmisión» para Bob (Claude Code) |
 
 ---
 
