@@ -52,6 +52,7 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_35_blueprint_transmision.md` | 2026-11-21 | Cierre de la ronda 3, ideas de crecimiento (amateur y TV), revisión de páginas (Operaciones se ve apagada por el túnel) y blueprint de la página «Transmisión» para Bob (Claude Code) |
 | `sesion_36_pagina_transmision.md` | 2026-11-22 | Construcción completa de la página Transmisión en 7 pasos (blueprint v3, sin km/h): export, lógica pura, HTML/CSS/JS, protagonista por cercanía al balón, radar, alineaciones, voz de MATEO, menú. 30/30 pruebas OK, 7/7 tags (IBM Bob) |
 | `sesion_37_presupuesto_bobcoins.md` | 2026-11-23 | Registro del estado del presupuesto: cuenta anterior agotada (~40), cuenta activa Pro Plus 155.90/180.00 Bobcoins (87% consumido, ~24 restantes, reseteo 2 dic). Recomendaciones para optimizar consumo hasta el reseteo (IBM Bob) |
+| `sesion_38_auditoria_cumplimiento.md` | 2026-11-23 | Auditoría de cumplimiento: reglas técnicas del programa y del proyecto en orden; faltan capturas y exportación oficial de Bob en `bob_sessions/` y llevar `feat-costa-rica` a `main` (Claude Code) |
 
 ---
 
