@@ -59,6 +59,28 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 
 ---
 
+## Exportaciones oficiales de Bob IDE y capturas de consumo
+
+Exportadas desde Bob IDE (menú `...` → «Export Current Task») el 2026-11-26: 11 tareas, del 2026-11-04 al 2026-11-23. Revisadas antes de subir: sin llaves, tokens ni correos. Las tareas anteriores al 2026-11-22 no tienen captura de consumo. Las capturas están en [`capturas/`](capturas/README.md).
+
+| Tarea de Bob | Exportación | Captura de consumo | Bobcoins | Reporte |
+|---|---|---|---|---|
+| Continuación del proyecto con Bob (2026-11-04) | `bob_export_2026-11-04_continuacion_proyecto.md` | — | — | — |
+| Capa visual de Omnimorph: arranque (2026-11-04) | `bob_export_2026-11-04_capa_visual_inicio.md` | — | — | — |
+| Capa visual de Omnimorph y tablero MATEO (2026-11-04) | `bob_export_2026-11-04_capa_visual_mateo.md` | — | — | — |
+| Cómo trabajar con Bob (2026-11-09) | `bob_export_2026-11-09_como_trabajar.md` | — | — | — |
+| Encargo de dorsales (2026-11-10) | `bob_export_2026-11-10_dorsales.md` | — | — | `sesion_15_dorsales_bob.md` |
+| Consultoría sin tocar código (2026-11-10) | `bob_export_2026-11-10_consultoria_sin_codigo.md` | — | — | — |
+| Plano brownfield para el equipo (2026-11-10) | `bob_export_2026-11-10_architect_brownfield.md` | — | — | — |
+| Página Partido de Fer (2026-11-14) | `bob_export_2026-11-14_pagina_partido_fer.md` | — | — | `sesion_26_pagina_partido_fer.md` |
+| Evaluación con guía y rúbrica (2026-11-14) | `bob_export_2026-11-14_evaluacion_rubrica.md` | — | — | — |
+| Construcción de la página Transmisión (2026-11-22) | `bob_export_transmision.md` | `capturas/bob_sesion_transmision.png`, `capturas/bob_sesion_transmision_detalle.png` (~228.8k tokens) | 45.60 | `sesion_36_pagina_transmision.md` |
+| Panel de 100 consumidores (2026-11-23) | `bob_export_panel_100.md` | `capturas/bob_sesion_panel_100_detalle.png` (~76.0k tokens) | 3.31 | — |
+| Consulta de consumo de Bobcoins (2026-11-26) | — | `capturas/bob_sesion_consumo_detalle.png` (~19.6k tokens) | 0.685 | `sesion_37_presupuesto_bobcoins.md` |
+| Cuenta activa (Pro Plus) | — | `capturas/bobcoins_cuenta_activa.png` | 156 de 180 usados; se renueva el 2026-12-02 | `sesion_37_presupuesto_bobcoins.md` |
+
+---
+
 ## Tecnologias IBM utilizadas
 
 | Tecnologia | Uso |

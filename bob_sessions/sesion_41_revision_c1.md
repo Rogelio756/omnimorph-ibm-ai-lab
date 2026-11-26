@@ -104,3 +104,11 @@ Gemini integra C1b en las posiciones (encargo §3b) y sigue con C2.
 **Puerta humana:** la hoja `docs/video_demo/hoja_8_tramos.jpg` se envió para que Fer y el usuario la aprueben.
 
 **Pendiente para el 26/11:** cerrar los 2 huecos de M3 (exigir que se nombre al equipo con territorio; comprobar «mitad rival» y «su mitad» contra el % de campo rival). Después, volver a correr Granite (~1.4 RU) si se quiere más voz de Granite en el video.
+
+## Prueba en vivo del chat con Granite y vista en celular (25/11, noche, Claude)
+
+- Chat en partido.html: estado «listo». La pregunta de Alfaro fue a Granite: 674 ms, 0.37 RU, PASS, respuesta apoyada en partido.json. La pregunta del 5-4-1 se respondió por regla con estado REVISAR (el verificador no encuentra respaldo para algunos números de la lectura del analista; revisar si son «40 minutos» y «15 minutos»).
+- Celular a 375 px: ninguna página tiene desborde horizontal (Inicio, Partido, MATEO, Método, Transmisión, Opinión, Operaciones). Videos a 372 px en MATEO y 340 px en Transmisión.
+- Detalles menores para el equipo: en MATEO hay textos de 9–10 px (pestañas de tramo, controles de audio y video, preguntas sugeridas) y botones de 28 px de alto (lo recomendado es ≥ 44 px). En Operaciones las preguntas largas se salen de su caja (la página no desborda).
+- Servicio arriba en el puerto 8600 (0.0.0.0) para que lo revise el usuario.
+- Opinión del usuario al cerrar: el radar de MATEO «se ve súper»; falta trabajar el radar de Transmisión. Se retoma el 26/11. Servidor apagado.
