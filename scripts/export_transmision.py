@@ -39,6 +39,7 @@ PARQUET  = ROOT / "data" / "clean" / "objects_cleaned.parquet"
 MATEO    = ROOT / "dashboard" / "data" / "mateo_data.json"
 PARTIDO  = ROOT / "dashboard" / "data" / "partido" / "partido.json"
 OUT      = ROOT / "dashboard" / "data" / "transmision.json"
+CURIOSOS = ROOT / "dashboard" / "data" / "datos_curiosos.json"   # scripts/generar_datos_curiosos.py
 
 VIDEO_W, VIDEO_H = 1280, 720   # resolución de las cajas en píxeles
 DIST_MAX_PX      = 120         # distancia máxima para considerar "cerca" del balón (§4)
@@ -250,6 +251,56 @@ def _color_uniforme(partido_d: dict, codigo: str, fallback: str) -> str:
     return fallback
 
 
+def _build_paneles(partido_d: dict, windows: list, meta: dict) -> dict:
+    """Paneles laterales: datos fijos del partido completo por equipo, medidas
+    por tramo (las mismas de MATEO) y datos curiosos (Granite verificado o plantilla)."""
+    tc = (partido_d.get("estadisticas", {}).get("resumen_comparativo", {})
+          .get("tiempo_completo", {}))
+    curiosos = _load(CURIOSOS).get("equipos", {}) if CURIOSOS.exists() else {}
+
+    def equipo(codigo: str) -> dict:
+        clave = next((k for k, e in partido_d.get("equipos", {}).items()
+                      if e.get("codigo") == codigo), None)
+        e = partido_d.get("equipos", {}).get(clave, {})
+        dato = lambda k: (tc.get(k) or {}).get(clave)
+        goles = [{"minuto": g["minuto"], "nombre": g["anotador"]["nombre"],
+                  "marcador": g["marcador_momento"]}
+                 for g in partido_d.get("goles", []) if g.get("equipo_anotador") == e.get("pais")]
+        return {
+            "codigo": codigo,
+            "nombre": e.get("pais", codigo),
+            "esquema": e.get("esquema_inicial"),
+            "entrenador": e.get("entrenador"),
+            "partido": {
+                "goles": dato("goles"),
+                "posesion_pct": dato("posesion_pct"),
+                "tiros_totales": dato("tiros_totales"),
+                "tiros_a_puerta": dato("tiros_a_puerta"),
+                "corners": dato("corners"),
+                "tarjetas_amarillas": dato("tarjetas_amarillas"),
+            },
+            "goles": goles,
+            "curiosos": curiosos.get(codigo, []),
+        }
+
+    tramos = []
+    for w in windows:
+        eqs = w.get("equipos") or {}
+        tramos.append({
+            "t0": w.get("t0"), "t1": w.get("t1"),
+            "territorio": w.get("territorio"),
+            "equipos": {c: {k: eqs.get(c, {}).get(k) for k in
+                            ("posicion_m", "pct_campo_rival", "largo_m", "ancho_m")}
+                        for c in (meta["team_a"], meta["team_b"])},
+        })
+    return {
+        "local": equipo(meta["team_b"]),
+        "visita": equipo(meta["team_a"]),
+        "tramos": tramos,
+        "fuente_partido": "Estadísticas del partido completo, de fuentes públicas (página Partido).",
+    }
+
+
 def main() -> None:
     _verificar_entradas()
 
@@ -301,6 +352,7 @@ def main() -> None:
     datos["cancha"]  = frames
     datos["jugadas"] = _build_jugadas(windows, cuadros, balon)
     datos["ficha"]   = _build_ficha(partido_d, meta["team_b"], meta["team_a"])
+    datos["paneles"] = _build_paneles(partido_d, windows, meta)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:

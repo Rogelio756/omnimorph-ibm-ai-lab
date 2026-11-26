@@ -34,6 +34,12 @@
   var fichaMovilEl  = document.getElementById('tv-ficha-movil');
   var mateoMovilEl  = document.getElementById('tv-mateo-movil');
   var radarMovilEl  = document.getElementById('tv-radar-movil');
+  var escenarioEl   = document.getElementById('tv-escenario');
+  var panelesToggleBtn = document.getElementById('tv-paneles-toggle');
+  var panelEls = {
+    local:  document.getElementById('tv-panel-local'),
+    visita: document.getElementById('tv-panel-visita'),
+  };
   var inicioBtn   = document.getElementById('tv-inicio');
   var pausaBtn    = document.getElementById('tv-pausa');
   var vozToggleBtn = document.getElementById('tv-voz-toggle');
@@ -73,6 +79,9 @@
       // Radar: última posición válida por cuadro, leyenda y copia para móvil
       estado.ultimo = L.ultimoValido(datos.cancha || []);
       prepararRadar(p);
+
+      // Paneles laterales (estilo transmisión de F1)
+      construirPaneles(datos.paneles, p);
 
       // Voz
       voz.src = datos.narracion.audio;
@@ -162,6 +171,23 @@
     }
   });
 
+  // ── Modo TV / Modo estadísticas ─────────────────────────────────────────
+  var CLAVE_PANELES = 'omnimorph.transmision.paneles';
+  function aplicarPaneles(activos) {
+    escenarioEl.classList.toggle('tv-escenario--sin-paneles', !activos);
+    panelesToggleBtn.setAttribute('aria-pressed', String(activos));
+    panelesToggleBtn.textContent = activos ? 'Ocultar estadísticas' : 'Mostrar estadísticas';
+    actualizarEscala();
+  }
+  var panelesGuardado = null;
+  try { panelesGuardado = localStorage.getItem(CLAVE_PANELES); } catch (e) { /* sin almacenamiento */ }
+  aplicarPaneles(panelesGuardado !== '0');
+  panelesToggleBtn.addEventListener('click', function () {
+    var activos = panelesToggleBtn.getAttribute('aria-pressed') !== 'true';
+    aplicarPaneles(activos);
+    try { localStorage.setItem(CLAVE_PANELES, activos ? '1' : '0'); } catch (e) { /* sin almacenamiento */ }
+  });
+
   // ── Bucle de animación ────────────────────────────────────────────────────
   function bucle() {
     requestAnimationFrame(bucle);
@@ -231,6 +257,9 @@
     // ⑤ Ficha (alineaciones, solo al inicio)
     fichaEl.hidden = !vis.ficha;
     if (fichaMovilEl) fichaMovilEl.hidden = !vis.ficha;
+
+    // Paneles laterales
+    actualizarPaneles(t, vis.protagonista && j ? j.protagonista : null);
 
     // ⑦ MATEO
     var frase = L.fraseEn(t, d.jugadas);
@@ -340,6 +369,141 @@
       if (g) g.innerHTML = html;
       var esp = r.querySelector('.tv-radar__espera');
       if (esp) esp.hidden = !enEspera;
+    });
+  }
+
+  // ── Paneles laterales (lenguaje de aficionado) ───────────────────────────
+  function _el(tag, clase, texto) {
+    var e = document.createElement(tag);
+    if (clase) e.className = clase;
+    if (texto != null) e.textContent = texto;
+    return e;
+  }
+
+  function _barra(clase) {
+    var b = _el('div', 'tv-panel__barra ' + (clase || ''));
+    b.appendChild(_el('span', 'tv-panel__relleno'));
+    return b;
+  }
+
+  function _cifra(valor, etiqueta) {
+    var c = _el('div', 'tv-panel__cifra');
+    c.appendChild(_el('span', 'tv-panel__num', valor));
+    c.appendChild(_el('span', 'tv-panel__etq', etiqueta));
+    return c;
+  }
+
+  function construirPaneles(paneles, partido) {
+    if (!paneles) {
+      escenarioEl.classList.add('tv-escenario--sin-paneles');
+      panelesToggleBtn.hidden = true;
+      return;
+    }
+    ['visita', 'local'].forEach(function (lado) {
+      var eq = paneles[lado];
+      var el = panelEls[lado];
+      if (!el || !eq) return;
+      el.style.setProperty('--tv-equipo-color', partido[lado].color);
+      while (el.firstChild) el.removeChild(el.firstChild);
+
+      // Encabezado
+      var cab = _el('header', 'tv-panel__cab');
+      cab.appendChild(_el('span', 'tv-panel__nombre', eq.nombre));
+      cab.appendChild(_el('span', 'tv-panel__sub',
+        [eq.esquema, eq.entrenador].filter(Boolean).join(' · ')));
+      el.appendChild(cab);
+
+      // Ahora (cambia con el video)
+      var ahora = _el('section', 'tv-panel__bloque');
+      ahora.appendChild(_el('h3', 'tv-panel__titulo', 'Ahora mismo'));
+      ahora.appendChild(_el('p', 'tv-panel__estado', ''));
+      ahora.appendChild(_el('p', 'tv-panel__frase tv-panel__frase--pos', ''));
+      ahora.appendChild(_barra('tv-panel__barra--cancha'));
+      ahora.appendChild(_el('p', 'tv-panel__frase tv-panel__frase--rival', ''));
+      ahora.appendChild(_barra('tv-panel__barra--rival'));
+      ahora.appendChild(_el('p', 'tv-panel__jugada', ''));
+      el.appendChild(ahora);
+
+      // El partido (fijo)
+      var pp = eq.partido || {};
+      var part = _el('section', 'tv-panel__bloque');
+      part.appendChild(_el('h3', 'tv-panel__titulo', 'En el partido'));
+      var cifras = _el('div', 'tv-panel__cifras');
+      if (pp.goles != null) cifras.appendChild(_cifra(String(pp.goles), pp.goles === 1 ? 'gol' : 'goles'));
+      if (pp.tiros_totales != null) cifras.appendChild(_cifra(String(pp.tiros_totales), 'tiros'));
+      if (pp.tiros_a_puerta != null) cifras.appendChild(_cifra(String(pp.tiros_a_puerta), 'a puerta'));
+      part.appendChild(cifras);
+      if (pp.posesion_pct != null) {
+        part.appendChild(_el('p', 'tv-panel__frase', 'Tuvo el balón el ' + pp.posesion_pct + ' % del tiempo'));
+        var bp = _barra();
+        bp.firstChild.style.width = Math.max(0, Math.min(100, pp.posesion_pct)) + '%';
+        part.appendChild(bp);
+      }
+      if (eq.goles && eq.goles.length) {
+        var ul = _el('ul', 'tv-panel__goles');
+        eq.goles.forEach(function (g) {
+          var li = _el('li');
+          li.appendChild(_el('span', 'tv-panel__minuto', g.minuto + '′'));
+          li.appendChild(document.createTextNode(' ' + g.nombre));
+          ul.appendChild(li);
+        });
+        part.appendChild(ul);
+      }
+      part.appendChild(_el('p', 'tv-panel__fuente', 'Partido completo · fuentes públicas'));
+      el.appendChild(part);
+
+      // ¿Sabías que…? (rota por jugada)
+      var cur = _el('section', 'tv-panel__bloque tv-panel__bloque--curioso');
+      cur.appendChild(_el('h3', 'tv-panel__titulo', '¿Sabías que…?'));
+      cur.appendChild(_el('p', 'tv-panel__curioso', ''));
+      cur.appendChild(_el('span', 'tv-panel__origen', ''));
+      el.appendChild(cur);
+    });
+    estado.panelClave = '';
+    actualizarPaneles(0, null);
+  }
+
+  function actualizarPaneles(t, protagonista) {
+    var d = estado.datos;
+    var pn = d && d.paneles;
+    if (!pn) return;
+    var i = L.jugadaEn(t, pn.tramos);
+    var clave = i + '|' + protagonista;
+    if (clave === estado.panelClave) return;
+    estado.panelClave = clave;
+    var tr = i >= 0 ? pn.tramos[i] : null;
+
+    ['visita', 'local'].forEach(function (lado) {
+      var eq = pn[lado], el = panelEls[lado];
+      if (!el || !eq || !el.firstChild) return;
+      var m = tr && tr.equipos ? tr.equipos[eq.codigo] : null;
+
+      var est = el.querySelector('.tv-panel__estado');
+      est.textContent = !tr ? '' : tr.territorio === eq.codigo ? 'Está adelantado'
+                      : tr.territorio === 'repartido' ? 'Juego parejo' : 'Está en su mitad';
+      est.classList.toggle('tv-panel__estado--fuerte', !!tr && tr.territorio === eq.codigo);
+
+      var pos = m && m.posicion_m != null ? Math.round(m.posicion_m) : null;
+      var riv = m && m.pct_campo_rival != null ? Math.round(m.pct_campo_rival) : null;
+      el.querySelector('.tv-panel__frase--pos').textContent =
+        pos == null ? '' : 'Juega a ' + pos + ' m de su portería';
+      el.querySelector('.tv-panel__barra--cancha .tv-panel__relleno').style.width =
+        (pos == null ? 0 : Math.min(100, pos / 105 * 100)) + '%';
+      el.querySelector('.tv-panel__frase--rival').textContent =
+        riv == null ? '' : riv + ' % de sus jugadores en campo rival';
+      el.querySelector('.tv-panel__barra--rival .tv-panel__relleno').style.width =
+        (riv == null ? 0 : riv) + '%';
+
+      var jug = protagonista != null ? d.jugadores[String(protagonista)] : null;
+      var jugEl = el.querySelector('.tv-panel__jugada');
+      var tiene = jug && jug.team === d.partido[lado].team && jug.etiqueta.indexOf('Jugador') !== 0;
+      jugEl.textContent = tiene ? 'En la jugada: ' + jug.etiqueta.replace(' · ', ' ') : '';
+      jugEl.hidden = !tiene;
+
+      var dc = L.datoCurioso(eq.curiosos, i);
+      el.querySelector('.tv-panel__curioso').textContent = dc ? dc.texto : '';
+      el.querySelector('.tv-panel__origen').textContent =
+        !dc ? '' : dc.origen === 'granite' ? 'Escrito por IBM Granite' : 'Dato del partido';
     });
   }
 

@@ -87,6 +87,14 @@
   };
 
   /**
+   * datoCurioso(lista, i) → el dato que toca en la jugada i (rota), o null.
+   */
+  L.datoCurioso = function (lista, i) {
+    if (!lista || !lista.length || i < 0) return null;
+    return lista[i % lista.length];
+  };
+
+  /**
    * ultimoValido(cancha) → arreglo: para cada cuadro f, el último cuadro <= f
    * con jugadores en el radar, o -1. En tomas cerradas el radar se queda con
    * la última posición conocida en vez de quedarse vacío.

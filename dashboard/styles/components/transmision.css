@@ -406,3 +406,159 @@
     margin-right: 0.4em;
   }
 }
+
+/* ── Paneles laterales (estilo transmisión de F1) ───────────────────────── */
+.tv-escenario {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr) minmax(200px, 260px);
+  grid-template-areas:
+    "visita tv        local"
+    "visita controles local"
+    "visita debajo    local";
+  grid-template-rows: auto auto 1fr;
+  column-gap: var(--space-3);
+  row-gap: var(--space-2);
+  width: 100%;
+  max-width: 1800px;
+  align-items: start;
+}
+
+.tv-escenario > .tv           { grid-area: tv; }
+.tv-escenario > .tv-controles { grid-area: controles; }
+.tv-escenario > .tv-debajo    { grid-area: debajo; }
+#tv-panel-visita              { grid-area: visita; }
+#tv-panel-local               { grid-area: local; }
+
+.tv-escenario--sin-paneles {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "tv" "controles" "debajo";
+  grid-template-rows: auto;
+}
+.tv-escenario--sin-paneles > .tv-panel { display: none; }
+
+.tv-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  background: var(--color-surface);
+  border: var(--border);
+  border-top: 4px solid var(--tv-equipo-color, var(--color-text-soft));
+  border-radius: var(--radius-card);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--color-text);
+  min-width: 0;
+}
+
+.tv-panel__cab { display: flex; flex-direction: column; gap: 2px; }
+.tv-panel__nombre { font-size: 20px; font-weight: 700; color: var(--tv-equipo-color, var(--color-text)); }
+.tv-panel__sub { color: var(--color-text-soft); font-size: 13px; }
+
+.tv-panel__bloque { display: flex; flex-direction: column; gap: 6px; }
+
+.tv-panel__titulo {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-soft);
+}
+
+.tv-panel__estado {
+  align-self: flex-start;
+  margin: 0;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--color-text) 25%, transparent);
+  font-size: 13px;
+  font-weight: 600;
+}
+.tv-panel__estado:empty { display: none; }
+.tv-panel__estado--fuerte {
+  background: var(--tv-equipo-color, var(--color-text));
+  border-color: transparent;
+  color: #fff;
+}
+
+.tv-panel__frase { margin: 4px 0 0; }
+.tv-panel__frase:empty { display: none; }
+
+.tv-panel__barra {
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--color-text) 14%, transparent);
+  overflow: hidden;
+}
+.tv-panel__relleno {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  background: var(--tv-equipo-color, var(--color-text));
+  transition: width var(--transition);
+}
+
+.tv-panel__jugada {
+  margin: 4px 0 0;
+  padding-left: 8px;
+  border-left: 3px solid var(--tv-equipo-color, var(--color-text));
+  font-weight: 600;
+}
+.tv-panel__jugada[hidden] { display: none; }
+
+.tv-panel__cifras { display: flex; gap: var(--space-4); }
+.tv-panel__cifra { display: flex; flex-direction: column; }
+.tv-panel__num {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.tv-panel__etq { font-size: 12px; color: var(--color-text-soft); }
+
+.tv-panel__goles {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tv-panel__minuto {
+  display: inline-block;
+  min-width: 2.4em;
+  font-weight: 700;
+  color: var(--tv-equipo-color, var(--color-text));
+}
+
+.tv-panel__fuente { margin: 2px 0 0; font-size: 12px; color: var(--color-text-soft); }
+
+.tv-panel__bloque--curioso {
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--tv-equipo-color, var(--color-text)) 12%, transparent);
+}
+.tv-panel__curioso { margin: 0; font-size: 15px; line-height: 1.4; }
+.tv-panel__origen { font-size: 12px; color: var(--color-text-soft); }
+
+/* Pantallas medianas: los paneles bajan, uno al lado del otro */
+@media (max-width: 1199px) {
+  .tv-escenario {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "tv        tv"
+      "controles controles"
+      "debajo    debajo"
+      "visita    local";
+    grid-template-rows: auto;
+  }
+}
+
+/* Celular: un panel debajo del otro */
+@media (max-width: 767px) {
+  .tv-escenario {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "tv" "controles" "debajo" "visita" "local";
+  }
+}

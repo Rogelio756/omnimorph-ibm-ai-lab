@@ -1,0 +1,118 @@
+{
+  "generado": "2026-11-26T23:21:30+00:00",
+  "nota": "Frases de Granite verificadas contra partido.json; si una no pasa, se usa el hecho tal cual.",
+  "equipos": {
+    "SKN": [
+      {
+        "texto": "El mejor calificado de San Cristóbal y Nieves en FotMob fue Mervin Lewis (#15), con 6.65.",
+        "origen": "granite"
+      },
+      {
+        "texto": "San Cristóbal y Nieves tuvo el balón el 35 % del partido completo.",
+        "origen": "granite"
+      },
+      {
+        "texto": "San Cristóbal y Nieves remató 5 veces, 1 a puerta, en todo el partido.",
+        "origen": "granite"
+      },
+      {
+        "texto": "San Cristóbal y Nieves acertó el 74 % de sus pases.",
+        "origen": "granite"
+      },
+      {
+        "texto": "San Cristóbal y Nieves tocó el balón 7 veces dentro del área rival.",
+        "origen": "granite"
+      },
+      {
+        "texto": "San Cristóbal y Nieves ganó 10 duelos aéreos.",
+        "origen": "granite"
+      }
+    ],
+    "CRC": [
+      {
+        "texto": "Costa Rica remató 23 veces, con 7 disparos al arco.",
+        "origen": "granite"
+      },
+      {
+        "texto": "Andy Rojas marcó el cuarto gol para Costa Rica.",
+        "origen": "granite"
+      },
+      {
+        "texto": "Costa Rica ganó 20 duelos aéreos en el partido.",
+        "origen": "granite"
+      },
+      {
+        "texto": "Orlando Galo marcó el 1-0 al minuto 40.",
+        "origen": "plantilla"
+      },
+      {
+        "texto": "Orlando Galo marcó el 2-0 al minuto 49.",
+        "origen": "plantilla"
+      },
+      {
+        "texto": "Josimar Alcócer marcó el 3-0 al minuto 82.",
+        "origen": "plantilla"
+      }
+    ]
+  },
+  "auditoria": [
+    {
+      "equipo": "SKN",
+      "modelo": "ibm/granite-4-h-small",
+      "latency_ms": 2174.1,
+      "tokens_in": 385,
+      "tokens_out": 229,
+      "generado_granite": "2026-11-26T23:20:38+00:00",
+      "reverificado": "2026-11-26T23:21:30+00:00",
+      "granite_crudas": [
+        "El mejor calificado de San Cristóbal y Nieves en FotMob fue Mervin Lewis (#15), con 6.65.",
+        "San Cristóbal y Nieves tuvo el balón el 35 % del partido completo.",
+        "San Cristóbal y Nieves remató 5 veces, 1 a puerta, en todo el partido.",
+        "San Cristóbal y Nieves acertó el 74 % de sus pases.",
+        "San Cristóbal y Nieves tocó el balón 7 veces dentro del área rival.",
+        "San Cristóbal y Nieves ganó 10 duelos aéreos."
+      ],
+      "granite_aceptadas": 6,
+      "granite_rechazadas": []
+    },
+    {
+      "equipo": "CRC",
+      "modelo": "ibm/granite-4-h-small",
+      "latency_ms": 1176.6,
+      "tokens_in": 399,
+      "tokens_out": 107,
+      "generado_granite": "2026-11-26T23:20:38+00:00",
+      "reverificado": "2026-11-26T23:21:30+00:00",
+      "granite_crudas": [
+        "Costa Rica dominó con un 65% de posesión en el partido.",
+        "Orlando Galo anotó dos goles tempranos para Costa Rica.",
+        "Costa Rica remató 23 veces, con 7 disparos al arco.",
+        "Andy Rojas marcó el cuarto gol para Costa Rica.",
+        "Costa Rica ganó 20 duelos aéreos en el partido.",
+        "El portero costarricense realizó una atajada clave."
+      ],
+      "granite_aceptadas": 3,
+      "granite_rechazadas": [
+        {
+          "texto": "Costa Rica dominó con un 65% de posesión en el partido.",
+          "errores": [
+            "juicio sin respaldo: «domin»"
+          ]
+        },
+        {
+          "texto": "Orlando Galo anotó dos goles tempranos para Costa Rica.",
+          "errores": [
+            "juicio sin respaldo: «tempran»",
+            "número en letras: «dos»"
+          ]
+        },
+        {
+          "texto": "El portero costarricense realizó una atajada clave.",
+          "errores": [
+            "juicio sin respaldo: «clave»"
+          ]
+        }
+      ]
+    }
+  ]
+}

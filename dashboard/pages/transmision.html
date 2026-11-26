@@ -39,6 +39,11 @@
         <code>.venv/Scripts/python.exe scripts/export_transmision.py</code></span>
     </div>
 
+    <div class="tv-escenario" id="tv-escenario">
+
+    <!-- Panel izquierdo: visita (San Cristóbal y Nieves) -->
+    <aside class="tv-panel" id="tv-panel-visita" data-lado="visita" aria-label="Datos del equipo visitante"></aside>
+
     <div class="tv" id="tv">
       <video id="tv-video"
              playsinline
@@ -114,7 +119,15 @@
       <button class="btn btn--outline btn-sm" id="tv-voz-toggle"
               aria-pressed="true">Voz de MATEO: sí</button>
       <button class="btn btn--outline btn-sm" id="tv-repetir" disabled>Repetir</button>
+      <button class="btn btn--outline btn-sm" id="tv-paneles-toggle"
+              aria-pressed="true" aria-controls="tv-escenario">Ocultar estadísticas</button>
     </div>
+
+    <!-- Panel derecho: local (Costa Rica) -->
+    <aside class="tv-panel" id="tv-panel-local" data-lado="local" aria-label="Datos del equipo local"></aside>
+
+    </div>
+
 
     <p class="tv-nota" id="tv-nota">La velocidad de los jugadores está en pruebas: la calibración de la cámara todavía no da cifras confiables, por eso no la mostramos.</p>
 

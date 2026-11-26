@@ -88,6 +88,14 @@ function grupo4() {
     assert.equal(L.graficosVisibles(4.6, J).radar, true);
   });
 
+  ok('datoCurioso rota por jugada y tolera listas vacías', function () {
+    var D = [{ texto: 'a' }, { texto: 'b' }];
+    assert.equal(L.datoCurioso(D, 0).texto, 'a');
+    assert.equal(L.datoCurioso(D, 3).texto, 'b');
+    assert.equal(L.datoCurioso([], 1), null);
+    assert.equal(L.datoCurioso(D, -1), null);
+  });
+
   ok('ultimoValido conserva la última posición en tomas cerradas', function () {
     var K = [{ p: [] }, { p: [[1, 0, 10, 10]] }, { p: [] }, null, { p: [[2, 1, 5, 5]] }];
     assert.deepEqual(L.ultimoValido(K), [-1, 1, 1, 1, 4]);
