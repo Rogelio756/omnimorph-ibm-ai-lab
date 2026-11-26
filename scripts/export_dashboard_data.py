@@ -44,6 +44,8 @@ OUT_DATA = DASH / "data"
 OUT_MEDIA = DASH / "media"
 
 PITCH_W, PITCH_H = 12000.0, 7000.0   # cm
+PITCH_L_M = 105.0                     # m reales (cancha 105 x 68 m)
+N_WINDOWS = 8
 V_MAX = 9.5                           # m/s (M2.3)
 MEDIANA_FRAMES = 31                   # 1 s a 30 fps
 PASO_FRAMES = 30                      # medir cada 1 s
@@ -61,8 +63,68 @@ def _team_label(v) -> str:
     return e.codigo if e else v
 
 
+def _moda_serie(s: pd.Series):
+    vals = s.dropna()
+    if len(vals) == 0:
+        return None
+    m = vals.mode()
+    return m.iloc[0] if len(m) > 0 else None
+
+
+def asignar_equipo_y_clase_por_tramo(df_tr: pd.DataFrame, n_frames: int) -> pd.DataFrame:
+    """
+    Asigna equipo (0/1) y condición de jugador/portero por moda de cada track_id
+    DENTRO de cada tramo táctico (8 ventanas uniformes), no de todo el clip.
+    Los árbitros por moda dentro del tramo quedan con es_jugador_tramo == False y team_tramo == 2.
+    """
+    df_out = df_tr.copy()
+    win_frames = max(int(np.ceil(n_frames / N_WINDOWS)), 100)
+    tid_col = "track_id" if "track_id" in df_out.columns and df_out["track_id"].notna().any() else "track_id_stitched"
+
+    team_tramo = pd.Series(-1, index=df_out.index, dtype=int)
+    es_jug_tramo = pd.Series(False, index=df_out.index, dtype=bool)
+
+    for w in range(N_WINDOWS):
+        f0 = w * win_frames
+        f1 = min(f0 + win_frames, n_frames)
+        mask_w = (df_out["frame"] >= f0) & (df_out["frame"] < f1)
+        sub_w = df_out[mask_w]
+        if len(sub_w) == 0:
+            continue
+
+        t_map: dict = {}
+        j_map: dict = {}
+        for tid, grp in sub_w.groupby(tid_col, sort=False):
+            if pd.isna(tid):
+                continue
+            tm = _moda_serie(grp["team"]) if "team" in grp.columns else None
+
+            es_j = True
+            if "class_name" in grp.columns and grp["class_name"].notna().any():
+                cm = _moda_serie(grp["class_name"])
+                es_j = str(cm).lower() in ("player", "goalkeeper")
+            elif "class_id" in grp.columns and grp["class_id"].notna().any():
+                cid = _moda_serie(grp["class_id"])
+                es_j = int(cid) in (0, 1, 2) and int(cid) != 3
+            j_map[tid] = es_j
+            if not es_j:
+                t_map[tid] = 2
+            else:
+                t_map[tid] = int(tm) if tm in (0, 1) else -1
+
+        team_tramo.loc[sub_w.index] = sub_w[tid_col].map(lambda t: t_map.get(t, -1)).astype(int)
+        es_jug_tramo.loc[sub_w.index] = sub_w[tid_col].map(lambda t: bool(j_map.get(t, False))).astype(bool)
+
+    df_out["team_tramo"] = team_tramo
+    df_out["es_jugador_tramo"] = es_jug_tramo
+    return df_out
+
+
 def build_frames(df_tr: pd.DataFrame, df_ball: pd.DataFrame, n_frames: int) -> list:
-    """Por frame: [[track_id, team(0/1/2=ref), x_dm, y_dm], ...] + balón. Coordenadas en decímetros (int)."""
+    """
+    Por frame: [[track_id, team(0/1/2), x_dm, y_dm], ...] + balón. Coordenadas en decímetros (int).
+    Los jugadores se colorean por team_tramo y los árbitros por moda del tramo se exportan con team=2.
+    """
     frames: list = [{"p": [], "b": None} for _ in range(n_frames)]
 
     for f_idx, grp in df_tr.groupby("frame"):
@@ -71,9 +133,9 @@ def build_frames(df_tr: pd.DataFrame, df_ball: pd.DataFrame, n_frames: int) -> l
         rows = []
         for r in grp.itertuples(index=False):
             x, y = r.pitch_x_smooth, r.pitch_y_smooth
-            if not (0 <= x <= PITCH_W and 0 <= y <= PITCH_H):
+            if pd.isna(x) or pd.isna(y) or not (0 <= x <= PITCH_W and 0 <= y <= PITCH_H):
                 continue
-            team = 2 if r.class_id == 3 else (int(r.team_mode) if r.team_mode in (0, 1) else 2)
+            team = 2 if (not r.es_jugador_tramo or r.class_id == 3) else (int(r.team_tramo) if r.team_tramo in (0, 1) else 2)
             rows.append([int(r.track_id_stitched), team, int(round(x / 10)), int(round(y / 10))])
         frames[int(f_idx)]["p"] = rows
 
@@ -111,16 +173,21 @@ def distancia_filtrada(fr: np.ndarray, x: np.ndarray, y: np.ndarray, fps: float)
 
 
 def build_players(df_tr: pd.DataFrame, fps: float, dorsales: dict | None = None) -> list:
-    """Por rastro: distancia aproximada, segundos medidos y mapa de calor 12×7."""
+    """Por rastro: distancia aproximada, segundos medidos y mapa de calor 12×7 (solo jugadores/porteros)."""
     players = []
-    for tid, g in df_tr.groupby("track_id_stitched"):
+    df_jug = df_tr[df_tr["es_jugador_tramo"]] if "es_jugador_tramo" in df_tr.columns else df_tr
+    for tid, g in df_jug.groupby("track_id_stitched"):
         g = g.sort_values("frame")
         inb = g[(g.pitch_x_smooth.between(0, PITCH_W)) & (g.pitch_y_smooth.between(0, PITCH_H))]
         if len(inb) < 15:
             continue
-        team = int(g["team_mode"].iloc[0]) if g["team_mode"].iloc[0] in (0, 1) else 2
+        if "team_tramo" in g.columns and (g["team_tramo"].isin([0, 1])).any():
+            t_vals = g.loc[g["team_tramo"].isin([0, 1]), "team_tramo"]
+            team = int(t_vals.mode().iloc[0])
+        else:
+            team = int(g["team_mode"].iloc[0]) if g["team_mode"].iloc[0] in (0, 1) else 2
         if (g["class_id"] == 3).mean() > 0.5:
-            team = 2
+            continue
 
         dist, segundos = distancia_filtrada(inb.frame.to_numpy(), inb.pitch_x.to_numpy() / 100.0,
                                             inb.pitch_y.to_numpy() / 100.0, fps)
@@ -275,7 +342,7 @@ def export_partido() -> None:
         data = {"pendiente": True, "id": PARTIDO.id, "titulo": PARTIDO.titulo,
                 "competicion": PARTIDO.competicion, "etiqueta": PARTIDO.etiqueta_corta}
         with open(out, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+            json.dump(data, f, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
         for origen in opcionales:
             (OUT_PARTIDO / origen.name).unlink(missing_ok=True)
         print(f"[OK] {out}  (pendiente: faltan los datos verificados de {PARTIDO.id})")
@@ -347,7 +414,7 @@ def export_partido() -> None:
             break
 
     with open(out, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+        json.dump(data, f, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
 
     copiados = []
     for origen in opcionales:
@@ -575,9 +642,13 @@ def export_metodo() -> None:
         "dorsales": dorsales,
         "monitores_detalle": monitores_detalle(m1, m2, m3, m4, estados),
     }
+    radar_err = leer("radar_error.json")
+    if radar_err:
+        data["radar_error"] = radar_err
+
     out = OUT_DATA / "metodo.json"
     with open(out, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
+        json.dump(data, f, ensure_ascii=False, indent=1, allow_nan=False)
     aviso = "" if data["coincide_partido"] else "  (AVISO: data/clean es de otro partido)"
     print(f"[OK] {out}{aviso}")
 
@@ -603,9 +674,10 @@ def main() -> None:
     df_tr = df[df.source == "track"].copy()
     df_tr = df_tr[df_tr.track_id_stitched.notna()]
     df_tr["track_id_stitched"] = df_tr["track_id_stitched"].astype(int)
+    df_tr = asignar_equipo_y_clase_por_tramo(df_tr, n_frames)
     dorsales = cargar_dorsales()
     df_tr = fusionar_rastros(df_tr, dorsales)
-    # Moda de equipo por jugador cosido (M2.0) → sin parpadeos de color
+    # Moda de equipo por jugador cosido para la ficha de jugadores
     mode = (df_tr.dropna(subset=["team"]).groupby("track_id_stitched")["team"]
             .agg(lambda s: int(s.mode().iloc[0])))
     df_tr["team_mode"] = df_tr["track_id_stitched"].map(mode).fillna(-1).astype(int)
@@ -615,21 +687,31 @@ def main() -> None:
     narrations = _load_json(CLEAN / "narrations.json")
     narr_by_w = {n["window_id"]: n for n in narrations}
 
+    def _centroide_m(val_cm):
+        if val_cm is None or (isinstance(val_cm, float) and np.isnan(val_cm)):
+            return None
+        return round(float(val_cm) * (PITCH_L_M / PITCH_W), 1)
+
     windows = []
     for w in tactical:
         n = narr_by_w.get(w["window_id"], {})
+        terr_raw = w.get("territorio", w.get("dominant_team"))
+        terr = "repartido" if terr_raw in ("repartido", "neutro", None) else _team_label(terr_raw)
+        dom = "neutro" if terr == "repartido" else terr
+        equipos_raw = w.get("equipos") or {}
+        equipos_out = {
+            _team_label(k): v for k, v in equipos_raw.items()
+        }
         windows.append({
             "id": w["window_id"],
             "t0": w["t0"], "t1": w["t1"],
             "f0": w.get("frame_start"), "f1": w.get("frame_end"),
-            "block_height_m": w.get("block_height_m"),
-            "compactness_m": w.get("block_compactness_m"),
-            "transition_mps": w.get("transition_speed_mps"),
-            "pressure": w.get("pressure_context"),
-            "dominant": _team_label(w.get("dominant_team")),
+            "territorio": terr,
+            "dominant": dom,
+            "equipos": equipos_out,
             "n_a": w.get("n_arg"), "n_b": w.get("n_fra"),
-            "centroid_a_m": round(w.get("centroid_arg_x_cm", 0) / 100, 1),
-            "centroid_b_m": round(w.get("centroid_fra_x_cm", 0) / 100, 1),
+            "centroid_a_m": _centroide_m(w.get("centroid_arg_x_cm")),
+            "centroid_b_m": _centroide_m(w.get("centroid_fra_x_cm")),
             "narration": n.get("narracion_es", ""),
             "analysis": n.get("analisis_tactico", ""),
             "latency_ms": n.get("latency_ms"),
@@ -682,7 +764,7 @@ def main() -> None:
 
     out_json = OUT_DATA / "mateo_data.json"
     with open(out_json, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+        json.dump(data, f, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
     print(f"[OK] {out_json}  ({out_json.stat().st_size / 1024:.0f} KB)  "
           f"frames={n_frames} players={len(data['players'])} windows={len(windows)}")
 

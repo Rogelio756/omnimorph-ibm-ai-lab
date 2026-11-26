@@ -16,9 +16,9 @@
 // ── Tipos de entrada esperados (documentación de contrato) ────────────────
 //
 // Tactical window (tactical_summaries.json):
-//   { window_id, t0, t1, frame_start, frame_end, block_height_m,
-//     transition_speed_mps, block_compactness_m, pressure_context,
-//     dominant_team, n_arg, n_fra, centroid_arg_x_cm, centroid_fra_x_cm }
+//   { window_id, t0, t1, frame_start, frame_end, territorio,
+//     dominant_team, equipos: { <cod>: { posicion_m, pct_campo_rival, largo_m, ancho_m } },
+//     n_arg, n_fra, centroid_arg_x_cm, centroid_fra_x_cm }
 //
 // Narration (narrations.json):
 //   { window_id, t0, t1, narracion_es, analisis_tactico,
@@ -44,27 +44,42 @@
 function adaptTactical(rawWindow) {
   if (!rawWindow) return null;
 
-  // Normalizar team IDs: el pipeline puede devolver ARG/BRA o FRA/GER
-  var domRaw = rawWindow.dominant_team || '';
+  var domRaw = rawWindow.territorio || rawWindow.dominant_team || 'repartido';
   var dominant = domRaw === 'ARG' ? 'BRA'
                : domRaw === 'FRA' ? 'GER'
                : domRaw;
+  var territorio = dominant === 'neutro' ? 'repartido' : dominant;
+  var equiposRaw = rawWindow.equipos || {};
+  var equipos = {};
+  Object.keys(equiposRaw).forEach(function (k) {
+    var eq = equiposRaw[k] || {};
+    var normKey = k === 'ARG' ? 'BRA' : k === 'FRA' ? 'GER' : k;
+    equipos[normKey] = {
+      posicion_m:      toNum(eq.posicion_m),
+      pct_campo_rival: toNum(eq.pct_campo_rival),
+      largo_m:         toNum(eq.largo_m),
+      ancho_m:         toNum(eq.ancho_m),
+    };
+  });
+
+  var cAx = toNum(rawWindow.centroid_arg_x_cm);
+  var cBx = toNum(rawWindow.centroid_fra_x_cm);
 
   return {
-    windowId:         rawWindow.window_id        || 'W?',
-    t0:               parseFloat(rawWindow.t0    || 0),
-    t1:               parseFloat(rawWindow.t1    || 4),
-    frameStart:       parseInt(rawWindow.frame_start || 0),
-    frameEnd:         parseInt(rawWindow.frame_end   || 0),
-    blockHeightM:     toNum(rawWindow.block_height_m),
-    transitionSpeedMps: toNum(rawWindow.transition_speed_mps),
-    compactnessM:     toNum(rawWindow.block_compactness_m),
-    pressure:         rawWindow.pressure_context  || '—',
-    dominantTeam:     dominant,
-    nTeamA:           rawWindow.n_arg             ?? null,
-    nTeamB:           rawWindow.n_fra             ?? null,
-    centroidAx:       toNum(rawWindow.centroid_arg_x_cm),  // en cm
-    centroidBx:       toNum(rawWindow.centroid_fra_x_cm),  // en cm
+    windowId:     rawWindow.window_id || rawWindow.id || 'W?',
+    t0:           parseFloat(rawWindow.t0 || 0),
+    t1:           parseFloat(rawWindow.t1 || 4),
+    frameStart:   parseInt(rawWindow.frame_start ?? rawWindow.f0 ?? 0),
+    frameEnd:     parseInt(rawWindow.frame_end ?? rawWindow.f1 ?? 0),
+    territorio:   territorio,
+    dominantTeam: dominant,
+    equipos:      equipos,
+    nTeamA:       rawWindow.n_arg ?? rawWindow.n_a ?? null,
+    nTeamB:       rawWindow.n_fra ?? rawWindow.n_b ?? null,
+    centroidAx:   cAx,
+    centroidBx:   cBx,
+    centroidAm:   cAx != null ? Math.round(cAx * 105 / 12000 * 10) / 10 : toNum(rawWindow.centroid_a_m),
+    centroidBm:   cBx != null ? Math.round(cBx * 105 / 12000 * 10) / 10 : toNum(rawWindow.centroid_b_m),
   };
 }
 

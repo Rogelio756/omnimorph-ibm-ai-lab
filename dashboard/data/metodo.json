@@ -11,8 +11,8 @@
  },
  "coincide_partido": true,
  "corrida": {
-  "fecha": "2026-11-09T23:06:15.820445+00:00",
-  "duracion_s": 25.94,
+  "fecha": "2026-11-25T22:56:49.120389+00:00",
+  "duracion_s": 30.26,
   "todos_pass": true,
   "monitores": {
    "M1": "PASS",
@@ -32,7 +32,7 @@
   "frames": 1080,
   "filas_jugadores": 17620,
   "filas_balon": 860,
-  "homografia_calculada_pct": 100.0
+  "homografia_calculada_pct": 99.4
  },
  "m2": {
   "ids_crudos": 112,
@@ -45,16 +45,16 @@
   "modelo": "ibm/granite-4-h-small",
   "llamadas": 8,
   "pass": 8,
-  "offline": 0,
-  "latencia_ms_media": 1588.25,
-  "latencia_ms_max": 2321.21,
-  "costo_ru": 0.5953,
-  "max_palabras": 45
+  "offline": 6,
+  "latencia_ms_media": 981.71,
+  "latencia_ms_max": 1583.18,
+  "costo_ru": 1.3624,
+  "max_palabras": 18
  },
  "m4": {
   "motor_tts": "windows_sapi",
   "clips": 8,
-  "desfase_ms_max": 19.02,
+  "desfase_ms_max": 19.82,
   "desfase_ms_limite": 40.0
  },
  "dorsales": {
@@ -76,7 +76,7 @@
     },
     {
      "descripcion": "Cuadros con homografía calculada",
-     "observado": 100.0,
+     "observado": 99.4,
      "limite": 95,
      "unidad": "% mín.",
      "pass": true
@@ -139,14 +139,14 @@
    "checks": [
     {
      "descripcion": "Homografía calculada (cruda) (%)",
-     "observado": 100.0,
+     "observado": 99.4,
      "limite": null,
      "unidad": "",
      "pass": true
     },
     {
      "descripcion": "Homografía calculada (suavizada EMA) (%)",
-     "observado": 100.0,
+     "observado": 99.4,
      "limite": null,
      "unidad": "",
      "pass": true
@@ -161,6 +161,27 @@
     {
      "descripcion": "Matriz normalizada presente",
      "observado": true,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "radar_error_mediana_m",
+     "observado": 2.4,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "radar_error_p90_m",
+     "observado": 3.2,
+     "limite": null,
+     "unidad": "",
+     "pass": true
+    },
+    {
+     "descripcion": "radar_error_metodo",
+     "observado": "área grande sin usarla para calibrar",
      "limite": null,
      "unidad": "",
      "pass": true
@@ -300,38 +321,38 @@
    "checks": [
     {
      "descripcion": "Llamadas con modelo IBM Granite autorizado",
-     "observado": 8,
-     "limite": 8,
+     "observado": 18,
+     "limite": 18,
      "unidad": "de",
      "pass": true
     },
     {
      "descripcion": "Respuestas con formato JSON válido",
-     "observado": 8,
-     "limite": 8,
+     "observado": 18,
+     "limite": 18,
      "unidad": "de",
      "pass": true
     },
     {
      "descripcion": "Palabras de la narración más larga",
      "observado": 18,
-     "limite": 45,
+     "limite": 18,
      "unidad": "máx.",
      "pass": true
     },
     {
      "descripcion": "Equipo dominante coherente con los datos",
-     "observado": 8,
-     "limite": 8,
+     "observado": 12,
+     "limite": 18,
      "unidad": "de",
-     "pass": true
+     "pass": false
     },
     {
      "descripcion": "Llamadas sin conexión (modo offline)",
-     "observado": 0,
+     "observado": 6,
      "limite": 0,
      "unidad": "",
-     "pass": true
+     "pass": false
     }
    ],
    "nombre": "Auditoría de IBM Granite",
@@ -356,7 +377,7 @@
     },
     {
      "descripcion": "Desfase de reloj máximo (ms)",
-     "observado": 19.02,
+     "observado": 19.82,
      "limite": 40.0,
      "unidad": "máx.",
      "pass": true
@@ -365,5 +386,14 @@
    "nombre": "Sincronización de voz y tablero",
    "estado": "PASS"
   }
- ]
+ ],
+ "radar_error": {
+  "mediana_m": 2.4,
+  "p90_m": 3.2,
+  "pct_mayor_5m": 0,
+  "puntos": 284,
+  "cuadros": 284,
+  "metodo": "área grande sin usarla para calibrar",
+  "explicacion": "Se calibra sin las líneas del área grande y se mide a cuántos metros queda el área en los cuadros donde se ve."
+ }
 }

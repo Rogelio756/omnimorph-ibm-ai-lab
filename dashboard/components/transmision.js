@@ -385,7 +385,7 @@
     var pie = document.createElement('div');
     pie.className = 'tv-ficha__pie';
     pie.textContent = ficha.estadio + ' · '
-      + ficha.asistencia.toLocaleString('es') + ' aficionados';
+      + ficha.asistencia.toLocaleString('es-MX') + ' aficionados';
     el.appendChild(pie);
   }
 

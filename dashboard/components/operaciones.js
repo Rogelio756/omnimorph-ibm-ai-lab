@@ -210,7 +210,7 @@
       var ce = s.chat.estado;
       host.appendChild(chip(ce === 'listo' ? 'ok' : ce === 'cargando' ? 'warn' : 'alert',
         'Chat Granite · ' + ce + (s.chat.motivo ? ' (' + s.chat.motivo + ')' : '')));
-      host.appendChild(chip('warn', 'watsonx Orchestrate · probado en desarrollo'));
+      host.appendChild(chip('warn', 'watsonx Orchestrate · preparado, sin usar'));
     } else if (servidorOk === false) {
       host.appendChild(chip('warn', 'IBM: sin comprobar (necesita el servidor local)'));
     }

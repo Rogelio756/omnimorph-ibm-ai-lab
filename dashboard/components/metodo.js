@@ -226,7 +226,7 @@
       { t: 'Narrador Granite', d: [(m3.modelo || '—').replace('ibm/', ''), num(m3.llamadas) + ' textos · ' + num(m3.latencia_ms_media, 0) + ' ms'],
         m: ['M3', mon.M3], ibm: true },
       { t: 'Voz', d: ['Síntesis local', num(m4.clips) + ' audios · ' + num(m4.desfase_ms_max, 1) + ' ms'], m: ['M4', mon.M4] },
-      { t: 'Tablero', d: ['MATEO · Partido · Método', 'Operaciones'], m: [num(C.n_pass) + '/' + num(C.n_total), C.todos_pass ? 'PASS' : 'FAIL'] }
+      { t: 'Tablero', d: ['MATEO · Partido', 'Transmisión · Método'], m: [num(C.n_pass) + '/' + num(C.n_total), C.todos_pass ? 'PASS' : 'FAIL'] }
     ];
     var datosPartido = { t: 'Datos del partido', d: [num(P.n_fuentes) + ' fuentes públicas', 'validación humana'],
       m: ['Datos', validado ? 'VALIDADOS' : 'POR VALIDAR'], humano: true };
@@ -282,6 +282,12 @@
       'Eso produce velocidades irreales, así que no las mostramos. Las posiciones usan la misma calibración: ' +
       'son más estables, pero aproximadas. El ' + num(m1.homografia_calculada_pct, 0) + ' % de calibración del ' +
       'monitor M1 significa que se pudo calcular en cada cuadro, no que sea exacta.'));
+    var radar = D.radar_error;
+    if (radar && radar.mediana_m != null) {
+      host.appendChild(limite('Error del radar',
+        'Error del radar: mediana ' + num(radar.mediana_m, 1) + ' m; 90 % de los casos hasta ' + num(radar.p90_m, 1) +
+        ' m' + (radar.cuadros != null ? ' (' + num(radar.cuadros) + ' cuadros)' : '') + '. ' + (radar.explicacion || '')));
+    }
     if (hayDorsales) {
       host.appendChild(limite('Dorsales identificados a mano',
         'El modelo automático de dorsales no lee los números en una transmisión de TV. ' + num(dor.jugadores) +
@@ -314,12 +320,12 @@
       '1. Que el modelo sea un IBM Granite autorizado.',
       '2. Que la respuesta tenga el formato esperado.',
       '3. Que la narración no pase de ' + num(m3.max_palabras) + ' palabras, para que quepa en su ventana de audio.',
-      '4. Que el equipo que la narración da como dominante coincida con los datos de esa ventana.'
+      '4. Que el equipo al que la narración da más territorio coincida con los datos de esa ventana.'
     ]));
     host.appendChild(parrafos('Trazabilidad', [
       'Cada llamada queda registrada con su modelo, latencia, tokens, costo y resultado. Si algo falla, hay registro.',
       'Las credenciales se leen de un archivo local fuera del código y nunca se publican.',
-      'La herramienta táctica también se integró y probó como herramienta de IBM watsonx Orchestrate durante el desarrollo.'
+      'La herramienta quedó preparada para IBM watsonx Orchestrate (OpenAPI); hoy no forma parte del flujo.'
     ]));
 
     // 6 · Lo que no afirmamos ------------------------------------------------

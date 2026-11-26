@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import sys
 import time
 import warnings
 from datetime import datetime, timezone
@@ -59,10 +60,24 @@ STITCH_FPS = 30.0                                # fps aproximados de los clips 
 STITCH_SIN_ENLACE = 1e9                          # costo de una pareja que no se puede unir
 PITCH_L_CM = 12_000.0
 PITCH_W_CM = 7_000.0
+PITCH_L_M = 105.0
+PITCH_W_M = 68.0
+INTERP_MAX_FRAMES = 15
 SAVGOL_WINDOW = 9
 SAVGOL_POLY = 3
 
+ROOT_DIR = pathlib.Path(__file__).resolve().parents[2]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 CLEAN_DIR = pathlib.Path("data/clean")
+
+
+def pitch_x_to_m(px_cm: float | np.ndarray) -> float | np.ndarray:
+    return px_cm * (PITCH_L_M / PITCH_L_CM)
+
+
+def pitch_y_to_m(py_cm: float | np.ndarray) -> float | np.ndarray:
+    return py_cm * (PITCH_W_M / PITCH_W_CM)
 
 
 def _fps_clip(total_frames: int) -> float:
@@ -71,6 +86,38 @@ def _fps_clip(total_frames: int) -> float:
         return FPS
     from implementacion import partido_config
     return partido_config.activo().fps
+
+
+def _interpolar_serie_huecos(frames: pd.Series, valores: pd.Series, max_hueco: int = INTERP_MAX_FRAMES) -> pd.Series:
+    """
+    Interpola linealmente huecos de hasta max_hueco cuadros sobre el eje real de frame
+    (solo en el interior del rastro; no arrastra en los extremos ni rellena fuera).
+    Un hueco de más de max_hueco cuadros consecutivos queda entero en NaN.
+    Conserva el índice original de la serie.
+    """
+    s_val = pd.to_numeric(valores, errors="coerce")
+    if s_val.notna().sum() < 2:
+        return s_val
+    orden = frames.argsort(kind="mergesort")
+    f_ord = frames.iloc[orden].astype(int).to_numpy()
+    v_ord = s_val.iloc[orden].to_numpy(dtype=float)
+
+    f_min, f_max = int(f_ord[0]), int(f_ord[-1])
+    grid = pd.Series(np.nan, index=range(f_min, f_max + 1), dtype=float)
+    grid.loc[f_ord] = v_ord
+
+    if not grid.isna().any():
+        return s_val
+
+    # Identificar corridas consecutivas de NaN y rellenar solo aquellas de longitud <= max_hueco
+    is_na = grid.isna()
+    bloques = (~is_na).cumsum()
+    longitudes_hueco = is_na.groupby(bloques).transform("sum")
+    grid_interp = grid.interpolate(method="index", limit_area="inside")
+    grid_final = grid.where(~(is_na & (longitudes_hueco <= max_hueco)), grid_interp)
+
+    res = pd.Series(grid_final.loc[f_ord].to_numpy(), index=s_val.iloc[orden].index, dtype=float)
+    return res.reindex(valores.index)
 
 
 # ===========================================================================
@@ -83,7 +130,8 @@ def phase1_separate_and_team(
     """
     Separa track vs ball.
     Asigna equipo por moda de track_id a lo largo del clip.
-    Interpola coordenadas pitch_x / pitch_y faltantes en tomas cerradas.
+    Interpola huecos de hasta 15 cuadros por rastro (y el balón igual); lo demás queda NaN.
+    Conserva el orden original de las filas tras interpolar.
 
     Retorna:
         df_track   : filas source == 'track'
@@ -93,24 +141,30 @@ def phase1_separate_and_team(
     df_track = df_objects[df_objects["source"] == "track"].copy()
     df_ball = df_objects[df_objects["source"] == "ball"].copy()
 
-    # Asegurar coordenadas pitch_x, pitch_y sin NaN (interpolación por track + proyección bbox)
-    for df_sub in (df_track, df_ball):
-        if len(df_sub) == 0:
-            continue
-        df_sub["pitch_x"] = pd.to_numeric(df_sub["pitch_x"], errors="coerce")
-        df_sub["pitch_y"] = pd.to_numeric(df_sub["pitch_y"], errors="coerce")
-        if "track_id" in df_sub.columns and df_sub["track_id"].notna().any():
-            df_sub["pitch_x"] = df_sub.groupby("track_id")["pitch_x"].transform(
-                lambda s: s.ffill().bfill()
-            )
-            df_sub["pitch_y"] = df_sub.groupby("track_id")["pitch_y"].transform(
-                lambda s: s.ffill().bfill()
-            )
-        # Fallback proporcional desde imagen a cancha (12000 x 7000 cm)
-        bx = ((df_sub["x1"].astype(float) + df_sub["x2"].astype(float)) / 2.0) / 1280.0 * PITCH_L_CM
-        by = (df_sub["y2"].astype(float)) / 720.0 * PITCH_W_CM
-        df_sub["pitch_x"] = df_sub["pitch_x"].fillna(bx.clip(0.0, PITCH_L_CM)).fillna(6000.0)
-        df_sub["pitch_y"] = df_sub["pitch_y"].fillna(by.clip(0.0, PITCH_W_CM)).fillna(3500.0)
+    if len(df_track) > 0:
+        df_track["pitch_x"] = pd.to_numeric(df_track["pitch_x"], errors="coerce")
+        df_track["pitch_y"] = pd.to_numeric(df_track["pitch_y"], errors="coerce")
+        if "track_id" in df_track.columns and df_track["track_id"].notna().any():
+            px_new = df_track["pitch_x"].copy()
+            py_new = df_track["pitch_y"].copy()
+            for _, grp in df_track.groupby("track_id", sort=False):
+                px_new.loc[grp.index] = _interpolar_serie_huecos(grp["frame"], grp["pitch_x"], INTERP_MAX_FRAMES)
+                py_new.loc[grp.index] = _interpolar_serie_huecos(grp["frame"], grp["pitch_y"], INTERP_MAX_FRAMES)
+            df_track["pitch_x"] = px_new
+            df_track["pitch_y"] = py_new
+
+    if len(df_ball) > 0:
+        df_ball["pitch_x"] = pd.to_numeric(df_ball["pitch_x"], errors="coerce")
+        df_ball["pitch_y"] = pd.to_numeric(df_ball["pitch_y"], errors="coerce")
+        # Si hay más de una fila de balón en el mismo cuadro, interpolar sobre cuadros únicos
+        if df_ball["frame"].duplicated().any():
+            prim = ~df_ball["frame"].duplicated(keep="first")
+            sub = df_ball.loc[prim]
+            df_ball.loc[prim, "pitch_x"] = _interpolar_serie_huecos(sub["frame"], sub["pitch_x"], INTERP_MAX_FRAMES)
+            df_ball.loc[prim, "pitch_y"] = _interpolar_serie_huecos(sub["frame"], sub["pitch_y"], INTERP_MAX_FRAMES)
+        else:
+            df_ball["pitch_x"] = _interpolar_serie_huecos(df_ball["frame"], df_ball["pitch_x"], INTERP_MAX_FRAMES)
+            df_ball["pitch_y"] = _interpolar_serie_huecos(df_ball["frame"], df_ball["pitch_y"], INTERP_MAX_FRAMES)
 
     # Moda de equipo por track_id
     team_map: Dict[int, Optional[int]] = {}
@@ -137,8 +191,7 @@ def phase4_homography_ema(
     """
     Normaliza H: H_norm = H / H[2,2]
     Aplica suavizado EMA: H_ema[t] = α*H[t] + (1-α)*H_ema[t-1]
-    En fotogramas de toma cerrada (sin homografía directa), mantiene la última
-    matriz H_ema válida (sample-and-hold) para garantizar continuidad 100%.
+    Donde homography_valid es falso (toma cerrada), no se arrastra H_ema (queda None).
 
     Agrega columnas H_norm y H_ema a df_frames.
     """
@@ -153,13 +206,15 @@ def phase4_homography_ema(
         is_valid = bool(row.get("homography_valid", False)) and raw_h is not None
         if not is_valid:
             h_norms.append(None)
-            if h_ema is not None:
-                h_emas.append(list(h_ema.flatten().round(6)))
-            else:
-                h_emas.append(None)
+            h_emas.append(None)
             continue
 
         h_raw = np.array(raw_h, dtype=float).reshape(3, 3)
+        if not np.isfinite(h_raw).all():
+            h_norms.append(None)
+            h_emas.append(None)
+            continue
+
         # Normalizar
         h22 = h_raw[2, 2]
         h_norm = h_raw / h22 if abs(h22) > 1e-9 else h_raw
@@ -173,10 +228,6 @@ def phase4_homography_ema(
         h_norms.append(list(h_norm.flatten().round(6)))
         h_emas.append(list(h_ema.flatten().round(6)))
 
-    # Backfill inicial si los primeros fotogramas no tenían H válida
-    first_valid_ema = next((x for x in h_emas if x is not None), list(np.eye(3).flatten()))
-    h_emas = [x if x is not None else first_valid_ema for x in h_emas]
-
     df_out["H_norm"] = h_norms
     df_out["H_ema"] = h_emas
     return df_out
@@ -186,6 +237,22 @@ def phase4_homography_ema(
 # FASE 3 — Track Stitching (Algoritmo Húngaro)
 # ===========================================================================
 
+def _cargar_mapa_rastros_partido() -> Optional[Dict[int, int]]:
+    """
+    Lee el mapa de identidades versionado del partido activo con ruta absoluta desde la raíz:
+    ROOT_DIR / "data" / "partidos" / <partido_activo> / "mapa_rastros.json".
+    Lo devuelve solo si el archivo existe para el partido activo.
+    """
+    from implementacion import partido_config
+    partido = partido_config.activo()
+    ruta = ROOT_DIR / "data" / "partidos" / partido.id / "mapa_rastros.json"
+    if not ruta.exists():
+        return None
+    with open(ruta, "r", encoding="utf-8") as f:
+        raw = json.load(f)
+    return {int(k): int(v) for k, v in raw.items()}
+
+
 def phase3_track_stitching(
     df_track: pd.DataFrame,
     team_map: Dict[int, Optional[int]],
@@ -193,22 +260,27 @@ def phase3_track_stitching(
     """
     Une fragmentos de ByteTrack en rastros mediante el Algoritmo Húngaro.
 
-    Un fragmento solo continúa a otro que ya terminó, hace poco y a una distancia
-    alcanzable corriendo, sin cambiar de equipo. Así un rastro nunca tiene dos
-    posiciones en el mismo frame. Un rastro no equivale a un jugador: tras un corte
-    de cámara la misma persona empieza otro.
-
-    Costo(i,j) = distancia entre el final de i y el inicio de j.
-    El rastro conserva el id de su primer fragmento, que ya está en team_map.
+    Si el partido activo tiene mapa_rastros.json y sus track_id coinciden con los datos,
+    aplica directamente esa relación track_id → track_id_stitched para preservar
+    los nombres y dorsales de rastros_dorsales.json. Conserva el orden original de las filas.
 
     Retorna df_track con columna track_id_stitched añadida.
     """
+    orig_index = df_track.index
     df = df_track.sort_values(["frame", "track_id"]).copy()
     df["track_id_stitched"] = df["track_id"].astype("Int64")
 
     if not SCIPY_OK or df["track_id"].notna().sum() == 0:
         # Fallback: stitched == original
-        return df
+        return df.reindex(orig_index)
+
+    tids_presentes = {int(t) for t in df["track_id"].dropna().unique()}
+    mapa_partido = _cargar_mapa_rastros_partido()
+    if mapa_partido is not None and tids_presentes == set(mapa_partido.keys()):
+        df["track_id_stitched"] = df["track_id"].map(
+            lambda tid: mapa_partido.get(int(tid)) if pd.notna(tid) else None
+        ).astype("Int64")
+        return df.reindex(orig_index)
 
     fragmentos = []
     for tid, grp in df.dropna(subset=["track_id"]).groupby("track_id"):
@@ -260,7 +332,7 @@ def phase3_track_stitching(
     df["track_id_stitched"] = df["track_id"].map(
         lambda tid: id_remap.get(int(tid)) if pd.notna(tid) else None
     ).astype("Int64")
-    return df
+    return df.reindex(orig_index)
 
 
 # ===========================================================================
@@ -270,12 +342,15 @@ def phase3_track_stitching(
 def phase2_kinematics(df_track: pd.DataFrame) -> pd.DataFrame:
     """
     Para cada track_id_stitched, aplica Savitzky-Golay a pitch_x y pitch_y,
-    luego calcula velocidad en m/s. Clips la velocidad a V_MAX_MPS.
+    luego calcula velocidad en m/s reales (cancha de 105 x 68 m).
+    Clips la velocidad a V_MAX_MPS. Conserva el orden original de las filas.
 
     Columnas anadidas: pitch_x_smooth, pitch_y_smooth, vx_mps, vy_mps, v_mps, v_clipped
     """
-    # Reset index para garantizar indices posicionales 0..N-1
-    df = df_track.copy().sort_values(["track_id_stitched", "frame"]).reset_index(drop=True)
+    orig_index = df_track.index
+    df = df_track.copy()
+    df["_orig_idx"] = orig_index
+    df = df.sort_values(["track_id_stitched", "frame"]).reset_index(drop=True)
     fps = _fps_clip(int(df["frame"].max()) + 1) if len(df) else FPS
 
     n_total = len(df)
@@ -287,30 +362,37 @@ def phase2_kinematics(df_track: pd.DataFrame) -> pd.DataFrame:
     v_clip_arr = np.full(n_total, np.nan)
 
     for tid, grp in df.groupby("track_id_stitched"):
-        # iloc positions (posicionales, no de etiqueta)
         pos = grp.index.to_numpy()
         n = len(pos)
 
-        px_vals = grp["pitch_x"].values.astype(float)
-        py_vals = grp["pitch_y"].values.astype(float)
+        px_vals = _interpolar_serie_huecos(grp["frame"], grp["pitch_x"], INTERP_MAX_FRAMES).to_numpy(dtype=float)
+        py_vals = _interpolar_serie_huecos(grp["frame"], grp["pitch_y"], INTERP_MAX_FRAMES).to_numpy(dtype=float)
 
-        if n < SAVGOL_WINDOW:
-            sx = px_vals.copy()
-            sy = py_vals.copy()
-        else:
-            if SCIPY_OK:
-                sx = savgol_filter(px_vals, SAVGOL_WINDOW, SAVGOL_POLY)
-                sy = savgol_filter(py_vals, SAVGOL_WINDOW, SAVGOL_POLY)
-            else:
-                sx = pd.Series(px_vals).rolling(5, min_periods=1, center=True).mean().values
-                sy = pd.Series(py_vals).rolling(5, min_periods=1, center=True).mean().values
+        sx = px_vals.copy()
+        sy = py_vals.copy()
+        valid_mask = ~(np.isnan(px_vals) | np.isnan(py_vals))
+
+        # Aplicar Savitzky-Golay por tramo continuo sin NaNs
+        if valid_mask.any():
+            idx_valid = np.where(valid_mask)[0]
+            cortes = np.where(np.diff(idx_valid) > 1)[0] + 1
+            for tramo in np.split(idx_valid, cortes):
+                if len(tramo) >= SAVGOL_WINDOW:
+                    if SCIPY_OK:
+                        sx[tramo] = savgol_filter(px_vals[tramo], SAVGOL_WINDOW, SAVGOL_POLY)
+                        sy[tramo] = savgol_filter(py_vals[tramo], SAVGOL_WINDOW, SAVGOL_POLY)
+                    else:
+                        sx[tramo] = pd.Series(px_vals[tramo]).rolling(5, min_periods=1, center=True).mean().values
+                        sy[tramo] = pd.Series(py_vals[tramo]).rolling(5, min_periods=1, center=True).mean().values
 
         smooth_x[pos] = sx
         smooth_y[pos] = sy
 
         if n >= 2:
-            dx = np.diff(sx, prepend=sx[0]) * fps / 100.0   # m/s
-            dy = np.diff(sy, prepend=sy[0]) * fps / 100.0
+            sx_m = pitch_x_to_m(sx)
+            sy_m = pitch_y_to_m(sy)
+            dx = np.diff(sx_m, prepend=sx_m[0]) * fps   # m/s reales (105 x 68 m)
+            dy = np.diff(sy_m, prepend=sy_m[0]) * fps
             spd = np.sqrt(dx**2 + dy**2)
             vx_arr[pos] = dx
             vy_arr[pos] = dy
@@ -323,6 +405,8 @@ def phase2_kinematics(df_track: pd.DataFrame) -> pd.DataFrame:
     df["vy_mps"] = vy_arr
     df["v_mps"] = v_arr
     df["v_clipped"] = v_clip_arr
+    df = df.set_index("_orig_idx").reindex(orig_index)
+    df.index.name = orig_index.name
     return df
 
 
@@ -330,31 +414,136 @@ def phase2_kinematics(df_track: pd.DataFrame) -> pd.DataFrame:
 # FASE 5 — Ventanas Tácticas de 4.0 s
 # ===========================================================================
 
+def _moda_serie(s: pd.Series) -> Any:
+    vals = s.dropna()
+    if len(vals) == 0:
+        return None
+    m = vals.mode()
+    return m.iloc[0] if len(m) > 0 else None
+
+
+def _calcular_metricas_equipo_tramo(
+    df_eq: pd.DataFrame,
+    ataca_hacia: str,
+) -> Dict[str, Any]:
+    """
+    Calcula las 4 métricas de un equipo en un tramo, en metros reales (105 x 68 m):
+      - posicion_m: mediana de la distancia a la portería propia (según ataca_hacia).
+      - pct_campo_rival: % de observaciones en la mitad rival (> 52.5 m de su portería).
+      - largo_m, ancho_m: en cada cuadro con 4 o más jugadores del equipo,
+        p90 - p10 en x y en y; la mediana de esos cuadros.
+    Sin datos suficientes: None, nunca 0 ni un valor inventado.
+    """
+    if len(df_eq) == 0:
+        return {
+            "posicion_m": None,
+            "pct_campo_rival": None,
+            "largo_m": None,
+            "ancho_m": None,
+        }
+
+    x_m = pitch_x_to_m(df_eq["pitch_x_smooth"].to_numpy(dtype=float))
+    y_m = pitch_y_to_m(df_eq["pitch_y_smooth"].to_numpy(dtype=float))
+
+    mitad_m = PITCH_L_M / 2.0
+    if ataca_hacia == "+x":
+        dist_propia = x_m
+        en_rival = x_m > mitad_m
+    elif ataca_hacia == "-x":
+        dist_propia = PITCH_L_M - x_m
+        en_rival = x_m < mitad_m
+    else:
+        raise ValueError(f"ataca_hacia inválido: {ataca_hacia!r}")
+
+    posicion_m = round(float(np.median(dist_propia)), 1)
+    pct_campo_rival = int(round(float(np.mean(en_rival) * 100.0)))
+
+    df_coords = pd.DataFrame({
+        "frame": df_eq["frame"].to_numpy(),
+        "x_m": x_m,
+        "y_m": y_m,
+    })
+    largos = []
+    anchos = []
+    for _, grp_f in df_coords.groupby("frame", sort=False):
+        if len(grp_f) >= 4:
+            gx = grp_f["x_m"].to_numpy(dtype=float)
+            gy = grp_f["y_m"].to_numpy(dtype=float)
+            largos.append(float(np.percentile(gx, 90) - np.percentile(gx, 10)))
+            anchos.append(float(np.percentile(gy, 90) - np.percentile(gy, 10)))
+
+    largo_m = round(float(np.median(largos)), 1) if len(largos) > 0 else None
+    ancho_m = round(float(np.median(anchos)), 1) if len(anchos) > 0 else None
+
+    return {
+        "posicion_m": posicion_m,
+        "pct_campo_rival": pct_campo_rival,
+        "largo_m": largo_m,
+        "ancho_m": ancho_m,
+    }
+
+
+def decidir_territorio(
+    cod_a: str,
+    pct_a: Optional[float | int],
+    cod_b: str,
+    pct_b: Optional[float | int],
+) -> str:
+    """
+    El equipo con más pct_campo_rival gana el territorio si la diferencia es
+    estrictamente MAYOR que 20 puntos; si no (o si falta un dato), "repartido".
+    La misma regla simétrica para los dos equipos.
+    """
+    if pct_a is None or pct_b is None:
+        return "repartido"
+    if isinstance(pct_a, float) and np.isnan(pct_a):
+        return "repartido"
+    if isinstance(pct_b, float) and np.isnan(pct_b):
+        return "repartido"
+    diff = float(pct_a) - float(pct_b)
+    if abs(diff) <= 20.0:
+        return "repartido"
+    return cod_a if diff > 20.0 else cod_b
+
+
 def phase5_tactical_windows(
     df_track_clean: pd.DataFrame,
-    df_ball: pd.DataFrame,
-    team_map: Dict[int, Optional[int]],
+    df_ball: Optional[pd.DataFrame] = None,
+    team_map: Optional[Dict[int, Optional[int]]] = None,
+    equipos_override: Optional[Tuple[Any, Any]] = None,
+    total_frames_override: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     """
     Divide el video en 8 ventanas tácticas uniformes a lo largo de todo el clip.
-    Calcula métricas tácticas por ventana.
+    Calcula métricas tácticas por equipo y tramo en metros reales (105 x 68 m).
+    El equipo y la clase se asignan por moda de cada track_id DENTRO de cada tramo;
+    solo cuentan jugadores y porteros (los árbitros se excluyen).
 
     Retorna lista de 8 dicts con:
       window_id, t0, t1, frame_start, frame_end,
-      block_height_m, block_compactness_m,
-      transition_speed_mps, pressure_context, dominant_team,
-      n_arg, n_fra, centroid_arg_x, centroid_fra_x
+      territorio, dominant_team, equipos,
+      n_arg, n_fra, centroid_arg_x_cm, centroid_fra_x_cm
     """
-    max_frame = int(df_track_clean["frame"].max()) + 1 if len(df_track_clean) > 0 else N_FRAMES
-    total_frames = max(max_frame, N_FRAMES)
-    fps_clip = _fps_clip(total_frames)
-    if total_frames > N_FRAMES:
-        from implementacion import partido_config
-        equipos = partido_config.activo().equipos
+    if total_frames_override is not None:
+        total_frames = int(total_frames_override)
     else:
-        equipos = None  # datos sintéticos: códigos legados ARG/FRA
-    win_frames = max(int(np.ceil(total_frames / N_WINDOWS)), WINDOW_SIZE_FRAMES)
-    win_s = round(win_frames / fps_clip, 2)
+        max_frame = int(df_track_clean["frame"].max()) + 1 if len(df_track_clean) > 0 else N_FRAMES
+        total_frames = max(max_frame, N_FRAMES)
+    fps_clip = _fps_clip(total_frames)
+
+    if equipos_override is not None:
+        cod0, dir0 = equipos_override[0].codigo, equipos_override[0].ataca_hacia
+        cod1, dir1 = equipos_override[1].codigo, equipos_override[1].ataca_hacia
+    elif total_frames > N_FRAMES:
+        from implementacion import partido_config
+        eqs = partido_config.activo().equipos
+        cod0, dir0 = eqs[0].codigo, eqs[0].ataca_hacia
+        cod1, dir1 = eqs[1].codigo, eqs[1].ataca_hacia
+    else:
+        cod0, dir0 = "ARG", "+x"
+        cod1, dir1 = "FRA", "-x"
+
+    win_frames = max(int(np.ceil(total_frames / N_WINDOWS)), 1) if total_frames_override is not None else max(int(np.ceil(total_frames / N_WINDOWS)), WINDOW_SIZE_FRAMES)
 
     windows = []
     for w in range(N_WINDOWS):
@@ -364,78 +553,63 @@ def phase5_tactical_windows(
         t1 = round(f1 / fps_clip, 2)
 
         mask_w = (df_track_clean["frame"] >= f0) & (df_track_clean["frame"] < f1)
-        df_w = df_track_clean[mask_w]
+        df_w = df_track_clean[mask_w].copy()
 
-        # Separar por equipo usando team_map o columna team
-        def team_of(row_tid):
-            if row_tid is None or (isinstance(row_tid, float) and np.isnan(row_tid)):
-                return None
-            return team_map.get(int(row_tid))
+        # Moda de equipo y clase por track_id DENTRO del tramo
+        tid_col = "track_id" if "track_id" in df_w.columns and df_w["track_id"].notna().any() else "track_id_stitched"
+        team_por_tid: Dict[Any, Optional[int]] = {}
+        es_jugador_por_tid: Dict[Any, bool] = {}
 
-        mapped_teams = df_w["track_id_stitched"].apply(team_of)
-        if "team" in df_w.columns:
-            mapped_teams = mapped_teams.fillna(df_w["team"])
+        if len(df_w) > 0 and tid_col in df_w.columns:
+            for tid, grp in df_w.groupby(tid_col, sort=False):
+                if tid is None or (isinstance(tid, float) and np.isnan(tid)):
+                    continue
+                t_mod = _moda_serie(grp["team"]) if "team" in grp.columns else None
+                team_por_tid[tid] = int(t_mod) if t_mod in (0, 1) else None
 
-        arg_mask = mapped_teams == 0
-        fra_mask = mapped_teams == 1
+                # Determinar si por moda es jugador o portero (excluir árbitros)
+                es_jug = True
+                if "class_name" in grp.columns and grp["class_name"].notna().any():
+                    c_mod = _moda_serie(grp["class_name"])
+                    es_jug = str(c_mod).lower() in ("player", "goalkeeper")
+                elif "class_id" in grp.columns and grp["class_id"].notna().any():
+                    cid_mod = _moda_serie(grp["class_id"])
+                    # En dataset sintético: 0=player, 1=goalkeeper, 2=referee
+                    # En percepción real YOLO: 1=goalkeeper, 2=player, 3=referee, 0=ball
+                    es_jug = int(cid_mod) in (0, 1, 2) and int(cid_mod) != 3
+                es_jugador_por_tid[tid] = es_jug
 
-        df_arg = df_w[arg_mask]
-        df_fra = df_w[fra_mask]
-
-        # block_height_m: dispersión vertical del equipo (std pitch_y en m)
-        block_height = 0.0
-        if "pitch_y_smooth" in df_arg.columns and len(df_arg) > 1:
-            std_arg_y = float(df_arg["pitch_y_smooth"].std())
-            std_fra_y = float(df_fra["pitch_y_smooth"].std()) if len(df_fra) > 1 else 0.0
-            if np.isnan(std_arg_y):
-                std_arg_y = 0.0
-            if np.isnan(std_fra_y):
-                std_fra_y = 0.0
-            block_height = (std_arg_y + std_fra_y) / 100.0
-
-        # block_compactness_m: distancia media entre jugadores de la línea defensiva
-        block_compactness = 0.0
-        if "pitch_x_smooth" in df_arg.columns and len(df_arg) > 1:
-            std_arg_x = float(df_arg["pitch_x_smooth"].std())
-            block_compactness = 0.0 if np.isnan(std_arg_x) else (std_arg_x / 100.0)
-
-        # transition_speed_mps: velocidad media del balón en la ventana
-        mask_ball_w = (df_ball["frame"] >= f0) & (df_ball["frame"] < f1)
-        df_ball_w = df_ball[mask_ball_w]
-        transition_speed = 0.0
-        if len(df_ball_w) >= 2:
-            dx_b = np.diff(df_ball_w["pitch_x"].values.astype(float)) * fps_clip / 100.0
-            dy_b = np.diff(df_ball_w["pitch_y"].values.astype(float)) * fps_clip / 100.0
-            spd_b = np.sqrt(dx_b**2 + dy_b**2)
-            spd_b = spd_b[~np.isnan(spd_b)]
-            if len(spd_b) > 0:
-                transition_speed = float(np.mean(spd_b))
-                transition_speed = min(transition_speed, V_MAX_MPS)
-
-        # Centroides
-        centroid_arg_x = float(df_arg["pitch_x_smooth"].mean()) if len(df_arg) > 0 and "pitch_x_smooth" in df_arg.columns else 6000.0
-        centroid_fra_x = float(df_fra["pitch_x_smooth"].mean()) if len(df_fra) > 0 and "pitch_x_smooth" in df_fra.columns else 6000.0
-        if np.isnan(centroid_arg_x):
-            centroid_arg_x = 6000.0
-        if np.isnan(centroid_fra_x):
-            centroid_fra_x = 6000.0
-
-        # pressure_context y dominant_team: un equipo domina si su centroide
-        # está en campo rival según hacia dónde ataca. Se revisa primero el team_id 0.
-        cod0, cod1 = ("ARG", "FRA") if equipos is None else (equipos[0].codigo, equipos[1].codigo)
-        dir0 = "+x" if equipos is None else equipos[0].ataca_hacia
-        mitad = PITCH_L_CM / 2
-        t0_en_campo_rival = centroid_arg_x > mitad if dir0 == "+x" else centroid_arg_x < mitad
-        t1_en_campo_rival = centroid_fra_x < mitad if dir0 == "+x" else centroid_fra_x > mitad
-        if t0_en_campo_rival:
-            pressure_context = "ataque"
-            dominant_team = cod0
-        elif t1_en_campo_rival:
-            pressure_context = "defensa"
-            dominant_team = cod1
+        if len(df_w) > 0 and tid_col in df_w.columns:
+            es_jug_mask = df_w[tid_col].map(lambda t: bool(es_jugador_por_tid.get(t, False)))
+            team_tramo = df_w[tid_col].map(lambda t: team_por_tid.get(t))
+            coords_ok = df_w["pitch_x_smooth"].notna() & df_w["pitch_y_smooth"].notna()
+            df_jug = df_w[es_jug_mask & coords_ok].copy()
+            df_jug["_team_tramo"] = team_tramo[es_jug_mask & coords_ok]
         else:
-            pressure_context = "neutro"
-            dominant_team = "neutro"
+            df_jug = df_w.iloc[0:0].copy()
+            df_jug["_team_tramo"] = pd.Series(dtype="object")
+
+        df_eq0 = df_jug[df_jug["_team_tramo"] == 0]
+        df_eq1 = df_jug[df_jug["_team_tramo"] == 1]
+
+        met0 = _calcular_metricas_equipo_tramo(df_eq0, dir0)
+        met1 = _calcular_metricas_equipo_tramo(df_eq1, dir1)
+
+        territorio = decidir_territorio(cod0, met0["pct_campo_rival"], cod1, met1["pct_campo_rival"])
+        dominant_team = "neutro" if territorio == "repartido" else territorio
+
+        # Centroides (None si no hay datos suficientes, nunca 6000 inventado)
+        if len(df_eq0) > 0:
+            c0_val = float(df_eq0["pitch_x_smooth"].mean())
+            centroid_arg_x = round(c0_val, 1) if not np.isnan(c0_val) else None
+        else:
+            centroid_arg_x = None
+
+        if len(df_eq1) > 0:
+            c1_val = float(df_eq1["pitch_x_smooth"].mean())
+            centroid_fra_x = round(c1_val, 1) if not np.isnan(c1_val) else None
+        else:
+            centroid_fra_x = None
 
         windows.append({
             "window_id": f"W{w}",
@@ -443,15 +617,16 @@ def phase5_tactical_windows(
             "t1": round(t1, 2),
             "frame_start": f0,
             "frame_end": max(f1 - 1, f0),
-            "block_height_m": round(block_height, 3),
-            "block_compactness_m": round(block_compactness, 3),
-            "transition_speed_mps": round(transition_speed, 3),
-            "pressure_context": pressure_context,
+            "territorio": territorio,
             "dominant_team": dominant_team,
-            "n_arg": int(arg_mask.sum()),
-            "n_fra": int(fra_mask.sum()),
-            "centroid_arg_x_cm": round(centroid_arg_x, 1),
-            "centroid_fra_x_cm": round(centroid_fra_x, 1),
+            "equipos": {
+                cod0: met0,
+                cod1: met1,
+            },
+            "n_arg": int(len(df_eq0)),
+            "n_fra": int(len(df_eq1)),
+            "centroid_arg_x_cm": centroid_arg_x,
+            "centroid_fra_x_cm": centroid_fra_x,
         })
 
     return windows
@@ -473,12 +648,15 @@ def run_stage_monitors(
     df_track_clean: pd.DataFrame,
     tactical_windows: List[dict],
     team_map: Dict[int, Optional[int]],
+    radar_error_path: Optional[str | pathlib.Path] = None,
+    output_dir: Optional[str | pathlib.Path] = None,
 ) -> dict:
     """
     Ejecuta los Monitores M2.0 a M2.5.
-    Guarda el reporte en data/clean/monitor_m2.json.
+    Guarda el reporte en data/clean/monitor_m2.json (o en output_dir si se indica).
     """
-    CLEAN_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir = pathlib.Path(output_dir) if output_dir is not None else CLEAN_DIR
+    out_dir.mkdir(parents=True, exist_ok=True)
     checks = {}
 
     # M2.0 — Separación track/ball
@@ -496,22 +674,55 @@ def run_stage_monitors(
         },
     }
 
-    # M2.1 — Homografía EMA normalizada
+    # M2.1 — Homografía EMA normalizada y error del radar
     n_hv = int(df_frames["homography_valid"].sum()) if "homography_valid" in df_frames.columns else 0
     hv_rate = n_hv / max(len(df_frames), 1)
     has_h_ema = "H_ema" in df_frames.columns
     n_ema_valid = int(df_frames["H_ema"].notna().sum()) if has_h_ema else 0
     ema_rate = n_ema_valid / max(len(df_frames), 1)
+
+    es_sintetico = len(df_frames) <= N_FRAMES
+    err_path = pathlib.Path(radar_error_path) if radar_error_path is not None else (out_dir / "radar_error.json")
+    radar_err_mediana = None
+    radar_err_p90 = None
+    radar_err_metodo = None
+    radar_err_aviso = None
+
+    if radar_error_path is not None or not es_sintetico:
+        if err_path.exists():
+            with open(err_path, "r", encoding="utf-8") as f:
+                r_err = json.load(f)
+            med_raw = r_err.get("mediana_m")
+            if med_raw is not None:
+                radar_err_mediana = float(med_raw)
+            radar_err_p90 = r_err.get("p90_m")
+            radar_err_metodo = r_err.get("metodo")
+            radar_err_ok = (radar_err_mediana is not None) and (radar_err_mediana <= 3.0)
+        else:
+            radar_err_ok = False
+            radar_err_aviso = f"Falta {err_path} con datos reales."
+    else:
+        radar_err_ok = True
+        radar_err_aviso = "Datos sintéticos: comprobación de radar_error.json omitida."
+        print(f"  [AVISO M2.1] {radar_err_aviso}")
+
+    m21_details: Dict[str, Any] = {
+        "homography_raw_valid_rate": round(hv_rate, 4),
+        "homography_ema_valid_rate": round(ema_rate, 4),
+        "has_H_ema": has_h_ema,
+        "has_H_norm": "H_norm" in df_frames.columns,
+        "radar_error_mediana_m": radar_err_mediana,
+        "radar_error_p90_m": radar_err_p90,
+        "radar_error_metodo": radar_err_metodo,
+    }
+    if radar_err_aviso is not None:
+        m21_details["aviso"] = radar_err_aviso
+
     checks["M2.1"] = {
         "monitor": "M2.1",
         "name": "Homografía EMA normalizada",
-        "pass": ema_rate >= 0.95 and hv_rate >= 0.50 and has_h_ema,
-        "details": {
-            "homography_raw_valid_rate": round(hv_rate, 4),
-            "homography_ema_valid_rate": round(ema_rate, 4),
-            "has_H_ema": has_h_ema,
-            "has_H_norm": "H_norm" in df_frames.columns,
-        },
+        "pass": ema_rate >= 0.95 and hv_rate >= 0.50 and has_h_ema and radar_err_ok,
+        "details": m21_details,
     }
 
     # M2.2 — Track Stitching
@@ -584,8 +795,8 @@ def run_stage_monitors(
             "windows_summary": [
                 {
                     "id": w["window_id"],
-                    "dominant_team": w["dominant_team"],
-                    "pressure_context": w["pressure_context"],
+                    "territorio": w.get("territorio"),
+                    "dominant_team": w.get("dominant_team"),
                 }
                 for w in tactical_windows
             ],
@@ -625,9 +836,9 @@ def run_stage_monitors(
         },
     }
 
-    out_path = CLEAN_DIR / "monitor_m2.json"
+    out_path = out_dir / "monitor_m2.json"
     with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=2, ensure_ascii=False)
+        json.dump(report, f, indent=2, ensure_ascii=False, allow_nan=False)
 
     _print_monitors(report)
     return report
@@ -728,7 +939,7 @@ def process_parquet_files(
 
     tactical_path = out_dir / "tactical_summaries.json"
     with open(tactical_path, "w", encoding="utf-8") as f:
-        json.dump(tactical_windows, f, indent=2, ensure_ascii=False)
+        json.dump(tactical_windows, f, indent=2, ensure_ascii=False, allow_nan=False)
 
     frames_clean_path = out_dir / "frames_clean.parquet"
     df_frames_h.to_parquet(str(frames_clean_path), index=False)
@@ -747,6 +958,7 @@ def process_parquet_files(
         df_track_clean=df_track_clean,
         tactical_windows=tactical_windows,
         team_map=team_map,
+        output_dir=out_dir,
     )
 
     elapsed = round(time.perf_counter() - t_start, 2)

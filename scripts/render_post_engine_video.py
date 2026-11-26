@@ -234,13 +234,25 @@ def main() -> None:
     df_tracks = df_obj[df_obj["source"] == "track"].copy()
     df_balls = df_obj[df_obj["source"] == "ball"].copy()
 
-    orig_team_mode: Dict[int, int] = {}
-    for tid, grp in df_tracks.groupby("track_id"):
-        if pd.isna(tid):
-            continue
-        t_vals = grp["team"].dropna()
-        if len(t_vals) > 0:
-            orig_team_mode[int(tid)] = int(t_vals.mode().iloc[0])
+    # Moda de equipo y clase por track_id dentro de cada tramo táctico (C2)
+    win_frames = max(int(np.ceil(len(df_frm) / 8)), 100)
+    team_tramo_map: Dict[Tuple[int, int], int] = {}
+    for w_idx in range(8):
+        f0 = w_idx * win_frames
+        f1 = min(f0 + win_frames, len(df_frm))
+        sub_w = df_tracks[(df_tracks["frame"] >= f0) & (df_tracks["frame"] < f1)]
+        for tid, grp in sub_w.groupby("track_id"):
+            if pd.isna(tid):
+                continue
+            cls_vals = grp["class_id"].dropna()
+            if len(cls_vals) > 0 and int(cls_vals.mode().iloc[0]) == REFEREE_CLASS_ID:
+                team_tramo_map[(w_idx, int(tid))] = REFEREE_CLASS_ID
+                continue
+            t_vals = grp["team"].dropna()
+            if len(t_vals) > 0:
+                team_tramo_map[(w_idx, int(tid))] = int(t_vals.mode().iloc[0])
+            else:
+                team_tramo_map[(w_idx, int(tid))] = 0
 
     df_tracks = df_tracks.sort_values(["track_id", "frame"]).reset_index(drop=True)
     bbox_alpha = 0.55
@@ -355,18 +367,17 @@ def main() -> None:
 
                 lookup_list = []
                 labels_list = []
+                w_cur_idx = min(7, idx // win_frames)
                 for _, r in grp.iterrows():
                     orig_tid = int(r["track_id"]) if pd.notna(r["track_id"]) else -1
                     stid = int(r["track_id_stitched"]) if pd.notna(r["track_id_stitched"]) else orig_tid
-                    cls_id = int(r["class_id"])
-                    if cls_id == REFEREE_CLASS_ID:
+                    t_clean = team_tramo_map.get((w_cur_idx, orig_tid), r.get("team"))
+                    if int(r["class_id"]) == REFEREE_CLASS_ID or t_clean == REFEREE_CLASS_ID:
                         t_clean = REFEREE_CLASS_ID
+                    elif pd.isna(t_clean) or t_clean not in (0, 1):
+                        t_clean = 0
                     else:
-                        t_clean = orig_team_mode.get(orig_tid, r.get("team"))
-                        if pd.isna(t_clean) or t_clean not in (0, 1):
-                            t_clean = 0
-                        else:
-                            t_clean = int(t_clean)
+                        t_clean = int(t_clean)
                     lookup_list.append(t_clean)
                     # Sin velocidad por jugador: la homografía salta entre cuadros y la
                     # velocidad instantánea sale topada en 9.5 m/s (diagnóstico en la sesión 13).
@@ -463,7 +474,7 @@ def main() -> None:
                         )
 
             t_cur = idx / fps
-            cam_tag = "TOMA ABIERTA (H_ema ACTIVA)" if is_wide_shot else "TOMA CERRADA / REPLAY (HOLD EMA)"
+            cam_tag = "TOMA ABIERTA (CALIBRACION ACTIVA)" if is_wide_shot else "TOMA CERRADA / REPLAY"
             tag_col = (50, 220, 100) if is_wide_shot else (0, 180, 255)
 
             # Encabezado en el video independiente del Radar 2D
@@ -495,23 +506,42 @@ def main() -> None:
 
             # 5. Panel de Ventana Táctica (arriba a la derecha, compacto)
             active_w = next((w for w in tactical_windows if w["t0"] <= t_cur < w["t1"]), tactical_windows[-1])
-            w_box_w, w_box_h = 295, 78
+            equipos_w = active_w.get("equipos") or {}
+            eq0_d = equipos_w.get(eq0.codigo) or {}
+            eq1_d = equipos_w.get(eq1.codigo) or {}
+            territorio_w = active_w.get("territorio") or active_w.get("dominant_team") or "repartido"
+
+            def _fmt_num(val, suf=""):
+                return f"{float(val):.0f}{suf}" if isinstance(val, (int, float)) else "-"
+
+            linea_eq0 = (
+                f"{eq0.codigo}: pos {_fmt_num(eq0_d.get('posicion_m'), 'm')} | "
+                f"rival {_fmt_num(eq0_d.get('pct_campo_rival'), '%')} | "
+                f"{_fmt_num(eq0_d.get('largo_m'))}x{_fmt_num(eq0_d.get('ancho_m'), 'm')}"
+            )
+            linea_eq1 = (
+                f"{eq1.codigo}: pos {_fmt_num(eq1_d.get('posicion_m'), 'm')} | "
+                f"rival {_fmt_num(eq1_d.get('pct_campo_rival'), '%')} | "
+                f"{_fmt_num(eq1_d.get('largo_m'))}x{_fmt_num(eq1_d.get('ancho_m'), 'm')}"
+            )
+
+            w_box_w, w_box_h = 335, 96
             wx1, wy1 = w_f - w_box_w - 15, 15
             overlay_top = img.copy()
             cv2.rectangle(overlay_top, (wx1, wy1), (wx1 + w_box_w, wy1 + w_box_h), (15, 23, 42), -1)
             cv2.addWeighted(overlay_top, 0.72, img, 0.28, 0, img)
             cv2.putText(
                 img,
-                f"Omnimorph Engine | Ventana {active_w['window_id']}",
-                (wx1 + 12, wy1 + 24),
+                f"Omnimorph Engine | {active_w['window_id']} ({active_w['t0']:.1f}-{active_w['t1']:.1f}s) | Terr: {territorio_w}",
+                (wx1 + 12, wy1 + 22),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                0.50,
+                0.44,
                 (100, 220, 255),
                 1,
             )
             cv2.putText(
                 img,
-                f"Altura bloque: {active_w['block_height_m']:.1f} m | Compac: {active_w['block_compactness_m']:.1f} m",
+                linea_eq0,
                 (wx1 + 12, wy1 + 48),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.44,
@@ -520,10 +550,10 @@ def main() -> None:
             )
             cv2.putText(
                 img,
-                f"Presion: {active_w['pressure_context']} | ventana {active_w['t0']:.1f}-{active_w['t1']:.1f} s",
-                (wx1 + 12, wy1 + 68),
+                linea_eq1,
+                (wx1 + 12, wy1 + 74),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                0.42,
+                0.44,
                 (180, 255, 180),
                 1,
             )

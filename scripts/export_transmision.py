@@ -304,7 +304,7 @@ def main() -> None:
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
-        json.dump(datos, f, ensure_ascii=False, separators=(",", ":"))
+        json.dump(datos, f, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
 
     n_bytes = OUT.stat().st_size
     print(

@@ -503,41 +503,60 @@ def render_panel3(frame: int, tactical: list | None, fps: float = 30.0):
 
     w = active_window
 
-    # Semáforo de equipo dominante
-    dom = w["dominant_team"]
-    if dom in ("ARG", "BRA"):
+    # Semáforo de territorio / equipo dominante
+    territorio = w.get("territorio", w.get("dominant_team", "repartido"))
+    equipos_w = w.get("equipos", {}) or {}
+    codigos_eq = list(equipos_w.keys())
+    cod_a = codigos_eq[0] if len(codigos_eq) >= 1 else "SKN"
+    cod_b = codigos_eq[1] if len(codigos_eq) >= 2 else "CRC"
+
+    if territorio == cod_a or territorio in ("ARG", "BRA", "SKN"):
         dom_color = "#3b82f6"
-        dom_label = "🔵 BRA (Brasil) domina"
-    elif dom in ("FRA", "GER"):
+        dom_label = f"🔵 Territorio: {territorio}"
+    elif territorio == cod_b or territorio in ("FRA", "GER", "CRC"):
         dom_color = "#ef4444"
-        dom_label = "🔴 GER (Alemania) domina"
+        dom_label = f"🔴 Territorio: {territorio}"
     else:
         dom_color = "#94a3b8"
-        dom_label = "⚪ Equilibrado"
+        dom_label = "⚪ Territorio: repartido"
 
     st.markdown(
         f'<div class="metric-card" style="border-left: 4px solid {dom_color}">'
-        f'<b>Ventana {w["window_id"]}</b> | {w["t0"]:.1f}s – {w["t1"]:.1f}s | {dom_label}'
+        f'<b>Ventana {w.get("window_id", "?")}</b> | {w.get("t0", 0.0):.1f}s – {w.get("t1", 0.0):.1f}s | {dom_label}'
         f'</div>',
         unsafe_allow_html=True,
     )
 
+    def _fmt_m(val, suf=" m"):
+        return f"{val:.1f}{suf}" if isinstance(val, (int, float)) else "—"
+
+    def _fmt_pct(val):
+        return f"{int(round(val))}%" if isinstance(val, (int, float)) else "—"
+
+    eq_a = equipos_w.get(cod_a, {}) or {}
+    eq_b = equipos_w.get(cod_b, {}) or {}
+
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("📏 Block Height", f'{w["block_height_m"]:.2f} m')
-        st.metric("🔲 Compacidad", f'{w["block_compactness_m"]:.2f} m')
+        st.metric(f"📏 Posición media {cod_a}", _fmt_m(eq_a.get("posicion_m")))
+        st.metric(f"🎯 En campo rival {cod_a}", _fmt_pct(eq_a.get("pct_campo_rival")))
+        st.metric(f"↔️ Largo / Ancho {cod_a}", f'{_fmt_m(eq_a.get("largo_m"), "")} × {_fmt_m(eq_a.get("ancho_m"))}')
     with col2:
-        st.metric("💨 Trans. Speed", f'{w["transition_speed_mps"]:.2f} m/s')
-        st.metric("🎯 Presión", w["pressure_context"].capitalize())
+        st.metric(f"📏 Posición media {cod_b}", _fmt_m(eq_b.get("posicion_m")))
+        st.metric(f"🎯 En campo rival {cod_b}", _fmt_pct(eq_b.get("pct_campo_rival")))
+        st.metric(f"↔️ Largo / Ancho {cod_b}", f'{_fmt_m(eq_b.get("largo_m"), "")} × {_fmt_m(eq_b.get("ancho_m"))}')
     with col3:
-        st.metric("👥 N BRA", w.get("n_arg", "—"))
-        st.metric("👥 N GER", w.get("n_fra", "—"))
+        st.metric("🗺️ Territorio", str(territorio))
+        st.metric(f"👥 Observaciones {cod_a}", w.get("n_arg", "—"))
+        st.metric(f"👥 Observaciones {cod_b}", w.get("n_fra", "—"))
 
     # Centroides
-    c_arg = w.get("centroid_arg_x_cm", 6000)
-    c_fra = w.get("centroid_fra_x_cm", 6000)
+    c_arg = w.get("centroid_arg_x_cm")
+    c_fra = w.get("centroid_fra_x_cm")
+    c_a_str = f"{c_arg * 105.0 / 12000.0:.1f} m" if isinstance(c_arg, (int, float)) else "—"
+    c_b_str = f"{c_fra * 105.0 / 12000.0:.1f} m" if isinstance(c_fra, (int, float)) else "—"
     st.caption(
-        f"Centroide BRA: {c_arg/100:.1f} m | Centroide GER: {c_fra/100:.1f} m"
+        f"Centroide {cod_a}: {c_a_str} | Centroide {cod_b}: {c_b_str}"
     )
 
 

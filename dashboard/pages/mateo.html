@@ -107,7 +107,7 @@
     .video-panel__thumb-video { position: relative; }
     .video-panel__thumb-video video { object-fit: contain; background: #000; cursor: pointer; }
     .video-panel__overlay {
-      position: absolute; top: var(--space-3); left: var(--space-3); z-index: 5;
+      position: absolute; bottom: var(--space-3); left: var(--space-3); z-index: 5;
       display: flex; gap: var(--space-2); pointer-events: none;
     }
     .video-panel__overlay .chip { background: rgba(0,0,0,0.6); }
@@ -146,8 +146,9 @@
     .centroid-line__track { position: absolute; left: 0; right: 0; top: 12px; height: 1px; background: var(--color-pitch-lines); }
     .centroid-line__mid { position: absolute; left: 50%; top: 4px; width: 1px; height: 17px; background: var(--color-pitch-lines); }
     .centroid-line__dot { position: absolute; top: 6px; width: 12px; height: 12px; border-radius: 50%; transform: translateX(-6px); transition: left var(--transition); border: 1px solid var(--color-bg); }
-    .kpi-grid > .kpi-card:nth-child(3) { grid-column: 1 / -1; border-right: none; }
+    .kpi-grid > .kpi-card:nth-child(5) { grid-column: 1 / -1; border-right: none; }
     .kpi-row { padding: var(--space-3) var(--cell-padding-x); border-bottom: var(--border); }
+    .page-mateo .site-credit { padding-bottom: 92px; }
 
     /* ── Panel 4: crónica ────────────────────────────────────────────────── */
     .chronicle-container { padding: var(--cell-padding-y) var(--cell-padding-x); display: flex; flex-direction: column; gap: var(--space-4); }
@@ -363,19 +364,25 @@
           <div class="panel__body">
             <div class="kpi-row" style="display:flex; align-items:center; gap: var(--space-3); flex-wrap: wrap;">
               <span class="badge badge--team-a" id="badge-dominant">—</span>
-              <span class="text-label" id="kpi-pressure-val" style="font-family: var(--font-mono); color: var(--color-text-soft);">Presión —</span>
+              <span class="text-label" id="kpi-pressure-val" style="font-family: var(--font-mono); color: var(--color-text-soft);">Territorio · —</span>
             </div>
 
             <div class="kpi-grid">
               <div class="kpi-card">
-                <span class="kpi-card__label">Altura del bloque</span>
-                <div><span class="kpi-card__value" id="kpi-bh-val">—</span><span class="kpi-card__unit">m</span></div>
-                <div class="spark" id="spark-bh" aria-label="Evolución por ventana"></div>
+                <span class="kpi-card__label">Distancia a su portería (<span data-eq="a">—</span> / <span data-eq="b">—</span>)</span>
+                <div><span class="kpi-card__value" id="kpi-pos-val" style="font-size: 28px;">—</span><span class="kpi-card__unit">m</span></div>
               </div>
               <div class="kpi-card">
-                <span class="kpi-card__label">Compacidad</span>
-                <div><span class="kpi-card__value" id="kpi-cp-val" style="font-size: 32px;">—</span><span class="kpi-card__unit">m</span></div>
-                <div class="spark" id="spark-cp" aria-label="Evolución por ventana"></div>
+                <span class="kpi-card__label">En campo rival (<span data-eq="a">—</span> / <span data-eq="b">—</span>)</span>
+                <div><span class="kpi-card__value" id="kpi-riv-val" style="font-size: 28px;">—</span><span class="kpi-card__unit">%</span></div>
+              </div>
+              <div class="kpi-card">
+                <span class="kpi-card__label">Largo visible (<span data-eq="a">—</span> / <span data-eq="b">—</span>)</span>
+                <div><span class="kpi-card__value" id="kpi-largo-val" style="font-size: 26px;">—</span><span class="kpi-card__unit">m</span></div>
+              </div>
+              <div class="kpi-card">
+                <span class="kpi-card__label">Ancho visible (<span data-eq="a">—</span> / <span data-eq="b">—</span>)</span>
+                <div><span class="kpi-card__value" id="kpi-ancho-val" style="font-size: 26px;">—</span><span class="kpi-card__unit">m</span></div>
               </div>
               <div class="kpi-card">
                 <span class="kpi-card__label">Presencia en cuadro</span>
@@ -391,7 +398,7 @@
             </div>
 
             <div class="kpi-row" style="border-bottom: none;">
-              <span class="text-label">Centroides en el eje largo (0 – 120 m)</span>
+              <span class="text-label">Centroides en el eje largo (0 – 105 m)</span>
               <div class="centroid-line">
                 <div class="centroid-line__track"></div>
                 <div class="centroid-line__mid"></div>
@@ -474,7 +481,7 @@
 
   <!-- ═══════════════════ ESTADO DEL SISTEMA ═══════════════════ -->
   <div class="obs-strip" role="region" aria-label="Estado del sistema MATEO" id="obs-strip">
-    <a class="obs-strip__verified" id="obs-verified-link" href="metodo.html">✓ Análisis verificado (9 de 9 comprobaciones)</a>
+    <a class="obs-strip__verified" id="obs-verified-link" href="metodo.html">Comprobaciones del proceso: —</a>
     <details class="obs-strip__details">
       <summary class="obs-strip__summary">Ver detalle</summary>
       <div class="obs-strip__chips" id="obs-chips">
@@ -579,7 +586,6 @@
 
       buildMonitors();
       buildTimeline();
-      buildSparks();
       buildTranscript();
       buildWaveform();
       renderPlayers();
@@ -613,7 +619,7 @@
       cp.lastChild.textContent = 'Pipeline ' + ok + '/' + keys.length + (ok === keys.length ? ' OK' : '');
       var verif = $('obs-verified-link');
       if (verif) {
-        verif.textContent = '✓ Análisis verificado (' + ok + ' de ' + keys.length + ' comprobaciones)';
+        verif.textContent = 'Comprobaciones del proceso: ' + ok + ' de ' + keys.length;
       }
     }
 
@@ -649,21 +655,12 @@
       render(true);
     }
 
-    // ── Sparklines por ventana ─────────────────────────────────────────
-    function buildSparks() {
-      [['spark-bh', 'block_height_m'], ['spark-cp', 'compactness_m']].forEach(function (s) {
-        var host = $(s[0]);
-        var max = Math.max.apply(null, D.windows.map(function (w) { return w[s[1]] || 0; })) || 1;
-        D.windows.forEach(function (w, i) {
-          var b = document.createElement('div');
-          b.className = 'spark__bar';
-          b.dataset.w = i;
-          b.style.height = Math.max(8, (w[s[1]] || 0) / max * 100) + '%';
-          b.title = nombreTramo(w, i) + ': ' + fmt(w[s[1]], 2);
-          b.addEventListener('click', function () { seek(w.t0 + 0.01); });
-          host.appendChild(b);
-        });
-      });
+    // ── Métricas por equipo y ventana ──────────────────────────────────
+    function _metricEquipo(w, cod, clave) {
+      var eqs = w && w.equipos;
+      if (!eqs || !eqs[cod]) return null;
+      var v = eqs[cod][clave];
+      return v == null || isNaN(v) ? null : Number(v);
     }
 
     // ── Transcripción ──────────────────────────────────────────────────
@@ -759,7 +756,7 @@
       var holding = lv !== f;
       $('radar-hold').classList.toggle('radar-hold--on', holding && lv >= 0);
       var tag = $('shot-tag');
-      tag.textContent = holding ? 'Toma cerrada / repetición · radar en espera' : 'Toma abierta · homografía activa';
+      tag.textContent = lv < 0 ? 'Cargando posiciones' : (holding ? 'Toma cerrada / repetición · radar en espera' : 'Toma abierta · homografía activa');
       tag.className = 'shot-tag' + (holding ? '' : ' shot-tag--open');
 
       var pl = $('radar-players'), tr = $('radar-trails');
@@ -806,9 +803,6 @@
       document.querySelectorAll('.master-clock__window').forEach(function (el, i) {
         el.classList.toggle('master-clock__window--active', i === wi);
       });
-      document.querySelectorAll('.spark__bar').forEach(function (b) {
-        b.classList.toggle('spark__bar--active', Number(b.dataset.w) === wi);
-      });
       document.querySelectorAll('.transcript__line').forEach(function (l, i) {
         l.classList.toggle('transcript__line--active', i === wi);
         l.classList.toggle('transcript__line--next', i === wi + 1);
@@ -826,14 +820,24 @@
       chipW.lastChild.textContent = nombreTramo(w, wi) + ' · ' + w.t0.toFixed(1) + '–' + w.t1.toFixed(1) + ' s';
       chipW.title = w.id;
 
-      $('kpi-bh-val').textContent = fmt(w.block_height_m, 1);
-      $('kpi-cp-val').textContent = fmt(w.compactness_m, 1);
-      $('kpi-pressure-val').textContent = 'Presión · ' + (w.pressure || '—');
+      var posA = _metricEquipo(w, TEAM[0], 'posicion_m'), posB = _metricEquipo(w, TEAM[1], 'posicion_m');
+      var rivA = _metricEquipo(w, TEAM[0], 'pct_campo_rival'), rivB = _metricEquipo(w, TEAM[1], 'pct_campo_rival');
+      var larA = _metricEquipo(w, TEAM[0], 'largo_m'), larB = _metricEquipo(w, TEAM[1], 'largo_m');
+      var ancA = _metricEquipo(w, TEAM[0], 'ancho_m'), ancB = _metricEquipo(w, TEAM[1], 'ancho_m');
+
+      $('kpi-pos-val').textContent = fmt(posA, 1) + ' / ' + fmt(posB, 1);
+      $('kpi-riv-val').textContent = fmt(rivA, 0) + ' / ' + fmt(rivB, 0);
+      $('kpi-largo-val').textContent = fmt(larA, 1) + ' / ' + fmt(larB, 1);
+      $('kpi-ancho-val').textContent = fmt(ancA, 1) + ' / ' + fmt(ancB, 1);
+
+      var terr = w.territorio || (w.dominant && w.dominant !== 'neutro' ? w.dominant : (w.equipos ? 'repartido' : '—'));
+      $('kpi-pressure-val').textContent = 'Territorio · ' + terr;
 
       var badge = $('badge-dominant');
-      if (w.dominant === TEAM[0]) { badge.className = 'badge badge--team-a'; badge.textContent = TEAM[0] + ' en campo rival'; }
-      else if (w.dominant === TEAM[1]) { badge.className = 'badge badge--team-b'; badge.textContent = TEAM[1] + ' en campo rival'; }
-      else { badge.className = 'badge'; badge.textContent = 'Equilibrado'; }
+      if (terr === TEAM[0]) { badge.className = 'badge badge--team-a'; badge.textContent = TEAM[0] + ' en campo rival'; }
+      else if (terr === TEAM[1]) { badge.className = 'badge badge--team-b'; badge.textContent = TEAM[1] + ' en campo rival'; }
+      else if (terr === 'repartido') { badge.className = 'badge'; badge.textContent = 'Territorio repartido'; }
+      else { badge.className = 'badge'; badge.textContent = '—'; }
 
       var tot = (w.n_a || 0) + (w.n_b || 0) || 1;
       var bar = $('kpi-presence-bar');
@@ -842,10 +846,11 @@
       $('kpi-pa').textContent = TEAM[0] + ' ' + Math.round((w.n_a || 0) / tot * 100) + '%';
       $('kpi-pb').textContent = TEAM[1] + ' ' + Math.round((w.n_b || 0) / tot * 100) + '%';
 
-      $('cent-a').style.left = Math.min(100, Math.max(0, w.centroid_a_m / 120 * 100)) + '%';
-      $('cent-b').style.left = Math.min(100, Math.max(0, w.centroid_b_m / 120 * 100)) + '%';
-      $('centroid-bra').textContent = fmt(w.centroid_a_m, 1) + ' m';
-      $('centroid-ger').textContent = fmt(w.centroid_b_m, 1) + ' m';
+      var ca = w.centroid_a_m, cb = w.centroid_b_m;
+      $('cent-a').style.left = (ca != null && !isNaN(ca) ? Math.min(100, Math.max(0, ca / 105 * 100)) : 50) + '%';
+      $('cent-b').style.left = (cb != null && !isNaN(cb) ? Math.min(100, Math.max(0, cb / 105 * 100)) : 50) + '%';
+      $('centroid-bra').textContent = ca != null && !isNaN(ca) ? fmt(ca, 1) + ' m' : '—';
+      $('centroid-ger').textContent = cb != null && !isNaN(cb) ? fmt(cb, 1) + ' m' : '—';
 
       $('chronicle-text').textContent = w.narration || '—';
       $('chronicle-analysis').textContent = w.analysis || '';

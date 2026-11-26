@@ -5,10 +5,11 @@ Agente Táctico y Narrador — ibm/granite-4-h-small
 
 Lee las 8 ventanas de data/clean/tactical_summaries.json,
 invoca ibm/granite-4-h-small (temperature=0.3, max_tokens=220),
-audita cada respuesta con el Monitor M3 y guarda data/clean/narrations.json.
+audita cada respuesta con el Monitor M3 (con hasta 2 reintentos si falla)
+y guarda data/clean/narrations.json.
 
 Credenciales exclusivamente desde .env:
-  IBM_CLOUD_API_KEY, WATSONX_URL, WATSONX_PROJECT_ID
+  IBM_CLOUD_API_KEY, WATSONX_URL, WATSONX_PROJECT_ID (o WATSONX_SPACE_ID)
 
 Si no hay credenciales (.env no configurado), ejecuta modo OFFLINE determinista
 basado en los datos reales de cada ventana.
@@ -23,17 +24,13 @@ import os
 import pathlib
 import sys
 import time
-from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, List, Optional
 
-# ---------------------------------------------------------------------------
-# Cargar variables de entorno desde .env (si existe)
-# ---------------------------------------------------------------------------
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
-    pass  # python-dotenv no instalado — se usan variables de entorno del sistema
+    pass
 
 # ---------------------------------------------------------------------------
 # Constantes
@@ -41,16 +38,21 @@ except ImportError:
 REQUIRED_MODEL = "ibm/granite-4-h-small"
 WATSONX_TEMPERATURE = 0.3
 WATSONX_MAX_TOKENS = 220
+MAX_RETRIES = 2
 CLEAN_DIR = pathlib.Path("data/clean")
 TACTICAL_PATH = CLEAN_DIR / "tactical_summaries.json"
 NARRATIONS_PATH = CLEAN_DIR / "narrations.json"
+AUDIT_LOG_PATH = CLEAN_DIR / "governance_audit.jsonl"
+REPORT_M3_PATH = CLEAN_DIR / "monitor_m3.json"
 
-# Rutas para importar módulos del proyecto
 _ROOT = pathlib.Path(__file__).parent.parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from implementacion.cloud_agent.governance_monitor_m3 import GovernanceMonitorM3
+from implementacion.cloud_agent.governance_monitor_m3 import (
+    GovernanceMonitorM3,
+    MAX_NARRATION_WORDS,
+)
 from implementacion import partido_config
 from implementacion.cloud_agent.red_ipv4 import preferir_ipv4_en_ibm
 
@@ -64,8 +66,6 @@ preferir_ipv4_en_ibm()
 def _get_watsonx_credentials() -> Optional[dict]:
     """
     Lee credenciales exclusivamente desde el entorno.
-    Usa WATSONX_SPACE_ID si está disponible (trial Orchestrate/AWS),
-    si no usa WATSONX_PROJECT_ID (watsonx.ai Studio clásico).
     Devuelve None si no hay credenciales configuradas.
     """
     api_key  = os.environ.get("IBM_CLOUD_API_KEY", "").strip()
@@ -86,15 +86,10 @@ def _get_watsonx_credentials() -> Optional[dict]:
     }
 
 
-# ---------------------------------------------------------------------------
-# Cliente watsonx.ai (IBM watsonx-ai SDK)
-# ---------------------------------------------------------------------------
-
 def _init_watsonx_model(creds: dict):
     """
     Inicializa ibm/granite-4-h-small con el SDK ibm-watsonx-ai.
-    Usa space_id si está disponible (trial Orchestrate/AWS), si no project_id.
-    Retorna el objeto model o None si el SDK no está disponible.
+    No imprime space_id ni project_id.
     """
     try:
         from ibm_watsonx_ai import Credentials
@@ -105,25 +100,21 @@ def _init_watsonx_model(creds: dict):
             api_key=creds["api_key"],
         )
 
-        # Preferir space_id (trial Orchestrate) sobre project_id
         init_kwargs = dict(
             model_id=REQUIRED_MODEL,
             credentials=credentials,
             params={
                 "temperature": WATSONX_TEMPERATURE,
-                "max_new_tokens": WATSONX_MAX_TOKENS,  # granite-3-8b-instruct
-                "max_tokens": WATSONX_MAX_TOKENS,       # granite-4-h-small (chat API)
+                "max_new_tokens": WATSONX_MAX_TOKENS,
+                "max_tokens": WATSONX_MAX_TOKENS,
             },
         )
         if creds.get("space_id"):
             init_kwargs["space_id"] = creds["space_id"]
-            print(f"[agent_narrator] Usando space_id={creds['space_id'][:8]}...")
         else:
             init_kwargs["project_id"] = creds["project_id"]
-            print(f"[agent_narrator] Usando project_id={creds['project_id'][:8]}...")
 
-        model = ModelInference(**init_kwargs)
-        return model
+        return ModelInference(**init_kwargs)
     except ImportError:
         print("[agent_narrator] ibm-watsonx-ai SDK no disponible — modo OFFLINE.")
         return None
@@ -133,46 +124,117 @@ def _init_watsonx_model(creds: dict):
 
 
 # ---------------------------------------------------------------------------
+# Helpers de formato de métricas
+# ---------------------------------------------------------------------------
+
+def _redondear_entero(val: Any) -> Optional[int]:
+    if val is None or (isinstance(val, float) and val != val):
+        return None
+    return int(round(float(val)))
+
+
+def _lineas_equipo_prompt(nombre: str, codigo: str, datos_eq: dict) -> str:
+    """
+    Formatea las 4 medidas de un equipo redondeadas a enteros, con nombre.
+    Omite los valores None.
+    """
+    partes = []
+    pos = _redondear_entero(datos_eq.get("posicion_m"))
+    pct = _redondear_entero(datos_eq.get("pct_campo_rival"))
+    largo = _redondear_entero(datos_eq.get("largo_m"))
+    ancho = _redondear_entero(datos_eq.get("ancho_m"))
+
+    if pos is not None:
+        partes.append(f"posición media a {pos} m de su portería")
+    if pct is not None:
+        partes.append(f"{pct}% en campo rival")
+    if largo is not None:
+        partes.append(f"largo de {largo} m")
+    if ancho is not None:
+        partes.append(f"ancho de {ancho} m")
+
+    if not partes:
+        return f"- {nombre} ({codigo}): sin observaciones en este tramo"
+    return f"- {nombre} ({codigo}): " + ", ".join(partes)
+
+
+# ---------------------------------------------------------------------------
 # Generador de prompts
 # ---------------------------------------------------------------------------
 
-def _build_prompt(window: dict) -> str:
+def _build_prompt(window: dict, errores_previos: Optional[List[str]] = None) -> str:
     """
     Construye el prompt para ibm/granite-4-h-small dada una ventana táctica.
-    El prompt pide un JSON con {window_id, t0, t1, analisis_tactico, narracion_es}.
+    Recibe territorio y las 4 medidas de los DOS equipos, redondeadas a enteros, con nombre.
     """
-    dominant = window["dominant_team"]
-    pressure = window["pressure_context"]
-    block_h = window["block_height_m"]
-    block_c = window["block_compactness_m"]
+    wid = window["window_id"]
     t0 = window["t0"]
     t1 = window["t1"]
-    wid = window["window_id"]
+    territorio = window.get("territorio") or window.get("dominant_team") or "repartido"
+    if territorio == "neutro":
+        territorio = "repartido"
 
-    # Descripción de dominio según el partido activo (data/partidos/<id>/partido.config.json)
     partido = partido_config.activo()
     eq0, eq1 = partido.equipos
-    equipo_dom = partido.equipo_por_codigo(dominant)
-    if equipo_dom is not None:
-        rival = eq1 if equipo_dom.team_id == 0 else eq0
-        team_label = f"{equipo_dom.nombre} ({equipo_dom.codigo})"
-        dominio_texto = f"{equipo_dom.nombre} tiene su bloque en campo de {rival.nombre}."
+    equipos_w = window.get("equipos") or {}
+    datos0 = equipos_w.get(eq0.codigo) or {}
+    datos1 = equipos_w.get(eq1.codigo) or {}
+
+    eq_dom = partido.equipo_por_codigo(territorio)
+    if eq_dom is not None:
+        rival = eq1 if eq_dom.team_id == 0 else eq0
+        datos_dom = datos0 if eq_dom.team_id == 0 else datos1
+        pos_ej = _redondear_entero(datos_dom.get("posicion_m")) or 65
+        territorio_linea = f"{eq_dom.nombre} ({eq_dom.codigo})"
+        regla_territorio = (
+            f"El territorio corresponde a {eq_dom.nombre}. "
+            f"No afirmes que el otro equipo está más adelantado ni en campo rival."
+        )
     else:
-        team_label = "Neutro (Disputa en mediocampo)"
-        dominio_texto = "El juego está equilibrado en el mediocampo, sin dominio claro."
+        rival = eq1
+        pos_ej = _redondear_entero(datos1.get("posicion_m")) or 65
+        territorio_linea = "repartido"
+        regla_territorio = (
+            "El territorio está repartido: NO digas que ninguno de los dos equipos está más adelantado."
+        )
 
-    prompt = f"""Eres un analista táctico de fútbol especializado en el partido {partido.titulo} ({partido.competicion}).
+    ej_dom = eq_dom if eq_dom is not None else eq1
+    ej_riv = rival if eq_dom is not None else eq0
+    ejemplo_territorio = (
+        f"{ej_dom.nombre} juega adelantado, a {pos_ej} metros de su portería; {ej_riv.nombre} queda en su mitad."
+    )
+    ejemplo_repartido = (
+        "Territorio repartido: ninguno de los dos equipos ocupa claramente más campo rival."
+    )
 
-Se te proporcionan las métricas tácticas de la ventana {wid} (t={t0:.1f}s – {t1:.1f}s):
-- Contexto de presión: {pressure}
-- Equipo dominante: {team_label}
-- {dominio_texto}
-- Altura del bloque defensivo: {block_h:.2f} m
-- Compacidad del bloque: {block_c:.2f} m
+    linea_eq0 = _lineas_equipo_prompt(eq0.nombre, eq0.codigo, datos0)
+    linea_eq1 = _lineas_equipo_prompt(eq1.nombre, eq1.codigo, datos1)
 
-Genera un análisis táctico breve en español (2-3 oraciones técnicas mencionando a {eq0.nombre} o {eq1.nombre} según corresponda; usa solo las métricas dadas, sin inventar jugadores, goles, marcador ni velocidades) y una narración deportiva en español de MÁXIMO 30 PALABRAS pensada para comentario de audio en vivo de 4 segundos.
+    bloque_errores = ""
+    if errores_previos:
+        lista_err = "\n".join(f"  * {e}" for e in errores_previos)
+        bloque_errores = (
+            f"\nATENCIÓN — Tu intento anterior fue rechazado por el monitor M3 por estos motivos:\n"
+            f"{lista_err}\n"
+            f"Corrige esos errores estrictamente en esta respuesta.\n"
+        )
 
-Responde EXCLUSIVAMENTE con un objeto JSON válido (sin texto antes ni después) con el siguiente esquema:
+    prompt = f"""Eres un analista táctico de fútbol del partido {partido.titulo} ({partido.competicion}).
+
+Datos medidos en el tramo {wid}:
+- Territorio: {territorio_linea}
+{linea_eq0}
+{linea_eq1}
+
+Describe únicamente dónde está cada equipo en la cancha y qué espacio ocupa (largo y ancho visibles):
+1. "analisis_tactico": exactamente 2 oraciones en español (una para {eq0.nombre} y otra para {eq1.nombre}). Escribe los números en cifras (dígitos, nunca en letras) y usa SOLO los números dados arriba para cada equipo. No escribas los segundos del tramo.
+2. "narracion_es": frase para voz de MÁXIMO {MAX_NARRATION_WORDS} PALABRAS (para durar menos de 3.9 s), sin cifras o con una sola cifra de las dadas arriba (en dígitos).
+   - Ejemplo válido si un equipo tiene el territorio: "{ejemplo_territorio}"
+   - Ejemplo válido si el territorio es repartido: "{ejemplo_repartido}"
+3. {regla_territorio}
+4. PROHIBIDO usar cualquiera de estas palabras o sus derivados (por raíz): posesión, presiona, presión, domina, dominio, controla, control, lucha, disputa, busca, intenta, quiere, pretende, ataca, ataque, gol, marcador, velocidad, repliega, repliegue, retrocede, empuja, arrincona, acorrala, encierra, encerrado, avanza. Prohibido mencionar intenciones de los jugadores, nombres de jugadores, goles, marcador o velocidades, y prohibido escribir números con letras.{bloque_errores}
+
+Responde EXCLUSIVAMENTE con un objeto JSON válido (sin texto antes ni después):
 {{
   "window_id": "{wid}",
   "t0": {t0},
@@ -190,13 +252,11 @@ Responde EXCLUSIVAMENTE con un objeto JSON válido (sin texto antes ni después)
 def _call_watsonx(model, prompt: str) -> tuple[Optional[dict], float, int, int]:
     """
     Llama al modelo watsonx.ai via API de chat (messages).
-    Compatible con ibm/granite-4-h-small y granite-3-8b-instruct.
     Devuelve (parsed_json, latency_ms, tokens_in, tokens_out).
     """
     import re
     t0 = time.perf_counter()
     try:
-        # Usar chat API (messages) — funciona con modelos base e instruct
         messages = [
             {"role": "system", "content": (
                 "Eres un analista tactico de futbol. "
@@ -207,7 +267,6 @@ def _call_watsonx(model, prompt: str) -> tuple[Optional[dict], float, int, int]:
         response = model.chat(messages=messages)
         latency_ms = (time.perf_counter() - t0) * 1000
 
-        # Shape chat response: {"choices": [{"message": {"content": "..."}}], "usage": {...}}
         generated_text = ""
         if isinstance(response, dict):
             choices = response.get("choices", [])
@@ -221,8 +280,7 @@ def _call_watsonx(model, prompt: str) -> tuple[Optional[dict], float, int, int]:
             tokens_in  = len(prompt) // 4
             tokens_out = len(generated_text) // 4
 
-        # Parsear JSON de la respuesta
-        json_match = re.search(r'\{.*\}', generated_text, re.DOTALL)
+        json_match = re.search(r"\{.*\}", generated_text, re.DOTALL)
         parsed = json.loads(json_match.group()) if json_match else None
 
         return parsed, latency_ms, int(tokens_in), int(tokens_out)
@@ -230,14 +288,13 @@ def _call_watsonx(model, prompt: str) -> tuple[Optional[dict], float, int, int]:
     except Exception as exc:
         latency_ms = (time.perf_counter() - t0) * 1000
         print(f"  [agent_narrator] Error llamando watsonx (chat): {exc}")
-        # Fallback a generate_text si chat no esta soportado
         try:
             t1 = time.perf_counter()
             generated_text = model.generate_text(prompt=prompt) or ""
             latency_ms = (time.perf_counter() - t1) * 1000
-            json_match = re.search(r'\{.*\}', generated_text, re.DOTALL)
+            json_match = re.search(r"\{.*\}", generated_text, re.DOTALL)
             parsed = json.loads(json_match.group()) if json_match else None
-            return parsed, latency_ms, len(prompt)//4, len(generated_text)//4
+            return parsed, latency_ms, len(prompt) // 4, len(generated_text) // 4
         except Exception as exc2:
             latency_ms2 = (time.perf_counter() - t0) * 1000
             print(f"  [agent_narrator] Fallback generate_text tambien fallo: {exc2}")
@@ -248,46 +305,69 @@ def _call_watsonx(model, prompt: str) -> tuple[Optional[dict], float, int, int]:
 # Modo OFFLINE determinista
 # ---------------------------------------------------------------------------
 
+def _oracion_equipo_offline(nombre: str, datos_eq: dict) -> str:
+    pos = _redondear_entero(datos_eq.get("posicion_m"))
+    pct = _redondear_entero(datos_eq.get("pct_campo_rival"))
+    largo = _redondear_entero(datos_eq.get("largo_m"))
+    ancho = _redondear_entero(datos_eq.get("ancho_m"))
+
+    fragmentos = []
+    if pos is not None:
+        fragmentos.append(f"se ubica a {pos} m de su portería")
+    if pct is not None:
+        fragmentos.append(f"con {pct}% en campo rival")
+    if largo is not None and ancho is not None:
+        fragmentos.append(f"ocupando {largo} m de largo por {ancho} m de ancho")
+    elif largo is not None:
+        fragmentos.append(f"con {largo} m de largo")
+    elif ancho is not None:
+        fragmentos.append(f"con {ancho} m de ancho")
+
+    if not fragmentos:
+        return f"{nombre} no registra observaciones visibles en este tramo."
+    return f"{nombre} " + ", ".join(fragmentos) + "."
+
+
 def _generate_offline_narration(window: dict) -> tuple[dict, float, int, int]:
     """
     Genera narración determinista offline basada en los datos reales de la ventana.
-    No usa LLM — para pruebas locales sin credenciales.
+    Cumple todas las reglas de M3:
+      - <= 18 palabras en narracion_es (sin cifras o con una sola).
+      - 2 oraciones en analisis_tactico con cifras exactas de cada equipo.
+      - Cero palabras prohibidas y coherencia total con territorio.
     """
-    dominant = window["dominant_team"]
-    pressure = window["pressure_context"]
     wid = window["window_id"]
     t0 = window["t0"]
     t1 = window["t1"]
-    block_h = window["block_height_m"]
+    territorio = window.get("territorio") or window.get("dominant_team") or "repartido"
+    if territorio == "neutro":
+        territorio = "repartido"
 
-    # Análisis táctico basado en las métricas de la ventana y el partido activo
     partido = partido_config.activo()
     eq0, eq1 = partido.equipos
-    equipo_dom = partido.equipo_por_codigo(dominant)
-    if equipo_dom is not None:
-        rival = eq1 if equipo_dom.team_id == 0 else eq0
-        analisis = (
-            f"{equipo_dom.nombre} adelanta sus líneas en campo de {rival.nombre} con un bloque de {block_h:.1f} m de amplitud. "
-            f"Fase de {pressure} con el bloque en campo rival. "
-            f"{rival.nombre} se repliega para cerrar los espacios por dentro."
-        )
-        narracion = (
-            f"{equipo_dom.nombre} adelanta líneas buscando abrir espacios ante la defensa de {rival.nombre}."
-        )
-    else:
-        analisis = (
-            f"Disputa táctica equilibrada en el mediocampo ({block_h:.1f} m de dispersión vertical). "
-            f"{eq0.nombre} y {eq1.nombre} se reparten el mediocampo sin un dominador claro. "
-            f"Fase de transición neutral con presión recíproca."
-        )
-        narracion = (
-            f"{eq0.nombre} y {eq1.nombre} disputan con intensidad el control del mediocampo."
-        )
+    equipos_w = window.get("equipos") or {}
+    datos0 = equipos_w.get(eq0.codigo) or {}
+    datos1 = equipos_w.get(eq1.codigo) or {}
 
-    # Asegurar límite de 45 palabras
+    oracion0 = _oracion_equipo_offline(eq0.nombre, datos0)
+    oracion1 = _oracion_equipo_offline(eq1.nombre, datos1)
+    analisis = f"{oracion0} {oracion1}"
+
+    eq_dom = partido.equipo_por_codigo(territorio)
+    if eq_dom is not None:
+        rival = eq1 if eq_dom.team_id == 0 else eq0
+        datos_dom = datos0 if eq_dom.team_id == 0 else datos1
+        pos_dom = _redondear_entero(datos_dom.get("posicion_m"))
+        if pos_dom is not None:
+            narracion = f"{eq_dom.nombre} juega adelantado, a {pos_dom} metros de su portería; {rival.nombre} queda en su mitad."
+        else:
+            narracion = f"{eq_dom.nombre} juega adelantado en campo rival; {rival.nombre} queda en su mitad."
+    else:
+        narracion = "Territorio repartido: ninguno de los dos equipos ocupa claramente más campo rival."
+
     words = narracion.split()
-    if len(words) > 45:
-        narracion = " ".join(words[:45])
+    if len(words) > MAX_NARRATION_WORDS:
+        narracion = " ".join(words[:MAX_NARRATION_WORDS])
 
     result = {
         "window_id": wid,
@@ -297,7 +377,6 @@ def _generate_offline_narration(window: dict) -> tuple[dict, float, int, int]:
         "narracion_es": narracion,
     }
 
-    # Simular latencia y tokens
     latency_ms = 5.0
     tokens_in = len(_build_prompt(window)) // 4
     tokens_out = len(analisis + narracion) // 4
@@ -312,27 +391,29 @@ def _generate_offline_narration(window: dict) -> tuple[dict, float, int, int]:
 def run_agent_narrator(
     tactical_path: str | pathlib.Path = TACTICAL_PATH,
     narrations_path: str | pathlib.Path = NARRATIONS_PATH,
+    audit_log: str | pathlib.Path = AUDIT_LOG_PATH,
+    report_path: str | pathlib.Path = REPORT_M3_PATH,
+    model_override: Any = None,
+    model_id_override: Optional[str] = None,
 ) -> dict:
     """
     Procesa las 8 ventanas tácticas con ibm/granite-4-h-small.
-    Si las credenciales no están configuradas, ejecuta modo OFFLINE.
-
-    Retorna dict con:
-        status      : "PASS" | "FAIL"
-        narrations  : lista de narraciones generadas
-        mode        : "online" | "offline" | "mixto" (hubo ventanas sin LLM)
-        m3_report   : reporte del Monitor M3
+    Si M3 da FAIL, reintenta con Granite hasta 2 veces enviando los errores.
+    Si sigue en FAIL, usa la plantilla offline con mode="offline".
+    Registra todos los intentos en audit_log y guarda el reporte final en report_path.
     """
     tactical_path = pathlib.Path(tactical_path)
     narrations_path = pathlib.Path(narrations_path)
-    CLEAN_DIR.mkdir(parents=True, exist_ok=True)
+    audit_log = pathlib.Path(audit_log)
+    report_path = pathlib.Path(report_path)
 
-    # Limpiar audit log anterior
-    audit_log = CLEAN_DIR / "governance_audit.jsonl"
+    narrations_path.parent.mkdir(parents=True, exist_ok=True)
+    audit_log.parent.mkdir(parents=True, exist_ok=True)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+
     if audit_log.exists():
         audit_log.unlink()
 
-    # Cargar ventanas tácticas
     if not tactical_path.exists():
         raise FileNotFoundError(f"No se encontró {tactical_path}. Ejecuta el engine primero.")
 
@@ -341,77 +422,116 @@ def run_agent_narrator(
 
     print(f"\n[agent_narrator] Procesando {len(tactical_summaries)} ventanas tácticas …")
 
-    # Verificar credenciales
-    creds = _get_watsonx_credentials()
-    if creds is None:
-        mode = "offline"
-        model = None
-        print("[agent_narrator] Credenciales no configuradas en .env → modo OFFLINE determinista")
-    else:
-        mode = "online"
-        model = _init_watsonx_model(creds)
-        if model is None:
-            mode = "offline"
-            print("[agent_narrator] SDK watsonx no disponible → modo OFFLINE determinista")
-        else:
-            print(f"[agent_narrator] Modelo: {REQUIRED_MODEL} (online)")
+    effective_model_id = model_id_override or REQUIRED_MODEL
 
-    # Inicializar Monitor M3
-    monitor = GovernanceMonitorM3(tactical_summaries)
+    if model_override is not None:
+        mode = "online"
+        model = model_override
+        print(f"[agent_narrator] Modelo (override): {effective_model_id} (online)")
+    else:
+        creds = _get_watsonx_credentials()
+        if creds is None:
+            mode = "offline"
+            model = None
+            print("[agent_narrator] Credenciales no configuradas en .env → modo OFFLINE determinista")
+        else:
+            mode = "online"
+            model = _init_watsonx_model(creds)
+            if model is None:
+                mode = "offline"
+                print("[agent_narrator] SDK watsonx no disponible → modo OFFLINE determinista")
+            else:
+                print(f"[agent_narrator] Modelo: {effective_model_id} (online)")
+
+    monitor = GovernanceMonitorM3(tactical_summaries, audit_log=audit_log)
 
     narrations = []
     for window in tactical_summaries:
         wid = window["window_id"]
         print(f"  [{wid}] Generando narración …", end=" ")
-        window_mode = "offline"
 
         if mode == "online" and model is not None:
-            prompt = _build_prompt(window)
-            result, latency_ms, tokens_in, tokens_out = _call_watsonx(model, prompt)
-            if result is None:
-                # Fallback offline si la llamada falló
-                print("(fallback offline)")
-                result, latency_ms, tokens_in, tokens_out = _generate_offline_narration(window)
-            else:
+            errores_previos: Optional[List[str]] = None
+            exito_online = False
+            result = None
+            latency_ms = 0.0
+            tokens_in = 0
+            tokens_out = 0
+
+            for intento in range(1, MAX_RETRIES + 2):  # hasta 3 intentos (1 inicial + 2 reintentos)
+                prompt = _build_prompt(window, errores_previos=errores_previos)
+                cand, lat, tin, tout = _call_watsonx(model, prompt)
+                llm_resp = (
+                    {k: cand[k] for k in ("window_id", "t0", "t1", "analisis_tactico", "narracion_es") if k in cand}
+                    if isinstance(cand, dict) else None
+                )
+                audit = monitor.audit_call(
+                    model_id=effective_model_id,
+                    window_id=wid,
+                    llm_response=llm_resp,
+                    latency_ms=lat,
+                    tokens_in=tin,
+                    tokens_out=tout,
+                    mode="online",
+                    attempt=intento,
+                )
+                if audit["status"] == "PASS" and cand is not None:
+                    result = cand
+                    latency_ms, tokens_in, tokens_out = lat, tin, tout
+                    exito_online = True
+                    print(f"✓ online intento {intento} ({latency_ms:.0f} ms)")
+                    break
+                errores_previos = audit.get("errors", ["Respuesta inválida"])
+
+            if exito_online and result is not None:
                 window_mode = "online"
-                print(f"✓ ({latency_ms:.0f} ms)")
+            else:
+                print("(fallback offline tras agotar reintentos)")
+                result, latency_ms, tokens_in, tokens_out = _generate_offline_narration(window)
+                window_mode = "offline"
+                monitor.audit_call(
+                    model_id=effective_model_id,
+                    window_id=wid,
+                    llm_response={k: result[k] for k in ("window_id", "t0", "t1", "analisis_tactico", "narracion_es") if k in result},
+                    latency_ms=latency_ms,
+                    tokens_in=tokens_in,
+                    tokens_out=tokens_out,
+                    mode="offline",
+                    attempt=MAX_RETRIES + 2,
+                )
         else:
             result, latency_ms, tokens_in, tokens_out = _generate_offline_narration(window)
+            window_mode = "offline"
             print(f"✓ offline ({latency_ms:.0f} ms)")
+            monitor.audit_call(
+                model_id=effective_model_id,
+                window_id=wid,
+                llm_response={k: result[k] for k in ("window_id", "t0", "t1", "analisis_tactico", "narracion_es") if k in result},
+                latency_ms=latency_ms,
+                tokens_in=tokens_in,
+                tokens_out=tokens_out,
+                mode="offline",
+                attempt=1,
+            )
 
-        # Agregar metadatos de auditoría
         result["latency_ms"] = round(latency_ms, 2)
         result["tokens_in"] = tokens_in
         result["tokens_out"] = tokens_out
         result["mode"] = window_mode
 
-        # Auditar con Monitor M3
-        audit = monitor.audit_call(
-            model_id=REQUIRED_MODEL,
-            window_id=wid,
-            llm_response={k: result[k] for k in ("window_id", "t0", "t1", "analisis_tactico", "narracion_es") if k in result},
-            latency_ms=latency_ms,
-            tokens_in=tokens_in,
-            tokens_out=tokens_out,
-            mode=window_mode,
-        )
-
         narrations.append(result)
 
-    # El modo global refleja lo que ocurrió, no lo que se intentó
     window_modes = {n["mode"] for n in narrations}
     if len(window_modes) > 1:
         mode = "mixto"
     elif window_modes:
         mode = window_modes.pop()
 
-    # Guardar narrations.json
     with open(narrations_path, "w", encoding="utf-8") as f:
-        json.dump(narrations, f, indent=2, ensure_ascii=False)
+        json.dump(narrations, f, indent=2, ensure_ascii=False, allow_nan=False)
     print(f"\n[agent_narrator] Narrations guardadas → {narrations_path}")
 
-    # Reporte final M3
-    m3_report = monitor.finalize_report()
+    m3_report = monitor.finalize_report(report_path=report_path)
 
     return {
         "status": m3_report["status"],
@@ -421,10 +541,6 @@ def run_agent_narrator(
         "n_windows": len(narrations),
     }
 
-
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     result = run_agent_narrator()

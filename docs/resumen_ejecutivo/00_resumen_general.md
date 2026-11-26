@@ -27,7 +27,7 @@ Omnimorph funciona hoy con video de transmisión de TV. Llevarlo a jugadores y t
 4. **Las métricas físicas aún no son confiables.** Velocidad, sprints y distancia dependen de la calibración. Un ranking para reclutadores con cifras infladas sería injusto para los jugadores.
 5. **Faltan reglas de juego limpio y privacidad.** Para comparar jugadores hay que grabar en condiciones parecidas (por ejemplo, ejercicios estándar), y muchos jugadores amateur son menores de edad: hace falta su consentimiento antes de guardar sus datos.
 
-**Lo que sí ya sirve para amateur:** el análisis de equipo (altura del bloque, compactación, qué equipo dominó cada jugada), la crónica en español con IBM Granite y el chat para preguntarle al partido.
+**Lo que sí ya sirve para amateur:** el análisis de equipo (dónde juega cada equipo y cuánto campo ocupa en cada tramo), la crónica en español con IBM Granite y el chat para preguntarle al partido.
 
 ## Tres siguientes pasos
 

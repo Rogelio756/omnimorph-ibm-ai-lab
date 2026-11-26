@@ -257,11 +257,26 @@ def definir_casos(datos_crc):
         return True, ""
     caso(16, "Escribe un código en Python que sume dos números", _c16)
 
-    # 17. Quién marcó cada gol — None (Granite)
-    def _c17(r):
-        if r is not None:
-            return False, f"deberia ser None (Granite), got: {_cortar(r)}"
+    # Inventos de Granite en los goles (validación del 24/11)
+    INVENTOS = ("penal", "de primera")
+
+    def _goles(r, contiene=(), no_contiene=()):
+        if r is None:
+            return False, "esperaba respuesta por regla, got None"
+        rsa = _sa(r)
+        for c in contiene:
+            if _sa(c) not in rsa:
+                return False, f"falta '{c}'"
+        for c in (*INVENTOS, *no_contiene):
+            if _sa(c) in rsa:
+                return False, f"contiene '{c}' (no deberia)"
         return True, ""
+
+    ANOTADORES = ("Orlando Galo", "Josimar Alcócer", "Andy Rojas")
+
+    # 17. C4: quién marcó cada gol → regla
+    def _c17(r):
+        return _goles(r, (*ANOTADORES, "minuto 40", "minuto 49", "minuto 82", "minuto 84"))
     caso(17, "¿Quién marcó cada gol y en qué minuto?", _c17)
 
     # 18. Resumen del partido — None o comparativa (ambos OK)
@@ -409,7 +424,74 @@ def definir_casos(datos_crc):
         return True, ""
     caso(32, "¿Cómo presionó Costa Rica después de perder el balón?", _c32)
 
+    # ── C4 (goles por regla y ventanas del clip) ──────────────────────────────
+
+    caso(33, "¿Quién marcó cada gol y cómo fue la jugada?", lambda r: _goles(
+        r, (*ANOTADORES, "1-0", "2-0", "3-0", "4-0", "Jefferson Brenes", "sin asistencia",
+            "junto al palo izquierdo", "definió cruzado")))
+    caso(34, "¿Cómo fue el 3-0?", lambda r: _goles(
+        r, ("Alcócer", "presión alta"), ("Andy Rojas", "Orlando Galo")))
+    caso(35, "¿Cómo fue el tercer gol?", lambda r: _goles(r, ("Alcócer",), ("Andy Rojas",)))
+    caso(36, "¿Cómo fue el de Alcócer?", lambda r: _goles(r, ("Alcócer",), ("Andy Rojas",)))
+    caso(37, "¿Cómo fue el gol al 82?", lambda r: _goles(r, ("Alcócer",), ("Andy Rojas",)))
+    caso(38, "¿El 3-0 fue de penal?", lambda r: _goles(r, ("Alcócer", "rebote"), ("Andy Rojas",)))
+    caso(39, "¿Cómo fue el segundo gol de Galo?", lambda r: _goles(r, ("2-0", "zurdazo"), ("1-0",)))
+    caso(40, "¿Cómo fue el gol de Campbell?", lambda r: _goles(
+        r, ("no registran goles de Joel Campbell",)))
+    caso(41, "¿Quién le marcó a San Cristóbal?", lambda r: _goles(
+        r, ANOTADORES, ("no registran",)))
+    caso(42, "¿Qué goles metió San Cristóbal?", lambda r: _goles(
+        r, ("no registran goles de San Cristóbal y Nieves",)))
+    caso(43, "¿Cómo fueron los goles del segundo tiempo?", lambda r: _goles(
+        r, ("2-0", "3-0", "4-0"), ("1-0",)))
+    caso(44, "¿Cómo fue el 2-1?", lambda r: _goles(r, ("no registran",)))
+    caso(45, "¿y el tercero?", lambda r: _goles(r, ("Alcócer",), ("Andy Rojas",)),
+         historial=[{"role": "user", "content": "¿Quién marcó cada gol?"}])
+    caso(46, "¿En qué minuto marcó Rojas?", lambda r: _goles(r, ("minuto 84",), ("Galo",)))
+
+    caso(53, "¿Quién fue el autor del 4-0?", lambda r: _goles(r, ("Andy Rojas",), ("Alcócer",)))
+
+    def _no_goles(r):
+        if r is not None and "minuto 84 · Andy Rojas" in r:
+            return False, "respondio con la lista de goles"
+        return True, ""
+    for num, pregunta in (
+        (47, "¿Qué tarjetas hubo después del 2-0?"),
+        (48, "¿Quién marcó a Galo?"),
+        (49, "¿Qué cambios hubo en el minuto 82?"),
+        (50, "¿Qué equipo marcó más goles?"),
+        (51, "¿Cómo defendió San Cristóbal en el 5-4-1?"),
+        (52, "¿Por qué Costa Rica ganó 4-0 el partido?"),
+        (54, "¿Por qué fallaron tantos goles?"),
+        (55, "¿Cómo terminó 4-0?"),
+    ):
+        caso(num, pregunta, _no_goles)
+
     return casos
+
+
+def probar_ventanas():
+    """_ventana_para_chat con el formato nuevo y con el viejo. Devuelve [(desc, ok, nota)]."""
+    from implementacion.cloud_agent.chat_agent import _ventana_para_chat, _ventanas_clip
+    medidas = {"posicion_m": 44.0, "pct_campo_rival": 8, "largo_m": 20.1, "ancho_m": 31.5}
+    nueva = {"window_id": "W0", "t0": 0.0, "t1": 4.5, "territorio": "CRC", "dominant_team": "CRC",
+             "equipos": {"SKN": medidas, "CRC": {**medidas, "pct_campo_rival": 86}}}
+    vieja = {"id": "W0", "t0": 0.0, "t1": 4.5, "dominant": "SKN", "pressure": "ataque",
+             "block_height_m": 32.0, "compactness_m": 29.3}
+    n, v = _ventana_para_chat(nueva), _ventana_para_chat(vieja)
+    reales = _ventanas_clip()
+    return [
+        ("ventana nueva: territorio y equipos con nombre",
+         n["ventana"] == "W0" and n["equipo_con_mas_territorio"] == "Costa Rica"
+         and n["equipos"]["Costa Rica"]["pct_en_campo_rival"] == 86
+         and n["equipos"]["San Cristóbal y Nieves"]["largo_visible_m"] == 20.1, str(n)),
+        ("ventana nueva repartida no truena",
+         _ventana_para_chat({**nueva, "territorio": "repartido"})["equipo_con_mas_territorio"]
+         == "repartido", ""),
+        ("ventana vieja: solo tiempos", v == {"ventana": "W0", "t0_s": 0.0, "t1_s": 4.5}, str(v)),
+        ("ventanas del repo cargan", len(reales) == 8 and all("ventana" in x for x in reales),
+         str(reales[:1])),
+    ]
 
 
 # ── prueba Brasil en subproceso ───────────────────────────────────────────────
@@ -428,6 +510,13 @@ BRASIL_CASOS = [
         "¿Qué debería corregir Brasil para el próximo partido?",
         ["no doy recomendaciones"],
         ["costa rica", "galo", "sawyers"],
+        False,
+    ),
+    (
+        "Brasil: ¿Quién marcó el primer gol? → regla sin 'jugada'",
+        "¿Quién marcó el primer gol?",
+        ["0-1", "minuto 11", "thomas muller"],
+        ["costa rica", "klose (", "none"],
         False,
     ),
 ]
@@ -511,6 +600,11 @@ def main():
         if not ok:
             print(f"     {'':7}  {'':62}  → RAZON: {nota}")
 
+    ventanas = probar_ventanas()
+    for desc, ok, nota in ventanas:
+        fallos += not ok
+        print(f"     {_OK if ok else _FALLA}  {desc}" + ("" if ok else f"  → {nota}"))
+
     # ── Prueba Brasil (subproceso) ────────────────────────────────────────────
     print()
     print("Brasil (subproceso con OMNIMORPH_PARTIDO=brasil_alemania_2014):")
@@ -534,7 +628,7 @@ def main():
             print(f"     STDERR: {stderr[:200]}")
 
     print(_SEP)
-    total_casos = len(casos) + len(BRASIL_CASOS)
+    total_casos = len(casos) + len(ventanas) + len(BRASIL_CASOS)
     print(f"Resultado: {total_casos - fallos}/{total_casos} OK", end="")
     if fallos:
         print(f"  ---  {fallos} FALLA(S)")

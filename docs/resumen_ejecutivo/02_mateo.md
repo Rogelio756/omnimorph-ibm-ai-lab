@@ -7,7 +7,7 @@
 **3. Qué muestra**
 - Video con marcas y video original, con controles de reproducción y audio.
 - Radar de jugadores y balón, sincronizado con el video.
-- Métricas de bloque, compacidad, presencia y centroides.
+- Métricas de posición y ocupación del campo de cada equipo.
 - Crónica y transcripción sincronizadas.
 - Rastros de jugadores con tiempo visible, mapa de calor y ficha de detalle (dashboard/pages/mateo.html).
 

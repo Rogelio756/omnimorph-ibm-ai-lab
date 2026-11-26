@@ -1,0 +1,281 @@
+{
+ "nota": "Puntos marcados a ojo sobre el video (1280x720) por Claude el 2026-11-25. Cancha de 105 x 68 m.",
+ "puntos": [
+  {
+   "cuadro": 10,
+   "nombre": "circulo_arriba",
+   "px": [
+    870,
+    343
+   ],
+   "cancha_m": [
+    52.5,
+    24.85
+   ]
+  },
+  {
+   "cuadro": 10,
+   "nombre": "circulo_abajo",
+   "px": [
+    883,
+    536
+   ],
+   "cancha_m": [
+    52.5,
+    43.15
+   ]
+  },
+  {
+   "cuadro": 10,
+   "nombre": "circulo_izq",
+   "px": [
+    461,
+    433
+   ],
+   "cancha_m": [
+    43.35,
+    34
+   ]
+  },
+  {
+   "cuadro": 150,
+   "nombre": "circulo_arriba",
+   "px": [
+    882,
+    210
+   ],
+   "cancha_m": [
+    52.5,
+    24.85
+   ]
+  },
+  {
+   "cuadro": 150,
+   "nombre": "circulo_abajo",
+   "px": [
+    887,
+    360
+   ],
+   "cancha_m": [
+    52.5,
+    43.15
+   ]
+  },
+  {
+   "cuadro": 150,
+   "nombre": "circulo_izq",
+   "px": [
+    561,
+    275
+   ],
+   "cancha_m": [
+    43.35,
+    34
+   ]
+  },
+  {
+   "cuadro": 150,
+   "nombre": "circulo_der",
+   "px": [
+    1221,
+    285
+   ],
+   "cancha_m": [
+    61.65,
+    34
+   ]
+  },
+  {
+   "cuadro": 150,
+   "nombre": "banda_lejana",
+   "px": [
+    878,
+    69
+   ],
+   "cancha_m": [
+    52.5,
+    0
+   ]
+  },
+  {
+   "cuadro": 300,
+   "nombre": "circulo_arriba",
+   "px": [
+    298,
+    218
+   ],
+   "cancha_m": [
+    52.5,
+    24.85
+   ]
+  },
+  {
+   "cuadro": 300,
+   "nombre": "circulo_abajo",
+   "px": [
+    315,
+    380
+   ],
+   "cancha_m": [
+    52.5,
+    43.15
+   ]
+  },
+  {
+   "cuadro": 300,
+   "nombre": "circulo_der",
+   "px": [
+    650,
+    294
+   ],
+   "cancha_m": [
+    61.65,
+    34
+   ]
+  },
+  {
+   "cuadro": 470,
+   "nombre": "circulo_arriba",
+   "px": [
+    568,
+    288
+   ],
+   "cancha_m": [
+    52.5,
+    24.85
+   ]
+  },
+  {
+   "cuadro": 470,
+   "nombre": "circulo_abajo",
+   "px": [
+    584,
+    471
+   ],
+   "cancha_m": [
+    52.5,
+    43.15
+   ]
+  },
+  {
+   "cuadro": 470,
+   "nombre": "circulo_izq",
+   "px": [
+    173,
+    378
+   ],
+   "cancha_m": [
+    43.35,
+    34
+   ]
+  },
+  {
+   "cuadro": 470,
+   "nombre": "circulo_der",
+   "px": [
+    975,
+    379
+   ],
+   "cancha_m": [
+    61.65,
+    34
+   ]
+  },
+  {
+   "cuadro": 470,
+   "nombre": "banda_lejana",
+   "px": [
+    561,
+    122
+   ],
+   "cancha_m": [
+    52.5,
+    0
+   ]
+  },
+  {
+   "cuadro": 660,
+   "nombre": "circulo_arriba",
+   "px": [
+    826,
+    246
+   ],
+   "cancha_m": [
+    52.5,
+    24.85
+   ]
+  },
+  {
+   "cuadro": 660,
+   "nombre": "circulo_abajo",
+   "px": [
+    838,
+    406
+   ],
+   "cancha_m": [
+    52.5,
+    43.15
+   ]
+  },
+  {
+   "cuadro": 660,
+   "nombre": "circulo_izq",
+   "px": [
+    480,
+    325
+   ],
+   "cancha_m": [
+    43.35,
+    34
+   ]
+  },
+  {
+   "cuadro": 660,
+   "nombre": "circulo_der",
+   "px": [
+    1188,
+    330
+   ],
+   "cancha_m": [
+    61.65,
+    34
+   ]
+  },
+  {
+   "cuadro": 660,
+   "nombre": "banda_lejana",
+   "px": [
+    819,
+    96
+   ],
+   "cancha_m": [
+    52.5,
+    0
+   ]
+  },
+  {
+   "cuadro": 860,
+   "nombre": "circulo_arriba",
+   "px": [
+    1130,
+    212
+   ],
+   "cancha_m": [
+    52.5,
+    24.85
+   ]
+  },
+  {
+   "cuadro": 860,
+   "nombre": "circulo_abajo",
+   "px": [
+    1132,
+    375
+   ],
+   "cancha_m": [
+    52.5,
+    43.15
+   ]
+  }
+ ]
+}

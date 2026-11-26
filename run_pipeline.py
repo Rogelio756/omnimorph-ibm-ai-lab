@@ -112,6 +112,9 @@ def _print_summary_table(results: Dict[str, str]) -> bool:
         status = results.get(mid, "?")
         if status == "PASS":
             tag = "[PASS]"
+        elif status == "SKIP":
+            tag = "[SKIP]"
+            all_pass = False
         elif status == "FAIL":
             tag = "[FAIL]"
             all_pass = False
@@ -283,11 +286,11 @@ def run_etapa4(skip_tts: bool = False) -> dict:
     _section(4, "Sintesis de Voz TTS + MONITOR M4")
 
     if skip_tts:
-        _info("TTS omitido (--skip-tts). Generando reporte M4 con estado PASS.")
+        _info("TTS omitido (--skip-tts). Generando reporte M4 con estado SKIP.")
         report = {
             "monitor": "M4",
             "name": "Sincronizacion TTS y Dashboard",
-            "status": "PASS",
+            "status": "SKIP",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "engine_used": "skip",
             "checks": {},
@@ -302,10 +305,10 @@ def run_etapa4(skip_tts: bool = False) -> dict:
             "note": "TTS omitido con --skip-tts",
         }
         CLEAN_DIR.mkdir(parents=True, exist_ok=True)
-        with open(CLEAN_DIR / "monitor_m4.json", "w") as f:
-            json.dump(report, f, indent=2)
-        _info("Monitor M4 marcado como PASS (skip)")
-        return {"status": "PASS", "skipped": True}
+        with open(CLEAN_DIR / "monitor_m4.json", "w", encoding="utf-8") as f:
+            json.dump(report, f, indent=2, allow_nan=False)
+        _info("Monitor M4 marcado como SKIP")
+        return {"status": "SKIP", "skipped": True}
 
     narrations_path = CLEAN_DIR / "narrations.json"
     if not narrations_path.exists():

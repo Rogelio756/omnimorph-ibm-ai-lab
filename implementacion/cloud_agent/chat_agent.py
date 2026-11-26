@@ -146,6 +146,14 @@ METRICAS_RESUMEN = ("goles", "posesion_pct", "tiros_totales", "tiros_a_puerta", 
 METRICAS_TOTALES = (*METRICAS_RESUMEN, "corners", "faltas_cometidas", "atajadas")
 RE_RESUMEN = re.compile(r"\b(?:resumen|resume|resumir|estadisticas)\b")
 
+# Métricas por equipo de cada ventana (tactical_summaries.json) -> nombre para el chat
+METRICAS_VENTANA = {
+    "posicion_m": "distancia_a_su_porteria_m",
+    "pct_campo_rival": "pct_en_campo_rival",
+    "largo_m": "largo_visible_m",
+    "ancho_m": "ancho_visible_m",
+}
+
 MENSAJE_BLOQUEADA = (
     "Descarté esta respuesta porque algunas cifras no coincidían con los datos. "
     "Prueba con una pregunta más concreta o consulta la página Partido."
@@ -350,7 +358,7 @@ SYSTEM_PROMPT_CLIP = """Eres MATEO, analista táctico de fútbol. Analizas un cl
 Reglas:
 1. Solo tienes las métricas por ventana del clip que están en DATOS. No tienes marcador, alineaciones, nombres de jugadores, goles ni estadísticas del partido completo: si te las piden, dilo sin rodeos y aclara que el equipo de análisis las está verificando.
 2. No inventes cifras, jugadores ni jugadas. Usa solo las cifras de DATOS y di a qué ventana y tiempo pertenecen.
-3. equipo_dominante significa el equipo cuyo bloque estaba en campo rival en esa ventana. No es posesión del balón ni quién juega mejor; no lo presentes así. En las ventanas neutras ningún equipo estaba en campo rival: no deduzcas nada más de ellas.
+3. equipo_con_mas_territorio significa el equipo con más presencia en campo rival en esa ventana. No es posesión del balón ni quién juega mejor; no lo presentes así. Si dice «repartido», ninguno tuvo clara ventaja: no deduzcas nada más. Si una ventana no trae métricas, di que no hay dato.
 4. Para totales y comparaciones usa resumen_clip, que ya está calculado. No sumes ni cuentes por tu cuenta.
 5. Las ventanas describen solo {duracion} segundos de video, no el partido completo.
 6. Responde en español, en un máximo de 120 palabras, sin mostrar JSON. Usa una lista con viñetas al enumerar.
@@ -386,10 +394,11 @@ def _datos_solo_clip(partido) -> dict:
             "clip": f"{duracion} s de video, plano táctico continuo",
             "equipos": {e.codigo: e.nombre for e in partido.equipos},
             "metricas": {
-                "equipo_dominante": "equipo con su bloque en campo rival (por la posición media); no es posesión",
-                "contexto_presion": "ataque si el primer equipo está en campo rival, defensa si lo está el segundo, neutro si ninguno",
-                "altura_bloque_m": "dispersión vertical (a lo ancho) de los dos equipos, en metros",
-                "compacidad_bloque_m": "dispersión a lo largo del campo del primer equipo, en metros",
+                "equipo_con_mas_territorio": "equipo con más presencia en campo rival (diferencia mayor a 20 puntos); no es posesión",
+                "distancia_a_su_porteria_m": "distancia de la posición media del equipo a su portería, en metros",
+                "pct_en_campo_rival": "% de las posiciones visibles del equipo en la mitad rival",
+                "largo_visible_m": "largo que ocupan los jugadores visibles del equipo, en metros",
+                "ancho_visible_m": "ancho que ocupan los jugadores visibles del equipo, en metros",
             },
         },
         "resumen_clip": _resumen_clip(ventanas, partido),
@@ -400,29 +409,16 @@ def _datos_solo_clip(partido) -> dict:
 
 def _resumen_clip(ventanas: list[dict], partido) -> str:
     """Totales calculados por código: Granite suma mal los segundos entre ventanas."""
+    con_dato = [v for v in ventanas if v.get("equipo_con_mas_territorio")]
+    if not con_dato:
+        return "Sin métricas por ventana en este clip."
     lineas = []
-    nombres = [e.nombre for e in partido.equipos]
-    for nombre in nombres + ["neutro"]:
-        propias = [v for v in ventanas if v["equipo_dominante"] == nombre]
+    for nombre in [e.nombre for e in partido.equipos] + ["repartido"]:
+        propias = [v for v in con_dato if v["equipo_con_mas_territorio"] == nombre]
         segundos = sum(v["t1_s"] - v["t0_s"] for v in propias)
         lista = ", ".join(v["ventana"] for v in propias) or "ninguna"
-        sujeto = "Sin equipo en campo rival (neutro)" if nombre == "neutro" else f"{nombre} en campo rival"
-        lineas.append(f"{sujeto}: {len(propias)} de {len(ventanas)} ventanas ({lista}), {segundos:.1f} s.")
-    for clave, etiqueta in (("altura_bloque_m", "Altura del bloque"), ("compacidad_bloque_m", "Compacidad del bloque")):
-        con_valor = [v for v in ventanas if v.get(clave) is not None]
-        if con_valor:
-            alto = max(con_valor, key=lambda v: v[clave])
-            bajo = min(con_valor, key=lambda v: v[clave])
-            serie = [v[clave] for v in con_valor]
-            pasos = [b - a for a, b in zip(serie, serie[1:])]
-            if pasos and all(p > 0 for p in pasos):
-                tendencia = "sube en cada ventana"
-            elif pasos and all(p < 0 for p in pasos):
-                tendencia = "baja en cada ventana"
-            else:
-                tendencia = "no sigue una tendencia: sube y baja entre ventanas"
-            lineas.append(f"{etiqueta}: máxima en {alto['ventana']} ({alto[clave]} m), "
-                          f"mínima en {bajo['ventana']} ({bajo[clave]} m); {tendencia}.")
+        sujeto = "Territorio repartido" if nombre == "repartido" else f"{nombre} con más territorio"
+        lineas.append(f"{sujeto}: {len(propias)} de {len(con_dato)} ventanas ({lista}), {segundos:.1f} s.")
     return "\n".join(lineas)
 
 
@@ -539,6 +535,26 @@ def cargar_datos() -> dict:
     return datos
 
 
+def _ventana_para_chat(v: dict) -> dict:
+    """
+    Una ventana con nombres claros. Las métricas del formato anterior están mal nombradas
+    (docs/meta_y_funciones.md), así que sin «equipos» y «territorio» solo van los tiempos.
+    """
+    ventana = {"ventana": v.get("window_id") or v.get("id"), "t0_s": v["t0"], "t1_s": v["t1"]}
+    equipos, territorio = v.get("equipos"), v.get("territorio")
+    if not isinstance(equipos, dict) or not territorio:
+        return ventana
+    ventana["equipo_con_mas_territorio"] = _nombre_equipo(territorio, territorio)
+    ventana["equipos"] = {
+        _nombre_equipo(codigo, codigo): {
+            nombre: medidas[clave] for clave, nombre in METRICAS_VENTANA.items()
+            if medidas.get(clave) is not None
+        }
+        for codigo, medidas in equipos.items()
+    }
+    return ventana
+
+
 def _ventanas_clip() -> list[dict]:
     """
     Ventanas del pipeline. data/clean/ no está en Git: en un clon limpio se usan
@@ -547,34 +563,12 @@ def _ventanas_clip() -> list[dict]:
     ventanas_path = CLEAN_DIR / "tactical_summaries.json"
     if ventanas_path.exists():
         with open(ventanas_path, encoding="utf-8") as f:
-            return [
-                {
-                    "ventana": v["window_id"],
-                    "t0_s": v["t0"],
-                    "t1_s": v["t1"],
-                    "equipo_dominante": _nombre_equipo(v["dominant_team"], v["dominant_team"]),
-                    "contexto_presion": v["pressure_context"],
-                    "altura_bloque_m": round(v["block_height_m"], 2),
-                    "compacidad_bloque_m": round(v["block_compactness_m"], 2),
-                }
-                for v in json.load(f)
-            ]
+            return [_ventana_para_chat(v) for v in json.load(f)]
     exportadas = _ROOT / "dashboard" / "data" / "mateo_data.json"
     if not exportadas.exists():
         return []
     with open(exportadas, encoding="utf-8") as f:
-        return [
-            {
-                "ventana": v["id"],
-                "t0_s": v["t0"],
-                "t1_s": v["t1"],
-                "equipo_dominante": _nombre_equipo(v["dominant"], v["dominant"]),
-                "contexto_presion": v["pressure"],
-                "altura_bloque_m": round(v["block_height_m"], 2),
-                "compacidad_bloque_m": round(v["compactness_m"], 2),
-            }
-            for v in json.load(f)["windows"]
-        ]
+        return [_ventana_para_chat(v) for v in json.load(f)["windows"]]
 
 
 def respuesta_sin_datos(pregunta: str, datos: dict) -> Optional[str]:
@@ -678,6 +672,173 @@ def respuesta_comparativa(pregunta: str, datos: dict) -> Optional[str]:
     if len(lineas) == 1:
         return None
     return "\n".join(lineas)
+
+
+# ── C4: goles ──────────────────────────────────────────────────────────────────
+# Granite agregó «de penal» y «de primera» a goles que no lo fueron, así que el relato
+# se copia de los datos.
+RE_GOL = re.compile(r"\b(?:gol(?:es|azo|azos)?|anotacion(?:es)?)\b")
+RE_QUIEN_MARCO = re.compile(r"\bquien(?:es)? (?:les? )?(?:marc|anot)(?:o|aron)\b")
+# Qué se pide de los goles. Conteos, rankings y valoraciones siguen su curso normal.
+RE_PIDE_GOL = re.compile(
+    r"\b(?:quien(?:es)?|como|cuando|describ\w*|cuent\w*|detall\w*|explic\w*|relat\w*|narr\w*|"
+    r"dime|lista\w*|muestra\w*|jugadas?|minutos?|asist\w*|penal\w*|penalti\w*|cabeza\w*|"
+    r"tiro libre|de primera|autogol\w*|autor\w*|marc(?:o|aron)|anot(?:o|aron)|met(?:io|ieron)|"
+    r"que equipo|cada gol|(?:todos )?los goles|que goles|cual(?:es)?)\b"
+)
+RE_NO_ES_GOL = re.compile(
+    r"\bcuant[oa]s\b|\bxg\b|\bpor que\b|\bfall\w*|\btermin\w*|\bgan(?:o|aron)\b|goles esperados|\banulad\w*|diferencia de gol|impact\w*|"
+    r"\b(?:mas|menos|mejor|peor|bonito|importante|clave|goleador)\b|\bcompar\w*|"
+    r"\bdespues de|\btras\b|\bantes de"
+)
+RE_GOL_EN_CONTRA = re.compile(
+    r"\b(?:recib\w*|encaj\w*|conced\w*|en contra|contra)\b|\bles? (?:marc|anot|met|hic|hiz)\w*"
+)
+RE_TIEMPO_GOL = (
+    (re.compile(r"\b(?:1t|1er tiempo|primer tiempo|primera (?:parte|mitad))\b"), "el primer tiempo"),
+    (re.compile(r"\b(?:2t|2do tiempo|segundo tiempo|segunda (?:parte|mitad))\b"), "el segundo tiempo"),
+)
+ORDINALES_GOL = (("primer", 0), ("segund", 1), ("tercer", 2), ("cuart", 3), ("quint", 4),
+                 ("sext", 5), ("septim", 6), ("octav", 7), ("ultim", -1))
+# «3-0», pero no el esquema «3-4-3»
+RE_MARCADOR = re.compile(r"(?<![\w-])(\d)\s*[-–]\s*(\d)(?![\w-])")
+RE_MINUTO_GOL = re.compile(r"\b(?:al|del|minuto|min)\s+(\d{1,3})\b(?!\s*[-–])")
+
+
+def _linea_gol(gol: dict) -> str:
+    anotador = gol["anotador"]["nombre"]
+    asistente = (gol.get("asistente") or {}).get("nombre")
+    asistencia = f"asistencia de {asistente}" if asistente else "sin asistencia"
+    marcador = gol["marcador_momento"]
+    linea = f"- {marcador} · minuto {gol['minuto']} · {anotador} ({gol['equipo_anotador']}), {asistencia}."
+    jugada = (gol.get("jugada") or "").strip()
+    if jugada.startswith(marcador):
+        jugada = jugada[len(marcador):].strip()
+    return f"{linea} {jugada}" if jugada else linea
+
+
+def _pide_goles(normalizada: str, goles: list[dict], alias_anotadores: list[str]) -> bool:
+    """True si la pregunta pide quién marcó o cómo fue uno o varios goles."""
+    if RE_NO_ES_GOL.search(normalizada) or RE_RANKING.search(normalizada):
+        return False
+    if RE_RECOMENDACION.search(normalizada) or RE_TACTICA.search(normalizada):
+        return False
+    if any(p in normalizada for palabras, _, _ in EVENTOS_POR_PREGUNTA for p in palabras):
+        return False
+    if RE_GOL.search(normalizada):
+        return RE_PIDE_GOL.search(normalizada) is not None or len(normalizada.split()) <= 5
+    nombra_marcador = RE_MARCADOR.search(normalizada) is not None
+    if RE_QUIEN_MARCO.search(normalizada):
+        # «¿Quién marcó a Galo?» pregunta por la marca defensiva
+        return nombra_marcador or not re.search(
+            r"\b(?:marco|marcaron) a (?:" + "|".join(map(re.escape, alias_anotadores)) + r")\b",
+            normalizada,
+        )
+    # Sin la palabra gol: «el 3-0», «el de Alcócer», «al 82», «¿cuándo marcó Rojas?»
+    if "partido" in normalizada or not RE_PIDE_GOL.search(normalizada):
+        return False
+    if nombra_marcador:
+        return True
+    minutos = {str(g["minuto"]) for g in goles}
+    if any(m in minutos for m in RE_MINUTO_GOL.findall(normalizada)):
+        return True
+    return any(
+        re.search(
+            rf"\bel de (?:\w+ )?{re.escape(a)}\b|\b(?:marco|anoto) (?:\w+ )?{re.escape(a)}\b"
+            rf"|\b{re.escape(a)} (?:marco|anoto)\b",
+            normalizada,
+        )
+        for a in alias_anotadores
+    )
+
+
+def respuesta_goles(
+    pregunta: str, datos: dict, historial: Optional[list] = None
+) -> Optional[str]:
+    """
+    C4 — Goles sin Granite: marcador, minuto, anotador, asistencia y la jugada tal como
+    está en los datos. Filtra por marcador, minuto, orden, anotador, equipo o tiempo.
+    """
+    goles = (datos.get("goles") or {}).get("lista") or []
+    hechos = datos.get("hechos") or {}
+    if not goles or not hechos:
+        return None
+    normalizada = sin_acentos(pregunta)
+    alias = hechos.get("alias_jugadores", {})
+    nombrados = list(dict.fromkeys(
+        nombre for clave, nombre in alias.items()
+        if re.search(rf"\b{re.escape(clave)}\b", normalizada)
+    ))
+    anotadores = {g["anotador"]["nombre"] for g in goles}
+    alias_anotadores = [clave for clave, nombre in alias.items() if nombre in anotadores]
+
+    texto, tiempos = normalizada, []
+    for indice, (patron, etiqueta) in enumerate(RE_TIEMPO_GOL):
+        if patron.search(texto):
+            tiempos.append((indice, etiqueta))
+            texto = patron.sub(" ", texto)
+    ordinal = next(
+        (i for raiz, i in ORDINALES_GOL if re.search(rf"\b{raiz}(?:o|a)?\b", texto)), None
+    )
+    marcadores = [f"{a}-{b}" for a, b in RE_MARCADOR.findall(texto)]
+    minutos = RE_MINUTO_GOL.findall(texto)
+
+    if not _pide_goles(normalizada, goles, alias_anotadores):
+        # Seguimiento de una pregunta de goles: «¿y el tercero?», «¿y el de Rojas?»
+        previas = [sin_acentos(m["content"]) for m in (historial or []) if m.get("role") == "user"]
+        concreta = (
+            ordinal is not None or marcadores or minutos
+            or any(n in anotadores for n in nombrados)
+        )
+        if not (
+            previas and concreta and len(normalizada.split()) <= 6
+            and RE_SEGUIMIENTO.search(normalizada)
+            and not RE_NO_ES_GOL.search(normalizada)
+            and not any(p in normalizada for ps, _, _ in EVENTOS_POR_PREGUNTA for p in ps)
+            and _pide_goles(previas[-1], goles, alias_anotadores)
+        ):
+            return None
+
+    elegidos, detalle = list(goles), []
+    if marcadores:
+        # En el orden en que se diga: «el 0-3» de la visita es el «3-0»
+        pedidos = {m for m in marcadores} | {m[::-1] for m in marcadores}
+        elegidos = [g for g in elegidos if g["marcador_momento"] in pedidos]
+        detalle.append(f"con el marcador {' ni '.join(marcadores)}")
+    if minutos:
+        elegidos = [g for g in elegidos if str(g["minuto"]) in minutos]
+        detalle.append(f"al minuto {' ni '.join(minutos)}")
+    if len(tiempos) == 1:
+        indice, etiqueta = tiempos[0]
+        elegidos = [g for g in elegidos if (g["minuto"] <= 45) == (indice == 0)]
+        detalle.append(f"en {etiqueta}")
+    equipos = [hechos["equipos"][c]["nombre"] for c in equipos_en_texto(normalizada, hechos)]
+    if len(equipos) == 1 and not (marcadores or minutos):
+        en_contra = RE_GOL_EN_CONTRA.search(normalizada) is not None
+        elegidos = [g for g in elegidos if (g["equipo_anotador"] == equipos[0]) != en_contra]
+        detalle.append(f"{'recibidos por' if en_contra else 'de'} {equipos[0]}")
+    if nombrados:
+        if "asist" in normalizada or "pase" in normalizada:
+            elegidos = [g for g in elegidos if (g.get("asistente") or {}).get("nombre") in nombrados]
+            detalle.append(f"con asistencia de {', '.join(nombrados)}")
+        else:
+            elegidos = [g for g in elegidos if g["anotador"]["nombre"] in nombrados]
+            detalle.append(f"de {', '.join(nombrados)}")
+
+    alcance = f" {' '.join(detalle)}" if detalle else ""
+    if not elegidos:
+        return (f"Los datos no registran goles{alcance}. Goles del partido ({len(goles)}):\n"
+                + "\n".join(map(_linea_gol, goles)))
+    if ordinal is not None and not (marcadores or minutos):
+        if ordinal >= len(elegidos):
+            palabra = "gol" if len(elegidos) == 1 else "goles"
+            return (f"Los datos registran {len(elegidos)} {palabra}{alcance}:\n"
+                    + "\n".join(map(_linea_gol, elegidos)))
+        elegidos = [elegidos[ordinal]]
+    if len(elegidos) == 1:
+        return _linea_gol(elegidos[0])
+    return (f"Goles{alcance or ' del partido'} ({len(elegidos)}):\n"
+            + "\n".join(map(_linea_gol, elegidos)))
 
 
 # Preguntas por un tipo de evento -> tipos de eventos_partido.json. Granite cuenta y
@@ -791,6 +952,8 @@ def fuera_de_tema(pregunta: str, datos: dict, historial: Optional[list] = None) 
         if patron.search(normalizada):
             return True
 
+    if not solo_clip(datos) and RE_MARCADOR.search(normalizada):
+        return False  # «¿cómo fue el 3-0?»
     vocabulario = [p for palabras in PALABRAS_SECCION.values() for p in palabras]
     vocabulario += [*PALABRAS_SOLO_PARTIDO, *PALABRAS_FUTBOL]
     if any(p in normalizada for p in vocabulario):
@@ -1222,6 +1385,7 @@ def respuesta_por_regla(
         return None  # las reglas usan alineaciones y estadísticas que todavía no existen
     return (
         respuesta_sin_datos(pregunta, datos)
+        or respuesta_goles(pregunta, datos, historial)   # C4
         or respuesta_eventos(pregunta, datos, historial)
         or respuesta_recomendacion(pregunta, datos)      # A3 antes que A2
         or respuesta_tactica(pregunta, datos)            # A2
