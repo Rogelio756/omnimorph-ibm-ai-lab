@@ -68,23 +68,38 @@
    * graficosVisibles(t, jugadas) → {indice, protagonista, radar, ficha}.
    * indice: índice de la jugada (o -1).
    * Si i === -1 → todos false.
-   * dt = t - j.t0; dur = j.t1 - j.t0.
+   * dt = t - j.t0.
    * protagonista = 0.5 <= dt && dt < 3.5
-   * radar        = (i % 2 === 0) && 0.5 <= dt && dt < dur - 0.3
-   * ficha        = (i % 2 === 1) && 0.5 <= dt && dt < dur - 0.3
+   * ficha        = alineaciones solo al inicio: jugada 0, 0.5 <= dt < 3.5
+   * radar        = fijo el resto del clip (desde dt 0.5 de la jugada 0 y sin ficha)
    */
   L.graficosVisibles = function (t, jugadas) {
     var i = L.jugadaEn(t, jugadas);
     if (i === -1) return { indice: -1, protagonista: false, radar: false, ficha: false };
-    var j   = jugadas[i];
-    var dt  = t - j.t0;
-    var dur = j.t1 - j.t0;
+    var dt    = t - jugadas[i].t0;
+    var ficha = i === 0 && dt >= 0.5 && dt < 3.5;
     return {
       indice:       i,
       protagonista: dt >= 0.5 && dt < 3.5,
-      radar:        (i % 2 === 0) && dt >= 0.5 && dt < dur - 0.3,
-      ficha:        (i % 2 === 1) && dt >= 0.5 && dt < dur - 0.3,
+      radar:        !ficha && (i > 0 || dt >= 0.5),
+      ficha:        ficha,
     };
+  };
+
+  /**
+   * ultimoValido(cancha) → arreglo: para cada cuadro f, el último cuadro <= f
+   * con jugadores en el radar, o -1. En tomas cerradas el radar se queda con
+   * la última posición conocida en vez de quedarse vacío.
+   */
+  L.ultimoValido = function (cancha) {
+    var out = new Array(cancha.length);
+    var ult = -1;
+    for (var f = 0; f < cancha.length; f++) {
+      var c = cancha[f];
+      if (c && c.p && c.p.length) ult = f;
+      out[f] = ult;
+    }
+    return out;
   };
 
   /**

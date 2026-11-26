@@ -61,26 +61,36 @@ function grupo4() {
     assert.equal(v.ficha,        false);
   });
 
-  ok('graficosVisibles(1.0, J) → {indice:0, protagonista:true, radar:true, ficha:false}', function () {
+  ok('graficosVisibles(1.0, J) → {indice:0, protagonista:true, radar:false, ficha:true}', function () {
     var v = L.graficosVisibles(1.0, J);
     assert.equal(v.indice,       0);
+    assert.equal(v.protagonista, true);
+    assert.equal(v.radar,        false);
+    assert.equal(v.ficha,        true);
+  });
+
+  ok('graficosVisibles(4.4, J) → protagonista:false, radar:true, ficha:false', function () {
+    var v = L.graficosVisibles(4.4, J);
+    assert.equal(v.protagonista, false);
+    assert.equal(v.radar,        true);
+    assert.equal(v.ficha,        false);
+  });
+
+  ok('graficosVisibles(5.0, J) → {indice:1, protagonista:true, radar:true, ficha:false}', function () {
+    var v = L.graficosVisibles(5.0, J);
+    assert.equal(v.indice,       1);
     assert.equal(v.protagonista, true);
     assert.equal(v.radar,        true);
     assert.equal(v.ficha,        false);
   });
 
-  ok('graficosVisibles(4.4, J) → protagonista:false, radar:false', function () {
-    var v = L.graficosVisibles(4.4, J);
-    assert.equal(v.protagonista, false);
-    assert.equal(v.radar,        false);
+  ok('graficosVisibles(4.6, J) → radar sigue fijo al cambiar de jugada', function () {
+    assert.equal(L.graficosVisibles(4.6, J).radar, true);
   });
 
-  ok('graficosVisibles(5.0, J) → {indice:1, protagonista:true, radar:false, ficha:true}', function () {
-    var v = L.graficosVisibles(5.0, J);
-    assert.equal(v.indice,       1);
-    assert.equal(v.protagonista, true);
-    assert.equal(v.radar,        false);
-    assert.equal(v.ficha,        true);
+  ok('ultimoValido conserva la última posición en tomas cerradas', function () {
+    var K = [{ p: [] }, { p: [[1, 0, 10, 10]] }, { p: [] }, null, { p: [[2, 1, 5, 5]] }];
+    assert.deepEqual(L.ultimoValido(K), [-1, 1, 1, 1, 4]);
   });
 
   var C = [[[6, 10, 10, 20, 40]], [], [[6, 12, 10, 22, 42]]];

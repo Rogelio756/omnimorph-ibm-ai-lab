@@ -33,6 +33,7 @@
   var mateoEl     = document.getElementById('tv-mateo');
   var fichaMovilEl  = document.getElementById('tv-ficha-movil');
   var mateoMovilEl  = document.getElementById('tv-mateo-movil');
+  var radarMovilEl  = document.getElementById('tv-radar-movil');
   var inicioBtn   = document.getElementById('tv-inicio');
   var pausaBtn    = document.getElementById('tv-pausa');
   var vozToggleBtn = document.getElementById('tv-voz-toggle');
@@ -68,6 +69,10 @@
 
       // Ficha (pre-construir, se muestra en paso 5)
       construirFicha(datos.ficha, p);
+
+      // Radar: última posición válida por cuadro, leyenda y copia para móvil
+      estado.ultimo = L.ultimoValido(datos.cancha || []);
+      prepararRadar(p);
 
       // Voz
       voz.src = datos.narracion.audio;
@@ -215,15 +220,15 @@
       limpiarTrazos();
     }
 
-    // ④ Radar
-    if (vis.radar && d.cancha[f]) {
-      dibujarRadar(d.cancha[f], p);
-      radarEl.hidden = false;
-    } else {
-      radarEl.hidden = true;
+    // ④ Radar (fijo después de las alineaciones)
+    if (vis.radar) {
+      var prot = vis.protagonista && j ? j.protagonista : null;
+      dibujarRadar(f, prot, p);
     }
+    radarEl.hidden = !vis.radar;
+    if (radarMovilEl) radarMovilEl.hidden = !vis.radar;
 
-    // ⑤ Ficha (alineaciones)
+    // ⑤ Ficha (alineaciones, solo al inicio)
     fichaEl.hidden = !vis.ficha;
     if (fichaMovilEl) fichaMovilEl.hidden = !vis.ficha;
 
@@ -276,81 +281,66 @@
     trazosEl.appendChild(tri);
   }
 
-  // ── ④ Mini radar ─────────────────────────────────────────────────────────
-  function dibujarRadar(entradaCancha, partido) {
-    var svgEl = radarEl.querySelector('.tv-radar__svg');
-    while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+  // ── ④ Radar ──────────────────────────────────────────────────────────────
+  // La cancha es fija en el HTML; aquí solo se dibujan los puntos.
+  var radares = [];
 
-    var VW = 1200, VH = 700;
-    var colorPitch      = _cssVar('--color-pitch')       || '#0E1A16';
-    var colorLines      = _cssVar('--color-pitch-lines') || '#2A4A3E';
-    var colorTextSoft   = _cssVar('--color-text-soft')   || '#A1A1AE';
-    var colorBall       = _cssVar('--color-ball')        || '#A3E635';
-
-    // Fondo
-    var rect = document.createElementNS(SVG_NS, 'rect');
-    rect.setAttribute('width', VW); rect.setAttribute('height', VH);
-    rect.setAttribute('fill', colorPitch);
-    svgEl.appendChild(rect);
-
-    // Líneas de cancha
-    var lineas = [
-      // Borde
-      { x1: 10, y1: 10, x2: VW - 10, y2: 10 },
-      { x1: VW - 10, y1: 10, x2: VW - 10, y2: VH - 10 },
-      { x1: VW - 10, y1: VH - 10, x2: 10, y2: VH - 10 },
-      { x1: 10, y1: VH - 10, x2: 10, y2: 10 },
-      // Línea media
-      { x1: VW / 2, y1: 10, x2: VW / 2, y2: VH - 10 },
-    ];
-    lineas.forEach(function (l) {
-      var ln = document.createElementNS(SVG_NS, 'line');
-      ln.setAttribute('x1', l.x1); ln.setAttribute('y1', l.y1);
-      ln.setAttribute('x2', l.x2); ln.setAttribute('y2', l.y2);
-      ln.setAttribute('stroke', colorLines); ln.setAttribute('stroke-width', '2');
-      svgEl.appendChild(ln);
-    });
-
-    // Círculo central (radio 91.5)
-    var cc = document.createElementNS(SVG_NS, 'circle');
-    cc.setAttribute('cx', VW / 2); cc.setAttribute('cy', VH / 2);
-    cc.setAttribute('r', '91.5');
-    cc.setAttribute('fill', 'none'); cc.setAttribute('stroke', colorLines);
-    cc.setAttribute('stroke-width', '2');
-    svgEl.appendChild(cc);
-
-    // Áreas 165×403 centradas en cada portería
-    [[10, (VH - 403) / 2], [VW - 10 - 165, (VH - 403) / 2]].forEach(function (pos) {
-      var ar = document.createElementNS(SVG_NS, 'rect');
-      ar.setAttribute('x', pos[0]); ar.setAttribute('y', pos[1]);
-      ar.setAttribute('width', '165'); ar.setAttribute('height', '403');
-      ar.setAttribute('fill', 'none'); ar.setAttribute('stroke', colorLines);
-      ar.setAttribute('stroke-width', '2');
-      svgEl.appendChild(ar);
-    });
-
-    // Jugadores y balón
-    var pts = L.puntosRadar(entradaCancha);
-    pts.jugadores.forEach(function (jug) {
-      var color = jug.team === 1 ? partido.local.color
-                : jug.team === 0 ? partido.visita.color
-                : colorTextSoft;
-      // Escalar coordenadas (cancha 1200×700 dm → viewBox 1200×700)
-      var cx = jug.x; var cy = jug.y;
-      var circ = document.createElementNS(SVG_NS, 'circle');
-      circ.setAttribute('cx', cx); circ.setAttribute('cy', cy);
-      circ.setAttribute('r', '12');
-      circ.setAttribute('fill', color);
-      svgEl.appendChild(circ);
-    });
-
-    if (pts.balon) {
-      var bal = document.createElementNS(SVG_NS, 'circle');
-      bal.setAttribute('cx', pts.balon.x); bal.setAttribute('cy', pts.balon.y);
-      bal.setAttribute('r', '8');
-      bal.setAttribute('fill', colorBall);
-      svgEl.appendChild(bal);
+  function prepararRadar(partido) {
+    radares = [radarEl];
+    if (radarMovilEl) {
+      var copia = radarEl.cloneNode(true);
+      copia.removeAttribute('id');
+      copia.hidden = false;
+      copia.classList.add('tv-radar--movil');
+      radarMovilEl.appendChild(copia);
+      radares.push(copia);
     }
+    radares.forEach(function (r) {
+      [['local', partido.local], ['visita', partido.visita]].forEach(function (par) {
+        var el = r.querySelector('[data-lado="' + par[0] + '"]');
+        if (el) {
+          el.textContent = par[1].codigo;
+          el.style.setProperty('--tv-equipo-color', par[1].color);
+        }
+      });
+    });
+  }
+
+  function dibujarRadar(f, protagonista, partido) {
+    var d  = estado.datos;
+    var lv = estado.ultimo ? estado.ultimo[f] : -1;
+    var enEspera = lv >= 0 && lv !== f;
+    var html = '';
+
+    if (lv >= 0) {
+      var pts = L.puntosRadar(d.cancha[lv]);
+      var colorRef  = _cssVar('--color-text-soft') || '#9CA3AF';
+      var colorBall = _cssVar('--color-ball')      || '#A3E635';
+      pts.jugadores.forEach(function (jug) {
+        var color = jug.team === 1 ? partido.local.color
+                  : jug.team === 0 ? partido.visita.color
+                  : colorRef;
+        var r = jug.team === 2 ? 18 : 26;
+        if (protagonista !== null && jug.id === protagonista) {
+          html += '<circle cx="' + jug.x + '" cy="' + jug.y + '" r="42" fill="none" stroke="' +
+                  colorBall + '" stroke-width="5"/>';
+        }
+        html += '<circle cx="' + jug.x + '" cy="' + jug.y + '" r="' + r + '" fill="' + color +
+                '" stroke="#111" stroke-width="3"/>';
+      });
+      // En toma cerrada no se sabe dónde está el balón: no se dibuja
+      if (!enEspera && pts.balon) {
+        html += '<circle cx="' + pts.balon.x + '" cy="' + pts.balon.y + '" r="16" fill="' +
+                colorBall + '" stroke="#111" stroke-width="3"/>';
+      }
+    }
+
+    radares.forEach(function (r) {
+      var g = r.querySelector('.tv-radar__puntos');
+      if (g) g.innerHTML = html;
+      var esp = r.querySelector('.tv-radar__espera');
+      if (esp) esp.hidden = !enEspera;
+    });
   }
 
   // ── ⑤ Ficha ──────────────────────────────────────────────────────────────

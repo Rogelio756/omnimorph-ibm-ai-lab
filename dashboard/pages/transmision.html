@@ -68,8 +68,29 @@
 
         <!-- ④ Mini radar -->
         <div class="tv-radar" id="tv-radar" hidden
-             role="img" aria-label="Mini radar con la posición de los jugadores">
-          <svg viewBox="0 0 1200 700" class="tv-radar__svg"></svg>
+             role="img" aria-label="Radar con la posición de los jugadores">
+          <svg viewBox="-20 -20 1240 740" class="tv-radar__svg">
+            <rect x="-20" y="-20" width="1240" height="740" class="tv-radar__cesped"/>
+            <g class="tv-radar__lineas" fill="none" stroke-width="3">
+              <rect x="0" y="0" width="1200" height="700"/>
+              <line x1="600" y1="0" x2="600" y2="700"/>
+              <circle cx="600" cy="350" r="91.5"/>
+              <rect x="0" y="148" width="165" height="403"/>
+              <rect x="1035" y="148" width="165" height="403"/>
+              <rect x="0" y="258" width="55" height="183"/>
+              <rect x="1145" y="258" width="55" height="183"/>
+              <rect x="-12" y="313" width="12" height="73"/>
+              <rect x="1200" y="313" width="12" height="73"/>
+              <path d="M165 277 A91.5 91.5 0 0 1 165 423"/>
+              <path d="M1035 277 A91.5 91.5 0 0 0 1035 423"/>
+            </g>
+            <g class="tv-radar__puntos"></g>
+          </svg>
+          <div class="tv-radar__pie">
+            <span class="tv-radar__equipo" data-lado="local"></span>
+            <span class="tv-radar__equipo" data-lado="visita"></span>
+            <span class="tv-radar__espera" hidden>Toma cerrada · última posición</span>
+          </div>
         </div>
 
         <!-- ⑤ Alineaciones -->
@@ -85,6 +106,7 @@
     <div class="tv-debajo" id="tv-debajo">
       <p class="tv-debajo__mateo" id="tv-mateo-movil" aria-hidden="true"></p>
       <div class="tv-debajo__ficha" id="tv-ficha-movil"></div>
+      <div class="tv-debajo__radar" id="tv-radar-movil"></div>
     </div>
 
     <div class="tv-controles">

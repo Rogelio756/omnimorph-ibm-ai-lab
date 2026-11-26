@@ -125,17 +125,35 @@
 }
 
 /* ── ④ Mini radar ───────────────────────────────────────────────────────── */
+/* Abajo al centro e inclinado, como si estuviera acostado sobre la cancha
+   (estilo videojuego / transmisión de TV) */
 .tv-radar {
   position: absolute;
-  bottom: 14%;
-  right: 2%;
-  width: 22%;
-  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
-  border: var(--border);
-  border-radius: var(--radius-card);
-  overflow: hidden;
+  bottom: 11%;
+  left: 50%;
+  width: 24%;
+  transform: translateX(-50%) perspective(900px) rotateX(38deg);
+  transform-origin: 50% 100%;
+  background: transparent;
+  border: none;
+  overflow: visible;
   opacity: 1;
   transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+.tv-radar .tv-radar__svg {
+  border: 1px solid color-mix(in srgb, var(--color-text) 45%, transparent);
+  border-radius: 4px;
+}
+
+.tv-radar .tv-radar__cesped { fill-opacity: 0.6; }
+
+.tv-radar .tv-radar__pie {
+  justify-content: center;
+  border-top: none;
+  padding: 0.25em 0 0;
+  text-shadow: 0 0 3px #000, 0 0 3px #000;
 }
 
 .tv-radar[hidden] {
@@ -147,6 +165,51 @@
   height: auto;
   display: block;
 }
+
+.tv-radar__cesped { fill: var(--color-pitch, #0E1A16); }
+.tv-radar__lineas { stroke: color-mix(in srgb, var(--color-text) 35%, transparent); }
+
+.tv-radar__pie {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  padding: 0.35em 0.7em;
+  font-family: var(--font-mono);
+  font-size: max(12px, 0.75em);
+  color: var(--color-text);
+  border-top: var(--border);
+}
+
+.tv-radar__equipo::before {
+  content: "";
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  margin-right: 0.35em;
+  border-radius: 50%;
+  vertical-align: -0.05em;
+  background: var(--tv-equipo-color, var(--color-text-soft));
+  border: 1px solid #111;
+}
+
+.tv-radar__espera {
+  margin-left: auto;
+  color: var(--color-text-soft);
+}
+
+.tv-radar__espera[hidden] { display: none; }
+
+/* Copia del radar debajo del video (solo móvil) */
+.tv-debajo__radar[hidden] { display: none; }
+.tv-radar.tv-radar--movil {
+  position: static;
+  width: 100%;
+  transform: none;
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+}
+
+.tv-radar.tv-radar--movil .tv-radar__cesped { fill-opacity: 1; }
+.tv-radar.tv-radar--movil .tv-radar__pie { justify-content: flex-start; text-shadow: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .tv-radar { transition: none; }
@@ -302,7 +365,7 @@
 
 /* ── Responsive móvil (< 768 px) ────────────────────────────────────────── */
 @media (max-width: 767px) {
-  /* El radar se oculta en móvil */
+  /* En móvil el radar se muestra debajo del video, no encima */
   .tv__capa .tv-radar {
     display: none !important;
   }
