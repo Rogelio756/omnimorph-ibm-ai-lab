@@ -111,3 +111,14 @@ Secciones:
 - Lo que no hay que prometer y cómo decirlo bien.
 - Preguntas probables.
 - Cómo entrar.
+
+## Documento de Google para Mariana (26/11, noche, Claude)
+
+Pedido del usuario: pasar a un Google Doc las respuestas a las preguntas de Mariana y la revisión del guion. Se creó «Omnimorph: respuestas, guion y deck para el pitch» en el Drive del usuario. Es privado hasta que el usuario lo comparta.
+
+Contenido:
+- Las 3 preguntas del chat para el video: «¿Cómo fue el 3-0?», el mejor jugador según FotMob y los kilómetros de Galo. Estas se responden por regla, no con Granite.
+- La cifra final de la crónica: 5 tramos de Granite y 3 de plantilla. Hubo corrección humana de redacción en 3 de los tramos de Granite.
+- El guion de 3 minutos actualizado, con una tabla de cambios y por qué.
+- El texto del deck en 6 láminas y las frases que hay que quitar del deck actual.
+- Las decisiones abiertas del equipo.
