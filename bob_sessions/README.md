@@ -57,6 +57,7 @@ Requerimiento del IBM SkillsBuild AI Experiential Learning Lab:
 | `sesion_40_chat_y_textos.md` | 2026-11-25 | Claude Code — Goles del chat por regla, textos de la web y README (C4–C5); Bob caído por error 525 |
 | `sesion_41_revision_c1.md` | 2026-11-25 | Claude Code — Revisión de C1 contra el video y calibración por líneas (C1b) |
 | `sesion_42_entregables_y_revision_tramos.md` | 2026-11-26 | Claude Code — Exportaciones de Bob y capturas (entregable 4), documentos de problema y solución y de tecnología (entregables 2 y 3), revisión humana de los 8 tramos: 8 de 8 |
+| `sesion_43_reunion_maciel.md` | 2026-11-27 | Claude Code — Preparación de la reunión con Fernando Maciel (IBM): app local, guion actualizado y dudas del lab |
 
 ---
 
