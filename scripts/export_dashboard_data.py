@@ -33,6 +33,12 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 from implementacion import partido_config
 
+# Precio público de IBM para ibm/granite-4-h-small (pago por uso, USD por millón de tokens).
+# Fuente: https://www.ibm.com/watsonx/pricing, consultada el 2026-11-26.
+PRECIO_USD_M_IN = 0.06
+PRECIO_USD_M_OUT = 0.25
+PRECIO_FUENTE = "precio público de IBM watsonx.ai, consultado el 26/11/2026"
+
 PARTIDO = partido_config.activo()
 CLEAN = ROOT / "data" / "clean"
 AUDIO = ROOT / "data" / "audio"
@@ -558,16 +564,24 @@ def export_metodo() -> None:
     if tactical:
         ventana_s = round(float(tactical[0]["t1"]) - float(tactical[0]["t0"]), 2)
 
-    # Límite de palabras que aplicó M3, tal como quedó en el registro de auditoría
+    # Límite de palabras que aplicó M3 y tokens reales de Granite, tal como quedaron en la auditoría
     max_palabras = None
+    llamadas_granite = tokens_in = tokens_out = 0
     audit = CLEAN / "governance_audit.jsonl"
     if audit.exists():
         with open(audit, encoding="utf-8") as f:
             for linea in f:
-                if linea.strip():
-                    max_palabras = (json.loads(linea).get("checks", {})
-                                    .get("narration_length", {}).get("max_allowed"))
-                    break
+                if not linea.strip():
+                    continue
+                e = json.loads(linea)
+                if max_palabras is None:
+                    max_palabras = e.get("checks", {}).get("narration_length", {}).get("max_allowed")
+                # Solo llamadas que sí fueron a Granite (incluye reintentos rechazados por M3)
+                if e.get("mode") != "offline" and (e.get("tokens_in") or 0) > 0:
+                    llamadas_granite += 1
+                    tokens_in += int(e.get("tokens_in") or 0)
+                    tokens_out += int(e.get("tokens_out") or 0)
+    costo_usd = (tokens_in * PRECIO_USD_M_IN + tokens_out * PRECIO_USD_M_OUT) / 1_000_000
 
     frames_corrida = c1.get("frames_total", {}).get("observed")
     estados = resumen.get("monitor_results", {})
@@ -630,7 +644,13 @@ def export_metodo() -> None:
             "offline": s3.get("offline_calls"),
             "latencia_ms_media": s3.get("latency_ms_mean"),
             "latencia_ms_max": s3.get("latency_ms_max"),
-            "costo_ru": s3.get("total_cost_ru_est"),
+            "llamadas_granite": llamadas_granite,
+            "tokens_in": tokens_in,
+            "tokens_out": tokens_out,
+            "costo_usd": round(costo_usd, 6),
+            "precio_usd_m_in": PRECIO_USD_M_IN,
+            "precio_usd_m_out": PRECIO_USD_M_OUT,
+            "precio_fuente": PRECIO_FUENTE,
             "max_palabras": max_palabras,
         },
         "m4": {

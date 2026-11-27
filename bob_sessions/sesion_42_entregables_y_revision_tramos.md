@@ -122,3 +122,15 @@ Contenido:
 - El guion de 3 minutos actualizado, con una tabla de cambios y por qué.
 - El texto del deck en 6 láminas y las frases que hay que quitar del deck actual.
 - Las decisiones abiertas del equipo.
+
+## Costo en dólares en vez de RU (26/11, noche, Claude)
+
+Problema: las páginas Método y Operaciones mostraban «1.84 RU» como costo de la corrida. Esa cifra es una estimación propia de M3: 0.0001 RU por token de entrada y 0.0003 por token de salida. No coincide con cómo IBM cobra.
+
+Cambio:
+- `export_dashboard_data.py` suma del registro de auditoría las llamadas que sí fueron a Granite, incluidos los reintentos rechazados. También calcula el costo con el precio público de IBM para granite-4-h-small: 0.06 USD por millón de tokens de entrada y 0.25 de salida, según https://www.ibm.com/watsonx/pricing, consultado el 26/11.
+- Método y Operaciones muestran el costo en USD y el total de tokens. Método además explica cómo se calcula el costo y que no incluye la computadora que procesa el video.
+
+Corrida actual: 16 llamadas a Granite, 11,623 tokens de entrada y 2,275 de salida. El costo es de unos 0.0013 USD.
+
+Sin cambiar: el chat de Operaciones sigue mostrando RU estimados por pregunta.

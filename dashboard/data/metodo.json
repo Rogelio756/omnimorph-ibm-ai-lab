@@ -48,7 +48,13 @@
   "offline": 3,
   "latencia_ms_media": 1103.46,
   "latencia_ms_max": 2219.07,
-  "costo_ru": 1.8448,
+  "llamadas_granite": 16,
+  "tokens_in": 11623,
+  "tokens_out": 2275,
+  "costo_usd": 0.001266,
+  "precio_usd_m_in": 0.06,
+  "precio_usd_m_out": 0.25,
+  "precio_fuente": "precio público de IBM watsonx.ai, consultado el 26/11/2026",
   "max_palabras": 18
  },
  "m4": {

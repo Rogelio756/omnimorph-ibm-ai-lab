@@ -315,7 +315,9 @@
       stat('Modelo', m3.modelo || '—', 'IBM watsonx.ai', true),
       stat('Llamadas auditadas', num(m3.pass) + '/' + num(m3.llamadas), num(m3.offline) + ' sin conexión'),
       stat('Latencia media', num(m3.latencia_ms_media, 0) + ' ms', 'máxima ' + num(m3.latencia_ms_max, 0) + ' ms'),
-      stat('Costo de la corrida', num(m3.costo_ru, 2) + ' RU', 'unidades de recurso de watsonx')));
+      stat('Costo de la corrida', m3.costo_usd == null ? '—' : num(m3.costo_usd, 4) + ' USD',
+        num((m3.tokens_in || 0) + (m3.tokens_out || 0)) + ' tokens en ' + num(m3.llamadas_granite) +
+        ' llamadas a Granite, con reintentos')));
     host.appendChild(parrafos('Qué revisa el monitor M3 en cada llamada', [
       '1. Que el modelo sea un IBM Granite autorizado.',
       '2. Que la respuesta tenga el formato esperado.',
@@ -323,7 +325,10 @@
       '4. Que el equipo al que la narración da más territorio coincida con los datos de esa ventana.'
     ]));
     host.appendChild(parrafos('Trazabilidad', [
-      'Cada llamada queda registrada con su modelo, latencia, tokens, costo y resultado. Si algo falla, hay registro.',
+      'Cada llamada queda registrada con su modelo, latencia, tokens y resultado. Si algo falla, hay registro.',
+      'El costo se calcula con los tokens registrados y el ' + (m3.precio_fuente || 'precio público de IBM') +
+        ': ' + num(m3.precio_usd_m_in, 2) + ' USD por millón de tokens de entrada y ' + num(m3.precio_usd_m_out, 2) +
+        ' de salida. No incluye la computadora que procesa el video.',
       'Las credenciales se leen de un archivo local fuera del código y nunca se publican.',
       'La herramienta quedó preparada para IBM watsonx Orchestrate (OpenAPI); hoy no forma parte del flujo.'
     ]));

@@ -108,7 +108,8 @@
     nar.appendChild(stat('Modelo', (m3.modelo || '—').replace('ibm/', ''), 'IBM watsonx.ai'));
     nar.appendChild(stat('Narraciones', num(m3.pass) + '/' + num(m3.llamadas), num(m3.offline) + ' sin conexión'));
     nar.appendChild(stat('Latencia media', num(m3.latencia_ms_media, 0) + ' ms', 'máxima ' + num(m3.latencia_ms_max, 0) + ' ms'));
-    nar.appendChild(stat('Costo de la corrida', num(m3.costo_ru, 2) + ' RU', 'estimado por tokens'));
+    nar.appendChild(stat('Costo de la corrida', m3.costo_usd == null ? '—' : num(m3.costo_usd, 4) + ' USD',
+      num((m3.tokens_in || 0) + (m3.tokens_out || 0)) + ' tokens · precio público de IBM'));
 
     var chipHost = $('op-chip');
     chipHost.className = 'chip ' + (C.todos_pass ? 'chip--ok' : 'chip--alert');
