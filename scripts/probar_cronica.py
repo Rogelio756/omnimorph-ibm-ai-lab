@@ -10,6 +10,11 @@ e. Modelo falso que falla 1 vez y luego acierta: 2 intentos registrados, estado 
 f. Modelo no Granite: FAIL.
 g. El exportador en carpeta temporal no contiene NaN ni claves viejas, conserva árbitros con team=2, interpola el balón, y el rastro 29 sale con equipo SKN en el cuadro 600 y CRC en el 800.
 h. Las 5 frases prohibidas/engañosas de C3a.1 dan FAIL, las 2 válidas dan PASS y la de "encierra" da FAIL por "encierra".
+i. Huecos de M3 cerrados (26/11): los errores de Granite del 25/11 (W0 «repartido» con territorio de CRC;
+   W1/W3 Costa Rica «en la mitad rival» con 40 y 34 %) dan FAIL, igual que no nombrar al equipo con territorio,
+   «su mitad» con 88 %, «sube sus líneas» y «retrasa»; «88 por ciento», «no llega a la mitad rival» y W2 correcto dan PASS.
+
+(c) Desde el 26/11 la prueba c revisa que las 8 frases publicadas en data/clean/narrations.json pasen M3.
 
 Todo corre en carpeta temporal sin tocar data/clean, dashboard/data ni dashboard/media.
 Sale con código 0 si todas pasan, o 1 si alguna falla.
@@ -230,11 +235,11 @@ def main() -> int:
             print(f"    {wid}: {aud['status']} -> {motivos}")
         print("  ------------------------------------------------------------------------\n")
 
-        ok_c = len(fallos_viejas) == 8
+        ok_c = len(viejas) == 8 and not fallos_viejas
         registrar(
-            "c. Las 8 frases viejas de data/clean/narrations.json fallan contra las reglas nuevas",
+            "c. Las 8 frases publicadas en data/clean/narrations.json pasan M3",
             ok_c,
-            f"fallaron {len(fallos_viejas)}/8 ({', '.join(fallos_viejas)})",
+            f"fallaron {len(fallos_viejas)}/{len(viejas)} ({', '.join(fallos_viejas) or 'ninguna'})",
         )
 
         # ── d. La plantilla offline de las 8 ventanas reales pasa M3 ─────────
@@ -430,6 +435,55 @@ def main() -> int:
             "h. 8 frases de prueba C3a.1 (5 FAIL + 2 PASS + 1 FAIL por 'encierra')",
             ok_h,
             ", ".join(detalles_h),
+        )
+
+        # ── i. Huecos de M3 cerrados (26/11) ─────────────────────────────────
+        mon_i = GovernanceMonitorM3(tactical_real, audit_log=tmp / "audit_i.jsonl")
+        por_id = {w["window_id"]: w for w in tactical_real}
+        casos_i = [
+            ("W0", "San Cristóbal y Nieves se ubica a 37 m de su portería. Costa Rica se ubica a 70 m de su portería.",
+             "Territorio repartido: ninguno de los dos equipos ocupa claramente más campo rival.", "FAIL"),
+            ("W0", "San Cristóbal y Nieves se ubica a 37 m de su portería. Costa Rica se ubica a 70 m de su portería.",
+             "Un equipo juega adelantado y el otro queda atrás.", "FAIL"),
+            ("W1", "San Cristóbal y Nieves se ubica a 53 m de su portería. Costa Rica se encuentra en la mitad rival, a 48 m de su portería.",
+             "Costa Rica se encuentra en la mitad rival.", "FAIL"),
+            ("W3", "San Cristóbal y Nieves se ubica a 50 m de su portería. Costa Rica se ubica a 48 m.",
+             "Costa Rica se instala en campo rival.", "FAIL"),
+            ("W0", "San Cristóbal y Nieves se ubica a 37 m. Costa Rica se ubica a 70 m.",
+             "Costa Rica queda en su mitad.", "FAIL"),
+            ("W0", "San Cristóbal y Nieves se ubica a 37 m. Costa Rica se ubica a 70 m.",
+             "Costa Rica sube sus líneas.", "FAIL"),
+            ("W0", "San Cristóbal y Nieves se ubica a 37 m. Costa Rica se ubica a 70 m.",
+             "Costa Rica adelantado; San Cristóbal y Nieves se retrasa.", "FAIL"),
+            ("W0", "San Cristóbal y Nieves se ubica a 37 m. Costa Rica tiene 88 por ciento en campo rival.",
+             "Costa Rica juega adelantado, con 88 por ciento en campo rival.", "PASS"),
+            ("W1", "San Cristóbal y Nieves se ubica a 53 m. Costa Rica se ubica a 48 m.",
+             "Costa Rica no llega a la mitad rival; territorio repartido.", "PASS"),
+            ("W2", "San Cristóbal y Nieves se ubica a 55 m de su portería, en la mitad rival. Costa Rica se ubica en su mitad, a 41 m.",
+             "San Cristóbal y Nieves juega en la mitad rival; Costa Rica queda en su mitad.", "PASS"),
+            ("W0", "San Cristóbal y Nieves se ubica a 37 m. Costa Rica se ubica a 70 m, ocupando el 88% del territorio.",
+             "Costa Rica adelantado, San Cristóbal y Nieves en su mitad.", "FAIL"),
+            ("W0", "San Cristóbal y Nieves se ubica a 37 m, ocupando un espacio de 6% en campo rival. Costa Rica se ubica a 70 m.",
+             "Costa Rica adelantado, San Cristóbal y Nieves en su mitad.", "FAIL"),
+            ("W6", "San Cristóbal y Nieves se ubica a 35 m. Costa Rica se ubica a 61 m.",
+             "Costa Rica adelantado, 61 metros; San Cristóbal y Nieves en mitad.", "FAIL"),
+        ]
+        ok_i = True
+        detalles_i = []
+        for idx_i, (wid, ana, nar, esp_i) in enumerate(casos_i, start=1):
+            w = por_id[wid]
+            aud_i = mon_i.audit_call(
+                REQUIRED_MODEL, wid,
+                {"window_id": wid, "t0": w["t0"], "t1": w["t1"], "analisis_tactico": ana, "narracion_es": nar},
+                10.0, 100, 40, mode="online",
+            )
+            if aud_i["status"] != esp_i:
+                ok_i = False
+            detalles_i.append(f"#{idx_i}:{aud_i['status']}(esp:{esp_i})")
+        registrar(
+            "i. Huecos de M3 cerrados: nombrar territorio, mitad rival / su mitad contra el %, 'sube sus líneas', 'por ciento', redacción del %",
+            ok_i,
+            ", ".join(detalles_i),
         )
 
     print("\n  --- Las 8 frases offline generadas por la plantilla nueva ---")

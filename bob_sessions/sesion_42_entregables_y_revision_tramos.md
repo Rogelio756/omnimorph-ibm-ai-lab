@@ -61,3 +61,40 @@ Idea del usuario: paneles a los lados del video, SKN a la izquierda y CRC a la d
   - Los botones (Pausa, Voz de MATEO, Repetir, Ocultar estadísticas) quedan justo debajo del video, a 8 px, en computadora y en celular.
   - Comprobado a 1600 px y a 375 px: sin desborde, sin textos de menos de 12 px y sin errores en consola. Pruebas: lógica 32 de 32 y `probar_transmision.py` 32 de 33 (la misma falla 7.3).
 - **Portada (pedido del usuario):** el botón «Ver partido de muestra» ahora dice «Prueba MATEO» (lleva a MATEO). Se agregó «Disfruta el partido», que lleva a Transmisión. El botón de sonido se queda. En celular los botones bajan de renglón sin salirse de la pantalla.
+- **Prueba con Mariana (26/11, 17:36):** `serve.py` en modo prueba por 12 h (tope de 15 preguntas a Granite por persona) más un túnel de Cloudflare por IPv4. Se comprobó desde fuera que Inicio, MATEO, Transmisión y los datos responden 200. Para empezar se archivó el estado de la prueba del 23/11.
+
+## Huecos de M3 cerrados (26/11, noche, Claude)
+
+Pedido del usuario: «cierra M3».
+
+- **Nombrar el territorio:** si un equipo tiene el territorio, la narración debe nombrarlo y no puede decir «repartido», «parejo», «equilibrado» ni «ninguno de los dos». Es el error de W0 del 25/11.
+- **Mitades contra los datos:** «mitad rival / campo rival / campo contrario» exige al menos 50 % en campo rival para el equipo nombrado; «su mitad / su campo» exige como mucho 50 %. Es el error de W1, W3 y W4 del 25/11, donde Costa Rica estaba «en la mitad rival» con 40, 34 y 38 %. Una cifra justo antes («con 6% en campo rival») no cuenta como afirmación, y las negaciones («no llega a la mitad rival») se respetan.
+- **Huecos de la revisión C3a.1:** «sube sus líneas» y «retrasa» quedan prohibidos (son movimientos que no se miden); «88 por ciento» ya no falla por «ciento».
+- **Prompt del narrador:**
+  - muestra solo el ejemplo que aplica al tramo (el 25/11 Granite copió el de «repartido» en un tramo de Costa Rica);
+  - pide nombrar al equipo con territorio;
+  - explica la regla del 50 %;
+  - se corrigió la doble negación del caso repartido.
+- **Auditoría:** cada intento guarda ahora el texto de Granite (`texto`) en `governance_audit.jsonl`, para revisar a mano también lo rechazado.
+- **`scripts/cronica_granite.py`:** respalda, corre el narrador y M3, las voces y M4, y regenera el video, MATEO y Transmisión. Imprime las 8 frases para la revisión a mano. Con `--restaurar` vuelve al respaldo. No toca `data/raw` ni el radar.
+- **Pruebas:**
+  - `probar_cronica.py`: 9 de 9. La prueba c ahora revisa las 8 frases publicadas; antes comparaba contra frases ya reemplazadas y fallaba. Nueva prueba i con 10 casos.
+  - `probar_chat_reglas.py`: 62 de 62.
+  - Las 8 frases publicadas siguen en PASS.
+- **Pendiente:** la corrida con Granite (~1.4 RU), que la corre el usuario.
+- **Corrida con Granite (la hizo el usuario, 26/11 ~17:58):**
+  - M3 en PASS: 5 tramos de Granite (W0, W2, W5, W6 y W7) y 3 de plantilla (W1, W3 y W4, todos «repartido», tras 3 intentos cada uno). 11 reintentos; costo estimado 1.84 RU.
+  - M4 en PASS: 8 voces, la más larga de 3.9 s.
+  - Se regeneraron el video, MATEO y Transmisión. Respaldo en `backups/pre_m3_2026-11-26_1758`.
+- **Revisión a mano (Claude):** las 5 narraciones de Granite coinciden con el territorio y las mitades de cada tramo. Quedan detalles de redacción que M3 no detecta:
+  - W0: el análisis dice «ocupando el 88% del territorio». El 88 % es la parte de las posiciones de Costa Rica en campo rival, no del territorio.
+  - W5: el análisis dice «94% de territorio en la mitad rival». En W0 y W5 también aparece «ocupando un espacio de 6% en campo rival».
+  - W6: la voz dice «San Cristóbal y Nieves en mitad» (le falta «su»).
+- Pruebas: `probar_cronica.py` 9 de 9; lógica de Transmisión 32 de 32; `probar_transmision.py` 32 de 33 (la misma falla 7.3). MATEO sin errores de consola y con «Comprobaciones del proceso: 9 de 9».
+- **Corrección de redacción (decisión del usuario: «a mano y regla en M3»):**
+  - **Regla nueva en M3:** falla si el texto dice «N% del territorio», «un espacio de N%» o «en mitad» sin «su» o «la». La prueba i suma 3 casos (13 en total).
+  - **Corrección a mano con `scripts/revision_humana_cronica.py`:** cambia el análisis de W0 y W5 («6% / 88% / 94% en campo rival») y la voz de W6 («en su mitad»). Primero audita lo corregido con M3; si no pasa, no guarda nada.
+  - **Trazabilidad:** cada tramo corregido lleva `revision_humana` en `narrations.json`. La auditoría guarda una entrada por corrección (0 RU), con el texto original de Granite. Por eso el conteo de reintentos sube de 11 a 14.
+  - **Resultado:** M3 en PASS (5 de Granite, 3 de plantilla) y M4 en PASS. Se regeneraron el video, MATEO y Transmisión.
+  - **Pruebas:** `probar_cronica.py` 9 de 9; `probar_chat_reglas.py` 62 de 62; `probar_transmision.py` 32 de 33 (la misma 7.3). MATEO sin errores y con «9 de 9».
+  - **Voces:** W1, W3, W4 y W6 marcaban 3.90 s porque el servicio recorta a 3.80 s. Medido sin recorte, la voz termina antes (W6 a los 3.55 s y W1 a los 3.38 s); solo se recorta silencio del final y no se pierde ninguna palabra.

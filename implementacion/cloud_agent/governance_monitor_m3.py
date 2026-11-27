@@ -14,6 +14,11 @@ Verifica por cada ventana táctica:
     - Si territorio es un equipo, falla si dice que el otro está adelantado, ocupa más
       campo rival o tiene más territorio.
     - Si territorio es "repartido", falla si lo afirma de cualquiera.
+    - Si territorio es un equipo, la narración debe nombrarlo y no puede decir que está repartido.
+    - «mitad rival / campo rival» exige que ese equipo tenga >= 50 % en campo rival;
+      «su mitad / su campo» exige <= 50 %.
+  ✓ Redacción de la métrica: el % en campo rival no es «% del territorio» ni «un espacio de N%»,
+    y «en mitad» sin «su» o «la» no se acepta.
   ✓ Verificación de números por oración:
     - Todo número del texto debe estar en los datos de ESA ventana (entero o con un decimal)
       y pertenecer al equipo que se nombra en la oración.
@@ -86,8 +91,31 @@ RE_PALABRAS_PROHIBIDAS = re.compile(
     r"encierr\w*|"
     r"encerr\w*|"
     r"avanz\w*|"
-    r"avanc\w*"
+    r"avanc\w*|"
+    r"retras\w*|"
+    r"sube\s+(?:sus\s+)?lineas|"
+    r"suben\s+(?:sus\s+)?lineas"
     r")\b"
+)
+
+# Afirmaciones de ubicación por mitades (sobre texto sin acentos)
+RE_EN_MITAD_RIVAL = re.compile(
+    r"\b(?:mitad|campo|terreno|zona|cancha)\s+(?:rival|contrari[oa]|ajen[oa]|del\s+rival|de\s+su\s+(?:rival|adversario))\b"
+)
+RE_EN_SU_MITAD = re.compile(
+    r"\b(?:su\s+(?:propia\s+)?(?:mitad|campo|terreno|zona)|(?:mitad|campo|terreno)\s+propi[oa]|propia\s+mitad)\b"
+)
+# Un porcentaje justo antes ("con 6% en campo rival") es una cifra, no una afirmación de ubicación
+RE_PCT_ANTES = re.compile(r"(?:%|por\s+ciento)\s+(?:\w+\s+){0,4}$")
+# Redacción que cambia el significado de la métrica (sobre texto sin acentos)
+RE_REDACCION_METRICA = re.compile(
+    r"\d+(?:[.,]\d+)?\s*%\s+(?:del?\s+)?(?:su\s+)?territorio\b|"
+    r"\bespacio\s+de\s+(?:un\s+)?\d+(?:[.,]\d+)?\s*%|"
+    r"\ben\s+mitad\b(?!\s+de\b)"
+)
+# Decir que el territorio está repartido cuando pertenece a un equipo
+RE_DICE_REPARTIDO = re.compile(
+    r"\b(?:repartid[oa]s?|parej[oa]s?|equilibrad[oa]s?|igualad[oa]s?|ninguno\s+de\s+los\s+dos)\b"
 )
 
 # Números escritos con letras (3..10, 11..90, 100..900).
@@ -293,6 +321,75 @@ class GovernanceMonitorM3:
 
         return len(errores) == 0, errores
 
+    def _verificar_mitades(
+        self,
+        oraciones_norm: List[str],
+        ground_truth: dict,
+        patrones_eq: Dict[str, re.Pattern],
+    ) -> List[str]:
+        """Compara «mitad rival» y «su mitad» con el % en campo rival del equipo nombrado."""
+        equipos_dict = ground_truth.get("equipos") or {}
+        errores: List[str] = []
+        for oracion in oraciones_norm:
+            menciones: List[Tuple[int, int, str]] = []
+            for cod in equipos_dict:
+                pat = patrones_eq.get(cod)
+                if pat:
+                    menciones += [(m.start(), m.end(), cod) for m in pat.finditer(oracion)]
+            menciones.sort()
+            for regex, es_rival in ((RE_EN_MITAD_RIVAL, True), (RE_EN_SU_MITAD, False)):
+                for m in regex.finditer(oracion):
+                    antes = oracion[:m.start()]
+                    if RE_PCT_ANTES.search(antes):
+                        continue
+                    previas = [x for x in menciones if x[1] <= m.start()]
+                    if previas:
+                        cod = previas[-1][2]
+                        tramo = oracion[previas[-1][1]:m.start()]
+                    else:
+                        posteriores = [x for x in menciones if x[0] >= m.end()]
+                        if not posteriores:
+                            continue
+                        cod = posteriores[0][2]
+                        tramo = antes
+                    tramo = re.split(r"[;:]", tramo.rsplit(",", 1)[-1])[-1]
+                    if RE_NEGACION_VERBO.search(tramo) or RE_SUJETO_NINGUNO.search(antes.rsplit(",", 1)[-1]):
+                        continue
+                    pct = (equipos_dict.get(cod) or {}).get("pct_campo_rival")
+                    if pct is None or pct != pct:
+                        continue
+                    if es_rival and pct < 50:
+                        errores.append(
+                            f"Se ubica a '{cod}' en la mitad rival, pero solo tiene {round(pct)}% en campo rival: '{oracion}'."
+                        )
+                    elif not es_rival and pct > 50:
+                        errores.append(
+                            f"Se ubica a '{cod}' en su mitad, pero tiene {round(pct)}% en campo rival: '{oracion}'."
+                        )
+        return errores
+
+    def _verificar_nombra_territorio(
+        self,
+        narracion_norm: str,
+        ground_truth: dict,
+        patrones_eq: Dict[str, re.Pattern],
+    ) -> List[str]:
+        """Si el territorio es de un equipo, la narración debe nombrarlo y no decir que está repartido."""
+        territorio = ground_truth.get("territorio")
+        if not territorio:
+            dom = ground_truth.get("dominant_team", "neutro")
+            territorio = "repartido" if dom in ("neutro", "repartido", None, "") else dom
+        if territorio == "repartido":
+            return []
+        errores: List[str] = []
+        pat = patrones_eq.get(territorio)
+        if pat and not pat.search(narracion_norm):
+            errores.append(f"El territorio es de '{territorio}', pero la narración no lo nombra.")
+        m = RE_DICE_REPARTIDO.search(narracion_norm)
+        if m:
+            errores.append(f"El territorio es de '{territorio}', pero la narración dice «{m.group(0)}».")
+        return errores
+
     def _verificar_numeros(
         self,
         oraciones_norm: List[str],
@@ -311,6 +408,7 @@ class GovernanceMonitorM3:
         errores: List[str] = []
 
         for oracion in oraciones_norm:
+            oracion = re.sub(r"\s*por\s+ciento\b", "%", oracion)
             en_letras = sorted(set(RE_NUMEROS_EN_LETRAS.findall(oracion)))
             if en_letras:
                 errores.append(
@@ -435,6 +533,16 @@ class GovernanceMonitorM3:
 
             palabras_ok, prohibidas_halladas = self._verificar_palabras_prohibidas(combinado_norm)
             territorio_ok, err_territorio = self._verificar_territorio(oraciones_norm, ground_truth, patrones_eq)
+            err_territorio = (
+                err_territorio
+                + self._verificar_mitades(oraciones_norm, ground_truth, patrones_eq)
+                + self._verificar_nombra_territorio(_sin_acentos(narracion_txt), ground_truth, patrones_eq)
+                + [
+                    f"Redacción engañosa de la métrica: «{m.group(0)}» (el % es de posiciones en campo rival)."
+                    for m in RE_REDACCION_METRICA.finditer(combinado_norm)
+                ]
+            )
+            territorio_ok = not err_territorio
             numeros_ok, err_numeros = self._verificar_numeros(oraciones_norm, ground_truth, patrones_eq)
         else:
             palabras_ok, prohibidas_halladas = False, []
@@ -492,6 +600,11 @@ class GovernanceMonitorM3:
             "status": status,
             "checks": checks,
             "errors": errors,
+            # Texto auditado, para poder revisar a mano lo que Granite escribió (aun si se rechazó)
+            "texto": {
+                "analisis_tactico": str(llm_response.get("analisis_tactico", "")) if llm_response else "",
+                "narracion_es": narration if llm_response else "",
+            },
         }
 
         with open(self.audit_log, "a", encoding="utf-8") as f:

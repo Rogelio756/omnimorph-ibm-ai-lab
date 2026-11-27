@@ -187,7 +187,8 @@ def _build_prompt(window: dict, errores_previos: Optional[List[str]] = None) -> 
         pos_ej = _redondear_entero(datos_dom.get("posicion_m")) or 65
         territorio_linea = f"{eq_dom.nombre} ({eq_dom.codigo})"
         regla_territorio = (
-            f"El territorio corresponde a {eq_dom.nombre}. "
+            f"El territorio corresponde a {eq_dom.nombre}: la narración DEBE nombrar a {eq_dom.nombre} "
+            f"y NO puede decir que el territorio está repartido o parejo. "
             f"No afirmes que el otro equipo está más adelantado ni en campo rival."
         )
     else:
@@ -195,7 +196,7 @@ def _build_prompt(window: dict, errores_previos: Optional[List[str]] = None) -> 
         pos_ej = _redondear_entero(datos1.get("posicion_m")) or 65
         territorio_linea = "repartido"
         regla_territorio = (
-            "El territorio está repartido: NO digas que ninguno de los dos equipos está más adelantado."
+            "El territorio está repartido: NO digas que alguno de los dos equipos está más adelantado."
         )
 
     ej_dom = eq_dom if eq_dom is not None else eq1
@@ -229,9 +230,9 @@ Datos medidos en el tramo {wid}:
 Describe únicamente dónde está cada equipo en la cancha y qué espacio ocupa (largo y ancho visibles):
 1. "analisis_tactico": exactamente 2 oraciones en español (una para {eq0.nombre} y otra para {eq1.nombre}). Escribe los números en cifras (dígitos, nunca en letras) y usa SOLO los números dados arriba para cada equipo. No escribas los segundos del tramo.
 2. "narracion_es": frase para voz de MÁXIMO {MAX_NARRATION_WORDS} PALABRAS (para durar menos de 3.9 s), sin cifras o con una sola cifra de las dadas arriba (en dígitos).
-   - Ejemplo válido si un equipo tiene el territorio: "{ejemplo_territorio}"
-   - Ejemplo válido si el territorio es repartido: "{ejemplo_repartido}"
+   - Ejemplo válido para este tramo: "{ejemplo_territorio if eq_dom is not None else ejemplo_repartido}"
 3. {regla_territorio}
+   Solo di que un equipo está «en la mitad rival» o «en campo rival» si tiene 50 % o más en campo rival; si tiene menos de 50 %, está «en su mitad».
 4. PROHIBIDO usar cualquiera de estas palabras o sus derivados (por raíz): posesión, presiona, presión, domina, dominio, controla, control, lucha, disputa, busca, intenta, quiere, pretende, ataca, ataque, gol, marcador, velocidad, repliega, repliegue, retrocede, empuja, arrincona, acorrala, encierra, encerrado, avanza. Prohibido mencionar intenciones de los jugadores, nombres de jugadores, goles, marcador o velocidades, y prohibido escribir números con letras.{bloque_errores}
 
 Responde EXCLUSIVAMENTE con un objeto JSON válido (sin texto antes ni después):

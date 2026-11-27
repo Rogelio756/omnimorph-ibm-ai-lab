@@ -45,16 +45,16 @@
   "modelo": "ibm/granite-4-h-small",
   "llamadas": 8,
   "pass": 8,
-  "offline": 6,
-  "latencia_ms_media": 981.71,
-  "latencia_ms_max": 1583.18,
-  "costo_ru": 1.3624,
+  "offline": 3,
+  "latencia_ms_media": 1103.46,
+  "latencia_ms_max": 2219.07,
+  "costo_ru": 1.8448,
   "max_palabras": 18
  },
  "m4": {
   "motor_tts": "windows_sapi",
   "clips": 8,
-  "desfase_ms_max": 19.82,
+  "desfase_ms_max": 18.24,
   "desfase_ms_limite": 40.0
  },
  "dorsales": {
@@ -321,35 +321,35 @@
    "checks": [
     {
      "descripcion": "Llamadas con modelo IBM Granite autorizado",
-     "observado": 18,
-     "limite": 18,
+     "observado": 22,
+     "limite": 22,
      "unidad": "de",
      "pass": true
     },
     {
      "descripcion": "Respuestas con formato JSON válido",
-     "observado": 18,
-     "limite": 18,
+     "observado": 22,
+     "limite": 22,
      "unidad": "de",
      "pass": true
     },
     {
      "descripcion": "Palabras de la narración más larga",
-     "observado": 18,
+     "observado": 13,
      "limite": 18,
      "unidad": "máx.",
      "pass": true
     },
     {
      "descripcion": "Equipo dominante coherente con los datos",
-     "observado": 12,
-     "limite": 18,
+     "observado": 11,
+     "limite": 22,
      "unidad": "de",
      "pass": false
     },
     {
      "descripcion": "Llamadas sin conexión (modo offline)",
-     "observado": 6,
+     "observado": 3,
      "limite": 0,
      "unidad": "",
      "pass": false
@@ -377,7 +377,7 @@
     },
     {
      "descripcion": "Desfase de reloj máximo (ms)",
-     "observado": 19.82,
+     "observado": 18.24,
      "limite": 40.0,
      "unidad": "máx.",
      "pass": true
