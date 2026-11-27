@@ -98,3 +98,16 @@ Pedido del usuario: «cierra M3».
   - **Resultado:** M3 en PASS (5 de Granite, 3 de plantilla) y M4 en PASS. Se regeneraron el video, MATEO y Transmisión.
   - **Pruebas:** `probar_cronica.py` 9 de 9; `probar_chat_reglas.py` 62 de 62; `probar_transmision.py` 32 de 33 (la misma 7.3). MATEO sin errores y con «9 de 9».
   - **Voces:** W1, W3, W4 y W6 marcaban 3.90 s porque el servicio recorta a 3.80 s. Medido sin recorte, la voz termina antes (W6 a los 3.55 s y W1 a los 3.38 s); solo se recorta silencio del final y no se pierde ninguna palabra.
+
+## Guía de la app para el pitch (26/11, noche, Claude)
+
+Pedido del usuario: Mariana arma el pitch; darle una guía de la app. Se hizo como documento de Claude Docs: «Guía de la app Omnimorph para el pitch» (https://claude.ai/artifact/2ia2NNbdWaQ3Sfr4hogtnG). Es privado hasta que el usuario lo comparta.
+
+Secciones:
+- En 30 segundos.
+- Recorrido de la demo.
+- Qué muestra cada página, con frases sugeridas.
+- Cifras que se pueden citar, con su fuente.
+- Lo que no hay que prometer y cómo decirlo bien.
+- Preguntas probables.
+- Cómo entrar.
