@@ -134,3 +134,22 @@ Cambio:
 Corrida actual: 16 llamadas a Granite, 11,623 tokens de entrada y 2,275 de salida. El costo es de unos 0.0013 USD.
 
 Sin cambiar: el chat de Operaciones sigue mostrando RU estimados por pregunta.
+
+## Animación de la jugada con ángulo de TV (26/11, noche, Claude)
+
+Pedido del usuario: tener una animación de apoyo para el video, porque mostrar la transmisión en YouTube puede generar reclamos por derechos.
+
+Qué se hizo:
+- Script nuevo, `scripts/animacion_recreacion.py`. Dibuja la cancha y las figuras de los jugadores, árbitros y balón con la perspectiva de la cámara de TV. Usa solo nuestros datos:
+  - las posiciones de `objects_cleaned.parquet`;
+  - las matrices de cámara de `calibracion_lineas.npz`.
+- No usa ningún píxel ni el audio de la transmisión, ni logos. Lleva la voz de MATEO, opcional con `--sin-audio`.
+- Huecos: si un jugador se pierde hasta 10 cuadros, se rellena por interpolación.
+- Cámara: se suavizó con Savitzky-Golay sobre 4 puntos de la imagen.
+  - El temblor bajó de 12.4 a 1.1 px de aceleración mediana.
+  - La cancha se mueve como máximo 0.47 m respecto a la calibración.
+- Rótulos: aviso en pantalla «Animación generada con las posiciones que calcula Omnimorph (error mediano ≈ 2.4 m). No es la imagen de la transmisión.»
+- Revisión: se compararon cuadros contra el original; la línea media y el círculo caen en el mismo lugar.
+- Salida: `outputs/animacion/recreacion_tv.mp4`, de 36 s y 5.7 MB. Git la ignora.
+
+Límites: hay identificadores duplicados, así que a veces se ven dos figuras encimadas. El balón no aparece en todos los cuadros.
